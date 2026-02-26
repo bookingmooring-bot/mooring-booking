@@ -1,0 +1,74 @@
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
+import HowItWorks from "./pages/HowItWorks";
+import About from "./pages/About";
+import BecomeProvider from "./pages/BecomeProvider";
+import Explore from "./pages/Explore";
+import Pricing from "./pages/Pricing";
+import Affiliate from "./pages/Affiliate";
+import Support from "./pages/Support";
+import Blog from "./pages/Blog";
+import Contact from "./pages/Contact";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Cookies from "./pages/Cookies";
+import GDPR from "./pages/GDPR";
+import Admin from "./pages/Admin";
+import UserPricing from "./pages/UserPricing";
+import SailingManual from "./pages/SailingManual";
+import MarinaPartnership from "./pages/MarinaPartnership";
+import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dashboard";
+import AddMooring from "./pages/AddMooring";
+import EditMooring from "./pages/EditMooring";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
+
+const queryClient = new QueryClient();
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/become-provider" element={<ProtectedRoute><BecomeProvider /></ProtectedRoute>} />
+            <Route path="/explore" element={<Explore />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/affiliate" element={<Affiliate />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/cookies" element={<Cookies />} />
+            <Route path="/gdpr" element={<GDPR />} />
+            <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+            <Route path="/user-pricing" element={<UserPricing />} />
+            <Route path="/sailing-manual" element={<SailingManual />} />
+            <Route path="/marina-partnership" element={<MarinaPartnership />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/add-mooring" element={<ProtectedRoute><AddMooring /></ProtectedRoute>} />
+            <Route path="/edit-mooring/:id" element={<ProtectedRoute><EditMooring /></ProtectedRoute>} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
+  </QueryClientProvider>
+);
+
+export default App;
