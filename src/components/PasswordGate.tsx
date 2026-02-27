@@ -89,17 +89,17 @@ const PasswordGate = ({ children }: PasswordGateProps) => {
 
                 {/* Title */}
                 <h1 style={styles.title}>Mooring Booking</h1>
-                <p style={styles.subtitle}>Sajt je trenutno u izradi</p>
+                <p style={styles.subtitle}>Site is currently under construction</p>
 
                 {/* Divider */}
                 <div style={styles.divider}>
                     <div style={styles.dividerLine} />
-                    <span style={styles.dividerText}>🔒 pristup</span>
+                    <span style={styles.dividerText}>🔒 access</span>
                     <div style={styles.dividerLine} />
                 </div>
 
                 <p style={styles.description}>
-                    Da biste nastavili, unesite pristupnu šifru.
+                    To continue, please enter the access password.
                 </p>
 
                 {/* Form */}
@@ -112,7 +112,7 @@ const PasswordGate = ({ children }: PasswordGateProps) => {
                                 setPassword(e.target.value);
                                 setError(false);
                             }}
-                            placeholder="Unesite šifru..."
+                            placeholder="Enter password..."
                             style={{
                                 ...styles.input,
                                 ...(error ? styles.inputError : {}),
@@ -131,11 +131,11 @@ const PasswordGate = ({ children }: PasswordGateProps) => {
                     </div>
 
                     {error && (
-                        <p style={styles.errorText}>❌ Pogrešna šifra. Pokušajte ponovo.</p>
+                        <p style={styles.errorText}>❌ Incorrect password. Please try again.</p>
                     )}
 
                     <button type="submit" style={styles.submitButton}>
-                        <span>Pristupi sajtu</span>
+                        <span>Access Site</span>
                         <span style={styles.arrow}>→</span>
                     </button>
                 </form>

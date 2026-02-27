@@ -179,8 +179,8 @@
     "subtitle": "Your personal nautical assistant",
     "placeholder": "Ask about weather, navigation, mooring tips...",
     "send": "Send",
-    "welcome": "Ahoy! I'm AI Captain, your trusted nautical assistant. I can help you with real-time weather forecasts, navigation advice, boat maneuvering techniques, and mooring tips across the Mediterranean. What would you like to know?",
-    "thinking": "Charting course..."
+    "welcome": "Hello! I'm AI Captain, your trusted nautical assistant. I can help you with real-time weather forecasts, navigation advice, boat maneuvering techniques, and mooring tips across the Mediterranean. What would you like to know?",
+    "thinking": "Just a moment, great advice is worth waiting for..."
   },
   "provider": {
     "title": "Create Your Provider Profile",
