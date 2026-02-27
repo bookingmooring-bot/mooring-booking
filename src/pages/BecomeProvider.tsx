@@ -21,6 +21,7 @@ import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import MonthlyCalendar, { CalendarDay } from "@/components/MonthlyCalendar";
 import AdBanner from "@/components/AdBanner";
+import CoordinatePickerMap from "@/components/provider/CoordinatePickerMap";
 
 const countries = [
   { code: "HR", name: "Croatia", flag: "🇭🇷" },
@@ -634,23 +635,46 @@ const BecomeProviderPage = () => {
                       <MapPin size={16} className="text-secondary" />
                       {t('provider.coordinates')} *
                     </Label>
-                    <div className="grid grid-cols-2 gap-4 mt-2">
-                      <Input
-                        placeholder={t('provider.latitude')}
-                        value={formData.latitude}
-                        onChange={(e) => setFormData(prev => ({ ...prev, latitude: e.target.value }))}
-                        required
-                      />
-                      <Input
-                        placeholder={t('provider.longitude')}
-                        value={formData.longitude}
-                        onChange={(e) => setFormData(prev => ({ ...prev, longitude: e.target.value }))}
-                        required
-                      />
+                    <div className="grid grid-cols-2 gap-4 mt-2 mb-3">
+                      <div>
+                        <label className="text-xs text-muted-foreground mb-1 block">Latitude</label>
+                        <Input
+                          placeholder="e.g. 43.5081"
+                          value={formData.latitude}
+                          onChange={(e) => setFormData(prev => ({ ...prev, latitude: e.target.value }))}
+                          required
+                          type="number"
+                          step="0.000001"
+                          min="-90"
+                          max="90"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-muted-foreground mb-1 block">Longitude</label>
+                        <Input
+                          placeholder="e.g. 16.4402"
+                          value={formData.longitude}
+                          onChange={(e) => setFormData(prev => ({ ...prev, longitude: e.target.value }))}
+                          required
+                          type="number"
+                          step="0.000001"
+                          min="-180"
+                          max="180"
+                        />
+                      </div>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Enter exact coordinates (e.g., 42.6507, 18.0944 for Dubrovnik)
-                    </p>
+                    <CoordinatePickerMap
+                      latitude={formData.latitude}
+                      longitude={formData.longitude}
+                      onCoordinatesChange={(lat, lng) =>
+                        setFormData(prev => ({ ...prev, latitude: lat, longitude: lng }))
+                      }
+                    />
+                    {formData.latitude && formData.longitude && (
+                      <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+                        📍 <span className="font-mono">{parseFloat(formData.latitude).toFixed(6)}°N, {parseFloat(formData.longitude).toFixed(6)}°E</span>
+                      </p>
+                    )}
                   </div>
                   <div className="md:col-span-2">
                     <Label htmlFor="description">{t('provider.description')} *</Label>
