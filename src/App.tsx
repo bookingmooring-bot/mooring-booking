@@ -29,46 +29,49 @@ import AddMooring from "./pages/AddMooring";
 import EditMooring from "./pages/EditMooring";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
+import PasswordGate from "./components/PasswordGate";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/how-it-works" element={<HowItWorks />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/become-provider" element={<ProtectedRoute><BecomeProvider /></ProtectedRoute>} />
-            <Route path="/explore" element={<Explore />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/affiliate" element={<Affiliate />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/cookies" element={<Cookies />} />
-            <Route path="/gdpr" element={<GDPR />} />
-            <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
-            <Route path="/user-pricing" element={<UserPricing />} />
-            <Route path="/sailing-manual" element={<SailingManual />} />
-            <Route path="/marina-partnership" element={<MarinaPartnership />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/add-mooring" element={<ProtectedRoute><AddMooring /></ProtectedRoute>} />
-            <Route path="/edit-mooring/:id" element={<ProtectedRoute><EditMooring /></ProtectedRoute>} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+  <PasswordGate>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/become-provider" element={<ProtectedRoute><BecomeProvider /></ProtectedRoute>} />
+              <Route path="/explore" element={<Explore />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/affiliate" element={<Affiliate />} />
+              <Route path="/support" element={<Support />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/cookies" element={<Cookies />} />
+              <Route path="/gdpr" element={<GDPR />} />
+              <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+              <Route path="/user-pricing" element={<UserPricing />} />
+              <Route path="/sailing-manual" element={<SailingManual />} />
+              <Route path="/marina-partnership" element={<MarinaPartnership />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/add-mooring" element={<ProtectedRoute><AddMooring /></ProtectedRoute>} />
+              <Route path="/edit-mooring/:id" element={<ProtectedRoute><EditMooring /></ProtectedRoute>} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </PasswordGate>
 );
 
 export default App;

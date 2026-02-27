@@ -58,7 +58,7 @@ const MapController = ({ center }: { center: [number, number] }) => {
 const ExploreMap = ({ moorings }: ExploreMapProps) => {
   const [selectedMooring, setSelectedMooring] = useState<Mooring | null>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-  
+
   // Center on Mediterranean
   const defaultCenter: [number, number] = [40.5, 18.0];
   const defaultZoom = 5;
@@ -82,11 +82,18 @@ const ExploreMap = ({ moorings }: ExploreMapProps) => {
           className="w-full h-full z-0"
           scrollWheelZoom={true}
         >
+          {/* ESRI Ocean basemap — batimetrija i nautički prikaz */}
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='Tiles &copy; <a href="https://services.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer">Esri</a> &mdash; Esri, GEBCO, NOAA &mdash; <a href="https://www.openseamap.org">OpenSeaMap</a> contributors'
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}"
+            maxZoom={13}
           />
-          
+          {/* OpenSeaMap overlay — nautički simboli: plutače, sidra, opasnosti */}
+          <TileLayer
+            url="https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png"
+            opacity={1}
+          />
+
           {moorings.map((mooring) => (
             <Marker
               key={mooring.id}
@@ -98,8 +105,8 @@ const ExploreMap = ({ moorings }: ExploreMapProps) => {
             >
               <Popup>
                 <div className="p-2 min-w-[200px]">
-                  <img 
-                    src={mooring.image} 
+                  <img
+                    src={mooring.image}
                     alt={mooring.name}
                     className="w-full h-24 object-cover rounded-lg mb-2"
                   />
@@ -114,13 +121,13 @@ const ExploreMap = ({ moorings }: ExploreMapProps) => {
                       {mooring.rating} ({mooring.reviewCount})
                     </span>
                     <span className="font-bold text-sm text-blue-600">
-                      €{mooring.discountPercent 
-                        ? Math.round(mooring.price * (1 - mooring.discountPercent / 100)) 
+                      €{mooring.discountPercent
+                        ? Math.round(mooring.price * (1 - mooring.discountPercent / 100))
                         : mooring.price}/night
                     </span>
                   </div>
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     className="w-full bg-gradient-to-r from-blue-900 to-cyan-500 text-white"
                     onClick={handleBookNow}
                   >

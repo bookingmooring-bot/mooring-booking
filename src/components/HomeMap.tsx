@@ -66,18 +66,25 @@ const HomeMap = () => {
         scrollWheelZoom={false}
         ref={mapRef}
       >
+        {/* ESRI Ocean basemap — batimetrija i nautički prikaz */}
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='Tiles &copy; <a href="https://services.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer">Esri</a> &mdash; Esri, GEBCO, NOAA, National Geographic, DeLorme, HERE, Geonames.org &mdash; <a href="https://www.openseamap.org">OpenSeaMap</a> contributors'
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}"
+          maxZoom={13}
+        />
+        {/* OpenSeaMap overlay — nautički simboli: plutače, sidra, opasnosti */}
+        <TileLayer
+          url="https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png"
+          opacity={1}
         />
         {mediterraneanCountries.map((country) => (
-          <Marker 
-            key={country.name} 
+          <Marker
+            key={country.name}
             position={[country.lat, country.lng]}
           >
             <Popup>
               <div className="text-center p-2">
-                <img 
+                <img
                   src={`https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${country.flagCode}.svg`}
                   alt={country.name}
                   className="w-8 h-8 mx-auto mb-1"
@@ -86,7 +93,7 @@ const HomeMap = () => {
                 <p className="text-sm text-muted-foreground">
                   {country.moorings.toLocaleString()} moorings
                 </p>
-                <a 
+                <a
                   href={`/explore?search=${country.name}`}
                   className="mt-2 inline-block px-4 py-1 bg-primary text-primary-foreground rounded-full text-sm hover:opacity-90"
                 >
@@ -97,15 +104,15 @@ const HomeMap = () => {
           </Marker>
         ))}
       </MapContainer>
-      
+
       {/* Country Labels */}
       <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-2 justify-center pointer-events-none z-[1000]">
         {mediterraneanCountries.slice(0, 6).map((country) => (
-          <span 
+          <span
             key={country.name}
             className="bg-card/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-foreground shadow-sm flex items-center gap-1"
           >
-            <img 
+            <img
               src={`https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${country.flagCode}.svg`}
               alt={country.name}
               className="w-4 h-4 inline-block"

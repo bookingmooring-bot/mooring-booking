@@ -104,6 +104,7 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
           messages: currentMessages,
           location,       // lat/lng sent so Edge Function can call Windy API
           userProfile,
+          searchDates: null, // Edge Function uses today + 7 days as default range
         },
       });
 
