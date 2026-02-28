@@ -38,6 +38,14 @@ const ExplorePage = () => {
   const [sortBy, setSortBy] = useState("rating");
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
 
+  // Capture referral code from ?ref= URL param and store in sessionStorage
+  useEffect(() => {
+    const ref = searchParams.get("ref");
+    if (ref) {
+      sessionStorage.setItem("referral_code", ref);
+    }
+  }, [searchParams]);
+
   // Update search when URL params change
   useEffect(() => {
     if (initialSearch) {

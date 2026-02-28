@@ -34,6 +34,7 @@ import {
 } from "@/hooks/useAdmin";
 import { useAllBookings } from "@/hooks/useBookings";
 import { format } from "date-fns";
+import AffiliateAdminTable from "@/components/admin/AffiliateAdminTable";
 
 const AdminDashboard = () => {
   const { t } = useTranslation();
@@ -171,6 +172,7 @@ const AdminDashboard = () => {
               <TabsTrigger value="providers">{t('admin.providerManagement') || "Providers"}</TabsTrigger>
               <TabsTrigger value="bookings">{t('admin.recentBookings') || "Bookings"}</TabsTrigger>
               <TabsTrigger value="commissions">{t('admin.pendingCommissions') || "Commissions"}</TabsTrigger>
+              <TabsTrigger value="affiliates">🔗 Affiliates</TabsTrigger>
             </TabsList>
 
             {/* Overview Tab */}
@@ -483,6 +485,17 @@ const AdminDashboard = () => {
                     )}
                   </TableBody>
                 </Table>
+              </div>
+            </TabsContent>
+
+            {/* Affiliates Tab */}
+            <TabsContent value="affiliates">
+              <div className="bg-card rounded-xl p-6 shadow-card">
+                <div className="mb-6">
+                  <h3 className="font-heading font-semibold text-lg">Affiliate Program Management</h3>
+                  <p className="text-muted-foreground text-sm">Review applications, approve affiliates, and monitor referral commissions.</p>
+                </div>
+                <AffiliateAdminTable />
               </div>
             </TabsContent>
 

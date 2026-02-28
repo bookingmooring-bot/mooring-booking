@@ -5,7 +5,8 @@ import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
 import { useUserBookings, useProviderBookings, Booking } from "@/hooks/useBookings";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Loader2, Ship, Calendar, Settings, ShieldCheck, Save, Anchor, Star } from "lucide-react";
+import { Loader2, Ship, Calendar, Settings, ShieldCheck, Save, Anchor, Star, Link2 } from "lucide-react";
+import AffiliateDashboard from "@/components/affiliate/AffiliateDashboard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,7 +27,7 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
 
-    const [activeTab, setActiveTab] = useState<'dashboard' | 'settings' | 'moorings' | 'calendar' | 'earnings' | 'spending'>('dashboard');
+    const [activeTab, setActiveTab] = useState<'dashboard' | 'settings' | 'moorings' | 'calendar' | 'earnings' | 'spending' | 'affiliate'>('dashboard');
     const [settingsForm, setSettingsForm] = useState({
         full_name: '',
         phone: '',
@@ -459,6 +460,15 @@ const Dashboard = () => {
                                     </>
                                 )}
                                 <button
+                                    onClick={() => setActiveTab('affiliate')}
+                                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'affiliate'
+                                        ? 'bg-background shadow text-foreground'
+                                        : 'text-muted-foreground hover:text-foreground'
+                                        }`}
+                                >
+                                    <Link2 size={14} className="inline mr-1" />Affiliate
+                                </button>
+                                <button
                                     onClick={() => setActiveTab('settings')}
                                     className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'settings'
                                         ? 'bg-background shadow text-foreground'
@@ -492,6 +502,10 @@ const Dashboard = () => {
                     ) : activeTab === 'spending' ? (
                         <div className="mt-8 animate-fade-in">
                             <ProviderSpendingDashboard />
+                        </div>
+                    ) : activeTab === 'affiliate' ? (
+                        <div className="mt-8 animate-fade-in">
+                            <AffiliateDashboard />
                         </div>
                     ) : (
                         <>
