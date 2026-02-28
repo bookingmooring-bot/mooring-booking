@@ -43,10 +43,17 @@ const PopularMoorings = () => {
                 price={mooring.price}
                 discountPercent={mooring.discountPercent}
                 isLastMinute={mooring.isLastMinute}
+                isNow4Today={mooring.isNow4Today}
                 windProtection={mooring.windProtection}
                 amenities={mooring.amenities}
                 image={mooring.image}
                 distance={mooring.distance}
+                lat={mooring.lat}
+                lng={mooring.lng}
+                ownerName={mooring.ownerName}
+                ownerPhone={mooring.ownerPhone}
+                description={mooring.description}
+                winterStorage={mooring.winterStorage}
               />
             ))}
           </div>

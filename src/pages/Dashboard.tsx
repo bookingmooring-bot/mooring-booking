@@ -2,16 +2,19 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
-import { useUserBookings, useProviderBookings } from "@/hooks/useBookings";
+import { useUserBookings, useProviderBookings, Booking } from "@/hooks/useBookings";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Loader2, Ship, Calendar, Settings, ShieldCheck, Save, Anchor } from "lucide-react";
+import { Loader2, Ship, Calendar, Settings, ShieldCheck, Save, Anchor, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import MooringList from "@/components/provider/MooringList";
 import ProviderCalendar from "@/components/provider/ProviderCalendar";
+import ProviderEarningsDashboard from "@/components/provider/ProviderEarningsDashboard";
+import ReviewMooringModal from "@/components/rating/ReviewMooringModal";
+import RateGuestModal from "@/components/rating/RateGuestModal";
 
 const Dashboard = () => {
     const { user, signOut } = useAuth();
@@ -22,13 +25,15 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
 
-    const [activeTab, setActiveTab] = useState<'dashboard' | 'settings' | 'moorings' | 'calendar'>('dashboard');
+    const [activeTab, setActiveTab] = useState<'dashboard' | 'settings' | 'moorings' | 'calendar' | 'earnings'>('dashboard');
     const [settingsForm, setSettingsForm] = useState({
         full_name: '',
         phone: '',
         boat_name: '',
         boat_length: '',
     });
+    const [reviewTarget, setReviewTarget] = useState<Booking | null>(null);
+    const [rateGuestTarget, setRateGuestTarget] = useState<Booking | null>(null);
 
     // Populate form when profile loads
     useEffect(() => {
@@ -193,7 +198,7 @@ const Dashboard = () => {
                                         <p className="text-sm">Boat: {booking.boat_name} ({booking.boat_length}m)</p>
                                     )}
                                 </div>
-                                <div className="flex flex-col items-start sm:items-end justify-between">
+                                <div className="flex flex-col items-start sm:items-end justify-between gap-3">
                                     {booking.booking_status === 'pending' ? (
                                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
                                             Pending
@@ -202,20 +207,46 @@ const Dashboard = () => {
                                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
                                             Confirmed
                                         </span>
+                                    ) : booking.booking_status === 'completed' ? (
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                                            Completed
+                                        </span>
                                     ) : (
                                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
                                             {booking.booking_status}
                                         </span>
                                     )}
 
-                                    <div className="mt-4 sm:mt-0 text-left sm:text-right">
+                                    <div className="mt-2 sm:mt-0 text-left sm:text-right">
                                         <p className="text-sm text-muted-foreground">Total Price</p>
                                         <p className="text-xl font-bold">€{booking.total_price}</p>
                                     </div>
+
+                                    {booking.booking_status === 'completed' && (
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="text-yellow-600 border-yellow-300 hover:bg-yellow-50 dark:hover:bg-yellow-900/20"
+                                            onClick={() => setReviewTarget(booking)}
+                                        >
+                                            <Star size={14} className="mr-1 fill-yellow-400 text-yellow-400" />
+                                            Ocijeni vez
+                                        </Button>
+                                    )}
                                 </div>
                             </div>
                         ))}
                     </div>
+                )}
+
+                {reviewTarget && (
+                    <ReviewMooringModal
+                        open={!!reviewTarget}
+                        onOpenChange={(open) => !open && setReviewTarget(null)}
+                        mooringId={reviewTarget.mooring_id}
+                        bookingId={reviewTarget.id}
+                        mooringName={reviewTarget.moorings?.name ?? 'Vez'}
+                    />
                 )}
             </div>
         );
@@ -269,7 +300,7 @@ const Dashboard = () => {
                                             </p>
                                         )}
                                     </div>
-                                    <div className="flex flex-col items-start sm:items-end justify-between">
+                                    <div className="flex flex-col items-start sm:items-end justify-between gap-3">
                                         {booking.booking_status === 'pending' ? (
                                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
                                                 Pending Action
@@ -278,24 +309,52 @@ const Dashboard = () => {
                                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
                                                 Confirmed
                                             </span>
+                                        ) : booking.booking_status === 'completed' ? (
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                                                Completed
+                                            </span>
                                         ) : (
                                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
                                                 {booking.booking_status}
                                             </span>
                                         )}
 
-                                        <div className="mt-4 sm:mt-0 text-left sm:text-right">
+                                        <div className="mt-2 sm:mt-0 text-left sm:text-right">
                                             <p className="text-sm text-muted-foreground">Earnings (minus commission)</p>
                                             <p className="text-xl font-bold text-secondary">
                                                 €{(booking.total_price - booking.commission_amount).toFixed(2)}
                                             </p>
                                         </div>
+
+                                        {booking.booking_status === 'completed' && (
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="text-yellow-600 border-yellow-300 hover:bg-yellow-50 dark:hover:bg-yellow-900/20"
+                                                onClick={() => setRateGuestTarget(booking)}
+                                            >
+                                                <Star size={14} className="mr-1 fill-yellow-400 text-yellow-400" />
+                                                Ocijeni gosta
+                                            </Button>
+                                        )}
                                     </div>
                                 </div>
                             ))}
                         </div>
                     )}
                 </div>
+
+                {/* Provider → Guest rating modal */}
+                {rateGuestTarget && (
+                    <RateGuestModal
+                        open={!!rateGuestTarget}
+                        onOpenChange={(open) => !open && setRateGuestTarget(null)}
+                        bookingId={rateGuestTarget.id}
+                        guestUserId={rateGuestTarget.user_id}
+                        guestName={rateGuestTarget.guest_name}
+                    />
+                )}
+
                 {renderUserTrips()}
             </div>
         );
@@ -378,6 +437,15 @@ const Dashboard = () => {
                                         >
                                             Calendar
                                         </button>
+                                        <button
+                                            onClick={() => setActiveTab('earnings')}
+                                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'earnings'
+                                                ? 'bg-background shadow text-foreground'
+                                                : 'text-muted-foreground hover:text-foreground'
+                                                }`}
+                                        >
+                                            💰 Earnings
+                                        </button>
                                     </>
                                 )}
                                 <button
@@ -406,6 +474,10 @@ const Dashboard = () => {
                     ) : activeTab === 'calendar' ? (
                         <div className="mt-8 animate-fade-in">
                             <ProviderCalendar />
+                        </div>
+                    ) : activeTab === 'earnings' ? (
+                        <div className="mt-8 animate-fade-in">
+                            <ProviderEarningsDashboard />
                         </div>
                     ) : (
                         <>

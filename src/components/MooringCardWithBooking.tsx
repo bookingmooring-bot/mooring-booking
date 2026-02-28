@@ -3,7 +3,7 @@ import { Star, Heart, MapPin, Waves, Zap, Wifi, Droplets } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import BookingModal from "./BookingModal";
+import MooringDetailModal from "./MooringDetailModal";
 
 interface MooringCardWithBookingProps {
   id: string;
@@ -16,6 +16,7 @@ interface MooringCardWithBookingProps {
   price: number;
   discountPercent?: number;
   isLastMinute?: boolean;
+  isNow4Today?: boolean;
   windProtection: 'excellent' | 'good' | 'moderate' | 'poor';
   amenities: string[];
   image: string;
@@ -24,6 +25,9 @@ interface MooringCardWithBookingProps {
   lng?: number;
   ownerName?: string;
   ownerPhone?: string;
+  description?: string;
+  winterStorage?: boolean;
+  winterPriceMonthly?: number;
 }
 
 const amenityIcons: Record<string, React.ReactNode> = {
@@ -50,6 +54,7 @@ const MooringCardWithBooking = ({
   price,
   discountPercent,
   isLastMinute,
+  isNow4Today,
   windProtection,
   amenities,
   image,
@@ -58,35 +63,38 @@ const MooringCardWithBooking = ({
   lng,
   ownerName,
   ownerPhone,
+  description,
+  winterStorage,
+  winterPriceMonthly,
 }: MooringCardWithBookingProps) => {
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const discountedPrice = discountPercent 
-    ? Math.round(price * (1 - discountPercent / 100)) 
+  const discountedPrice = discountPercent
+    ? Math.round(price * (1 - discountPercent / 100))
     : price;
 
-  const openBooking = () => {
-    setIsBookingOpen(true);
+  const openDetail = () => {
+    setIsDetailOpen(true);
   };
 
   return (
     <>
       <div className="group bg-card rounded-xl overflow-hidden shadow-card hover:shadow-hover transition-all duration-300">
-        {/* Image Container - Clickable */}
-        <div 
-          className="relative aspect-[16/10] overflow-hidden cursor-pointer" 
-          onClick={openBooking}
+        {/* Image Container - Clickable → opens Detail */}
+        <div
+          className="relative aspect-[16/10] overflow-hidden cursor-pointer"
+          onClick={openDetail}
           role="button"
           tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && openBooking()}
+          onKeyDown={(e) => e.key === 'Enter' && openDetail()}
         >
-          <img 
-            src={image} 
+          <img
+            src={image}
             alt={name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
-          
+
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
             {discountPercent && (
@@ -102,19 +110,19 @@ const MooringCardWithBooking = ({
           </div>
 
           {/* Favorite Button */}
-          <button 
+          <button
             className="absolute top-3 right-3 p-2 bg-card/80 backdrop-blur-sm rounded-full hover:bg-card transition-colors"
             onClick={(e) => {
               e.stopPropagation();
               setIsFavorite(!isFavorite);
             }}
           >
-            <Heart 
-              size={18} 
+            <Heart
+              size={18}
               className={cn(
                 "transition-colors",
                 isFavorite ? "fill-destructive text-destructive" : "text-muted-foreground hover:text-destructive"
-              )} 
+              )}
             />
           </button>
 
@@ -124,8 +132,8 @@ const MooringCardWithBooking = ({
           </div>
         </div>
 
-        {/* Content - Also Clickable */}
-        <div className="p-4 cursor-pointer" onClick={openBooking}>
+        {/* Content - Also Clickable → opens Detail */}
+        <div className="p-4 cursor-pointer" onClick={openDetail}>
           {/* Header */}
           <div className="flex items-start justify-between gap-2 mb-2">
             <div>
@@ -171,36 +179,47 @@ const MooringCardWithBooking = ({
               <span className="font-heading font-bold text-xl text-primary">€{discountedPrice}</span>
               <span className="text-muted-foreground text-sm">/night</span>
             </div>
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               className="bg-gradient-ocean font-semibold"
               onClick={(e) => {
                 e.stopPropagation();
-                openBooking();
+                openDetail();
               }}
             >
-              Book Now
+              View Details
             </Button>
           </div>
         </div>
       </div>
 
-      <BookingModal 
-        mooring={{ 
-          id, 
-          name, 
-          location, 
-          country, 
-          price, 
-          discountPercent, 
+      {/* Detail Modal */}
+      <MooringDetailModal
+        mooring={{
+          id,
+          name,
+          location,
+          country,
+          countryFlag,
+          rating,
+          reviewCount,
+          price,
+          discountPercent,
+          isLastMinute,
+          isNow4Today,
+          windProtection,
+          amenities,
           image,
+          description,
           lat,
           lng,
           ownerName,
           ownerPhone,
+          winterStorage,
+          winterPriceMonthly,
         }}
-        isOpen={isBookingOpen}
-        onClose={() => setIsBookingOpen(false)}
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
       />
     </>
   );
