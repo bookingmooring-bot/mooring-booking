@@ -172,8 +172,9 @@
     "subtitle": "Votre assistant nautique personnel",
     "placeholder": "Demandez sur la météo, la navigation, conseils d'amarrage...",
     "send": "Envoyer",
-    "welcome": "Ohé! Je suis AI Capitaine, votre assistant nautique de confiance. Je peux vous aider avec les prévisions météo en temps réel, conseils de navigation, techniques de manœuvre et conseils d'amarrage en Méditerranée. Que voulez-vous savoir?",
-    "thinking": "Je trace la route..."
+    "welcome": "Bienvenue à bord! Je suis AI Capitaine, votre intrépide navigateur à travers les profondeurs de la mer et les secrets des ports. J'assiste en navigation, conseils nautiques, prévisions météo, situations de crise, manœuvres, amarrage, recherche de postes et marinas abordables, réparations techniques, départ et arrivée en port. Quel cap mettons-nous aujourd'hui?",
+    "thinking": "Je navigue dans les profondeurs de la mer de données... Veuillez patienter, nous jetons bientôt l'ancre avec des réponses!",
+    "farewell": "Mer calme! Votre fidèle AI Capitaine toujours prêt pour la prochaine aventure."
   },
   "provider": {
     "title": "Créez Votre Profil Fournisseur",

@@ -173,8 +173,9 @@
     "subtitle": "Kişisel denizcilik asistanınız",
     "placeholder": "Hava durumu, navigasyon, bağlama ipuçları hakkında sorun...",
     "send": "Gönder",
-    "welcome": "Ahoy! Ben AI Kaptan, güvenilir denizcilik asistanınızım. Size gerçek zamanlı hava tahminleri, navigasyon tavsiyeleri, manevra teknikleri ve Akdeniz'de bağlama ipuçları konusunda yardımcı olabilirim. Ne bilmek istersiniz?",
-    "thinking": "Rota belirleniyor..."
+    "welcome": "Gemiye hoş geldiniz! Ben AI Kaptan, denizin derinliklerinde ve limanların sırlarında cesaretli rehberinizim. Navigasyon, denizcilik tavsiyeleri, hava tahminleri, kriz durumları, manevra, bağlama, uygun fiyatlı bağlama noktaları ve marinaların aranması, teknik tamir, liman çıkışı ve girişi konularında yardım ediyorum. Bugün hangi rotayı belirleyeceğiz?",
+    "thinking": "Veri denizinin derinliklerinde yol alıyorum... Lütfen bekleyin, yakında yanıtlarla demirleyeceğiz!",
+    "farewell": "Sakin denizler! Sadık AI Kaptanınız her zaman bir sonraki maceraya hazır."
   },
   "provider": {
     "title": "Sağlayıcı Profilinizi Oluşturun",

@@ -173,8 +173,9 @@
     "subtitle": "Vaš osebni pomorski asistent",
     "placeholder": "Vprašajte o vremenu, navigaciji, nasvetih za privez...",
     "send": "Pošlji",
-    "welcome": "Ahoj! Sem AI Kapitan, vaš zaupanja vreden pomorski asistent. Lahko vam pomagam z vremenskimi napovedmi v realnem času, nasveti za navigacijo, tehnikami manevriranja in nasveti za privez po Mediteranu. Kaj bi radi vedeli?",
-    "thinking": "Izračunavam smer..."
+    "welcome": "Dobrodošli na krovu! Sem AI Kapitan, vaš neustrašeni navigator skozi globine morja in skrivnosti pristanišč. Pomagam pri navigaciji, pomorskih nasvetih, vremenskih napovedih, kriznih situacijah, manevriranju, privezovanju, iskanju ugodnih privezov in marin, tehničnih popravilih, odhodu in prihodu v pristanišča. Katero smer nastavimo danes?",
+    "thinking": "Plavam skozi morske globine podatkov... Prosim počakajte, kmalu sidramo z odgovori!",
+    "farewell": "Mirno morje! Vaš zvesti AI Kapitan vedno pripravljen na naslednjo pustolovščino."
   },
   "provider": {
     "title": "Ustvarite Svoj Profil Ponudnika",

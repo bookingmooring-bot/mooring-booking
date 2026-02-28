@@ -173,8 +173,9 @@
     "subtitle": "Twój osobisty asystent morski",
     "placeholder": "Zapytaj o pogodę, nawigację, wskazówki dotyczące cumowania...",
     "send": "Wyślij",
-    "welcome": "Ahoj! Jestem AI Kapitanem, twoim zaufanym asystentem morskim. Mogę pomóc z prognozą pogody, radami nawigacyjnymi i wskazówkami dotyczącymi cumowania. Jak mogę pomóc?",
-    "thinking": "Planuję kurs..."
+    "welcome": "Witamy na pokładzie! Jestem AI Kapitanem, Twoim nieustraszonym nawigatorem przez głębiny morza i tajemnice portów. Pomagam w nawigacji, poradach nautycznych, prognozach pogody, sytuacjach kryzysowych, manewrowaniu, cumowaniu, wyszukiwaniu niedrogich miejsc cumowniczych i marin, naprawach technicznych, odpływaniu i wpływaniu do portów. Jaki kurs wyznaczamy dziś?",
+    "thinking": "Płynę przez morskie głębiny danych... Proszę czekać, wkrótce zacumujemy z odpowiedziami!",
+    "farewell": "Spokojne morze! Twój wierny AI Kapitan zawsze gotowy na kolejną przygodę."
   },
   "provider": {
     "title": "Utwórz Profil Dostawcy",

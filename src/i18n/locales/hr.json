@@ -179,8 +179,9 @@
     "subtitle": "Vaš osobni nautički asistent",
     "placeholder": "Pitajte o vremenu, navigaciji, savjetima za vezanje...",
     "send": "Pošalji",
-    "welcome": "Ćao! Ja sam AI Kapetan, vaš pouzdani nautički asistent. Mogu vam pomoći s vremenskom prognozom u realnom vremenu, savjetima za navigaciju, tehnikama manevriranja broda i savjetima za vezanje diljem Mediterana. Što želite znati?",
-    "thinking": "Samo trenutak, pravi savjet vrijedi sačekati..."
+    "welcome": "Dobro došli na palubu! Ja sam AI Kapetan, vaš neustrašivi navigator kroz dubine mora i tajne luka. Asistiram u plovidbi, nautičkim savjetima, vremenskoj prognozi, kriznim situacijama, manevrima, vezanju, pretraživanju povoljnih vezova i marina, tehničkim popravcima, isplovljavanju i uplovljavanju. Koji kurs postavljamo danas?",
+    "thinking": "Plovim kroz morske dubine podataka... Molimo sačekajte, ubrzo sidrimo s odgovorima!",
+    "farewell": "Mirno more! Vaš vjerni AI Kapetan uvijek spreman za sljedeću avanturu."
   },
   "provider": {
     "title": "Kreirajte Svoj Profil Davatelja",

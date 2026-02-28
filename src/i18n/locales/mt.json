@@ -173,8 +173,9 @@
     "subtitle": "L-assistent nawtiku personali tiegħek",
     "placeholder": "Staqsi dwar it-temp, navigazzjoni, pariri għall-mooring...",
     "send": "Ibgħat",
-    "welcome": "Ahoy! Jien AI Kaptan, l-assistent nawtiku fdat tiegħek. Nista' ngħinek bi previżjonijiet tat-temp f'ħin reali, pariri ta' navigazzjoni, tekniki ta' manovrabilità, u pariri għall-mooring fil-Mediterran. Xi trid tkun taf?",
-    "thinking": "Qed nippjana r-rotta..."
+    "welcome": "Merħba abbord! Jien AI Kaptan, il-navigatur kuraġġuż tiegħek fil-fond tal-baħar u s-sigriet tal-portijiet. Ngħin fin-navigazzjoni, pariri nawtiċi, previsjonijiet tat-temp, sitwazzjonijiet ta' kriżi, manovri, ramm, tfittxija ta' ormeggi u marini bi prezzijiet raġonevoli, tiswijiet tekniċi, it-tluq u l-wasla fil-portijiet. Liema rotta nistabbilixxu llum?",
+    "thinking": "Qed inbaħħar fil-fond tal-baħar tad-data... Jekk jogħġbok stenna, dalwaqt norbtu bl-tweġibiet!",
+    "farewell": "Baħar kalm! L-AI Kaptan fidil tiegħek dejjem lest għall-avventura jmiss."
   },
   "provider": {
     "title": "Oħloq il-Profil tal-Fornitur Tiegħek",

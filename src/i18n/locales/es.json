@@ -172,8 +172,9 @@
     "subtitle": "Tu asistente náutico personal",
     "placeholder": "Pregunta sobre el tiempo, navegación, consejos de amarre...",
     "send": "Enviar",
-    "welcome": "¡Ahoy! Soy AI Capitán, tu asistente náutico de confianza. Puedo ayudarte con pronósticos del tiempo en tiempo real, consejos de navegación, técnicas de maniobra y consejos de amarre en el Mediterráneo. ¿Qué te gustaría saber?",
-    "thinking": "Trazando rumbo..."
+    "welcome": "¡Bienvenido a bordo! Soy AI Capitán, tu intrépido navegante a través de las profundidades del mar y los secretos de los puertos. Asisto en navegación, consejos náuticos, pronósticos del tiempo, situaciones de crisis, maniobras, amarre, búsqueda de amarres y marinas asequibles, reparaciones técnicas, salida y entrada en puertos. ¿Qué rumbo fijamos hoy?",
+    "thinking": "Navegando por las profundidades del mar de datos... ¡Por favor espera, pronto anclaremos con respuestas!",
+    "farewell": "¡Mar en calma! Tu fiel AI Capitán siempre listo para la próxima aventura."
   },
   "provider": {
     "title": "Crea Tu Perfil de Proveedor",

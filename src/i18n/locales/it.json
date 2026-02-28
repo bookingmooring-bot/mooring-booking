@@ -172,8 +172,9 @@
     "subtitle": "Il tuo assistente nautico personale",
     "placeholder": "Chiedi del meteo, navigazione, consigli per l'ormeggio...",
     "send": "Invia",
-    "welcome": "Ahoy! Sono AI Capitano, il tuo fidato assistente nautico. Posso aiutarti con previsioni meteo in tempo reale, consigli di navigazione, tecniche di manovra e consigli per l'ormeggio nel Mediterraneo. Cosa vorresti sapere?",
-    "thinking": "Traccio la rotta..."
+    "welcome": "Benvenuto a bordo! Sono AI Capitano, il tuo intrepido navigatore attraverso le profondità del mare e i segreti dei porti. Assisto nella navigazione, consigli nautici, previsioni meteorologiche, situazioni di crisi, manovre, ormeggio, ricerca di ormeggi e marine convenienti, riparazioni tecniche, uscita e ingresso nei porti. Quale rotta tracciamo oggi?",
+    "thinking": "Navigo nelle profondità del mare dei dati... Attendere prego, ancoriamo presto con le risposte!",
+    "farewell": "Mare calmo! Il tuo fedele AI Capitano sempre pronto per la prossima avventura."
   },
   "provider": {
     "title": "Crea il Tuo Profilo Fornitore",

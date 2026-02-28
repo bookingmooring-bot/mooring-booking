@@ -173,8 +173,9 @@
     "subtitle": "Váš osobný námorný asistent",
     "placeholder": "Spýtajte sa na počasie, navigáciu, tipy na kotvenie...",
     "send": "Odoslať",
-    "welcome": "Ahoj! Som AI Kapitán, váš spoľahlivý námorný asistent. Môžem vám pomôcť s predpoveďou počasia, navigačnými radami a tipmi na kotvenie. Ako vám môžem pomôcť?",
-    "thinking": "Plánujem kurz..."
+    "welcome": "Vitajte na palube! Som AI Kapitán, váš neohrožený navigátor hĺbkami mora a tajomstvami prístavov. Pomáham s navigáciou, námornými radami, predpoveďou počasia, krízovými situáciami, manévrovaním, kotvením, hľadaním dostupných kotvísk a marín, technickými opravami, výjazdom a vjazdom do prístavov. Aký kurz nastavujeme dnes?",
+    "thinking": "Plaviem hĺbinami dátového mora... Prosím čakajte, čoskoro zakotvíme s odpoveďami!",
+    "farewell": "Pokojné more! Váš verný AI Kapitán vždy pripravený na ďalšie dobrodružstvo."
   },
   "provider": {
     "title": "Vytvoriť Profil Poskytovateľa",

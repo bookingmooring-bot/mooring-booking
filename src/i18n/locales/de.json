@@ -172,8 +172,9 @@
     "subtitle": "Ihr persönlicher Nautik-Assistent",
     "placeholder": "Fragen Sie nach Wetter, Navigation, Anlegetipps...",
     "send": "Senden",
-    "welcome": "Ahoi! Ich bin KI Kapitän, Ihr vertrauenswürdiger Nautik-Assistent. Ich kann Ihnen bei Echtzeit-Wettervorhersagen, Navigationsratschlägen, Manövriertechniken und Anlegetipps im Mittelmeer helfen. Was möchten Sie wissen?",
-    "thinking": "Kurs wird berechnet..."
+    "welcome": "Willkommen an Bord! Ich bin KI Kapitän, Ihr furchtloser Navigator durch die Tiefen des Meeres und die Geheimnisse der Häfen. Ich helfe bei Navigation, nautischen Ratschlägen, Wettervorhersagen, Krisensituationen, Manövern, Festmachen, der Suche nach günstigen Liegeplätzen und Marinas, technischen Reparaturen sowie Ein- und Auslaufen in Häfen. Welchen Kurs setzen wir heute?",
+    "thinking": "Ich navigiere durch die Tiefen der Datensee... Bitte warten, wir werfen bald Anker mit Antworten!",
+    "farewell": "Ruhige See! Ihr treuer KI Kapitän ist immer bereit für das nächste Abenteuer."
   },
   "provider": {
     "title": "Erstellen Sie Ihr Anbieter-Profil",

@@ -173,8 +173,9 @@
     "subtitle": "Személyes tengeri asszisztense",
     "placeholder": "Kérdezzen időjárásról, navigációról, kikötési tippekről...",
     "send": "Küldés",
-    "welcome": "Ahoj! Én vagyok az AI Kapitány, a megbízható tengeri asszisztense. Segíthetek valós idejű időjárás-előrejelzésekkel, navigációs tanácsokkal és kikötési tippekkel. Miben segíthetek?",
-    "thinking": "Útvonal tervezése..."
+    "welcome": "Üdvözöljük a fedélzeten! Én vagyok az AI Kapitány, a tengeri mélységek és kikötők titkainak bátor navigátora. Segítek a navigációban, nautikus tanácsadásban, időjárás-előrejelzésekben, válsághelyzetekben, manőverezésben, kikötésben, megfizethető kikötőhelyek és marinák keresésében, műszaki javításokban, kikötők elhagyásában és megközelítésében. Milyen irányt veszünk fel ma?",
+    "thinking": "Az adattenger mélyein hajózom... Kérem várjon, hamarosan horgonyt vetünk a válaszokkal!",
+    "farewell": "Csendes tenger! Az ön hűséges AI Kapitánya mindig készen áll a következő kalandra."
   },
   "provider": {
     "title": "Szolgáltatói Profil Létrehozása",
