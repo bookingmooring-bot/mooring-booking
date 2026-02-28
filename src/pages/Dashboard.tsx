@@ -5,7 +5,7 @@ import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
 import { useUserBookings, useProviderBookings, Booking } from "@/hooks/useBookings";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Loader2, Ship, Calendar, Settings, ShieldCheck, Save, Anchor, Star, Link2 } from "lucide-react";
+import { Loader2, Ship, Calendar, Settings, ShieldCheck, Save, Anchor, Star } from "lucide-react";
 import AffiliateDashboard from "@/components/affiliate/AffiliateDashboard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -390,7 +390,7 @@ const Dashboard = () => {
             <main className="flex-1 pt-24 pb-12 bg-muted/30">
                 <div className="container mx-auto px-4 max-w-5xl">
                     {/* Profile Header */}
-                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-card rounded-2xl p-6 shadow-card border border-border">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-card rounded-2xl p-6 shadow-card border border-border">
                         <div className="flex items-center gap-4">
                             <div className="h-16 w-16 bg-gradient-ocean rounded-full flex items-center justify-center text-primary-foreground text-xl font-bold">
                                 {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || '?'}
@@ -408,79 +408,36 @@ const Dashboard = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex gap-3 mt-4 md:mt-0">
-                            <div className="bg-muted p-1 rounded-lg flex inline-flex">
+                        <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-red-500 hover:text-red-600 hover:bg-red-50 self-start md:self-center">
+                            Sign Out
+                        </Button>
+                    </div>
+
+                    {/* Tab Strip — scrollable on small screens */}
+                    <div className="bg-card rounded-2xl shadow-card border border-border overflow-x-auto">
+                        <div className="flex items-center gap-1 p-2 min-w-max">
+                            {[
+                                { key: 'dashboard', label: 'Dashboard' },
+                                ...(profile?.role === 'provider' ? [
+                                    { key: 'moorings', label: 'My Moorings' },
+                                    { key: 'calendar', label: 'Calendar' },
+                                    { key: 'earnings', label: '💰 Earnings' },
+                                    { key: 'spending', label: '💳 Spending' },
+                                ] : []),
+                                { key: 'affiliate', label: '🔗 Affiliate' },
+                                { key: 'settings', label: '⚙️ Settings' },
+                            ].map((tab) => (
                                 <button
-                                    onClick={() => setActiveTab('dashboard')}
-                                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'dashboard'
-                                        ? 'bg-background shadow text-foreground'
-                                        : 'text-muted-foreground hover:text-foreground'
+                                    key={tab.key}
+                                    onClick={() => setActiveTab(tab.key as typeof activeTab)}
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab.key
+                                        ? 'bg-primary/10 text-primary shadow-sm'
+                                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                                         }`}
                                 >
-                                    Dashboard
+                                    {tab.label}
                                 </button>
-                                {profile?.role === 'provider' && (
-                                    <>
-                                        <button
-                                            onClick={() => setActiveTab('moorings')}
-                                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'moorings'
-                                                ? 'bg-background shadow text-foreground'
-                                                : 'text-muted-foreground hover:text-foreground'
-                                                }`}
-                                        >
-                                            My Moorings
-                                        </button>
-                                        <button
-                                            onClick={() => setActiveTab('calendar')}
-                                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'calendar'
-                                                ? 'bg-background shadow text-foreground'
-                                                : 'text-muted-foreground hover:text-foreground'
-                                                }`}
-                                        >
-                                            Calendar
-                                        </button>
-                                        <button
-                                            onClick={() => setActiveTab('earnings')}
-                                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'earnings'
-                                                ? 'bg-background shadow text-foreground'
-                                                : 'text-muted-foreground hover:text-foreground'
-                                                }`}
-                                        >
-                                            💰 Earnings
-                                        </button>
-                                        <button
-                                            onClick={() => setActiveTab('spending')}
-                                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'spending'
-                                                ? 'bg-background shadow text-foreground'
-                                                : 'text-muted-foreground hover:text-foreground'
-                                                }`}
-                                        >
-                                            💳 My Spending
-                                        </button>
-                                    </>
-                                )}
-                                <button
-                                    onClick={() => setActiveTab('affiliate')}
-                                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'affiliate'
-                                        ? 'bg-background shadow text-foreground'
-                                        : 'text-muted-foreground hover:text-foreground'
-                                        }`}
-                                >
-                                    <Link2 size={14} className="inline mr-1" />Affiliate
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('settings')}
-                                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'settings'
-                                        ? 'bg-background shadow text-foreground'
-                                        : 'text-muted-foreground hover:text-foreground'
-                                        }`}
-                                >
-                                    Settings
-                                </button>
-                            </div>
-                            <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-red-500 hover:text-red-600 hover:bg-red-50 ml-2">
-                                Sign Out
-                            </Button>
+                            ))}
                         </div>
                     </div>
 
@@ -518,6 +475,7 @@ const Dashboard = () => {
                             )}
                         </>
                     )}
+
                 </div>
             </main>
             <Footer />
