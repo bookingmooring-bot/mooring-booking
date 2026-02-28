@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import MooringList from "@/components/provider/MooringList";
 import ProviderCalendar from "@/components/provider/ProviderCalendar";
 import ProviderEarningsDashboard from "@/components/provider/ProviderEarningsDashboard";
+import ProviderSpendingDashboard from "@/components/provider/ProviderSpendingDashboard";
 import ReviewMooringModal from "@/components/rating/ReviewMooringModal";
 import RateGuestModal from "@/components/rating/RateGuestModal";
 
@@ -25,7 +26,7 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
 
-    const [activeTab, setActiveTab] = useState<'dashboard' | 'settings' | 'moorings' | 'calendar' | 'earnings'>('dashboard');
+    const [activeTab, setActiveTab] = useState<'dashboard' | 'settings' | 'moorings' | 'calendar' | 'earnings' | 'spending'>('dashboard');
     const [settingsForm, setSettingsForm] = useState({
         full_name: '',
         phone: '',
@@ -446,6 +447,15 @@ const Dashboard = () => {
                                         >
                                             💰 Earnings
                                         </button>
+                                        <button
+                                            onClick={() => setActiveTab('spending')}
+                                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'spending'
+                                                ? 'bg-background shadow text-foreground'
+                                                : 'text-muted-foreground hover:text-foreground'
+                                                }`}
+                                        >
+                                            💳 My Spending
+                                        </button>
                                     </>
                                 )}
                                 <button
@@ -478,6 +488,10 @@ const Dashboard = () => {
                     ) : activeTab === 'earnings' ? (
                         <div className="mt-8 animate-fade-in">
                             <ProviderEarningsDashboard />
+                        </div>
+                    ) : activeTab === 'spending' ? (
+                        <div className="mt-8 animate-fade-in">
+                            <ProviderSpendingDashboard />
                         </div>
                     ) : (
                         <>

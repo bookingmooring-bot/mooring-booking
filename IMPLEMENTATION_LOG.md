@@ -173,3 +173,106 @@ Provider mooring owners now have a dedicated **💰 Earnings** tab in their dash
 - [ ] Click the Earnings tab → confirm KPI cards, mooring table, and guest list load
 - [ ] Toggle **Paid Only** button and time range pills to test filter behaviour
 - [ ] Check browser DevTools Console for any runtime errors
+
+---
+
+## ✅ [Step S1] — `provider_addon_costs` Table + RLS
+**Date:** 2026-02-28 16:18  
+**Status:** Completed
+
+### What Was Done
+Created the `provider_addon_costs` ledger table in Supabase with columns: `id`, `provider_id`, `mooring_id`, `addon_type` (CHECK: marketing_tools/premium_listing/now4today/insurance), `amount`, `billing_cycle` (CHECK: monthly/yearly/per_booking), `activated_at`, `notes`, `created_at`. Added three indexes (provider, mooring, type). Enabled RLS with three policies: provider SELECT own rows, provider INSERT own rows, admin ALL.
+
+### Files Changed
+| File | Change | Details |
+|------|--------|---------|
+| Migration `create_provider_addon_costs` | Created | Table + indexes + 3 RLS policies |
+
+---
+
+## ✅ [Step S2] — `get_provider_spending` RPC Function
+**Date:** 2026-02-28 16:19  
+**Status:** Completed
+
+### What Was Done
+Created `get_provider_spending(p_provider_id uuid) RETURNS jsonb` RPC function using `SECURITY INVOKER` + `SET search_path = public`. Returns a single jsonb object with: `total_spent` (all-time), `monthly_recurring` (active monthly subscriptions), `yearly_recurring` (active yearly), `now4today_surcharge` (20% of Now4Today booking gross — informational), `twelve_month_projection` (monthly×12 + yearly), plus three arrays: `by_addon[]` (grouped by type), `by_mooring[]` (grouped by mooring), `recent_costs[]` (last 20 records with mooring names).
+
+### Files Changed
+| File | Change | Details |
+|------|--------|---------|
+| Migration `get_provider_spending_rpc` | Created | Full plpgsql RPC with jsonb output |
+
+### Key Decisions Made
+- Returned as a single `jsonb` (not TABLE) to keep the hook simple — one `.rpc()` call returns everything
+- Now4Today surcharge computed from bookings (20% of gross) — shown as informational, not a provider cost
+
+---
+
+## ✅ [Step S3] — Backfill + Auto-Trigger
+**Date:** 2026-02-28 16:20  
+**Status:** Completed
+
+### What Was Done
+**Backfill migration** (`seed_addon_costs_from_moorings`): Inserted cost records for all existing moorings with active add-on flags — Marketing Tools (€5/mo), Premium Listing (€9.99/mo), Insurance (€9.99/yr), Now4Today (€0 activation record). Used `ON CONFLICT DO NOTHING` for idempotency.
+
+**Trigger migration** (`addon_costs_auto_trigger`): Created `handle_mooring_addon_activated()` trigger function using `SECURITY DEFINER` that fires `AFTER UPDATE` on the `moorings` table. For each add-on column that transitions `false → true`, automatically inserts the corresponding cost record. Attached as `trg_mooring_addon_activated`.
+
+### Files Changed
+| File | Change | Details |
+|------|--------|---------|
+| Migration `seed_addon_costs_from_moorings` | Created | Backfill for existing active add-ons |
+| Migration `addon_costs_auto_trigger` | Created | Trigger function + trigger on moorings |
+
+### Key Decisions Made
+- Trigger uses `SECURITY DEFINER` (unlike RPCs) so it can bypass RLS to write to the provider_addon_costs table from a mooring UPDATE context
+
+---
+
+## ✅ [Step S4] — `useProviderSpending` Hook
+**Date:** 2026-02-28 16:21  
+**Status:** Completed
+
+### What Was Done
+Created `src/hooks/useProviderSpending.ts` with exported `ADDON_PRICES` constant (single source of truth for all add-on labels, prices, icons), full TypeScript types (`AddonCostRecord`, `AddonBreakdown`, `MooringCostBreakdown`, `ProviderSpendingSummary`), and the hook itself calling `supabase.rpc('get_provider_spending')`. staleTime: 10 minutes. Query key: `['provider-spending', user?.id]`.
+
+### Files Changed
+| File | Change | Details |
+|------|--------|---------|
+| `src/hooks/useProviderSpending.ts` | Created | Hook + `ADDON_PRICES` + 4 exported types |
+
+---
+
+## ✅ [Step S5] — `ProviderSpendingDashboard` Component + My Spending Tab
+**Date:** 2026-02-28 16:22  
+**Status:** Completed
+
+### What Was Done
+Created `src/components/provider/ProviderSpendingDashboard.tsx` with: (1) 3 KPI cards (Total Spent, Monthly Recurring, 12-Month Projection), (2) a Stripe-coming-soon info banner, (3) Now4Today surcharge info panel (orange, shown only when surcharge > 0), (4) Active Add-Ons panel grouped by type with icons and cycle badges, (5) Cost by Mooring table sorted by spend desc, (6) Cost History chronological list.
+
+Modified `Dashboard.tsx`: added import, extended `activeTab` type to `'spending'`, added "💳 My Spending" tab button after Earnings, added render branch for `ProviderSpendingDashboard`.
+
+TypeScript build: `npx tsc --noEmit` → **0 errors**.
+
+### Files Changed
+| File | Change | Details |
+|------|--------|---------|
+| `src/components/provider/ProviderSpendingDashboard.tsx` | Created | Full UI with 5 sections + sub-components |
+| `src/pages/Dashboard.tsx` | Modified | +1 import, type extended, +1 tab button, +1 render branch |
+
+---
+
+## 🏁 Implementation Complete — Provider Marketing Spend Tracker
+
+**Date:** 2026-02-28  
+**Total Steps Completed:** 5  
+**Files Created:** 3 (`useProviderSpending.ts`, `ProviderSpendingDashboard.tsx`, 4 Supabase migrations)  
+**Files Modified:** 1 (`Dashboard.tsx`)
+
+### Summary
+Providers now have a **💳 My Spending** tab in their dashboard showing total lifetime add-on spend, monthly recurring cost, 12-month projection, per-add-on breakdown, per-mooring cost ranking, and a chronological activation history. A database trigger automatically records costs when providers activate new add-ons. The architecture is Stripe-ready — when payment webhooks arrive (Phase 2D), they simply insert into the same `provider_addon_costs` table.
+
+### Next Steps for User
+- [ ] Run `npm run dev` → log in as a **provider** → click **💳 My Spending** tab
+- [ ] Verify KPI cards, Active Add-Ons panel, and Cost History render
+- [ ] Activate an add-on toggle on a mooring → check that a new cost record appears automatically
+- [ ] When Stripe is added (Phase 2D): webhook inserts into `provider_addon_costs` — no frontend changes needed
