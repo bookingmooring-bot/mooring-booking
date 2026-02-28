@@ -1,7 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { X, Send, Anchor, Ship } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
 import { getUserLocation } from "@/services/weatherService";
 import { isPremium, hasAIQuestionsRemaining, AI_BASIC_LIMIT, getUserTier } from "@/lib/subscription";
@@ -43,10 +42,25 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const lastAssistantRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Auto-scroll to newest message
+  // Auto-resize textarea as user types
+  const autoResize = useCallback(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }, []);
+
+  // Scroll: new assistant message → scroll to its TOP so user reads from beginning
+  // Loading spinner / user message → scroll to bottom so user sees the spinner
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (!isLoading && messages.length > 0 && messages[messages.length - 1].role === 'assistant') {
+      lastAssistantRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages, isLoading]);
 
   const handleSend = async () => {
@@ -56,6 +70,8 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
     const currentMessages = [...messages, userMessage];
     setMessages(currentMessages);
     setInput("");
+    // Reset textarea height
+    if (textareaRef.current) { textareaRef.current.style.height = 'auto'; }
     setIsLoading(true);
 
     // ─── Tier checks ───────────────────────────────────────────────────────────
@@ -157,13 +173,22 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
             </button>
           </div>
           <div className="h-80 overflow-y-auto p-4 space-y-4">
-            {messages.map((msg, i) => (
-              <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] rounded-xl px-4 py-2 ${msg.role === 'user' ? 'bg-secondary text-secondary-foreground' : 'bg-muted text-foreground'}`}>
-                  <p className="text-sm whitespace-pre-line">{msg.content}</p>
+            {messages.map((msg, i) => {
+              const isLastAssistant =
+                msg.role === 'assistant' &&
+                i === messages.map(m => m.role).lastIndexOf('assistant');
+              return (
+                <div
+                  key={i}
+                  ref={isLastAssistant ? lastAssistantRef : undefined}
+                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div className={`max-w-[80%] rounded-xl px-4 py-2 ${msg.role === 'user' ? 'bg-secondary text-secondary-foreground' : 'bg-muted text-foreground'}`}>
+                    <p className="text-sm whitespace-pre-line">{msg.content}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             {isLoading && (
               <div className="flex justify-start">
                 <div className="bg-muted rounded-xl px-4 py-2">
@@ -173,16 +198,24 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
             )}
             <div ref={messagesEndRef} />
           </div>
-          <div className="p-4 border-t border-border flex gap-2">
-            <Input
+          <div className="p-4 border-t border-border flex gap-2 items-end">
+            <textarea
+              ref={textareaRef}
+              rows={1}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+              onChange={(e) => { setInput(e.target.value); autoResize(); }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
               placeholder={t("aiChat.placeholder")}
-              className="flex-1"
               disabled={isLoading}
+              className="flex-1 resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 overflow-hidden leading-5"
+              style={{ minHeight: '36px', maxHeight: '120px' }}
             />
-            <Button onClick={handleSend} size="icon" className="bg-gradient-ocean" disabled={isLoading}>
+            <Button onClick={handleSend} size="icon" className="bg-gradient-ocean shrink-0" disabled={isLoading}>
               <Send size={18} />
             </Button>
           </div>
