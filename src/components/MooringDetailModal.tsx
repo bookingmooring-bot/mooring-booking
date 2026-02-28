@@ -48,6 +48,9 @@ interface MooringDetailModalProps {
     };
     isOpen: boolean;
     onClose: () => void;
+    /** Dates pre-selected in the Explorer search (YYYY-MM-DD) */
+    initialCheckIn?: string;
+    initialCheckOut?: string;
 }
 
 const amenityConfig: Record<
@@ -94,6 +97,8 @@ const MooringDetailModal = ({
     mooring,
     isOpen,
     onClose,
+    initialCheckIn,
+    initialCheckOut,
 }: MooringDetailModalProps) => {
     const [isBookingOpen, setIsBookingOpen] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
@@ -137,6 +142,8 @@ const MooringDetailModal = ({
                     handleBookingClose();
                     onClose();
                 }}
+                initialCheckIn={initialCheckIn}
+                initialCheckOut={initialCheckOut}
             />
         );
     }

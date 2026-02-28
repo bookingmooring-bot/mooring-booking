@@ -30,9 +30,12 @@ interface BookingModalProps {
   mooring: MooringData;
   isOpen: boolean;
   onClose: () => void;
+  /** Pre-fill dates from the Explorer search bar (YYYY-MM-DD) */
+  initialCheckIn?: string;
+  initialCheckOut?: string;
 }
 
-const BookingModal = ({ mooring, isOpen, onClose }: BookingModalProps) => {
+const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOut }: BookingModalProps) => {
   const { t } = useTranslation();
   const createBooking = useCreateBooking();
   const { data: profile } = useProfile();
@@ -65,8 +68,16 @@ const BookingModal = ({ mooring, isOpen, onClose }: BookingModalProps) => {
         guestPhone: prev.guestPhone || profile?.phone || "",
         guestEmail: prev.guestEmail || user?.email || "",
       }));
+
+      // Pre-fill dates from Explorer search bar if provided
+      if (initialCheckIn && initialCheckOut) {
+        setDateRange({
+          from: new Date(initialCheckIn + 'T00:00:00'),
+          to: new Date(initialCheckOut + 'T00:00:00'),
+        });
+      }
     }
-  }, [isOpen, profile, user]);
+  }, [isOpen, profile, user, initialCheckIn, initialCheckOut]);
 
   if (!isOpen) return null;
 

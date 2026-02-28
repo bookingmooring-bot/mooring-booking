@@ -28,6 +28,9 @@ interface MooringCardWithBookingProps {
   description?: string;
   winterStorage?: boolean;
   winterPriceMonthly?: number;
+  /** Pre-selected dates from the Explorer search bar (YYYY-MM-DD) */
+  initialCheckIn?: string;
+  initialCheckOut?: string;
 }
 
 const amenityIcons: Record<string, React.ReactNode> = {
@@ -66,6 +69,8 @@ const MooringCardWithBooking = ({
   description,
   winterStorage,
   winterPriceMonthly,
+  initialCheckIn,
+  initialCheckOut,
 }: MooringCardWithBookingProps) => {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -220,6 +225,8 @@ const MooringCardWithBooking = ({
         }}
         isOpen={isDetailOpen}
         onClose={() => setIsDetailOpen(false)}
+        initialCheckIn={initialCheckIn}
+        initialCheckOut={initialCheckOut}
       />
     </>
   );

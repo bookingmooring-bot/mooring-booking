@@ -232,3 +232,47 @@ export function useUpdateMooringAddons() {
         },
     });
 }
+
+export interface AvailableMooringsParams {
+    checkIn: string;     // YYYY-MM-DD
+    checkOut: string;    // YYYY-MM-DD
+    query?: string;
+    country?: string;
+}
+
+/**
+ * Fetches moorings that are confirmed available for the given date range.
+ * Uses the get_available_moorings RPC which cross-checks both bookings
+ * and the mooring_availability calendar to exclude blocked moorings.
+ * Falls back to fetchMoorings() when dates are not provided.
+ */
+export function useAvailableMoorings(params: Partial<AvailableMooringsParams>) {
+    const { checkIn, checkOut, query = '', country = '' } = params;
+    const hasDateRange = !!checkIn && !!checkOut;
+
+    return useQuery({
+        queryKey: ['moorings', 'available', checkIn, checkOut, query, country],
+        queryFn: async () => {
+            if (!hasDateRange) {
+                // No dates — return all active moorings (client-side text filter applied on Explorer)
+                return fetchMoorings();
+            }
+
+            const { data, error } = await supabase
+                .rpc('get_available_moorings', {
+                    p_check_in: checkIn,
+                    p_check_out: checkOut,
+                    p_query: query || null,
+                    p_country: country || null,
+                });
+
+            if (error) {
+                console.error('get_available_moorings RPC error:', error.message);
+                return [];
+            }
+
+            return (data as DbMooring[]).map(dbToFrontend);
+        },
+        staleTime: 1 * 60 * 1000, // 1 minute — availability changes often
+    });
+}
