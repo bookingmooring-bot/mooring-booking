@@ -3,6 +3,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { supabase } from '@/lib/supabase';
 
 // Fix for default marker icons
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -12,29 +13,46 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
-// Mediterranean countries with moorings - using Twemoji codes for cross-platform compatibility
-const mediterraneanCountries = [
-  { name: "Croatia", lat: 43.5, lng: 16.4, moorings: 2500, flagCode: "1f1ed-1f1f7" },
-  { name: "Greece", lat: 37.98, lng: 23.73, moorings: 2100, flagCode: "1f1ec-1f1f7" },
-  { name: "Italy", lat: 41.9, lng: 12.5, moorings: 1800, flagCode: "1f1ee-1f1f9" },
-  { name: "Spain", lat: 39.47, lng: -0.38, moorings: 1200, flagCode: "1f1ea-1f1f8" },
-  { name: "France", lat: 43.3, lng: 5.37, moorings: 950, flagCode: "1f1eb-1f1f7" },
-  { name: "Turkey", lat: 36.85, lng: 28.27, moorings: 800, flagCode: "1f1f9-1f1f7" },
-  { name: "Albania", lat: 41.33, lng: 19.82, moorings: 350, flagCode: "1f1e6-1f1f1" },
-  { name: "Malta", lat: 35.9, lng: 14.51, moorings: 280, flagCode: "1f1f2-1f1f9" },
-  { name: "Slovenia", lat: 45.55, lng: 13.73, moorings: 180, flagCode: "1f1f8-1f1ee" },
-  { name: "Montenegro", lat: 42.44, lng: 18.77, moorings: 320, flagCode: "1f1f2-1f1ea" },
-  { name: "Cyprus", lat: 34.92, lng: 33.62, moorings: 420, flagCode: "1f1e8-1f1fe" },
-];
+interface Mooring {
+  id: string;
+  name: string;
+  location: string;
+  country: string;
+  lat: number;
+  lng: number;
+  price_per_night: number;
+}
 
 const HomeMap = () => {
   const [isClient, setIsClient] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [moorings, setMoorings] = useState<Mooring[]>([]);
+  const [loading, setLoading] = useState(true);
   const mapRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
     setIsClient(true);
+    fetchMoorings();
   }, []);
+
+  const fetchMoorings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('moorings')
+        .select('id, name, location, country, lat, lng, price_per_night')
+        .eq('status', 'active')
+        .not('lat', 'is', null)
+        .not('lng', 'is', null);
+
+      if (error) throw error;
+      setMoorings(data || []);
+    } catch (err) {
+      console.error('Error fetching moorings for map:', err);
+      setHasError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (hasError) {
     return (
@@ -49,7 +67,7 @@ const HomeMap = () => {
     );
   }
 
-  if (!isClient) {
+  if (!isClient || loading) {
     return (
       <div className="w-full h-[400px] rounded-xl overflow-hidden bg-muted">
         <Skeleton className="w-full h-full" />
@@ -57,11 +75,18 @@ const HomeMap = () => {
     );
   }
 
+  // Get unique countries for the bottom labels
+  const countries = Array.from(
+    new Map(
+      moorings.map(m => [m.country, m.country])
+    ).values()
+  ).slice(0, 6);
+
   return (
     <div className="w-full h-[400px] rounded-xl overflow-hidden shadow-card relative">
       <MapContainer
-        center={[40, 15]}
-        zoom={5}
+        center={[43, 16]}
+        zoom={6}
         className="h-full w-full z-0"
         scrollWheelZoom={false}
         ref={mapRef}
@@ -77,27 +102,25 @@ const HomeMap = () => {
           url="https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png"
           opacity={1}
         />
-        {mediterraneanCountries.map((country) => (
+        {moorings.map((mooring) => (
           <Marker
-            key={country.name}
-            position={[country.lat, country.lng]}
+            key={mooring.id}
+            position={[mooring.lat, mooring.lng]}
           >
             <Popup>
-              <div className="text-center p-2">
-                <img
-                  src={`https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${country.flagCode}.svg`}
-                  alt={country.name}
-                  className="w-8 h-8 mx-auto mb-1"
-                />
-                <h3 className="font-bold text-lg">{country.name}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {country.moorings.toLocaleString()} moorings
-                </p>
+              <div className="text-center p-2 min-w-[160px]">
+                <h3 className="font-bold text-base">{mooring.name}</h3>
+                <p className="text-sm text-muted-foreground">{mooring.location}</p>
+                {mooring.price_per_night && (
+                  <p className="text-sm font-semibold mt-1">
+                    €{mooring.price_per_night} / noć
+                  </p>
+                )}
                 <a
-                  href={`/explore?search=${country.name}`}
+                  href={`/explore?id=${mooring.id}`}
                   className="mt-2 inline-block px-4 py-1 bg-primary text-primary-foreground rounded-full text-sm hover:opacity-90"
                 >
-                  Explore
+                  Pregledaj
                 </a>
               </div>
             </Popup>
@@ -105,22 +128,19 @@ const HomeMap = () => {
         ))}
       </MapContainer>
 
-      {/* Country Labels */}
-      <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-2 justify-center pointer-events-none z-[1000]">
-        {mediterraneanCountries.slice(0, 6).map((country) => (
-          <span
-            key={country.name}
-            className="bg-card/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-foreground shadow-sm flex items-center gap-1"
-          >
-            <img
-              src={`https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${country.flagCode}.svg`}
-              alt={country.name}
-              className="w-4 h-4 inline-block"
-            />
-            {country.name}
-          </span>
-        ))}
-      </div>
+      {/* Country labels at the bottom */}
+      {countries.length > 0 && (
+        <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-2 justify-center pointer-events-none z-[1000]">
+          {countries.map((country) => (
+            <span
+              key={country}
+              className="bg-card/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-foreground shadow-sm"
+            >
+              {country}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
