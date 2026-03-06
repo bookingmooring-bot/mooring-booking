@@ -51,6 +51,33 @@ function tierFromPriceId(priceId: string): 'premium-monthly' | 'premium-annual' 
   return 'premium-monthly'; // default to monthly for any other paid price
 }
 
+async function notifyAdminStripeAlert(
+  stripeEvent: string,
+  stripeEventId: string,
+  amount?: number,
+  customerEmail?: string
+) {
+  try {
+    await fetch(
+      'https://bblxawscmyzelinidkmb.supabase.co/functions/v1/send-admin-notification',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          alert_type:      'stripe_alert',
+          stripe_event:    stripeEvent,
+          stripe_event_id: stripeEventId,
+          stripe_amount:   amount,
+          customer_email:  customerEmail,
+        }),
+      }
+    );
+  } catch (err) {
+    console.error('Failed to notify admin of Stripe event:', err);
+    // Non-blocking: admin notification failure must not break webhook
+  }
+}
+
 // ─── Main handler ──────────────────────────────────────────────────────────────
 
 Deno.serve(async (req: Request) => {
@@ -108,8 +135,35 @@ Deno.serve(async (req: Request) => {
           '— attempt:',
           invoice.attempt_count
         );
-        // After 3 failed attempts Stripe auto-cancels the subscription
-        // which will fire customer.subscription.deleted above. No extra action needed.
+        await notifyAdminStripeAlert(
+          'payment_failed',
+          event.id,
+          invoice.amount_due ? invoice.amount_due / 100 : undefined,
+          invoice.customer_email || undefined
+        );
+        break;
+      }
+
+      case 'charge.dispute.created': {
+        const dispute = event.data.object as Stripe.Dispute;
+        console.warn('Dispute opened:', dispute.id, 'amount:', dispute.amount);
+        await notifyAdminStripeAlert(
+          'dispute_opened',
+          event.id,
+          dispute.amount ? dispute.amount / 100 : undefined
+        );
+        break;
+      }
+
+      case 'charge.refunded': {
+        const charge = event.data.object as Stripe.Charge;
+        console.log('Charge refunded:', charge.id);
+        await notifyAdminStripeAlert(
+          'refund_created',
+          event.id,
+          charge.amount_refunded ? charge.amount_refunded / 100 : undefined,
+          charge.billing_details?.email || undefined
+        );
         break;
       }
 

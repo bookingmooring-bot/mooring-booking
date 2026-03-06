@@ -12,6 +12,32 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 );
 
+async function notifyAdminStripeAlert(
+  stripeEvent: string,
+  stripeEventId: string,
+  amount?: number,
+  customerEmail?: string
+) {
+  try {
+    await fetch(
+      'https://bblxawscmyzelinidkmb.supabase.co/functions/v1/send-admin-notification',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          alert_type:      'stripe_alert',
+          stripe_event:    stripeEvent,
+          stripe_event_id: stripeEventId,
+          stripe_amount:   amount,
+          customer_email:  customerEmail,
+        }),
+      }
+    );
+  } catch (err) {
+    console.error('Failed to notify admin of Stripe Connect event:', err);
+  }
+}
+
 Deno.serve(async (req: Request) => {
   const body = await req.text();
   const signature = req.headers.get('stripe-signature');
@@ -102,7 +128,23 @@ Deno.serve(async (req: Request) => {
       case 'payment_intent.payment_failed': {
         const pi = event.data.object as Stripe.PaymentIntent;
         console.warn('Booking payment failed:', pi.id, '— reason:', pi.last_payment_error?.message);
-        // The booking was never created (we create it on success only), so no cleanup needed
+        await notifyAdminStripeAlert(
+          'payment_failed',
+          event.id,
+          pi.amount ? pi.amount / 100 : undefined,
+          pi.receipt_email || undefined
+        );
+        break;
+      }
+
+      case 'transfer.failed': {
+        const transfer = event.data.object as Stripe.Transfer;
+        console.warn('Transfer to provider failed:', transfer.id);
+        await notifyAdminStripeAlert(
+          'transfer_failed',
+          event.id,
+          transfer.amount ? transfer.amount / 100 : undefined
+        );
         break;
       }
 

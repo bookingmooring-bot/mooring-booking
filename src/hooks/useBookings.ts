@@ -95,6 +95,29 @@ export function useCreateBooking() {
                 .single();
 
             if (error) throw new Error(error.message);
+
+            // Fire-and-forget: send confirmation emails to guest + provider
+            // Non-fatal: booking succeeds even if email fails
+            try {
+                const { data: mooringData } = await supabase
+                    .from('moorings')
+                    .select('name, location, owner_id, profiles!moorings_owner_id_fkey(email, raw_user_meta_data)')
+                    .eq('id', input.mooring_id)
+                    .single();
+
+                supabase.functions.invoke('send-booking-emails', {
+                    body: {
+                        booking: data,
+                        mooring: mooringData,
+                        provider: (mooringData as any)?.profiles,
+                        guest_email: input.guest_email,
+                        guest_name: input.guest_name,
+                    },
+                }).catch(err => console.warn('[booking email] non-fatal error:', err));
+            } catch (emailErr) {
+                console.warn('[booking email] non-fatal fetch error:', emailErr);
+            }
+
             return data as Booking;
         },
         onSuccess: () => {
