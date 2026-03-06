@@ -11,7 +11,7 @@
     "badge": "La 1ère Marketplace d'Amarrages en Méditerranée",
     "title": "Trouvez Votre",
     "titleHighlight": "Amarrage Parfait",
-    "subtitle": "Découvrez plus de 10 000 amarrages privés en Croatie, Grèce, Italie et au-delà. Réservez instantanément. Naviguez facilement. Économisez jusqu'à 50%.",
+    "subtitle": "Découvrez plus de 10 000 amarrages en Croatie, Grèce, Italie et au-delà. Réservez instantanément. Naviguez facilement. Économisez jusqu'à 50%.",
     "whereTo": "Où?",
     "checkIn": "Arrivée",
     "checkOut": "Départ",
@@ -96,7 +96,7 @@
     "step3Title": "Naviguez",
     "step3Desc": "Obtenez une navigation nautique étape par étape vers votre amarrage. Les coordonnées se débloquent après la réservation. AI Capitaine fournit des prévisions météo en temps réel, alertes vent et conseils de manœuvre!",
     "step4Title": "Profitez & Évaluez",
-    "step4Desc": "Arrivez à votre amarrage privé, amarrez-vous en toute sécurité et partagez votre expérience avec la communauté."
+    "step4Desc": "Arrivez à votre amarrage, amarrez-vous en toute sécurité et partagez votre expérience avec la communauté."
   },
   "testimonials": {
     "title": "Ce que Dit Notre Communauté",
@@ -113,12 +113,12 @@
     "roleYachtOwner": "Propriétaire de Yacht",
     "roleSailingEnthusiast": "Passionné de Voile",
     "roleCatamaranGuest": "Client Charter Catamaran",
-    "sailor1": "J'ai économisé plus de 60% par rapport aux frais de port! J'ai trouvé un amarrage privé à Dubrovnik pour seulement €45/nuit au lieu de €120 à la marina. Incroyable!",
+    "sailor1": "J'ai économisé plus de 60% par rapport aux frais de port! J'ai trouvé un amarrage à Dubrovnik pour seulement €45/nuit au lieu de €120 à la marina. Incroyable!",
     "sailor2": "La fonction de navigation est incroyable. Coordonnées GPS exactes après réservation - plus de recherches! J'ai économisé 55% sur mon voyage dans les îles grecques.",
     "sailor3": "La meilleure décision nautique! Amarrages privés avec 50%+ d'économies, contact direct avec le propriétaire et alertes météo. Game changer pour naviguer en Méditerranée!",
-    "sailor4": "J'ai économisé €2.000 sur mon voyage de deux semaines en Croatie! Les amarrages privés sont meilleurs que les marinas - plus calmes et moitié prix.",
+    "sailor4": "J'ai économisé €2.000 sur mon voyage de deux semaines en Croatie! Les amarrages sont meilleurs que les marinas - plus calmes et moitié prix.",
     "owner1": "Mooring Booking a augmenté mes revenus de 300% cette saison. Les gens réservent chaque nuit! Mon quai inutilisé rapporte maintenant €15.000+ par an.",
-    "owner2": "Ma bouée privée à Santorin rapporte €800/semaine en haute saison. C'est €20.000+ de revenu passif pur! Seulement 15% de commission, c'est très juste.",
+    "owner2": "Ma bouée à Santorin rapporte €800/semaine en haute saison. C'est €20.000+ de revenu passif pur! Seulement 15% de commission, c'est très juste.",
     "owner3": "J'ai transformé ma place de port inutilisée en €12.000/an de revenus. Le code QR instantané et le système de réservation ont rendu tout si facile!",
     "owner4": "De 0 à €25.000 de revenus annuels la première année! Mes trois amarrages dans la Baie de Kotor sont toujours réservés!",
     "affiliate1": "Mon blog de voile génère maintenant €3.000/mois en commissions affilié! Chaque réservation via mon lien me rapporte 10%.",
@@ -144,7 +144,7 @@
     "stat3Label": "Commission simple"
   },
   "footer": {
-    "description": "La plus grande marketplace d'amarrages de Méditerranée. Réservez des amarrages privés dans plus de 10 pays avec confirmation instantanée. Économisez 50%+ par rapport aux marinas.",
+    "description": "La plus grande marketplace d'amarrages de Méditerranée. Réservez des amarrages dans plus de 10 pays avec confirmation instantanée. Économisez 50%+ par rapport aux marinas.",
     "about": "À Propos",
     "aboutUs": "À Propos",
     "howItWorksLink": "Comment ça Marche",
@@ -398,7 +398,7 @@
     "ourStory": "Notre Histoire",
     "tagline": "L'Airbnb des",
     "taglineHighlight": "Amarrages Méditerranéens",
-    "missionText": "Notre mission est de connecter les navigateurs avec les propriétaires d'amarrages privés.",
+    "missionText": "Notre mission est de connecter les navigateurs avec les propriétaires d'amarrages.",
     "activeMoorings": "Amarrages Actifs",
     "happySailors": "Navigateurs Satisfaits",
     "countriesCount": "Pays",
@@ -640,7 +640,7 @@
   },
   "howItWorksPage": {
     "heroTitle": "Comment Fonctionne Mooring Booking",
-    "heroSubtitle": "La façon la plus simple de trouver et réserver des amarrages privés en Méditerranée.",
+    "heroSubtitle": "La façon la plus simple de trouver et réserver des amarrages en Méditerranée.",
     "forSailors": "Pour les Navigateurs",
     "bookPerfect": "Réservez Votre Amarrage Parfait",
     "startSearching": "Commencer à Chercher",
@@ -672,13 +672,13 @@
     "contactSupport": "Contacter le Support",
     "learnMore": "En Savoir Plus",
     "searchDiscover": "Chercher & Découvrir",
-    "searchDiscoverDesc": "Parcourez 10 000+ amarrages privés en Méditerranée.",
+    "searchDiscoverDesc": "Parcourez 10 000+ amarrages en Méditerranée.",
     "bookInstantly": "Réservez Instantanément",
     "bookInstantlyDesc": "Réservez en secondes avec des paiements sécurisés.",
     "navigateToMooring": "Naviguez vers Votre Amarrage",
     "navigateDesc": "Après confirmation, débloquez les coordonnées GPS et la navigation.",
     "dockEnjoy": "Amarrez, Profitez & Évaluez",
-    "dockEnjoyDesc": "Arrivez avec confiance à votre amarrage privé."
+    "dockEnjoyDesc": "Arrivez avec confiance à votre amarrage."
   },
   "notFound": {
     "title": "404",

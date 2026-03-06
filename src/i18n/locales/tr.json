@@ -11,7 +11,7 @@
     "badge": "Akdeniz'in #1 Bağlama Pazaryeri",
     "title": "Mükemmel",
     "titleHighlight": "Bağlamanızı Bulun",
-    "subtitle": "Hırvatistan, Yunanistan, İtalya ve ötesinde 10.000'den fazla özel bağlama noktasını keşfedin. Anında rezervasyon yapın. Kolayca navigasyon yapın. %50'ye kadar tasarruf edin.",
+    "subtitle": "Hırvatistan, Yunanistan, İtalya ve ötesinde 10.000'den fazla bağlama noktasını keşfedin. Anında rezervasyon yapın. Kolayca navigasyon yapın. %50'ye kadar tasarruf edin.",
     "whereTo": "Nereye?",
     "checkIn": "Giriş",
     "checkOut": "Çıkış",
@@ -96,7 +96,7 @@
     "step3Title": "Navigasyon Yap",
     "step3Desc": "Bağlamanıza adım adım denizcilik navigasyonu alın. Koordinatlar rezervasyondan sonra açılır. AI Kaptan gerçek zamanlı hava tahmini, rüzgar uyarıları ve manevra tavsiyeleri sağlar!",
     "step4Title": "Keyfini Çıkarın & Değerlendirin",
-    "step4Desc": "Özel bağlamanıza varın, güvenle bağlanın ve deneyiminizi toplulukla paylaşın."
+    "step4Desc": "Bağlamanıza varın, güvenle bağlanın ve deneyiminizi toplulukla paylaşın."
   },
   "testimonials": {
     "title": "Topluluğumuz Ne Diyor",
@@ -113,12 +113,12 @@
     "roleYachtOwner": "Yat Sahibi",
     "roleSailingEnthusiast": "Yelken Tutkunu",
     "roleCatamaranGuest": "Katamaran Misafiri",
-    "sailor1": "Marina ücretlerine kıyasla %60'dan fazla tasarruf ettim! Dubrovnik'te marinadaki €120 yerine sadece €45/gece'ye özel bağlama buldum. İnanılmaz!",
+    "sailor1": "Marina ücretlerine kıyasla %60'dan fazla tasarruf ettim! Dubrovnik'te marinadaki €120 yerine sadece €45/gece'ye bağlama buldum. İnanılmaz!",
     "sailor2": "Navigasyon özelliği inanılmaz. Rezervasyondan sonra tam GPS koordinatları - artık arama yok! Yunan adaları turumda %55 tasarruf ettim.",
-    "sailor3": "En iyi denizcilik kararı! %50+ tasarrufla özel bağlamalar, doğrudan sahiple iletişim ve hava durumu uyarıları. Akdeniz'de yelken için game changer!",
-    "sailor4": "İki haftalık Hırvatistan gezimde €2.000 tasarruf ettim! Özel bağlamalar marinalardan daha iyi - daha sessiz ve yarı fiyat.",
+    "sailor3": "En iyi denizcilik kararı! %50+ tasarrufla bağlamalar, doğrudan sahiple iletişim ve hava durumu uyarıları. Akdeniz'de yelken için game changer!",
+    "sailor4": "İki haftalık Hırvatistan gezimde €2.000 tasarruf ettim! Bağlamalar marinalardan daha iyi - daha sessiz ve yarı fiyat.",
     "owner1": "Mooring Booking bu sezon gelirimi %300 artırdı. İnsanlar her gece rezervasyon yapıyor! Kullanılmayan iskelim şimdi yılda €15.000+ kazanıyor.",
-    "owner2": "Santorini'deki özel şamandıram yüksek sezonda haftalık €800 kazanıyor. Bu €20.000+ saf pasif gelir demek! Sadece %15 komisyon çok adil.",
+    "owner2": "Santorini'deki şamandıram yüksek sezonda haftalık €800 kazanıyor. Bu €20.000+ saf pasif gelir demek! Sadece %15 komisyon çok adil.",
     "owner3": "Kullanılmayan marina yerimi yılda €12.000 gelire çevirdim. Anında QR kodu ve rezervasyon sistemi her şeyi çok kolaylaştırdı!",
     "owner4": "İlk yılımda 0'dan €25.000 yıllık gelire! Kotor Körfezi'ndeki üç bağlamam her zaman dolu!",
     "affiliate1": "Yelken blogum şimdi ayda €3.000 affiliate komisyonu üretiyor! Linkim üzerinden her rezervasyon bana %10 kazandırıyor.",
@@ -144,7 +144,7 @@
     "stat3Label": "Basit komisyon"
   },
   "footer": {
-    "description": "Akdeniz'in en büyük bağlama pazaryeri. 10'dan fazla ülkede anında onay ve güvenli ödemelerle özel bağlamalar rezerve edin. Marinalara kıyasla %50+ tasarruf edin.",
+    "description": "Akdeniz'in en büyük bağlama pazaryeri. 10'dan fazla ülkede anında onay ve güvenli ödemelerle bağlamalar rezerve edin. Marinalara kıyasla %50+ tasarruf edin.",
     "about": "Hakkımızda",
     "forYou": "Sizin İçin",
     "sailingManual": "Yelken Kılavuzu",
@@ -181,7 +181,7 @@
     "title": "Sağlayıcı Profilinizi Oluşturun",
     "subtitle": "Bağlamanızı sadece 10 dakikada listeleyin ve yılda €10.000+ kazanmaya başlayın",
     "mooringName": "Bağlama Adı",
-    "mooringNamePlaceholder": "örn. Özel Şamandıra Marina İstanbul",
+    "mooringNamePlaceholder": "örn. Şamandıra Marina İstanbul",
     "country": "Ülke",
     "selectCountry": "Ülke seçin",
     "region": "Bölge/Şehir",
@@ -399,7 +399,7 @@
     "ourStory": "Hikayemiz",
     "tagline": "Akdeniz Bağlamalarının",
     "taglineHighlight": "Airbnb'si",
-    "missionText": "Denizcileri özel bağlama sahipleriyle buluşturmak misyonumuz.",
+    "missionText": "Denizcileri bağlama sahipleriyle buluşturmak misyonumuz.",
     "activeMoorings": "Aktif Bağlamalar",
     "happySailors": "Mutlu Denizciler",
     "countriesCount": "Ülke",
@@ -641,7 +641,7 @@
   },
   "howItWorksPage": {
     "heroTitle": "Mooring Booking Nasıl Çalışır",
-    "heroSubtitle": "Akdeniz'de özel bağlama bulmanın en kolay yolu.",
+    "heroSubtitle": "Akdeniz'de bağlama bulmanın en kolay yolu.",
     "forSailors": "Denizciler İçin",
     "bookPerfect": "Mükemmel Bağlamanızı Bulun",
     "startSearching": "Aramaya Başlayın",
@@ -673,13 +673,13 @@
     "contactSupport": "Destek İletişim",
     "learnMore": "Daha Fazla Bilgi",
     "searchDiscover": "Ara & Keşfet",
-    "searchDiscoverDesc": "Akdeniz'de 10.000+ özel bağlama.",
+    "searchDiscoverDesc": "Akdeniz'de 10.000+ bağlama.",
     "bookInstantly": "Anında Rezervasyon",
     "bookInstantlyDesc": "Güvenli ödemelerle saniyeler içinde.",
     "navigateToMooring": "Navigasyon",
     "navigateDesc": "Rezervasyondan sonra GPS açılır.",
     "dockEnjoy": "Bağlanın & Değerlendirin",
-    "dockEnjoyDesc": "Güvenle özel bağlamanıza varın."
+    "dockEnjoyDesc": "Güvenle bağlamanıza varın."
   },
   "notFound": {
     "title": "404",
