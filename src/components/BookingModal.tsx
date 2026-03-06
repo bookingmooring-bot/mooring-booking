@@ -10,6 +10,7 @@ import { openNavigation } from "@/lib/navigation";
 import { useCreateBooking, useMooringAvailability } from "@/hooks/useBookings";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
+import { useBookingPayment } from "@/hooks/useBookingPayment";
 
 interface MooringData {
   id: string;
@@ -38,6 +39,7 @@ interface BookingModalProps {
 const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOut }: BookingModalProps) => {
   const { t } = useTranslation();
   const createBooking = useCreateBooking();
+  const bookingPayment = useBookingPayment();
   const { data: profile } = useProfile();
   const { user } = useAuth();
   const { data: availabilityData, isLoading: isLoadingAvailability } = useMooringAvailability(mooring.id);
@@ -164,35 +166,69 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
   const canProceedStep1 = dateRange?.from && dateRange?.to && isRangeValid() && bookingData.boatName;
   const canProceedStep2 = bookingData.guestName && bookingData.guestEmail && bookingData.guestPhone;
 
+  const buildBookingPayload = () => ({
+    mooring_id: mooring.id,
+    check_in: checkInStr,
+    check_out: checkOutStr,
+    boat_name: bookingData.boatName,
+    boat_length: bookingData.boatLength ? parseFloat(bookingData.boatLength) : undefined,
+    guest_name: bookingData.guestName,
+    guest_email: bookingData.guestEmail,
+    guest_phone: bookingData.guestPhone,
+    nights: Math.max(1, nights),
+    price_per_night: discountedPrice,
+    total_price: totalPrice,
+    commission_amount: parseFloat((totalPrice * 0.15).toFixed(2)),
+    is_now4today: mooring.isNow4Today || false,
+  });
+
+  const handlePayWithCard = async () => {
+    // Triggers Stripe Checkout → booking created by webhook after payment
+    bookingPayment.mutate(
+      {
+        mooringId: mooring.id,
+        bookingData: buildBookingPayload(),
+        successPath: '/dashboard',
+        cancelPath: '/explore',
+      },
+      {
+        onSuccess: (result) => {
+          if (result?.fallback) {
+            // Provider not connected, booking saved as cash
+            toast.success(t('booking.confirmed', 'Booking Confirmed!') + ' (Cash)');
+            setStep(4);
+          }
+          // If Stripe URL returned, user is redirected automatically by the hook
+        },
+        onError: (err) => {
+          toast.error('Payment error: ' + err.message);
+        },
+      }
+    );
+  };
+
+  const handlePayCash = async () => {
+    // Direct DB insert for cash/manual booking (same as before)
+    try {
+      await createBooking.mutateAsync({
+        ...buildBookingPayload(),
+        payment_method: 'cash',
+        payment_status: 'pending',
+      });
+      setStep(4);
+      toast.success(t('booking.confirmed', 'Booking Confirmed!'));
+    } catch (error: any) {
+      toast.error('Booking failed: ' + (error.message || 'Please try again'));
+    }
+  };
+
   const handleSubmit = async () => {
     if (step === 1 && canProceedStep1) {
       setStep(2);
     } else if (step === 2 && canProceedStep2) {
       setStep(3);
-    } else if (step === 3) {
-      // Save booking to Supabase
-      try {
-        await createBooking.mutateAsync({
-          mooring_id: mooring.id,
-          check_in: checkInStr,
-          check_out: checkOutStr,
-          boat_name: bookingData.boatName,
-          boat_length: bookingData.boatLength ? parseFloat(bookingData.boatLength) : undefined,
-          guest_name: bookingData.guestName,
-          guest_email: bookingData.guestEmail,
-          guest_phone: bookingData.guestPhone,
-          nights: Math.max(1, nights),
-          price_per_night: discountedPrice,
-          total_price: totalPrice,
-          payment_method: bookingData.paymentMethod,
-          is_now4today: mooring.isNow4Today || false,
-        });
-        setStep(4);
-        toast.success(t('booking.confirmed', 'Booking Confirmed!'));
-      } catch (error: any) {
-        toast.error('Booking failed: ' + (error.message || 'Please try again'));
-      }
     }
+    // Step 3 is handled by handlePayWithCard / handlePayCash buttons
   };
 
   const copyCoordinates = () => {
@@ -379,31 +415,9 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
                 <CreditCard size={18} className="text-secondary" />
                 {t('booking.paymentMethod', 'Payment Method')}
               </h3>
-              <div className="space-y-2">
-                {[
-                  { id: 'card', label: t('booking.card', 'Credit/Debit Card'), icon: '💳' },
-                  { id: 'paypal', label: 'PayPal', icon: '🅿️' },
-                  { id: 'cash', label: t('booking.cash', 'Cash on Arrival'), icon: '💵' },
-                ].map((method) => (
-                  <button
-                    key={method.id}
-                    onClick={() => setBookingData({ ...bookingData, paymentMethod: method.id as any })}
-                    className={`w-full p-3 sm:p-4 rounded-lg border-2 flex items-center gap-3 transition-colors ${bookingData.paymentMethod === method.id
-                      ? 'border-secondary bg-secondary/5'
-                      : 'border-border hover:border-muted-foreground'
-                      }`}
-                  >
-                    <span className="text-xl sm:text-2xl">{method.icon}</span>
-                    <span className="font-medium text-foreground text-sm sm:text-base">{method.label}</span>
-                    {bookingData.paymentMethod === method.id && (
-                      <Check size={18} className="text-secondary ml-auto" />
-                    )}
-                  </button>
-                ))}
-              </div>
 
               {/* Price Breakdown */}
-              <div className="bg-muted/50 rounded-lg p-3 sm:p-4 space-y-2 mt-4">
+              <div className="bg-muted/50 rounded-lg p-3 sm:p-4 space-y-2">
                 <div className="flex justify-between text-xs sm:text-sm">
                   <span className="text-muted-foreground">€{discountedPrice} × {nights} {t('booking.nights', 'nights')}</span>
                   <span className="text-foreground">€{totalPrice}</span>
@@ -417,6 +431,41 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
                   <span className="text-primary">€{totalPrice}</span>
                 </div>
               </div>
+
+              {/* Stripe Card Payment */}
+              <Button
+                onClick={handlePayWithCard}
+                disabled={bookingPayment.isPending}
+                className="w-full bg-gradient-ocean font-semibold h-12 text-base"
+              >
+                {bookingPayment.isPending ? (
+                  <span className="flex items-center gap-2 justify-center">
+                    <Loader2 size={18} className="animate-spin" /> Preusmjeravanje na plaćanje...
+                  </span>
+                ) : (
+                  '💳 Plati karticom (Stripe)'
+                )}
+              </Button>
+
+              {/* Cash fallback */}
+              <Button
+                onClick={handlePayCash}
+                disabled={createBooking.isPending}
+                variant="outline"
+                className="w-full h-10"
+              >
+                {createBooking.isPending ? (
+                  <span className="flex items-center gap-2 justify-center">
+                    <Loader2 size={16} className="animate-spin" /> Saving...
+                  </span>
+                ) : (
+                  '💵 Plati gotovinom / na licu mjesta'
+                )}
+              </Button>
+
+              <p className="text-xs text-muted-foreground text-center">
+                Stripe plaćanje je sigurno i šifrirano. Pritiskom na "Plati karticom" bit ćeš preusmjeren na Stripe.
+              </p>
             </div>
           )}
 

@@ -102,7 +102,7 @@
     "step3Title": "Navigate & AI Captain",
     "step3Desc": "GPS coordinates unlock after booking. Premium members get unlimited AI Captain with 7-day forecasts, storm alerts, maneuvering guides, offline maps, and turn-by-turn navigation. Basic users get 5 AI questions/day.",
     "step4Title": "Enjoy & Review",
-    "step4Desc": "Arrive at your private mooring, dock safely, and share your experience. Premium Annual members (€9.99/mo) enjoy priority booking, exclusive discounts up to 25%, and dedicated support."
+    "step4Desc": "Arrive at your mooring, dock safely, and share your experience. Premium Annual members (€9.99/mo) enjoy priority booking, exclusive discounts up to 25%, and dedicated support."
   },
   "testimonials": {
     "title": "What Our Community Says",
@@ -119,10 +119,10 @@
     "roleYachtOwner": "Yacht Owner",
     "roleSailingEnthusiast": "Sailing Enthusiast",
     "roleCatamaranGuest": "Catamaran Charter Guest",
-    "sailor1": "I saved over 60% compared to marina fees! Found a private mooring in Dubrovnik for just €45/night instead of €120 at the marina. Incredible!",
+    "sailor1": "I saved over 60% compared to marina fees! Found a mooring in Dubrovnik for just €45/night instead of €120 at the marina. Incredible!",
     "sailor2": "Upgraded to Premium and it changed everything! Unlimited AI Captain, offline maps, storm alerts — worth every cent. Plus saved 55% on my Greek island trip.",
     "sailor3": "Premium Annual at €9.99/mo is a steal! 7-day forecasts, priority booking, maneuvering guides — plus Now4Today alerts saved us twice. Best sailing investment ever!",
-    "sailor4": "Saved €2,000 on my two-week Croatia trip! The private moorings are better than marinas - quieter, more authentic, and half the price.",
+    "sailor4": "Saved €2,000 on my two-week Croatia trip! The moorings on this platform are better than marinas - quieter, more authentic, and half the price.",
     "owner1": "Mooring Booking increased my revenue by 300% this season. People just book overnight! My unused dock now earns €15,000+ annually.",
     "owner2": "My private buoy in Santorini earns €800/week in peak season. That's €20,000+ pure passive income! Only 15% commission is very fair.",
     "owner3": "As a concessionaire I had many costs and few used buoys. Through this app, I turned every buoy into a serious business.",
@@ -155,7 +155,7 @@
     "stat3Label": "Simple commission"
   },
   "footer": {
-    "description": "The Mediterranean's largest mooring marketplace. Book private moorings across 10+ countries with instant confirmation and secure payments. Save 50%+ compared to marina fees.",
+    "description": "The Mediterranean's largest mooring marketplace. Book moorings and marina berths across 10+ countries with instant confirmation and secure payments. Save 50%+ compared to marina fees.",
     "about": "About",
     "aboutUs": "About Us",
     "howItWorksLink": "How It Works",
@@ -233,7 +233,11 @@
     "available": "Available",
     "booked": "Booked",
     "declarations": "Declarations",
-    "declaration1": "I confirm that I am the owner or long-term lessee of this mooring and take full responsibility for the quality of service provided.",
+    "declaration1": "I declare that I am the authorized representative of a legal entity (company/concessionaire) with the legal right of disposal (pravo raspolaganja) over the listed mooring(s). I confirm that all required concessions, permits, and authorizations are in place and take full legal responsibility for the accuracy of this statement.",
+    "declarationRightOfDisposal": "Izjava o pravu raspolaganja — I declare that I am the authorized representative of a legal entity with full legal right of disposal over the listed mooring(s), and that all required concessions and permits are valid.",
+    "concessionNumber": "Concession Number",
+    "concessionNumberPlaceholder": "e.g., HR-CRO-2025-0042",
+    "concessionNumberDesc": "Enter the official concession or permit number issued by the relevant authority for this mooring.",
     "declaration2": "I agree that Mooring Booking will charge 15% commission for each booking, including cash payments, and I will settle outstanding commissions monthly.",
     "termsAgree": "I agree to the Terms of Service and Privacy Policy",
     "publishProfile": "Publish Profile",
@@ -720,7 +724,7 @@
   },
   "howItWorksPage": {
     "heroTitle": "How Mooring Booking Works",
-    "heroSubtitle": "The simplest way to find and book private moorings across the Mediterranean. From discovery to docking in just 4 steps.",
+    "heroSubtitle": "The simplest way to find and book moorings and marina berths across the Mediterranean. From discovery to docking in just 4 steps.",
     "forSailors": "For Sailors & Boat Owners",
     "bookPerfect": "Book Your Perfect Mooring",
     "startSearching": "Start Searching Moorings",
@@ -752,13 +756,13 @@
     "contactSupport": "Contact Support",
     "learnMore": "Learn More About Us",
     "searchDiscover": "Search & Discover",
-    "searchDiscoverDesc": "Browse 10,000+ private moorings across the Mediterranean. Filter by location, price, wind protection, amenities, and availability.",
+    "searchDiscoverDesc": "Browse 10,000+ moorings and marina berths across the Mediterranean. Filter by location, price, wind protection, amenities, and availability.",
     "bookInstantly": "Book Instantly",
     "bookInstantlyDesc": "Reserve your mooring in seconds with secure payment options including Visa, Mastercard, PayPal, and Google Pay.",
     "navigateToMooring": "Navigate to Your Mooring",
     "navigateDesc": "After booking confirmation, unlock precise GPS coordinates and turn-by-turn nautical navigation to your mooring.",
     "dockEnjoy": "Dock, Enjoy & Review",
-    "dockEnjoyDesc": "Arrive at your private mooring with confidence. Access owner contact details, check-in instructions, and amenity information."
+    "dockEnjoyDesc": "Arrive at your mooring with confidence. Access provider contact details, check-in instructions, and amenity information."
   },
   "notFound": {
     "title": "404",

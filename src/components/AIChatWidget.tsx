@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { X, Send, Anchor, Ship } from "lucide-react";
+import { X, Send, Anchor, Ship, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { getUserLocation } from "@/services/weatherService";
@@ -7,6 +7,7 @@ import { isPremium, hasAIQuestionsRemaining, AI_BASIC_LIMIT, getUserTier } from 
 import { useProfile, useIncrementAIQuestions } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { useNavigate } from "react-router-dom";
 
 interface AIChatWidgetProps {
   isOpen?: boolean;
@@ -30,6 +31,8 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
   const { user } = useAuth();
   const { data: profile } = useProfile();
   const incrementAI = useIncrementAIQuestions();
+  const navigate = useNavigate();
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
@@ -81,9 +84,10 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
       : getAnonCount() < AI_BASIC_LIMIT;
 
     if (!premium && !hasRemaining) {
+      setShowPaywall(true);
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: "⭐ Iskoristio si svih 10 besplatnih pitanja AI Kapetana.\n\nNadogradi na **Premium** za neograničen pristup, 7-dnevne prognoze, upozorenja na oluje i još mnogo toga!\n\nPosjeti stranicu s cijenama. 🚢"
+        content: `⭐ Iskoristio si svih ${AI_BASIC_LIMIT} besplatnih pitanja AI Kapetana.\n\nNadogradi na **Premium** za neograničen pristup, 7-dnevne prognoze, upozorenja na oluje i još mnogo toga! 🚢`
       }]);
       setIsLoading(false);
       return;
@@ -198,27 +202,46 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
             )}
             <div ref={messagesEndRef} />
           </div>
-          <div className="p-4 border-t border-border flex gap-2 items-end">
-            <textarea
-              ref={textareaRef}
-              rows={1}
-              value={input}
-              onChange={(e) => { setInput(e.target.value); autoResize(); }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSend();
-                }
-              }}
-              placeholder={t("aiChat.placeholder")}
-              disabled={isLoading}
-              className="flex-1 resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 overflow-hidden leading-5"
-              style={{ minHeight: '36px', maxHeight: '120px' }}
-            />
-            <Button onClick={handleSend} size="icon" className="bg-gradient-ocean shrink-0" disabled={isLoading}>
-              <Send size={18} />
-            </Button>
-          </div>
+          {/* Input area / Paywall */}
+          {showPaywall ? (
+            <div className="p-4 border-t border-border">
+              <div className="bg-gradient-to-r from-gold/10 to-secondary/10 border border-gold/30 rounded-xl p-4 text-center">
+                <Crown className="text-gold mx-auto mb-2" size={28} />
+                <p className="text-sm font-semibold text-foreground mb-1">AI Kapetan Premium</p>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Iskoristio si {AI_BASIC_LIMIT} besplatnih pitanja. Nadogradi za neograničen pristup!
+                </p>
+                <Button
+                  onClick={() => { handleClose(); navigate('/user-pricing'); }}
+                  className="w-full bg-gradient-ocean font-semibold text-sm h-9"
+                >
+                  ⭐ Nadogradi na Premium
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="p-4 border-t border-border flex gap-2 items-end">
+              <textarea
+                ref={textareaRef}
+                rows={1}
+                value={input}
+                onChange={(e) => { setInput(e.target.value); autoResize(); }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+                placeholder={t("aiChat.placeholder")}
+                disabled={isLoading}
+                className="flex-1 resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 overflow-hidden leading-5"
+                style={{ minHeight: '36px', maxHeight: '120px' }}
+              />
+              <Button onClick={handleSend} size="icon" className="bg-gradient-ocean shrink-0" disabled={isLoading}>
+                <Send size={18} />
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </>

@@ -70,7 +70,7 @@ const AboutPage = () => {
                 <p><strong className="text-foreground">{t('about.storyP2', '"Why isn\'t there an Airbnb for moorings?" That simple question became our obsession.')}</strong></p>
                 <p>{t('about.storyP3', 'Mooring Booking was born from that frustration. We built the platform we wished existed.')}</p>
                 <p>{t('about.storyP4', 'Today, we aspire to 10,000+ moorings and marina berths across Croatia, Greece, Italy, France, Spain, Turkey, Albania, Malta, Cyprus and Slovenia.')}</p>
-                <p className="text-foreground font-medium">{t('about.storyP5', 'This is just the beginning. Our vision is to make every private mooring and marina berth in the Mediterranean accessible to every sailor.')}</p>
+                <p className="text-foreground font-medium">{t('about.storyP5', 'This is just the beginning. Our vision is to make every mooring berth and marina in the Mediterranean accessible to every sailor.')}</p>
                 <h3 className="font-heading text-xl font-bold text-foreground mt-8">{t('about.featuresTitle', 'What Sets Us Apart')}</h3>
                 <ul className="list-disc list-inside space-y-2">
                   <li>{t('about.feature1', 'Now4Today — Same-day bookings (01:00 AM–11:00 PM) with instant 20% premium for urgent availability')}</li>

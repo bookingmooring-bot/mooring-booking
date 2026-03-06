@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
 import { useUserBookings, useProviderBookings, Booking } from "@/hooks/useBookings";
+import { useQueryClient } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Loader2, Ship, Calendar, Settings, ShieldCheck, Save, Anchor, Star } from "lucide-react";
@@ -17,6 +18,7 @@ import ProviderEarningsDashboard from "@/components/provider/ProviderEarningsDas
 import ProviderSpendingDashboard from "@/components/provider/ProviderSpendingDashboard";
 import ReviewMooringModal from "@/components/rating/ReviewMooringModal";
 import RateGuestModal from "@/components/rating/RateGuestModal";
+import { useStripeConnect } from "@/hooks/useStripeConnect";
 
 const Dashboard = () => {
     const { user, signOut } = useAuth();
@@ -26,6 +28,8 @@ const Dashboard = () => {
     const { data: providerBookings, isLoading: providerBookingsLoading } = useProviderBookings();
     const navigate = useNavigate();
     const { toast } = useToast();
+    const queryClient = useQueryClient();
+    const stripeConnect = useStripeConnect();
 
     const [activeTab, setActiveTab] = useState<'dashboard' | 'settings' | 'moorings' | 'calendar' | 'earnings' | 'spending' | 'affiliate'>('dashboard');
     const [settingsForm, setSettingsForm] = useState({
@@ -48,6 +52,43 @@ const Dashboard = () => {
             });
         }
     }, [profile]);
+
+    // Handle Stripe return URL params
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.get('session_id')) {
+            // Returned from subscription checkout
+            toast({ title: '🎉 Pretplata aktivirana!', description: 'Dobrodošao u Premium! Tvoj plan je sada aktivan.' });
+            window.history.replaceState({}, '', window.location.pathname);
+            queryClient.invalidateQueries({ queryKey: ['profile'] });
+        }
+
+        if (params.get('payment_success')) {
+            // Returned from booking payment
+            toast({ title: '✅ Plaćanje uspješno!', description: 'Tvoja rezervacija je potvrđena i primljena.' });
+            window.history.replaceState({}, '', window.location.pathname);
+            queryClient.invalidateQueries({ queryKey: ['bookings'] });
+        }
+
+        if (params.get('stripe_return')) {
+            // Provider returned from Stripe Express onboarding
+            toast({ title: '💳 Stripe račun spojen!', description: 'Isplate su sada aktivne. Primat ćeš 85% od svake rezervacije.' });
+            window.history.replaceState({}, '', window.location.pathname);
+            queryClient.invalidateQueries({ queryKey: ['profile'] });
+        }
+
+        if (params.get('stripe_refresh')) {
+            // Provider onboarding was not completed
+            toast({
+                title: 'Onboarding nije završen',
+                description: 'Dovrši postavljanje Stripe računa da bi primao isplate.',
+                variant: 'destructive',
+            });
+            window.history.replaceState({}, '', window.location.pathname);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Redirect if somehow not logged in (though ProtectedRoute should catch this)
     useEffect(() => {
@@ -258,6 +299,44 @@ const Dashboard = () => {
     const renderProviderView = () => {
         return (
             <div className="mt-8 space-y-8">
+                {/* Stripe Connect Card */}
+                <div className={`bg-card rounded-2xl p-6 shadow-card border ${
+                    profile?.stripe_onboarding_complete
+                        ? 'border-success/40 border-l-4 border-l-success'
+                        : 'border-border border-l-4 border-l-warning'
+                }`}>
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h3 className="font-semibold text-foreground">
+                                💳 Stripe Payouts
+                            </h3>
+                            {profile?.stripe_onboarding_complete ? (
+                                <p className="text-sm text-success mt-1">✅ Spojen — primat ćeš 85% od svake rezervacije automatski.</p>
+                            ) : (
+                                <p className="text-sm text-muted-foreground mt-1">
+                                    Spoji svoj bankovni račun da primaš isplate. Dobit ćeš 85% od svake rezervacije plaćene karticom.
+                                </p>
+                            )}
+                        </div>
+                        {!profile?.stripe_onboarding_complete && (
+                            <Button
+                                onClick={() => stripeConnect.mutate()}
+                                disabled={stripeConnect.isPending}
+                                className="bg-gradient-ocean shrink-0"
+                            >
+                                {stripeConnect.isPending ? (
+                                    <span className="flex items-center gap-2">
+                                        <Loader2 size={16} className="animate-spin" /> Preusmjeravanje...
+                                    </span>
+                                ) : (
+                                    'Spoji Stripe račun'
+                                )}
+                            </Button>
+                        )}
+                    </div>
+                </div>
+
+                {/* Provider Bookings + Mooring List */}
                 <div className="bg-card rounded-2xl p-6 shadow-card border border-border border-l-4 border-l-secondary">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                         <div>
@@ -300,6 +379,12 @@ const Dashboard = () => {
                                             <p className="text-sm">
                                                 <span className="text-muted-foreground">Boat:</span> {booking.boat_name} ({booking.boat_length}m)
                                             </p>
+                                        )}
+                                        {/* Stripe payment indicator */}
+                                        {booking.stripe_payment_intent_id && (
+                                            <span className="inline-flex items-center gap-1 text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 px-2 py-0.5 rounded-full mt-1">
+                                                💳 Stripe
+                                            </span>
                                         )}
                                     </div>
                                     <div className="flex flex-col items-start sm:items-end justify-between gap-3">

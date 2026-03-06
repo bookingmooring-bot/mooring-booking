@@ -15,6 +15,9 @@ export interface Profile {
     preferred_language: string;
     boat_name?: string | null;
     boat_length?: number | null;
+    stripe_customer_id?: string | null;
+    stripe_account_id?: string | null;
+    stripe_onboarding_complete?: boolean | null;
     created_at: string;
 }
 

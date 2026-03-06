@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Check, Anchor, Crown, Ship, Zap, Shield, Wifi, Star, Clock } from "lucide-react";
+import { Check, Anchor, Crown, Ship, Zap, Shield, Wifi, Star, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getUserTier } from "@/lib/subscription";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 
 const UserPricingPage = () => {
   const { t } = useTranslation();
@@ -18,23 +19,44 @@ const UserPricingPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const checkout = useStripeCheckout();
+
+  // Price IDs from env
+  const PRICE_IDS: Record<string, string | undefined> = {
+    'premium-monthly': import.meta.env.VITE_STRIPE_PRICE_PREMIUM_MONTHLY,
+    'premium-annual': import.meta.env.VITE_STRIPE_PRICE_PREMIUM_ANNUAL,
+  };
 
   const handleSelectPlan = (planId: string) => {
-    if (planId === currentTier) return; // already on this plan
+    if (planId === currentTier && !!user) return; // already on this plan
     if (planId === 'basic') {
       setSelectedPlan(planId);
       return;
     }
-    // For paid plans — require auth, then show placeholder
+    // Require login
     if (!user) {
       toast({ title: t('userPricing.loginRequired', 'Please sign in first'), description: t('userPricing.loginRequiredDesc', 'You need an account to subscribe to a premium plan.') });
       navigate('/auth');
       return;
     }
-    // Placeholder until Stripe is integrated (Phase 2D)
-    toast({ title: t('userPricing.comingSoon', 'Coming Soon'), description: t('userPricing.stripeComingSoon', 'Online payment will be available soon. Contact us for early access!') });
+    // Check price ID configured
+    const priceId = PRICE_IDS[planId];
+    if (!priceId || priceId.startsWith('price_YOUR')) {
+      toast({ title: 'Stripe not configured', description: 'Payment is not set up yet. Contact support.' });
+      return;
+    }
+    // Launch Stripe Checkout
     setSelectedPlan(planId);
+    checkout.mutate(
+      { priceId, successPath: '/dashboard', cancelPath: '/user-pricing' },
+      {
+        onError: (err) => {
+          toast({ title: 'Payment error', description: err.message, variant: 'destructive' });
+        },
+      }
+    );
   };
+
 
   const plans = [
     {
@@ -220,14 +242,23 @@ const UserPricingPage = () => {
 
                     <Button
                       onClick={() => handleSelectPlan(plan.id)}
-                      disabled={plan.id === currentTier && !!user}
+                      disabled={(plan.id === currentTier && !!user) || checkout.isPending}
                       className={`w-full font-semibold ${plan.id === currentTier && user ? 'bg-muted text-muted-foreground cursor-default'
                         : plan.popular ? 'bg-success hover:bg-success/90'
                           : plan.id === 'basic' ? 'bg-secondary hover:bg-secondary/90'
                             : 'bg-gradient-ocean'
                         }`}
                     >
-                      {plan.id === currentTier && user ? t('userPricing.currentPlan', 'Current Plan') : plan.cta}
+                      {checkout.isPending && selectedPlan === plan.id ? (
+                        <span className="flex items-center gap-2 justify-center">
+                          <Loader2 size={16} className="animate-spin" />
+                          Redirecting...
+                        </span>
+                      ) : plan.id === currentTier && user ? (
+                        t('userPricing.currentPlan', 'Current Plan')
+                      ) : (
+                        plan.cta
+                      )}
                     </Button>
                   </div>
                 );

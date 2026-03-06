@@ -173,6 +173,7 @@ const BecomeProviderPage = () => {
     latitude: "",
     longitude: "",
     description: "",
+    concessionNumber: "",
     windProtection: "good",
     amenities: [] as string[],
     maxBoatLength: "",
@@ -499,7 +500,7 @@ const BecomeProviderPage = () => {
                   <div className="bg-muted rounded-lg p-4 text-sm text-foreground leading-relaxed max-h-60 overflow-y-auto">
                     <h3 className="font-semibold mb-2">Terms of Service Summary</h3>
                     <ul className="space-y-2 list-disc list-inside text-muted-foreground">
-                      <li>I confirm ownership or long-term lease of the listed mooring(s).</li>
+                      <li>I provide the Izjava o pravu raspolaganja (right of disposal declaration), confirming I am an authorized representative of a legal entity with valid concession/permit over the listed mooring(s).</li>
                       <li>I agree to a 15% commission on all bookings, including cash payments.</li>
                       <li>I consent to the transfer of my data and listing information to any successor entity in the event of a sale, merger, or acquisition of Intelligent Matrix.</li>
                       <li>I understand the platform provides no warranty and operates on an "AS IS" basis.</li>
@@ -600,6 +601,18 @@ const BecomeProviderPage = () => {
                       className="mt-2"
                       required
                     />
+                  </div>
+                  <div>
+                    <Label htmlFor="concessionNumber">{t('provider.concessionNumber')} *</Label>
+                    <Input
+                      id="concessionNumber"
+                      placeholder={t('provider.concessionNumberPlaceholder')}
+                      value={formData.concessionNumber}
+                      onChange={(e) => setFormData(prev => ({ ...prev, concessionNumber: e.target.value }))}
+                      className="mt-2"
+                      required
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">{t('provider.concessionNumberDesc')}</p>
                   </div>
                   <div>
                     <Label>{t('provider.country')} *</Label>
@@ -1233,15 +1246,21 @@ const BecomeProviderPage = () => {
                   {t('provider.declarations')}
                 </h2>
                 <div className="space-y-4">
-                  <div className="flex items-start gap-3 p-4 bg-muted rounded-lg">
+                  {/* First declaration: Right of Disposal — visually prominent */}
+                  <div className="flex items-start gap-3 p-4 bg-warning/10 border-2 border-warning/40 rounded-lg">
                     <Checkbox
                       id="ownership"
                       checked={declarations.ownership}
                       onCheckedChange={(checked) => setDeclarations(prev => ({ ...prev, ownership: checked as boolean }))}
                     />
-                    <Label htmlFor="ownership" className="text-sm leading-relaxed cursor-pointer">
-                      {t('provider.declaration1')}
-                    </Label>
+                    <div>
+                      <Label htmlFor="ownership" className="text-sm font-semibold text-foreground cursor-pointer block mb-1">
+                        ⚖️ {t('provider.declarationRightOfDisposal', 'Izjava o pravu raspolaganja')}
+                      </Label>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {t('provider.declaration1')}
+                      </p>
+                    </div>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-muted rounded-lg">
                     <Checkbox

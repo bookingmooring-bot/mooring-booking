@@ -104,7 +104,7 @@ const TermsPage = () => {
                       <li>{t('terms.provResp4', 'Ensure moorings meet applicable local safety standards')}</li>
                       <li>{t('terms.provResp5', 'Honor all confirmed bookings')}</li>
                       <li>{t('terms.provResp6', 'Pay the 15% commission on all Platform bookings without exception')}</li>
-                      <li>{t('terms.provResp7', 'Sign the ownership/lease declaration')}</li>
+                      <li>{t('terms.provResp7', 'Sign the right-of-disposal declaration (Izjava o pravu raspolaganja) confirming legal authorization over the mooring')}</li>
                       <li>{t('terms.provResp8', 'Sign the commission payment agreement')}</li>
                       <li>{t('terms.provResp9', 'Maintain valid liability insurance where required by local law')}</li>
                       <li>{t('terms.provResp10', 'Comply with all applicable local, national, and international regulations')}</li>
@@ -183,7 +183,7 @@ const TermsPage = () => {
                     {t('terms.prohibitedTitle')}
                   </h2>
                   <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                    <li>{t('terms.prohibited1', 'Listing moorings you don\'t own or have legal rights to')}</li>
+                    <li>{t('terms.prohibited1', 'Listing moorings you have no legal right of disposal (pravo raspolaganja) or valid concession over')}</li>
                     <li>{t('terms.prohibited2', 'Providing false, misleading, or fraudulent information')}</li>
                     <li>{t('terms.prohibited3', 'Circumventing the Platform to avoid commission fees')}</li>
                     <li>{t('terms.prohibited4', 'Contacting users outside the Platform to avoid fees')}</li>

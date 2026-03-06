@@ -14,7 +14,9 @@ export interface CreateBookingInput {
     nights: number;
     price_per_night: number;
     total_price: number;
+    commission_amount?: number;
     payment_method?: string;
+    payment_status?: string;
     is_now4today?: boolean;
 }
 
@@ -39,6 +41,8 @@ export interface Booking {
     booking_status: string;
     confirmation_code: string;
     is_now4today: boolean;
+    stripe_payment_intent_id?: string | null;
+    stripe_checkout_session_id?: string | null;
     created_at: string;
     moorings?: {
         name: string;

@@ -8,7 +8,7 @@ const Testimonials = () => {
     // Sailors/Customers - Save 50%+
     {
       id: 1,
-      content: t('testimonials.sailor1', "I saved over 60% compared to marina fees! Found a private mooring in Dubrovnik for just €45/night instead of €120 at the marina. Incredible!"),
+      content: t('testimonials.sailor1', "I saved over 60% compared to marina fees! Found a mooring in Dubrovnik for just €45/night instead of €120 at the marina. Incredible!"),
       author: "Sarah L.",
       location: "London, UK",
       role: t('testimonials.roleSailor', 'Sailor & Customer'),
@@ -35,7 +35,7 @@ const Testimonials = () => {
     },
     {
       id: 4,
-      content: t('testimonials.sailor4', "Saved €2,000 on my two-week Croatia trip! The private moorings are better than marinas - quieter, more authentic, and half the price."),
+      content: t('testimonials.sailor4', "Saved €2,000 on my two-week Croatia trip! The moorings on this platform are better than marinas - quieter, more authentic, and half the price."),
       author: "Emma T.",
       location: "Amsterdam, Netherlands",
       role: t('testimonials.roleSailor', 'Sailor & Customer'),
