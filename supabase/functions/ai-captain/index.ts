@@ -52,7 +52,7 @@ async function fetchAvailableMoorings(
     boatLength?: number,
 ): Promise<string> {
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-        return "ℹ️ Pretraga vezova trenutno nije dostupna (nedostaju konfiguracijski podaci).";
+        return "Ahoj! AI kapetan na vezi... nemam dostupnih informacija (nedostaju konfiguracijski podaci).";
     }
 
     try {
@@ -64,7 +64,7 @@ async function fetchAvailableMoorings(
         url.searchParams.set("select", "id,name,location,country,country_flag,lat,lng,price_per_night,max_boat_length,max_draft,amenities,wind_protection,is_last_minute,mooring_units,rating,review_count");
         url.searchParams.set("status", "eq.active");
         url.searchParams.set("order", "rating.desc");
-        url.searchParams.set("limit", "10");
+        url.searchParams.set("limit", "50");
 
         // If boat length is specified, filter moorings that can accommodate it
         if (boatLength && boatLength > 0) {
@@ -83,7 +83,7 @@ async function fetchAvailableMoorings(
 
         if (!res.ok) {
             console.error("Moorings fetch failed:", res.status, await res.text());
-            return "ℹ️ Pretraga vezova trenutno nije dostupna.";
+            return "Ahoj! AI kapetan na vezi... nemam dostupnih informacija o vezovima.";
         }
 
         const moorings: MooringRow[] = await res.json();
@@ -111,7 +111,7 @@ async function fetchAvailableMoorings(
 
         if (available.length === 0) {
             const hint = boatLength ? ` za brod duljine ${boatLength}m` : "";
-            return `ℹ️ Trenutno nema dostupnih vezova${hint} za period ${checkIn} – ${checkOut} u sustavu.\n🔗 Provjeri sve vezove na: https://mooringbooking.com/explore`;
+            return `Ahoj! AI kapetan na vezi... nemam dostupnih informacija o slobodnim vezovima${hint} za traženi period. Razumijem, treba ti vez za večeras, pratiti ćemo situaciju!\n🔗 Provjeri sve vezove na: https://mooringbooking.com/explore`;
         }
 
         const lines = available.slice(0, 5).map((m, i) => {
@@ -126,7 +126,7 @@ async function fetchAvailableMoorings(
         return `⚓ SLOBODNI VEZOVI (${checkIn} – ${checkOut}):\n${lines.join("\n\n")}\n\n🔗 Rezerviraj na: https://mooringbooking.com/explore`;
     } catch (e) {
         console.error("fetchAvailableMoorings error:", e);
-        return "ℹ️ Pretraga vezova trenutno nije dostupna.";
+        return "Ahoj! AI kapetan na vezi... nemam dostupnih informacija u bazi.";
     }
 }
 
@@ -353,7 +353,9 @@ Govoriš s autoritetom i stručnošću iskusnog pomorca. Uvijek si precizan, kon
 Plan korisnika: ${userProfile?.tier ?? "basic"}.
 ${boatInfo}
 
-═══ TRENUTNO STANJE MORA (${lat.toFixed(2)}°N, ${lng.toFixed(2)}°E) ═══
+═══ TRENUTNI STATUS ═══
+📅 Datum: ${todayStr} (Ako korisnik traži vez "za danas" ili "večeras", naglasi Now4Today opciju za brzu rezervaciju!)
+📍 Lokacija: ${lat.toFixed(2)}°N, ${lng.toFixed(2)}°E
 ${weatherStr}
 ${wavesStr}${mooringsSection}
 
@@ -371,7 +373,7 @@ ${wavesStr}${mooringsSection}
 💼 ZA PROVIDERE: Registracija BESPLATNO | Provizija 15% po rezervaciji | Provider zadržava ~82–85% neto
   • Dodaci: Marketing Tools €5/mj | Premium Listing €9.99/mj | Mooring Insurance €9.99/god
 
-🛥️ FUNKCIJE: Now4Today (last-minute), Winter Storage, Affiliate program (5–15%), Instant booking, Ocjene 1–5⭐
+🛥️ FUNKCIJE: Now4Today (last-minute rezervacije za ISTI DAN), Winter Storage, Affiliate program (5–15%), Instant booking, Ocjene 1–5⭐
 
 📍 REZERVACIJA: mooringbooking.com/explore → pretraži → filtriraj → Book Now → email potvrda
 
@@ -383,6 +385,7 @@ ${wavesStr}${mooringsSection}
 • Upozorenja: vjetar >25 čv = osiguraj brod, >40 čv = ostani u luci, val >2.5 m = ne idi
 • Gorivo: ~15–25 L/h pri 7–8 čv za plovilo 10–14 m. Uvijek 20% rezerve
 • Hitno: MAYDAY → VHF Ch.16 | MRCC: +385 1 195 | EPIRB aktivacija
+• Benzinske pumpe (Gas stations): Uvijek provjeriti radno vrijeme (često zatvorene noću). Petkom popodne i subotom ujutro su velike gužve zbog chartera. Kod jakog vjetra pristup može biti opasan jer je potrebno dugo zadržavanje dok se čeka red.
 
 ═══ DIJAGNOSTIKA I POPRAVAK BRODOVA ═══
 

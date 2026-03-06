@@ -190,6 +190,25 @@ const Testimonials = () => {
       avatar: "https://images.unsplash.com/photo-1548142813-c348350df52b?w=150&h=150&fit=crop",
       rating: 5,
     },
+    // New Mooring Owners
+    {
+      id: 21,
+      content: t('testimonials.owner5', "As a marina director, Mooring Booking helped us fill empty transit berths. The system is simple and I highly recommend it."),
+      author: "Luka I.",
+      location: "Zadar, Croatia",
+      role: t('testimonials.roleDirector', 'Marina Director'),
+      avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop",
+      rating: 5,
+    },
+    {
+      id: 22,
+      content: t('testimonials.owner6', "Our luxury yacht dock now has a perfect schedule. Clients appreciate the discretion and ease of booking through the app."),
+      author: "Antoine M.",
+      location: "Cannes, France",
+      role: t('testimonials.roleDockConcessionaire', 'Luxury Yacht Dock Concessionaire'),
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop",
+      rating: 5,
+    },
   ];
 
   return (
@@ -208,7 +227,7 @@ const Testimonials = () => {
         {/* Testimonials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {testimonials.map((testimonial) => (
-            <div 
+            <div
               key={testimonial.id}
               className="bg-card rounded-xl p-6 shadow-card hover:shadow-hover transition-all relative"
             >
@@ -229,8 +248,8 @@ const Testimonials = () => {
 
               {/* Author */}
               <div className="flex items-center gap-3">
-                <img 
-                  src={testimonial.avatar} 
+                <img
+                  src={testimonial.avatar}
                   alt={testimonial.author}
                   className="w-10 h-10 rounded-full object-cover"
                 />

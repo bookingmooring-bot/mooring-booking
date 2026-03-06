@@ -83,6 +83,8 @@ const AddMooring = () => {
                 throw error;
             }
 
+            window.scrollTo(0, 0);
+
             toast({
                 title: "✅ Mooring Added!",
                 description: "Your new mooring has been submitted and is pending review.",

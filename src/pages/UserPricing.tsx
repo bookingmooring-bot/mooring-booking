@@ -222,9 +222,9 @@ const UserPricingPage = () => {
                       onClick={() => handleSelectPlan(plan.id)}
                       disabled={plan.id === currentTier && !!user}
                       className={`w-full font-semibold ${plan.id === currentTier && user ? 'bg-muted text-muted-foreground cursor-default'
-                          : plan.popular ? 'bg-success hover:bg-success/90'
-                            : plan.id === 'basic' ? 'bg-secondary hover:bg-secondary/90'
-                              : 'bg-gradient-ocean'
+                        : plan.popular ? 'bg-success hover:bg-success/90'
+                          : plan.id === 'basic' ? 'bg-secondary hover:bg-secondary/90'
+                            : 'bg-gradient-ocean'
                         }`}
                     >
                       {plan.id === currentTier && user ? t('userPricing.currentPlan', 'Current Plan') : plan.cta}
@@ -262,7 +262,7 @@ const UserPricingPage = () => {
                     <tr>
                       <th className="text-left p-4 font-heading font-semibold">{t('userPricing.feature')}</th>
                       <th className="text-center p-4 font-heading font-semibold">{t('userPricing.basicFree')}</th>
-                      <th className="text-center p-4 font-heading font-semibold">{t('userPricing.premium')}</th>
+                      <th className="text-right p-4 font-heading font-semibold pr-8">{t('userPricing.premium')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -278,9 +278,9 @@ const UserPricingPage = () => {
                             <span className="text-warning text-sm">{row.basic}</span>
                           )}
                         </td>
-                        <td className="p-4 text-center">
+                        <td className="p-4 text-right pr-8">
                           {row.premium === true ? (
-                            <Check className="text-success mx-auto" size={18} />
+                            <Check className="text-success ml-auto" size={18} />
                           ) : typeof row.premium === 'string' ? (
                             <span className="text-gold text-sm font-medium">{row.premium}</span>
                           ) : (
