@@ -16,7 +16,17 @@ import { supabase } from '@/lib/supabase';
 export function useStripeConnect() {
   return useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase.functions.invoke('create-connect-account');
+      // Refresh session first to ensure JWT is not expired (prevents 401 on Edge Function)
+      const { data: sessionData, error: sessionError } = await supabase.auth.refreshSession();
+      if (sessionError || !sessionData?.session) {
+        throw new Error('Nisi prijavljen ili je sesija istekla. Molimo se odjavi i ponovo prijavi.');
+      }
+
+      const { data, error } = await supabase.functions.invoke('create-connect-account', {
+        headers: {
+          Authorization: `Bearer ${sessionData.session.access_token}`,
+        },
+      });
 
       if (error) throw new Error(error.message);
       if (!data?.url) throw new Error('No onboarding URL returned from server.');
