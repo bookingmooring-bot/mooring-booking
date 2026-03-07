@@ -2,11 +2,6 @@
 import Stripe from 'https://esm.sh/stripe@13?target=deno';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
-  apiVersion: '2024-06-20',
-  httpClient: Stripe.createFetchHttpClient(),
-});
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, content-type',
@@ -18,6 +13,21 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    // Initialize Stripe INSIDE the handler so any init error is caught
+    // and returned with proper CORS headers (prevents CORS error on client)
+    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
+    if (!stripeKey) {
+      return new Response(JSON.stringify({ error: 'Stripe not configured on server.' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const stripe = new Stripe(stripeKey, {
+      apiVersion: '2024-06-20',
+      httpClient: Stripe.createFetchHttpClient(),
+    });
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
@@ -49,7 +59,7 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const appUrl = Deno.env.get('APP_URL') ?? 'http://localhost:5173';
+    const appUrl = Deno.env.get('APP_URL') ?? 'https://www.mooring-booking.com';
 
     // Create or reuse Stripe Express Connect account
     let accountId = profile.stripe_account_id;
