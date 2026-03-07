@@ -1260,6 +1260,9 @@ const BecomeProviderPage = () => {
                       <p className="text-xs text-muted-foreground leading-relaxed">
                         {t('provider.declaration1')}
                       </p>
+                      <p className="text-xs text-muted-foreground/70 leading-relaxed mt-2 italic border-t border-warning/20 pt-2">
+                        {t('provider.disposalDisclaimer', 'By submitting this declaration, you confirm that you have the legal right of disposal over this mooring and are responsible for the accuracy of the provided data. Mooring Booking platform is not responsible for false declarations.')}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-muted rounded-lg">

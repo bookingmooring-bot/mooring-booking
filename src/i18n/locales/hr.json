@@ -1,7 +1,7 @@
 {
   "nav": {
     "explore": "Istraži",
-    "howItWorks": "Kako Radi",
+    "howItWorks": "Talas po Talas",
     "becomeProvider": "Postani Davatelj",
     "signIn": "Prijava",
     "getStarted": "Započni",
@@ -18,7 +18,8 @@
     "search": "Pretraži",
     "countries": "10+ Država",
     "reviews": "4.9/5 iz 2.500+ recenzija",
-    "secure": "Sigurna plaćanja"
+    "secure": "Sigurna plaćanja",
+    "stripePayments": "Stripe zaštićena plaćanja"
   },
   "popular": {
     "title": "Popularni Vezovi",
@@ -101,8 +102,8 @@
     "step2Desc": "Rezervirajte svoje mjesto u sekundi sa sigurnim plaćanjem. Ostvarite do 20% popusta na svaku rezervaciju. Now4Today hitne rezervacije dostupne 48h unaprijed.",
     "step3Title": "Navigiraj i AI Kapetan",
     "step3Desc": "GPS koordinate se otključavaju nakon rezervacije. Premium članovi dobivaju neograničenog AI Kapetana sa 7-dnevnom prognozom, upozorenjima na oluje, vodičima za manevriranje, offline kartama i navigacijom korak po korak. Basic korisnici imaju 5 AI pitanja dnevno.",
-    "step4Title": "Uživaj i Ocijeni",
-    "step4Desc": "Dođite do svog veza, sigurno se privežite i podijelite iskustvo. Premium Godišnji članovi (€9,99/mj) uživaju prioritetnu rezervaciju, ekskluzivne popuste do 25% i posvećenu podršku."
+    "step4Title": "Dođi i Privežite se",
+    "step4Desc": "Dođite do rezervisanog veza, sigurno se privežite i podijelite iskustvo. Premium Godišnji članovi (€9,99/mj) uživaju prioritetnu rezervaciju, ekskluzivne popuste do 25% i posvećenu podršku."
   },
   "testimonials": {
     "title": "Što Kaže Naša Zajednica",
@@ -141,12 +142,12 @@
     "roleDockConcessionaire": "Koncesionar doka za luksuzne jahte"
   },
   "providerCta": {
-    "badge": "Za Vlasnike Vezova",
+    "badge": "Za Iznajmljivače Vezova",
     "title": "Pretvorite vaše nepopunjene vezove u",
     "titleHighlight": "izvanredan prihod",
-    "subtitle": "Objavite svoj vez na doku, bovi, murinu ili marini u samo 10 minuta i gledajte kako rezervacije pristižu.",
+    "subtitle": "Bilo da ste koncesionar pomorskog dobra, imate bove, vez, dok ili ste po djelatnosti marina — povećajte procenat iznajmljivanja neiskorištenih vezova i pretvorite ih u konkretan prihod.",
     "button": "Postanite Davatelj",
-    "note": "Besplatna registracija • Bez početnih troškova • Trenutni QR kod i affiliate link",
+    "note": "Besplatna registracija • Bez početnih troškova",
     "stat1": "300%",
     "stat1Label": "Prosječno povećanje prihoda",
     "stat2": "10.000+",
@@ -155,10 +156,10 @@
     "stat3Label": "Jednostavna provizija"
   },
   "footer": {
-    "description": "Najveće mediteransko tržište vezova. Rezervirajte privatne vezove u 10+ država s trenutnom potvrdom i sigurnim plaćanjem. Uštedite 50%+ u odnosu na marine.",
+    "description": "Najveće mediteransko tržište vezova. Rezervirajte povoljne vezove, dokove i sidrišta u 10+ država s trenutnom potvrdom i sigurnim plaćanjem. Uštedite 50%+ u odnosu na marine.",
     "about": "O Nama",
     "aboutUs": "O Nama",
-    "howItWorksLink": "Kako Radi",
+    "howItWorksLink": "Talas po Talas",
     "blog": "Blog",
     "contact": "Kontakt",
     "forYou": "Za Vas",
@@ -168,7 +169,7 @@
     "affiliateProgram": "Affiliate Program",
     "support": "Podrška",
     "sailingManual": "Priručnik za Plovidbu",
-    "marinaPartnership": "Marina Partnerstvo (B2B)",
+    "marinaPartnership": "B2B partnerstava i turističke agencije",
     "contactUs": "Kontaktirajte Nas",
     "legal": "Pravno",
     "privacyPolicy": "Pravila Privatnosti",
@@ -177,14 +178,17 @@
     "gdpr": "GDPR",
     "allRightsReserved": "Sva prava pridržana.",
     "madeWith": "Napravljeno s",
-    "by": "od"
+    "by": "od",
+    "stripeSecure": "Plaćanja su sigurna i obrađena putem Stripe platforme"
   },
   "aiChat": {
     "title": "AI Kapetan",
     "subtitle": "Vaš osobni nautički asistent",
     "placeholder": "Pitajte o vremenu, navigaciji, savjetima za vezanje...",
     "send": "Pošalji",
-    "welcome": "Welcome aboard! I am AI Captain, your fearless navigator through the depths of the sea and the secrets of harbors. I assist with navigation, nautical advice, weather forecasts, crisis situations, maneuvers, mooring, searching for affordable berths and marinas, technical repairs, departure and arrival in ports. What course are we setting today?",
+    "welcome": "Welcome aboard! I am AI Captain, your fearless navigator through the depths of the sea and the secrets of harbors. I assist with navigation, nautical advice, weather forecasts, crisis situations, maneuvers, mooring, searching for affordable berths and marinas, technical repairs, departure and arrival in ports. You can also ask me about tourist information, fuel stations, and restaurants along your route. What course are we setting today?",
+    "capabilities": "možete me pitati i o turističkim informacijama, lokacijama benzinskih pumpi i restoranima na vašoj ruti",
+    "extendedDesc": "Kažite mi krajnje odredište i dobićete fantastičan itinerer gdje možete prenoćiti, povoljne vezove, povijest mjesta gdje ćete uploviti, benzinske crpke, savjete za manevriranje, pa čak i preporuku za najboljeg ocijenjenog restorana u blizini veza.",
     "thinking": "Plovim kroz morske dubine podataka... Molimo sačekajte, ubrzo sidrimo s odgovorima!",
     "farewell": "Mirno more! Vaš vjerni AI Kapetan uvijek spreman za sljedeću avanturu."
   },
@@ -236,6 +240,7 @@
     "declaration1": "Potvrđujem da sam vlasnik ili dugoročni zakupac ovog veza i preuzimam punu odgovornost za kvalitetu pružene usluge.",
     "declaration2": "Slažem se da će Mooring Booking naplatiti 15% provizije za svaku rezervaciju, uključujući plaćanja gotovinom, te ću podmiriti nepodmirene provizije mjesečno.",
     "termsAgree": "Slažem se s Uvjetima korištenja i Pravilima privatnosti",
+    "disposalDisclaimer": "Davanjem ove izjave potvrđujete da imate pravno pravo raspolaganja ovim vezom te da ste odgovorni za tačnost privedenih podataka. Platforma Mooring Booking nije odgovorna za lažne izjave.",
     "publishProfile": "Objavi Profil",
     "contactInfo": "Kontakt Informacije (vidljive nakon rezervacije)",
     "address": "Adresa",
@@ -264,8 +269,8 @@
     "whyProvidersLove": "Zašto Davatelji Vole Mooring Booking",
     "successStories": "Priče o Uspjehu Davatelja",
     "successStoriesSubtitle": "Stvarna zarada stvarnih vlasnika vezova diljem Mediterana.",
-    "readyToEarn": "Spremni za Zaradu?",
-    "readyToEarnDesc": "Pridružite se tisućama vlasnika vezova koji već zarađuju pasivni prihod. Besplatna registracija, bez mjesečnih naknada, samo 15% na uspješne rezervacije.",
+    "readyToEarn": "Počnite zarađivati",
+    "readyToEarnDesc": "Povećajte za 30% iznajmljivanje vezova i prihod vaše tvrtke. Mi vam dovodimo konkretne korisnike koji odmah online plaćaju uslugu.",
     "createProviderAccount": "Kreirajte Svoj Račun Davatelja",
     "joinProviders": "Pridružite se 10.000+ Davatelja",
     "increaseIncome": "Povećajte Svoj Prihod",
@@ -573,7 +578,7 @@
   "about": {
     "ourStory": "Naša Priča",
     "taglineHighlight": "Vezove",
-    "missionText": "Naša misija je povezati nautičare sa vlasnicima vezova, čineći plovidbu Mediteranom pristupačnijom i dostupnijom za svakoga.",
+    "missionText": "Naša misija je povezati nautičare sa iznajmljivačima povoljnijih vezova, čineći nautiku dostupnijom svima.",
     "activeMoorings": "Aktivnih Vezova",
     "happySailors": "Zadovoljnih Nautičara",
     "countriesCount": "Država",
@@ -588,11 +593,19 @@
     "passionTitle": "Strast za Plovidbom",
     "passionDesc": "Osnovana od nautičara, za nautičare. Razumijemo radost pronalaska savršenog veza nakon dugog dana na moru.",
     "trustTitle": "Povjerenje i Sigurnost",
-    "trustDesc": "Svaki vlasnik veza je verificiran. Sigurna plaćanja štite i nautičare i davatelje.",
+    "trustDesc": "Svaki vez, dok i sidrište je verifikovan od strane naše platforme. Sigurna plaćanja štite i nautičare i davatelje.",
     "communityTitle": "Zajednica na Prvom Mjestu",
     "communityDesc": "Gradimo više od tržišta — stvaramo zajednicu mediteranskih nautičara.",
     "qualityTitle": "Standardi Kvalitete",
     "qualityDesc": "Naš sustav ocjenjivanja osigurava da samo najbolji vezovi dođu do vrha. Bez skrivenih naknada, bez iznenađenja.",
+    "featuresTitle": "Šta nas Izdvaja",
+    "feature1": "Now4Today — Rezervacije istog dana (01:00 – 23:00) s trenutnim povećanjem od 20% za hitnu dostupnost",
+    "feature2": "AI Kapetan — Vaš osobni asistent za plovidbu: vrijeme, navigacija, vodiči za vezanje, turistički sadržaji, restorani i benzinske crpke",
+    "feature3": "Prilagođene Dnevne Cijene — Davatelji postavljaju fleksibilne cijene po danu putem kalendarskog nadzora",
+    "feature4": "Osiguranje Veza — Opcionalna zaštita od odgovornosti prema trećima za samo €9,99/godišnje",
+    "feature5": "Do 50% popusta — Davatelji mogu ponuditi 0–50% popusta na standardne cijene",
+    "feature6": "Marketing Alati i Premium Oglas — Povećajte vidljivost s QR kodovima, affiliate linkovima i prioritetom u pretrazi",
+    "feature7": "Partnerski Popusti — Budući da od naših partnera tražimo popuste za vas, cijene vezova će zasigurno biti povoljnije od standardnih",
     "meetTeam": "Upoznajte Tim",
     "meetTeamSubtitle": "Nautičari, poduzetnici i tehnolozi ujedinjeni strašću prema moru.",
     "ceoRole": "Osnivač i CEO",

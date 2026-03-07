@@ -8,24 +8,11 @@ import { useTranslation } from "react-i18next";
 const AboutPage = () => {
   const { t } = useTranslation();
 
-  const stats = [
-    { value: "10,000+", label: t('about.activeMoorings') },
-    { value: "50,000+", label: t('about.happySailors') },
-    { value: "10+", label: t('about.countriesCount') },
-    { value: "€2M+", label: t('about.savedByBoaters') },
-  ];
-
   const values = [
     { icon: Heart, title: t('about.passionTitle'), description: t('about.passionDesc') },
     { icon: Shield, title: t('about.trustTitle'), description: t('about.trustDesc') },
     { icon: Users, title: t('about.communityTitle'), description: t('about.communityDesc') },
     { icon: Award, title: t('about.qualityTitle'), description: t('about.qualityDesc') },
-  ];
-
-  const team = [
-    { name: "M. Bosic", role: t('about.ceoRole', 'Founder & CEO'), bio: t('about.ceoBio', 'Sailor with 15 years of Mediterranean experience. Long-time CEO in the tourism industry. Vision: democratize mooring access for all sailors.'), avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop" },
-    { name: "D. Lazukic", role: t('about.advisorRole', 'Strategic Advisor'), bio: t('about.advisorBio', 'Former President of Sunčani Hvar and Marina Resort. Expert in marina operations with 20+ years of experience.'), avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop" },
-    { name: "Dimitri Papadopoulos", role: t('about.expansionRole', 'Mediterranean Expansion'), bio: t('about.expansionBio', 'Greek sailing champion. Leads our expansion across the Aegean and Eastern Med.'), avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop" },
   ];
 
   return (
@@ -47,19 +34,6 @@ const AboutPage = () => {
           </div>
         </section>
 
-        <section className="py-12 bg-card border-b border-border">
-          <div className="container mx-auto px-4">
-            <p className="text-center text-muted-foreground text-sm mb-6">{t('about.aspiringNote', 'We aspire to reach these milestones across Croatia, Greece, Italy, France, Spain, Turkey, Albania, Malta, Cyprus and Slovenia')}</p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {stats.map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <div className="font-heading text-3xl md:text-4xl font-bold text-secondary">{stat.value}</div>
-                  <div className="text-muted-foreground text-sm mt-1">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
 
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
@@ -79,6 +53,7 @@ const AboutPage = () => {
                   <li>{t('about.feature4', 'Mooring Insurance — Optional third-party liability protection at just €9.99/year')}</li>
                   <li>{t('about.feature5', 'Up to 50% discount — Providers can offer 0–50% off standard rates')}</li>
                   <li>{t('about.feature6', 'Marketing Tools & Premium Listing — Boost your visibility with QR codes, affiliate links, and priority search placement')}</li>
+                  <li>{t('about.feature7', 'Partner Discounts — Since we negotiate discounts from our partners for you, mooring prices will certainly be more affordable than standard rates')}</li>
                 </ul>
               </div>
             </div>
@@ -100,22 +75,6 @@ const AboutPage = () => {
           </div>
         </section>
 
-        <section className="py-20 bg-background">
-          <div className="container mx-auto px-4">
-            <h2 className="font-heading text-3xl font-bold text-foreground mb-4 text-center">{t('about.meetTeam')}</h2>
-            <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">{t('about.meetTeamSubtitle')}</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              {team.map((member) => (
-                <div key={member.name} className="text-center">
-                  <img src={member.avatar} alt={member.name} className="w-32 h-32 rounded-full mx-auto mb-4 object-cover shadow-card" />
-                  <h3 className="font-heading font-semibold text-lg text-foreground">{member.name}</h3>
-                  <p className="text-secondary text-sm font-medium mb-2">{member.role}</p>
-                  <p className="text-muted-foreground text-sm">{member.bio}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
 
         <section className="py-20 bg-gradient-ocean">
           <div className="container mx-auto px-4 text-center">

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Star, MapPin, Navigation, Anchor, Phone } from "lucide-react";
 import BookingModal from "./BookingModal";
 import "leaflet/dist/leaflet.css";
+import { mooringLocations } from "./MooringMap";
 
 // Fix for default marker icons in react-leaflet
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -59,12 +60,38 @@ const ExploreMap = ({ moorings }: ExploreMapProps) => {
   const [selectedMooring, setSelectedMooring] = useState<Mooring | null>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
 
+  // Filter out moorings with invalid/missing coordinates
+  const validMoorings = moorings.filter(
+    (m) => m.lat && m.lng && isFinite(m.lat) && isFinite(m.lng) && (m.lat !== 0 || m.lng !== 0)
+  );
+
+  // Fallback to Mediterranean sample moorings if DB returned no valid moorings
+  const displayMoorings: Array<{ id: string; name: string; location: string; country: string; lat: number; lng: number; price: number; rating?: number; reviewCount?: number; discountPercent?: number; image?: string }> =
+    validMoorings.length > 0
+      ? validMoorings
+      : mooringLocations.map((ml) => ({
+          id: ml.id,
+          name: ml.name,
+          location: ml.location,
+          country: ml.country,
+          lat: ml.lat,
+          lng: ml.lng,
+          price: ml.price,
+          rating: ml.rating,
+          reviewCount: 0,
+          discountPercent: undefined,
+          image: "",
+        }));
+
   // Center on Mediterranean
   const defaultCenter: [number, number] = [40.5, 18.0];
   const defaultZoom = 5;
 
-  const handleMarkerClick = (mooring: Mooring) => {
-    setSelectedMooring(mooring);
+  const handleMarkerClick = (mooring: typeof displayMoorings[number]) => {
+    if (validMoorings.length > 0) {
+      const m = moorings.find(x => x.id === mooring.id);
+      if (m) setSelectedMooring(m);
+    }
   };
 
   const handleBookNow = () => {
@@ -94,7 +121,7 @@ const ExploreMap = ({ moorings }: ExploreMapProps) => {
             opacity={1}
           />
 
-          {moorings.map((mooring) => (
+          {displayMoorings.map((mooring) => (
             <Marker
               key={mooring.id}
               position={[mooring.lat, mooring.lng]}
@@ -105,20 +132,22 @@ const ExploreMap = ({ moorings }: ExploreMapProps) => {
             >
               <Popup>
                 <div className="p-2 min-w-[200px]">
-                  <img
-                    src={mooring.image}
-                    alt={mooring.name}
-                    className="w-full h-24 object-cover rounded-lg mb-2"
-                  />
+                  {mooring.image && (
+                    <img
+                      src={mooring.image}
+                      alt={mooring.name}
+                      className="w-full h-24 object-cover rounded-lg mb-2"
+                    />
+                  )}
                   <h3 className="font-bold text-sm">{mooring.name}</h3>
                   <p className="text-xs text-gray-600 flex items-center gap-1 mb-1">
                     <MapPin size={12} />
-                    {mooring.location}, {mooring.country} {mooring.countryFlag}
+                    {mooring.location}, {mooring.country}
                   </p>
                   <div className="flex items-center justify-between mb-2">
                     <span className="flex items-center gap-1 text-xs">
                       <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                      {mooring.rating} ({mooring.reviewCount})
+                      {mooring.rating ?? '—'}
                     </span>
                     <span className="font-bold text-sm text-blue-600">
                       €{mooring.discountPercent
@@ -126,13 +155,15 @@ const ExploreMap = ({ moorings }: ExploreMapProps) => {
                         : mooring.price}/night
                     </span>
                   </div>
-                  <Button
-                    size="sm"
-                    className="w-full bg-gradient-to-r from-blue-900 to-cyan-500 text-white"
-                    onClick={handleBookNow}
-                  >
-                    Book Now
-                  </Button>
+                  {validMoorings.length > 0 && (
+                    <Button
+                      size="sm"
+                      className="w-full bg-gradient-to-r from-blue-900 to-cyan-500 text-white"
+                      onClick={handleBookNow}
+                    >
+                      Book Now
+                    </Button>
+                  )}
                 </div>
               </Popup>
             </Marker>

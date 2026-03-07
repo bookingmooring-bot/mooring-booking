@@ -18,7 +18,8 @@
     "search": "Search",
     "countries": "10+ Countries",
     "reviews": "4.9/5 from 2,500+ reviews",
-    "secure": "Secure payments"
+    "secure": "Secure payments",
+    "stripePayments": "Stripe Secured"
   },
   "popular": {
     "title": "Popular Moorings",
@@ -146,7 +147,7 @@
     "titleHighlight": "extraordinary income",
     "subtitle": "List your mooring on a dock, buoy, or in a marina in just 10 minutes and watch the bookings roll in.",
     "button": "Become a Provider",
-    "note": "Free to register • No upfront costs • Instant QR code & affiliate link",
+    "note": "Free to register • No upfront costs",
     "stat1": "300%",
     "stat1Label": "Avg. revenue increase",
     "stat2": "10,000+",
@@ -168,7 +169,7 @@
     "affiliateProgram": "Affiliate Program",
     "support": "Support",
     "sailingManual": "Sailing Manual",
-    "marinaPartnership": "Marina Partnership (B2B)",
+    "marinaPartnership": "B2B Partnerships & Tourist Agencies",
     "contactUs": "Contact Us",
     "legal": "Legal",
     "privacyPolicy": "Privacy Policy",
@@ -177,7 +178,8 @@
     "gdpr": "GDPR",
     "allRightsReserved": "All rights reserved.",
     "madeWith": "Made with",
-    "by": "by"
+    "by": "by",
+    "stripeSecure": "Payments are secure and processed via Stripe"
   },
   "aiChat": {
     "title": "AI Captain",
@@ -240,6 +242,7 @@
     "concessionNumberDesc": "Enter the official concession or permit number issued by the relevant authority for this mooring.",
     "declaration2": "I agree that Mooring Booking will charge 15% commission for each booking, including cash payments, and I will settle outstanding commissions monthly.",
     "termsAgree": "I agree to the Terms of Service and Privacy Policy",
+    "disposalDisclaimer": "By submitting this declaration, you confirm that you have the legal right of disposal over this mooring and are responsible for the accuracy of the provided data. Mooring Booking platform is not responsible for false declarations.",
     "publishProfile": "Publish Profile",
     "contactInfo": "Contact Information (visible after booking)",
     "address": "Address",
