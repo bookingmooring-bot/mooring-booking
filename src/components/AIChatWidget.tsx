@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { X, Send, Anchor, Ship, Crown } from "lucide-react";
+import captainAvatar from "@/assets/captain-avatar.png";
+import { X, Send, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { getUserLocation } from "@/services/weatherService";
@@ -38,6 +39,13 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
   const handleClose = () => { if (onClose) onClose(); else setInternalIsOpen(false); };
   const handleOpen = () => { if (onClose) return; setInternalIsOpen(true); };
+
+  // Listen for the global 'open-ai-captain' event fired by the Header nav button
+  useEffect(() => {
+    const handler = () => setInternalIsOpen(true);
+    window.addEventListener('open-ai-captain', handler);
+    return () => window.removeEventListener('open-ai-captain', handler);
+  }, []);
 
   const [messages, setMessages] = useState<Message[]>([
     { role: "assistant", content: t("aiChat.welcome"), isWelcome: true }
@@ -155,17 +163,17 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
     <>
       {!onClose && (
         <button onClick={handleOpen}
-          className={`fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-ocean rounded-full shadow-hover flex items-center justify-center transition-transform hover:scale-110 ${isOpen ? 'hidden' : ''}`}
+          className={`fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-hover overflow-hidden border-2 border-gold transition-transform hover:scale-110 ${isOpen ? 'hidden' : ''}`}
           aria-label="Open AI Captain">
-          <Ship className="text-primary-foreground" size={32} />
+          <img src={captainAvatar} alt="AI Captain" className="w-full h-full object-cover object-top" />
         </button>
       )}
       {isOpen && (
         <div className="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-card rounded-2xl shadow-hover border border-border overflow-hidden animate-fade-in">
           <div className="bg-gradient-ocean p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gold/20 rounded-full flex items-center justify-center">
-                <Anchor className="text-gold" size={20} />
+              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gold/60 shrink-0">
+                <img src={captainAvatar} alt="AI Captain" className="w-full h-full object-cover object-top" />
               </div>
               <div>
                 <h3 className="font-heading font-semibold text-primary-foreground">{t("aiChat.title")}</h3>

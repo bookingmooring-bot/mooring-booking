@@ -1,4 +1,4 @@
-{
+﻿{
   "nav": {
     "explore": "Explorer",
     "howItWorks": "Comment ça Marche",
@@ -9,8 +9,8 @@
   },
   "hero": {
     "badge": "La 1ère Marketplace d'Amarrages en Méditerranée",
-    "title": "Trouvez Votre",
-    "titleHighlight": "Amarrage Parfait",
+    "title": "Avec le Capitaine IA, découvrez les meilleurs et les plus sûrs",
+    "titleHighlight": "amarrages, pontons et postes marines",
     "subtitle": "Découvrez plus de 10 000 amarrages en Croatie, Grèce, Italie et au-delà. Réservez instantanément. Naviguez facilement. Économisez jusqu'à 50%.",
     "whereTo": "Où?",
     "checkIn": "Arrivée",

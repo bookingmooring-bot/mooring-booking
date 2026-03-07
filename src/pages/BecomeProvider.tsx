@@ -492,26 +492,26 @@ const BecomeProviderPage = () => {
                     Digital Consent Agreement
                   </h1>
                   <p className="text-muted-foreground">
-                    Please review and accept all terms before publishing your profile.
+                    {t('provider.reviewTerms')}
                   </p>
                 </div>
 
                 <div className="space-y-4 mb-8">
                   <div className="bg-muted rounded-lg p-4 text-sm text-foreground leading-relaxed max-h-60 overflow-y-auto">
-                    <h3 className="font-semibold mb-2">Terms of Service Summary</h3>
+                    <h3 className="font-semibold mb-2">{t('provider.consentSummaryTitle')}</h3>
                     <ul className="space-y-2 list-disc list-inside text-muted-foreground">
-                      <li>I provide the Izjava o pravu raspolaganja (right of disposal declaration), confirming I am an authorized representative of a legal entity with valid concession/permit over the listed mooring(s).</li>
-                      <li>I agree to a 15% commission on all bookings, including cash payments.</li>
-                      <li>I consent to the transfer of my data and listing information to any successor entity in the event of a sale, merger, or acquisition of Intelligent Matrix.</li>
-                      <li>I understand the platform provides no warranty and operates on an "AS IS" basis.</li>
-                      <li>I agree to indemnify Intelligent Matrix against any claims related to my mooring.</li>
-                      <li>I accept mandatory arbitration under Austrian/EU law for any disputes.</li>
-                      <li>I agree that Intelligent Matrix's maximum liability is limited to fees paid in the last 12 months.</li>
-                      <li>I understand my account may be terminated at any time with or without cause.</li>
-                      {formData.marketingTools && <li>I agree to the €5/month recurring charge for Marketing Tools (QR code & affiliate link).</li>}
-                      {formData.premiumListing && <li>I agree to the €9.99/month recurring charge for Premium Listing placement.</li>}
-                      {formData.insuranceMediation && <li>I agree to the €9.99/year recurring charge for Insurance Mediation services.</li>}
-                      {formData.now4today && <li>I understand Now4Today bookings carry a mandatory 20% price surcharge, and the 15% commission is calculated on the full increased amount.</li>}
+                      <li>{t('provider.consentTerm1')}</li>
+                      <li>{t('provider.consentTerm2')}</li>
+                      <li>{t('provider.consentTerm3')}</li>
+                      <li>{t('provider.consentTerm4')}</li>
+                      <li>{t('provider.consentTerm5')}</li>
+                      <li>{t('provider.consentTerm6')}</li>
+                      <li>{t('provider.consentTerm7')}</li>
+                      <li>{t('provider.consentTerm8')}</li>
+                      {formData.marketingTools && <li>{t('provider.consentTermMarketing')}</li>}
+                      {formData.premiumListing && <li>{t('provider.consentTermPremium')}</li>}
+                      {formData.insuranceMediation && <li>{t('provider.consentTermInsurance')}</li>}
+                      {formData.now4today && <li>{t('provider.consentTermNow4Today')}</li>}
                     </ul>
                   </div>
 
@@ -522,7 +522,7 @@ const BecomeProviderPage = () => {
                       onCheckedChange={(checked) => setConsentAccepted(checked as boolean)}
                     />
                     <Label htmlFor="finalConsent" className="text-sm leading-relaxed cursor-pointer font-medium">
-                      I have read and I digitally consent to all Terms of Service, Privacy Policy, GDPR policy, commission structure, data transfer clause, and all applicable terms as outlined above. I understand this constitutes a legally binding agreement.
+                      {t('provider.consentRequired')}
                     </Label>
                   </div>
                 </div>
@@ -533,7 +533,7 @@ const BecomeProviderPage = () => {
                     className="flex-1"
                     onClick={() => { setShowConsent(false); setConsentAccepted(false); }}
                   >
-                    Back to Edit
+                    {t('provider.backToEdit')}
                   </Button>
                   <Button
                     className="flex-1 bg-gradient-ocean font-semibold h-12"
@@ -543,19 +543,19 @@ const BecomeProviderPage = () => {
                     {isSubmitting ? (
                       <>
                         <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2" />
-                        {uploadingPhotos ? 'Uploading Photos...' : 'Publishing...'}
+                        {uploadingPhotos ? t('provider.uploadingPhotos') : t('provider.publishing')}
                       </>
                     ) : (
                       <>
                         <Check className="mr-2" size={20} />
-                        Accept & Publish Profile
+                        {t('provider.acceptPublish')}
                       </>
                     )}
                   </Button>
                 </div>
 
                 <p className="text-xs text-muted-foreground text-center mt-4">
-                  By clicking "Accept & Publish Profile", you provide digital consent equivalent to a handwritten signature under EU eIDAS regulation.
+                  {t('provider.eIdas')}
                 </p>
               </div>
             </div>
@@ -701,7 +701,7 @@ const BecomeProviderPage = () => {
                       required
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      {formData.description.length}/500 characters
+                      {formData.description.length}/500 {t('provider.charCount')}
                     </p>
                   </div>
                 </div>
@@ -1222,7 +1222,7 @@ const BecomeProviderPage = () => {
                   <div>
                     <Label htmlFor="whatsapp" className="flex items-center gap-2">
                       <MessageSquare size={14} className="text-success" />
-                      WhatsApp Number (optional)
+                      {t('provider.whatsappNumber')}
                     </Label>
                     <Input
                       id="whatsapp"
@@ -1233,7 +1233,7 @@ const BecomeProviderPage = () => {
                       className="mt-2"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      Receive booking notifications via WhatsApp
+                      {t('provider.notificationsWhatsapp')}
                     </p>
                   </div>
                 </div>
@@ -1282,7 +1282,7 @@ const BecomeProviderPage = () => {
                       onCheckedChange={(checked) => setDeclarations(prev => ({ ...prev, dataTransfer: checked as boolean }))}
                     />
                     <Label htmlFor="dataTransfer" className="text-sm leading-relaxed cursor-pointer">
-                      I consent to the transfer of my data, listings, and account information to any successor entity in the event of a sale, merger, or acquisition of Intelligent Matrix.
+                      {t('provider.dataTransferConsent2')}
                     </Label>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-muted rounded-lg">
@@ -1306,7 +1306,7 @@ const BecomeProviderPage = () => {
                   className="flex-1"
                   onClick={() => setShowForm(false)}
                 >
-                  Cancel
+                  {t('provider.cancel')}
                 </Button>
                 <Button
                   type="submit"

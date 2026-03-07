@@ -7,7 +7,6 @@ import Testimonials from "@/components/Testimonials";
 import HomePricing from "@/components/HomePricing";
 import ProviderCTA from "@/components/ProviderCTA";
 import Footer from "@/components/Footer";
-import AIChatWidget from "@/components/AIChatWidget";
 import WeatherWidget from "@/components/WeatherWidget";
 import MapErrorBoundary from "@/components/MapErrorBoundary";
 import AdBanner from "@/components/AdBanner";
@@ -93,7 +92,6 @@ const Index = () => {
         <ProviderCTA />
       </main>
       <Footer />
-      <AIChatWidget />
     </div>
   );
 };

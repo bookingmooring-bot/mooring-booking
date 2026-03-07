@@ -1,4 +1,4 @@
-{
+﻿{
   "nav": {
     "explore": "Erkunden",
     "howItWorks": "Wie es funktioniert",
@@ -9,8 +9,8 @@
   },
   "hero": {
     "badge": "Der #1 Liegeplatz-Marktplatz im Mittelmeer",
-    "title": "Finden Sie Ihren Perfekten",
-    "titleHighlight": "Liegeplatz",
+    "title": "Mit dem KI-Kapitän, entdecken Sie die besten und sichersten",
+    "titleHighlight": "Liegeplätze, Stege und Marinas",
     "subtitle": "Entdecken Sie 10.000+ private Liegeplätze in Kroatien, Griechenland, Italien und darüber hinaus. Sofort buchen. Einfach navigieren. Bis zu 50% sparen.",
     "whereTo": "Wohin?",
     "checkIn": "Check-in",
@@ -132,7 +132,7 @@
     "affiliate2": "Ich bin ein Yacht-Charter-Unternehmen und verdiene €5.000/Monat, indem ich Mooring Booking empfehle. Die 10% lebenslange Provision ist fantastisch!",
     "affiliate3": "Meine Instagram-Segelseite hat letzten Sommer €8.000 an Provisionen verdient! Ich teile nur meine Erfahrungen und Affiliate-Links.",
     "affiliate4": "Als Marina-Manager empfehle ich Mooring Booking an Überlauf-Gäste. €2.000/Monat extra Provision und zufriedene Kunden - Win-Win!",
-    "aiCaptain1": "KI Kapitän hat unseren Trip gerettet, als der Ankerwinsch während eines Sturms ausfiel! Er führte uns Schritt für Schritt, um den Anker manuell zu sichern und Schutz zu finden. Bester Segelassistent überhaupt!",
+    "aiCaptain1": "KI Kapitän hat unseren Trip gerettet, als der Ankerwinsch während eines Sturms ausfiel! Er führte uns Schritt-für-Schritt, um den Anker manuell zu sichern und Schutz zu finden. Bester Segelassistent überhaupt!",
     "aiCaptain2": "KI Kapitän schlug eine fantastische 7-Tage-Route durch die griechischen Inseln vor, die wir selbst nie entdeckt hätten. Perfekte Windbedingungen und versteckte Ankerplätze!",
     "aiCaptain3": "Als Katamaran-Neuling hatte ich Angst vor der Einfahrt in den engen Hafen. KI Kapitän führte mich durch jeden Schritt - Anfahrtswinkel, Geschwindigkeit, Leinenreihenfolge. Perfekt angelegt!",
     "discount1": "Meine 10 Liegeplätze in der Bucht von Kotor sind immer voll. Ich habe einen 50% Rabatt für die Nebensaison angeboten und meine Winterliegeplätze sind ausgebucht!",

@@ -12,16 +12,64 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { useAvailableMoorings } from "@/hooks/useMoorings";
+import { useAvailableMoorings, useMooringsByLocation } from "@/hooks/useMoorings";
+import { useDebounce } from "@/hooks/useDebounce";
 import ExploreMap from "@/components/ExploreMap";
 import AdBanner from "@/components/AdBanner";
 import { useTranslation } from "react-i18next";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
-const KNOWN_COUNTRIES = [
-  "Croatia", "Greece", "Italy", "Spain", "France", "Monaco",
-  "Turkey", "Albania", "Malta", "Cyprus", "Slovenia", "Montenegro",
-];
+
+/**
+ * Map of every known alias (any language, lower-case) to the English country
+ * name stored in the DB. Add more rows as needed.
+ */
+const COUNTRY_ALIASES: Record<string, string> = {
+  // Croatia
+  croatia: "Croatia", hrvatska: "Croatia", kroatien: "Croatia",
+  croazia: "Croatia", croatie: "Croatia", croacia: "Croatia",
+  "hırvatistan": "Croatia", chorwacja: "Croatia",
+  // Italy
+  italy: "Italy", italia: "Italy", italija: "Italy",
+  italien: "Italy", italie: "Italy", "İtalya": "Italy",
+  italya: "Italy", itali: "Italy", "إيطاليا": "Italy",
+  // Greece
+  greece: "Greece", grecia: "Greece", grčka: "Greece", grcka: "Greece",
+  griechenland: "Greece", grèce: "Greece", yunanistan: "Greece",
+  hellas: "Greece", "Ελλάδα": "Greece", ellada: "Greece",
+  // Spain
+  spain: "Spain", españa: "Spain", espana: "Spain", spanija: "Spain",
+  spanien: "Spain", espagne: "Spain", spagna: "Spain", "İspanya": "Spain", ispanya: "Spain",
+  // France
+  france: "France", francuska: "France", frankreich: "France",
+  frankrig: "France", fransa: "France", "فرانسه": "France",
+  // Montenegro
+  montenegro: "Montenegro", crna_gora: "Montenegro", "crna gora": "Montenegro",
+  karadağ: "Montenegro", karadag: "Montenegro",
+  // Slovenia
+  slovenia: "Slovenia", slovenija: "Slovenia", slowenien: "Slovenia",
+  slovénie: "Slovenia", eslovenia: "Slovenia",
+  // Albania
+  albania: "Albania", albanija: "Albania", shqipëri: "Albania",
+  albanien: "Albania", albanie: "Albania", arnavutluk: "Albania",
+  // Turkey
+  turkey: "Turkey", türkiye: "Turkey", turkiye: "Turkey", turska: "Turkey",
+  türkei: "Turkey", turquie: "Turkey", turchia: "Turkey",
+  // Malta
+  malta: "Malta",
+  // Cyprus
+  cyprus: "Cyprus", kipar: "Cyprus", kıbrıs: "Turkey", kibris: "Cyprus",
+  zypern: "Cyprus", chypre: "Cyprus", cipro: "Cyprus",
+  // Monaco
+  monaco: "Monaco",
+};
+
+/** Returns the canonical English DB country name for ANY language input, or null. */
+function detectCountry(query: string): string | null {
+  if (!query) return null;
+  const key = query.trim().toLowerCase();
+  return COUNTRY_ALIASES[key] ?? null;
+}
 
 const amenitiesOptions = ["water", "electricity", "wifi", "toilet", "shower", "fuel", "restaurant"];
 
@@ -44,14 +92,6 @@ function tomorrowISO(): string {
   const d = new Date();
   d.setDate(d.getDate() + 1);
   return d.toISOString().split("T")[0];
-}
-
-/** Detect whether the location string looks like a known country name */
-function detectCountry(query: string): string | null {
-  if (!query) return null;
-  const q = query.trim().toLowerCase();
-  const match = KNOWN_COUNTRIES.find((c) => c.toLowerCase() === q);
-  return match || null;
 }
 
 /** Count nights between two YYYY-MM-DD strings */
@@ -98,7 +138,7 @@ const ExplorePage = () => {
     if (ref) sessionStorage.setItem("referral_code", ref);
   }, [searchParams]);
 
-  // ── Derive query params for the hook ──────────────────────────────────
+  // ── Derive query params for the hooks ─────────────────────────────────
   const detectedCountry = detectCountry(committedLocation);
   const hookParams = {
     checkIn: committedCheckIn || undefined,
@@ -107,12 +147,33 @@ const ExplorePage = () => {
     country: detectedCountry || undefined,
   };
 
+  // Text-based hook (exact country / location ilike match)
   const { data: mooringsData, isLoading: mooringsLoading } =
     useAvailableMoorings(hookParams);
 
-  const allMoorings = mooringsData || [];
+  // Geo-based hook — debounced 600 ms; kicks in for any non-country query
+  const debouncedLocation = useDebounce(committedLocation, 600);
+  const useGeo = !!debouncedLocation && !detectedCountry;
+
+  const { data: geoData, isLoading: geoLoading } = useMooringsByLocation({
+    query: useGeo ? debouncedLocation : '',
+    radiusKm: 20,
+    checkIn: committedCheckIn || undefined,
+    checkOut: committedCheckOut || undefined,
+  });
+
+  // Use geo results as primary; fall back to text results only when geo is empty
+  const textMoorings = mooringsData || [];
+  const geoMoorings = geoData || [];
+  const allMoorings = useGeo
+    ? (geoMoorings.length > 0 ? geoMoorings : textMoorings)
+    : textMoorings;
+
+  const mooringsLoading_ = mooringsLoading || (useGeo && geoLoading);
 
   // ── Client-side post-filter (amenities, special flags, sort) ─────────
+  // When using geo results, they are already pre-sorted by distance.
+  // We respect the user's sort choice but keep geo-distance sort as tiebreaker.
   const filteredMoorings = allMoorings
     .filter((m) => {
       if (showLastMinuteOnly && !m.isLastMinute) return false;
@@ -124,6 +185,8 @@ const ExplorePage = () => {
     .sort((a, b) => {
       if (a.isPremiumListing && !b.isPremiumListing) return -1;
       if (!a.isPremiumListing && b.isPremiumListing) return 1;
+      // When geo search is active, default sort is distance (already ordered)
+      if (useGeo && sortBy === "rating") return 0; // preserve distance order
       if (sortBy === "rating") return b.rating - a.rating;
       if (sortBy === "price-low") return a.price - b.price;
       if (sortBy === "price-high") return b.price - a.price;
@@ -363,9 +426,14 @@ const ExplorePage = () => {
         {/* ─── Results ─────────────────────────────────────────────────── */}
         <section className="py-8">
           <div className="container mx-auto px-4">
-            {mooringsLoading ? (
+            {mooringsLoading_ ? (
               <div className="flex items-center justify-center py-20">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                {useGeo && (
+                  <span className="ml-3 text-sm text-muted-foreground">
+                    Geocoding location…
+                  </span>
+                )}
               </div>
             ) : (
               <>

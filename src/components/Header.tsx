@@ -5,19 +5,17 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
-import AIChatWidget from "./AIChatWidget";
 import logo from "@/assets/logo.jpg";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
+  const openCaptain = () => window.dispatchEvent(new Event('open-ai-captain'));
   const { t } = useTranslation();
   const { user } = useAuth();
 
   return (
-    <>
-      <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
             {/* Logo - 50% bigger than original (72px vs 48px) with pulse animation */}
@@ -53,7 +51,7 @@ const Header = () => {
                 {t('nav.becomeProvider')}
               </Link>
               <button
-                onClick={() => setIsChatOpen(true)}
+                onClick={openCaptain}
                 className="flex items-center gap-2 font-medium text-secondary hover:text-secondary/80 transition-colors bg-secondary/10 px-3 py-2 rounded-full"
               >
                 <Ship size={20} />
@@ -92,9 +90,9 @@ const Header = () => {
               <ThemeToggle />
               <LanguageSwitcher />
               <button
-                onClick={() => setIsChatOpen(true)}
+                onClick={openCaptain}
                 className="p-2.5 text-secondary bg-secondary/10 rounded-full"
-                aria-label="AI Captain"
+                aria-label={t('nav.aiAssistant')}
               >
                 <Ship size={24} />
               </button>
@@ -159,10 +157,7 @@ const Header = () => {
             </div>
           )}
         </div>
-      </header>
-
-      <AIChatWidget isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
-    </>
+    </header>
   );
 };
 

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { allMoorings as hardcodedMoorings, Mooring } from '@/data/moorings';
+import { geocodeQuery, haversineKm, formatDistance } from '@/lib/geocoding';
 
 export interface DbMooring {
     id: string;
@@ -276,3 +277,83 @@ export function useAvailableMoorings(params: Partial<AvailableMooringsParams>) {
         staleTime: 1 * 60 * 1000, // 1 minute — availability changes often
     });
 }
+
+export interface LocationSearchParams {
+    query: string;       // free-text city/place name, e.g. "venecia" or "Split"
+    radiusKm?: number;   // default: 20 km
+    checkIn?: string;    // YYYY-MM-DD (optional)
+    checkOut?: string;   // YYYY-MM-DD (optional)
+}
+
+export interface MooringWithDistance extends Mooring {
+    distanceKm: number;
+}
+
+/**
+ * Geocodes the search query, fetches all active moorings, then filters + sorts
+ * them by real geographic distance (Haversine formula).
+ *
+ * The result will have:
+ *   - mooring.distance = "3.2 km from Venice"
+ *   - mooring.distanceKm = 3.2 (numeric, for sorting)
+ *
+ * Works with ANY city spelling — "venecia", "Venezia", "Venice", "Venecija" all
+ * resolve to the same lat/lng via OpenStreetMap Nominatim.
+ */
+export function useMooringsByLocation(params: LocationSearchParams) {
+    const { query, radiusKm = 20, checkIn, checkOut } = params;
+    const trimmed = query.trim();
+
+    return useQuery({
+        queryKey: ['moorings', 'geo', trimmed, radiusKm, checkIn, checkOut],
+        queryFn: async (): Promise<MooringWithDistance[]> => {
+            if (trimmed.length < 2) return [];
+
+            // 1. Geocode the user's search query
+            const geo = await geocodeQuery(trimmed);
+            if (!geo) {
+                console.warn('[useMooringsByLocation] Could not geocode:', trimmed);
+                return [];
+            }
+
+            // 2. Fetch moorings (availability-aware when dates are given)
+            let raw: DbMooring[] = [];
+
+            if (checkIn && checkOut) {
+                const { data, error } = await supabase.rpc('get_available_moorings', {
+                    p_check_in: checkIn,
+                    p_check_out: checkOut,
+                    p_query: null,
+                    p_country: null,
+                });
+                if (!error && data) raw = data as DbMooring[];
+            } else {
+                const { data, error } = await supabase
+                    .from('moorings')
+                    .select('*')
+                    .eq('status', 'active');
+                if (!error && data) raw = data as DbMooring[];
+            }
+
+            // 3. Calculate distance for every mooring, filter by radius, sort closest-first
+            const results: MooringWithDistance[] = raw
+                .filter((m) => m.lat && m.lng)  // skip nulls / 0,0
+                .map((m) => {
+                    const distKm = haversineKm(geo.lat, geo.lng, m.lat, m.lng);
+                    const frontend = dbToFrontend(m);
+                    return {
+                        ...frontend,
+                        distance: `${formatDistance(distKm)} from ${geo.cityName}`,
+                        distanceKm: distKm,
+                    };
+                })
+                .filter(({ distanceKm }) => distanceKm <= radiusKm)
+                .sort((a, b) => a.distanceKm - b.distanceKm);
+
+            return results;
+        },
+        staleTime: 3 * 60 * 1000,
+        enabled: trimmed.length >= 2,
+    });
+}
+
