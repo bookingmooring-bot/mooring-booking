@@ -183,13 +183,13 @@
     "stripeSecure": "Platby su bezpecne a spracovane prostrednictvom Stripe"
   },
   "aiChat": {
-    "title": "AI Kapitán",
+    "title": "Kapitán Jeck",
     "subtitle": "Váš osobný námorný asistent",
     "placeholder": "Spýtajte sa na počasie, navigáciu, tipy na kotvenie...",
     "send": "Odoslať",
-    "welcome": "Vitajte na palube! Som AI Kapitán, váš neohrožený navigátor hĺbkami mora a tajomstvami prístavov. Pomáham s navigáciou, námornými radami, predpoveďou počasia, krízovými situáciami, manévrovaním, kotvením, hľadaním dostupných kotvísk a marín, technickými opravami, výjazdom a vjazdom do prístavov. Aký kurz nastavujeme dnes?",
+    "welcome": "Vitajte na palube! Som Jeck – váš neohrožený navigátor hĺbkami mora a tajomstvami prístavov. Pomáham s navigáciou, námornými radami, predpoveďou počasia, krízovými situáciami, manévrovaním, kotvením, hľadaním dostupných kotvísk a marín, technickými opravami, výjazdom a vjazdom do prístavov. Aký kurz nastavujeme dnes?",
     "thinking": "Plaviem hĺbinami dátového mora... Prosím čakajte, čoskoro zakotvíme s odpoveďami!",
-    "farewell": "Pokojné more! Váš verný AI Kapitán vždy pripravený na ďalšie dobrodružstvo."
+    "farewell": "Pokojné more! Váš verný Kapitán Jeck vždy pripravený na ďalšie dobrodružstvo."
   },
   "provider": {
     "title": "Vytvoriť Profil Poskytovateľa",

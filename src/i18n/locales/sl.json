@@ -183,11 +183,11 @@
     "stripeSecure": "Placila so varna in obdelana prek Stripe"
   },
   "aiChat": {
-    "title": "AI Kapitan",
+    "title": "AI Kapitan Jack",
     "subtitle": "Vaš osebni pomorski asistent",
     "placeholder": "Vprašajte o vremenu, navigaciji, nasvetih za privez...",
     "send": "Pošlji",
-    "welcome": "Dobrodošli na krovu! Sem AI Kapitan, vaš neustrašeni navigator skozi globine morja in skrivnosti pristanišč. Pomagam pri navigaciji, pomorskih nasvetih, vremenskih napovedih, kriznih situacijah, manevriranju, privezovanju, iskanju ugodnih privezov in marin, tehničnih popravilih, odhodu in prihodu v pristanišča. Katero smer nastavimo danes?",
+    "welcome": "Dobrodošli na krovu! Sem AI Kapitan Jack, vaš neustrašeni navigator skozi globine morja in skrivnosti pristanišč. Pomagam pri navigaciji, pomorskih nasvetih, vremenskih napovedih, kriznih situacijah, manevriranju, privezovanju, iskanju ugodnih privezov in marin, tehničnih popravilih, odhodu in prihodu v pristanišča. Katero smer nastavimo danes?",
     "thinking": "Plavam skozi morske globine podatkov... Prosim počakajte, kmalu sidramo z odgovori!",
     "farewell": "Mirno morje! Vaš zvesti AI Kapitan vedno pripravljen na naslednjo pustolovščino."
   },

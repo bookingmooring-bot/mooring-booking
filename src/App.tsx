@@ -51,6 +51,7 @@ import Admin from "./pages/Admin";
 import UserPricing from "./pages/UserPricing";
 import SailingManual from "./pages/SailingManual";
 import MarinaPartnership from "./pages/MarinaPartnership";
+import AICaptainPage from "./pages/AICaptainPage";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import AddMooring from "./pages/AddMooring";
@@ -91,6 +92,7 @@ const App = () => {
                 <Route path="/user-pricing" element={<UserPricing />} />
                 <Route path="/sailing-manual" element={<SailingManual />} />
                 <Route path="/marina-partnership" element={<MarinaPartnership />} />
+                <Route path="/ai-captain" element={<AICaptainPage />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/add-mooring" element={<ProtectedRoute><AddMooring /></ProtectedRoute>} />

@@ -6,6 +6,7 @@ import HowItWorks from "@/components/HowItWorks";
 import Testimonials from "@/components/Testimonials";
 import HomePricing from "@/components/HomePricing";
 import ProviderCTA from "@/components/ProviderCTA";
+import AICaptainTeaser from "@/components/AICaptainTeaser";
 import Footer from "@/components/Footer";
 import WeatherWidget from "@/components/WeatherWidget";
 import MapErrorBoundary from "@/components/MapErrorBoundary";
@@ -79,6 +80,7 @@ const Index = () => {
         </section>
         
         <HowItWorks />
+        <AICaptainTeaser />
         <Testimonials />
         
         {/* Ad Banner */}

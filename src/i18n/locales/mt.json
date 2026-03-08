@@ -183,11 +183,11 @@
     "stripeSecure": "Il-hlasijiet huma siguri u pprocssati permezz ta' Stripe"
   },
   "aiChat": {
-    "title": "AI Kaptan",
+    "title": "AI Kaptan Jack",
     "subtitle": "L-assistent nawtiku personali tiegħek",
     "placeholder": "Staqsi dwar it-temp, navigazzjoni, pariri għall-mooring...",
     "send": "Ibgħat",
-    "welcome": "Merħba abbord! Jien AI Kaptan, il-navigatur kuraġġuż tiegħek fil-fond tal-baħar u s-sigriet tal-portijiet. Ngħin fin-navigazzjoni, pariri nawtiċi, previsjonijiet tat-temp, sitwazzjonijiet ta' kriżi, manovri, ramm, tfittxija ta' ormeggi u marini bi prezzijiet raġonevoli, tiswijiet tekniċi, it-tluq u l-wasla fil-portijiet. Liema rotta nistabbilixxu llum?",
+    "welcome": "Merħba abbord! Jien AI Kaptan Jack, il-navigatur kuraġġuż tiegħek fil-fond tal-baħar u s-sigriet tal-portijiet. Ngħin fin-navigazzjoni, pariri nawtiċi, previsjonijiet tat-temp, sitwazzjonijiet ta' kriżi, manovri, ramm, tfittxija ta' ormeggi u marini bi prezzijiet raġonevoli, tiswijiet tekniċi, it-tluq u l-wasla fil-portijiet. Liema rotta nistabbilixxu llum?",
     "thinking": "Qed inbaħħar fil-fond tal-baħar tad-data... Jekk jogħġbok stenna, dalwaqt norbtu bl-tweġibiet!",
     "farewell": "Baħar kalm! L-AI Kaptan fidil tiegħek dejjem lest għall-avventura jmiss."
   },

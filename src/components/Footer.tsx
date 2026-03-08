@@ -52,6 +52,9 @@ const Footer = () => {
               <button onClick={() => handleLinkClick('/support#faq')} className="text-left text-primary-foreground/70 hover:text-gold transition-colors text-sm">
                 FAQ
               </button>
+              <button onClick={() => handleLinkClick('/ai-captain')} className="text-left text-primary-foreground/70 hover:text-gold transition-colors text-sm">
+                {t('footer.aiCaptain', 'AI Captain')}
+              </button>
               <button onClick={() => handleLinkClick('/contact')} className="text-left text-primary-foreground/70 hover:text-gold transition-colors text-sm">
                 {t('footer.contact')}
               </button>

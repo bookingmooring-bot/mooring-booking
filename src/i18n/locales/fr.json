@@ -1,4 +1,4 @@
-﻿{
+{
   "nav": {
     "explore": "Explorer",
     "howItWorks": "Comment ça Marche",
@@ -182,11 +182,11 @@
     "stripeSecure": "Les paiements sont securises et traites via Stripe"
   },
   "aiChat": {
-    "title": "AI Capitaine",
+    "title": "AI Capitaine Jack",
     "subtitle": "Votre assistant nautique personnel",
     "placeholder": "Demandez sur la météo, la navigation, conseils d'amarrage...",
     "send": "Envoyer",
-    "welcome": "Bienvenue à bord! Je suis AI Capitaine, votre intrépide navigateur à travers les profondeurs de la mer et les secrets des ports. J'assiste en navigation, conseils nautiques, prévisions météo, situations de crise, manœuvres, amarrage, recherche de postes et marinas abordables, réparations techniques, départ et arrivée en port. Quel cap mettons-nous aujourd'hui?",
+    "welcome": "Bienvenue à bord! Je suis AI Capitaine Jack, votre intrépide navigateur à travers les profondeurs de la mer et les secrets des ports. J'assiste en navigation, conseils nautiques, prévisions météo, situations de crise, manœuvres, amarrage, recherche de postes et marinas abordables, réparations techniques, départ et arrivée en port. Quel cap mettons-nous aujourd'hui?",
     "thinking": "Je navigue dans les profondeurs de la mer de données... Veuillez patienter, nous jetons bientôt l'ancre avec des réponses!",
     "farewell": "Mer calme! Votre fidèle AI Capitaine toujours prêt pour la prochaine aventure."
   },

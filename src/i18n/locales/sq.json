@@ -183,11 +183,11 @@
     "stripeSecure": "Pagesat jane te sigurta dhe perpunohen nepermjet Stripe"
   },
   "aiChat": {
-    "title": "AI Kapiten",
+    "title": "AI Kapiten Jack",
     "subtitle": "Asistenti juaj personal detar",
     "placeholder": "Pyesni rreth motit, navigimit, këshillave të ankorimit...",
     "send": "Dërgo",
-    "welcome": "Mirë se vini në bord! Unë jam AI Kapiten, navigatori juaj i guximshëm nëpër thellësitë e detit dhe sekretet e porteve. Ndihmoj me navigim, këshilla nautike, parashikime moti, situata krizash, manovra, ankorim, kërkim të ankorimeve dhe marinave të lira, riparime teknike, nisje dhe hyrje në porte. Çfarë kursi vendosim sot?",
+    "welcome": "Mirë se vini në bord! Unë jam AI Kapiten Jack, navigatori juaj i guximshëm nëpër thellësitë e detit dhe sekretet e porteve. Ndihmoj me navigim, këshilla nautike, parashikime moti, situata krizash, manovra, ankorim, kërkim të ankorimeve dhe marinave të lira, riparime teknike, nisje dhe hyrje në porte. Çfarë kursi vendosim sot?",
     "thinking": "Po lundroj nëpër thellësitë e detit të të dhënave... Ju lutemi prisni, së shpejti ankorojmë me përgjigje!",
     "farewell": "Det i qetë! AI Kapiteni juaj besnik gjithmonë gati për aventurën tjetër."
   },

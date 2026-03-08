@@ -179,14 +179,15 @@
     "allRightsReserved": "Sva prava pridržana.",
     "madeWith": "Napravljeno s",
     "by": "od",
-    "stripeSecure": "Plaćanja su sigurna i obrađena putem Stripe platforme"
+    "stripeSecure": "Plaćanja su sigurna i obrađena putem Stripe platforme",
+    "aiCaptain": "AI Kapetan"
   },
   "aiChat": {
-    "title": "AI Kapetan",
+    "title": "AI Kapetanm Jack",
     "subtitle": "Vaš osobni nautički asistent",
     "placeholder": "Pitajte o vremenu, navigaciji, savjetima za vezanje...",
     "send": "Pošalji",
-    "welcome": "Welcome aboard! I am AI Captain, your fearless navigator through the depths of the sea and the secrets of harbors. I assist with navigation, nautical advice, weather forecasts, crisis situations, maneuvers, mooring, searching for affordable berths and marinas, technical repairs, departure and arrival in ports. You can also ask me about tourist information, fuel stations, and restaurants along your route. What course are we setting today?",
+    "welcome": "Welcome aboard! I am AI Captain Jack, your fearless navigator through the depths of the sea and the secrets of harbors. I assist with navigation, nautical advice, weather forecasts, crisis situations, maneuvers, mooring, searching for affordable berths and marinas, technical repairs, departure and arrival in ports. You can also ask me about tourist information, fuel stations, and restaurants along your route. What course are we setting today?",
     "capabilities": "možete me pitati i o turističkim informacijama, lokacijama benzinskih pumpi i restoranima na vašoj ruti",
     "extendedDesc": "Kažite mi krajnje odredište i dobićete fantastičan itinerer gdje možete prenoćiti, povoljne vezove, povijest mjesta gdje ćete uploviti, benzinske crpke, savjete za manevriranje, pa čak i preporuku za najboljeg ocijenjenog restorana u blizini veza.",
     "thinking": "Plovim kroz morske dubine podataka... Molimo sačekajte, ubrzo sidrimo s odgovorima!",
@@ -1067,5 +1068,88 @@
     "signInBtn": "Prijavi se",
     "haveAccount": "Već imate račun? Prijavite se",
     "noAccount": "Nemate račun? Registrirajte se"
+  },
+  "aiCaptainTeaser": {
+    "badge": "AI Kapetan",
+    "title": "Upoznajte vašeg AI Kapetana",
+    "subtitle": "Nautički AI stručnjak dostupan 24/7 — od upozorenja na oluje i planiranja rute do dijagnostike broda i manevara privezivanja.",
+    "feature": {
+      "weather": "Vremenska upozorenja",
+      "navigation": "Navigacija korak po korak",
+      "mooring": "Pomoć pri privezivanju",
+      "diagnostics": "Dijagnostika broda"
+    },
+    "readMore": "Pročitaj više"
+  },
+  "aiCaptainPage": {
+    "badge": "AI Kapetan Jack",
+    "heroTitle": "Sve što",
+    "heroHighlight": "AI Kapetan može",
+    "heroSubtitle": "Vaš 24/7 nautički stručnjak pokrenut Google Gemini AI-em. Od upozorenja na oluje do dijagnostike broda — AI Kapetan vas pokriva na moru.",
+    "ctaStart": "Počni besplatno",
+    "ctaPlans": "Pogledaj planove",
+    "capabilitiesTitle": "Sve sposobnosti",
+    "capabilitiesSubtitle": "Deset moćnih područja gdje AI Kapetan pomaže na vodi.",
+    "cap": {
+      "weather": {
+        "title": "Vremenska prognoza i oluje",
+        "desc": "7-dnevne prognoze s brzinom vjetra, visinom valova, vidljivošću i upozorenjima na oluje. Znaj prije nego kreš."
+      },
+      "navigation": {
+        "title": "Navigacija korak po korak",
+        "desc": "Precizna GPS nautička navigacija s vaše trenutne pozicije do bilo kojeg veza ili luke na Mediteranu."
+      },
+      "mooring": {
+        "title": "Vodič za privezivanje",
+        "desc": "Upute korak po korak za prilazan i privezivanje — bove, pristanište i tijesne marine."
+      },
+      "routing": {
+        "title": "Planiranje rute",
+        "desc": "AI rute za više dana prema polazištu, tipu broda i vremenskim uvjetima. Otkrijte skrivene vezove."
+      },
+      "diagnostics": {
+        "title": "Dijagnostika broda",
+        "desc": "Problemi s motorom, električni kvarovi, sidreni vinč, pumpa — AI Kapetan vodi kroz dijagnozu i privremene popravke."
+      },
+      "colregs": {
+        "title": "COLREGS i sigurnosna pravila",
+        "desc": "Međunarodna plovidbena pravila na zahtjev. Jasna objašnjenja za svako pravilo, na jeziku razumljivom svima."
+      },
+      "maneuvers": {
+        "title": "Vodiči za manevre",
+        "desc": "Ulazak katamarana u usku luku, sidrenje u jakim strujama, pristajanje u vjetru — detaljna pomoć korak po korak."
+      },
+      "discover": {
+        "title": "Pronađi povoljne vezove",
+        "desc": "Pitajte AI Kapetana da pronađe najjeftinije ili najocjenjenije vezove blizu bilo koje lokacije. Direktni linkovi za rezervaciju."
+      },
+      "offline": {
+        "title": "Offline pristup (Premium)",
+        "desc": "Premium članovi mogu koristiti AI Kapetana s 24-satnim cachom vremenskih prognoza, offline kartama i spremljenim navigacijskim vodičima — čak i bez interneta."
+      },
+      "multilang": {
+        "title": "Višejezična podrška",
+        "desc": "Komunicirajte na hrvatskom, engleskom, talijanskom, grčkom, njemačkom, turskom i više. AI Kapetan vas razumije."
+      }
+    },
+    "planTitle": "Besplatno vs Premium",
+    "planSubtitle": "Počnite besplatno. Nadogradite za puni AI Kapetan doživljaj.",
+    "planFeature": "Funkcija",
+    "planBasic": "Basic (Besplatno)",
+    "planPremium": "Premium",
+    "planRow": {
+      "booking": "Pretraži i rezerviraj vezove",
+      "aiBasic": "AI Kapetan (5 pitanja ukupno)",
+      "weather3": "3-dnevna vremenska prognoza",
+      "aiUnlimited": "Neograničeni AI Kapetan",
+      "weather7": "7-dnevne detaljne prognoze",
+      "offline": "Offline karte i cache",
+      "stormAlerts": "Upozorenja na oluje i vjetar",
+      "routing": "AI planiranje rute",
+      "maneuvers": "Vodiči za manevre",
+      "priority": "Prioritetna rezervacija"
+    },
+    "ctaTitle": "Spremi za pametnije plovidbu?",
+    "ctaSubtitle": "Pridružite se tisućama nautičara koji koriste AI Kapetana svaki dan. Besplatno za početak."
   }
 }

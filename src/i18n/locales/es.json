@@ -1,4 +1,4 @@
-﻿{
+{
   "nav": {
     "explore": "Explorar",
     "howItWorks": "Cómo Funciona",
@@ -182,11 +182,11 @@
     "stripeSecure": "Los pagos son seguros y procesados a traves de Stripe"
   },
   "aiChat": {
-    "title": "AI Capitán",
+    "title": "AI Capitán Jeck",
     "subtitle": "Tu asistente náutico personal",
     "placeholder": "Pregunta sobre el tiempo, navegación, consejos de amarre...",
     "send": "Enviar",
-    "welcome": "¡Bienvenido a bordo! Soy AI Capitán, tu intrépido navegante a través de las profundidades del mar y los secretos de los puertos. Asisto en navegación, consejos náuticos, pronósticos del tiempo, situaciones de crisis, maniobras, amarre, búsqueda de amarres y marinas asequibles, reparaciones técnicas, salida y entrada en puertos. ¿Qué rumbo fijamos hoy?",
+    "welcome": "¡Bienvenido a bordo! Soy AI Capitán Jeck, tu intrépido navegante a través de las profundidades del mar y los secretos de los puertos. Asisto en navegación, consejos náuticos, pronósticos del tiempo, situaciones de crisis, maniobras, amarre, búsqueda de amarres y marinas asequibles, reparaciones técnicas, salida y entrada en puertos. ¿Qué rumbo fijamos hoy?",
     "thinking": "Navegando por las profundidades del mar de datos... ¡Por favor espera, pronto anclaremos con respuestas!",
     "farewell": "¡Mar en calma! Tu fiel AI Capitán siempre listo para la próxima aventura."
   },

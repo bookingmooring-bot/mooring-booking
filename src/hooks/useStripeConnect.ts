@@ -1,53 +1,38 @@
-import { useMutation } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { useMutation } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
 /**
- * Initiates the Stripe Express Connect onboarding flow for a provider.
- * Uses raw fetch() instead of supabase.functions.invoke() to avoid
- * client-side CORS issues caused by the SDK's request handling.
- *
- * On completion, Stripe redirects to /dashboard?stripe_return=1
- * On abandonment, Stripe redirects to /dashboard?stripe_refresh=1
+ * Initiates Stripe Connect (Express) onboarding for a provider.
+ * Calls the `create-connect-account` Edge Function which returns an onboarding URL,
+ * then redirects the provider's browser to that URL.
  */
 export function useStripeConnect() {
+  const { toast } = useToast();
+
   return useMutation({
     mutationFn: async () => {
-      // Refresh session first to ensure JWT is not expired
-      const { data: sessionData, error: sessionError } = await supabase.auth.refreshSession();
-      if (sessionError || !sessionData?.session) {
-        throw new Error('Nisi prijavljen ili je sesija istekla. Molimo se odjavi i ponovo prijavi.');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        throw new Error("Not authenticated");
       }
 
-      const token = sessionData.session.access_token;
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+      const { data, error } = await supabase.functions.invoke("create-connect-account", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
 
-      // Use raw fetch to bypass supabase.functions.invoke CORS issues
-      const response = await fetch(
-        `${supabaseUrl}/functions/v1/create-connect-account`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-            'apikey': supabaseAnonKey,
-          },
-          body: JSON.stringify({}),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.error ?? `Server error: ${response.status}`);
-      }
-
-      if (!data?.url) {
-        throw new Error('No onboarding URL returned from server.');
-      }
+      if (error) throw error;
+      if (!data?.url) throw new Error("No onboarding URL returned");
 
       // Redirect to Stripe Express onboarding
       window.location.href = data.url;
+    },
+    onError: (err: Error) => {
+      toast({
+        title: "Stripe greška",
+        description: err.message || "Nije moguće pokrenuti Stripe onboarding. Pokušaj ponovo.",
+        variant: "destructive",
+      });
     },
   });
 }
