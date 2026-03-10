@@ -40,7 +40,7 @@ const PasswordGate = ({ children }: PasswordGateProps) => {
         }
     };
 
-    // Bypass gate for provider-specific public pages
+    // ⚡ Bypass gate for provider-specific public pages — MUST be before any other guard
     if (PUBLIC_PROVIDER_PATHS.some(p => window.location.pathname.startsWith(p))) {
         return <>{children}</>;
     }
