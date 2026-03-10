@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 
+// Routes that bypass PasswordGate entirely (public provider pages)
+const PUBLIC_PROVIDER_PATHS = ["/join-as-provider", "/provider-portal"];
+
 const STORAGE_KEY = "mb_gate_auth";
 const CORRECT_PASSWORD = "Brod.96.vez";
 
@@ -36,6 +39,11 @@ const PasswordGate = ({ children }: PasswordGateProps) => {
             setTimeout(() => setShake(false), 600);
         }
     };
+
+    // Bypass gate for provider-specific public pages
+    if (PUBLIC_PROVIDER_PATHS.some(p => window.location.pathname.startsWith(p))) {
+        return <>{children}</>;
+    }
 
     if (checking) return null;
     if (isAuthenticated) return <>{children}</>;

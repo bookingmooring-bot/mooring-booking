@@ -60,6 +60,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import PasswordGate from "./components/PasswordGate";
 import AIChatWidget from "./components/AIChatWidget";
+import ProviderLanding from "./pages/ProviderLanding";
+import ProviderPortal from "./pages/ProviderPortal";
 
 const queryClient = new QueryClient();
 
@@ -97,6 +99,8 @@ const App = () => {
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/add-mooring" element={<ProtectedRoute><AddMooring /></ProtectedRoute>} />
                 <Route path="/edit-mooring/:id" element={<ProtectedRoute><EditMooring /></ProtectedRoute>} />
+                <Route path="/join-as-provider" element={<ProviderLanding />} />
+                <Route path="/provider-portal" element={<ProviderPortal />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
