@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 // Routes that bypass PasswordGate entirely (public provider pages)
 const PUBLIC_PROVIDER_PATHS = ["/join-as-provider", "/provider-portal"];
@@ -11,20 +11,20 @@ interface PasswordGateProps {
 }
 
 const PasswordGate = ({ children }: PasswordGateProps) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    // Read sessionStorage SYNCHRONOUSLY so there is zero delay / flash.
+    // This avoids the old checking=true → null flash that broke production.
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
+        () => sessionStorage.getItem(STORAGE_KEY) === "true"
+    );
     const [password, setPassword] = useState("");
     const [error, setError] = useState(false);
     const [shake, setShake] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const [checking, setChecking] = useState(true);
 
-    useEffect(() => {
-        const stored = sessionStorage.getItem(STORAGE_KEY);
-        if (stored === "true") {
-            setIsAuthenticated(true);
-        }
-        setChecking(false);
-    }, []);
+    // ─── Bypass: public provider pages skip the gate entirely ─────────────────
+    if (PUBLIC_PROVIDER_PATHS.some(p => window.location.pathname.startsWith(p))) {
+        return <>{children}</>;
+    }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,12 +40,6 @@ const PasswordGate = ({ children }: PasswordGateProps) => {
         }
     };
 
-    // ⚡ Bypass gate for provider-specific public pages — MUST be before any other guard
-    if (PUBLIC_PROVIDER_PATHS.some(p => window.location.pathname.startsWith(p))) {
-        return <>{children}</>;
-    }
-
-    if (checking) return null;
     if (isAuthenticated) return <>{children}</>;
 
     return (
