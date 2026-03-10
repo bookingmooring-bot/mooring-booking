@@ -2,17 +2,16 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import {
   Anchor, ArrowRight, ArrowLeft, CheckCircle2, Eye, EyeOff,
-  Loader2, MapPin, Phone, Mail, User, Lock, Ship, Star, TrendingUp, Shield, Users
+  Loader2, Phone, Mail, User, Lock, Ship, Star, TrendingUp, Shield, Users
 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface OnboardingAnswers {
-  mooringType: string;
-  quantity: string;
-  country: string;
-  city: string;
+  // Map of mooring type id → quantity (number string). Empty map = nothing selected.
+  mooringTypes: Record<string, string>;
   phone: string;
+  declarationAccepted: boolean;
 }
 
 type Step = "hero" | "questions" | "register" | "success";
@@ -26,12 +25,6 @@ const MOORING_TYPES = [
   { id: "other", label: "Other", icon: "🌊" },
 ];
 
-const QUANTITIES = ["1", "2–3", "4–5", "6–10", "10+"];
-
-const COUNTRIES = [
-  "Croatia", "Greece", "Italy", "Spain", "France",
-  "Montenegro", "Slovenia", "Turkey", "Malta", "Albania", "Cyprus", "Other",
-];
 
 const BENEFITS = [
   { icon: TrendingUp, label: "€5,000+", desc: "avg. annual earnings" },
@@ -181,7 +174,7 @@ const dotStyle = (active: boolean): React.CSSProperties => ({
 const ProviderLanding = () => {
   const [step, setStep] = useState<Step>("hero");
   const [answers, setAnswers] = useState<OnboardingAnswers>({
-    mooringType: "", quantity: "", country: "", city: "", phone: "",
+    mooringTypes: {}, phone: "", declarationAccepted: false,
   });
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
@@ -192,7 +185,10 @@ const ProviderLanding = () => {
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
   const questionsValid =
-    answers.mooringType && answers.quantity && answers.country && answers.city.trim();
+    Object.keys(answers.mooringTypes).length > 0 &&
+    Object.values(answers.mooringTypes).every(q => q.trim() !== "" && Number(q) > 0) &&
+    answers.phone.trim().length >= 6 &&
+    answers.declarationAccepted;
 
   const formValid = isSignIn
     ? (form.email.trim() && form.password)
@@ -204,19 +200,19 @@ const ProviderLanding = () => {
 
   const sendWelcomeEmail = async (email: string, name: string) => {
     try {
+      const typeSummary = Object.entries(answers.mooringTypes)
+        .map(([id, qty]) => `${MOORING_TYPES.find(t => t.id === id)?.label ?? id}: ${qty}`)
+        .join(", ");
       await supabase.functions.invoke("send-provider-welcome", {
         body: {
           to: email,
           name: name || email.split("@")[0],
           portal_url: getPortalUrl(),
-          mooring_type: answers.mooringType,
-          quantity: answers.quantity,
-          country: answers.country,
-          city: answers.city,
+          mooring_type: typeSummary,
+          quantity: Object.values(answers.mooringTypes).reduce((s, v) => s + Number(v), 0).toString(),
         },
       });
     } catch {
-      // Non-fatal: email failure doesn't block registration
       console.warn("Welcome email could not be sent");
     }
   };
@@ -232,7 +228,6 @@ const ProviderLanding = () => {
           phone: answers.phone || null,
         })
         .eq("id", userId);
-
       if (!error) break;
       await new Promise((r) => setTimeout(r, 800));
     }
@@ -315,6 +310,26 @@ const ProviderLanding = () => {
     </div>
   );
 
+  // Toggle a mooring type on/off in the multi-select map
+  const toggleMooringType = (id: string) => {
+    setAnswers(prev => {
+      const next = { ...prev.mooringTypes };
+      if (next[id] !== undefined) {
+        delete next[id];
+      } else {
+        next[id] = "1";
+      }
+      return { ...prev, mooringTypes: next };
+    });
+  };
+
+  const setTypeQty = (id: string, val: string) => {
+    setAnswers(prev => ({
+      ...prev,
+      mooringTypes: { ...prev.mooringTypes, [id]: val },
+    }));
+  };
+
   const renderQuestions = () => (
     <div style={S.card}>
       <button style={S.backBtn} onClick={() => setStep("hero")}>
@@ -323,84 +338,83 @@ const ProviderLanding = () => {
       <div style={S.stepLabel}>Step 1 of 2</div>
       <div style={S.stepTitle}>Tell us about your mooring</div>
 
-      {/* Type */}
+      {/* Multi-select mooring types */}
       <div style={S.qGroup}>
-        <div style={S.qLabel}>What type of mooring do you have?</div>
+        <div style={S.qLabel}>What type(s) of mooring do you have? <span style={{ color: "#475569", fontWeight: 400 }}>(select all that apply)</span></div>
         <div style={S.optionGrid}>
-          {MOORING_TYPES.map((t) => (
-            <div
-              key={t.id}
-              style={optionStyle(answers.mooringType === t.id)}
-              onClick={() => setAnswers({ ...answers, mooringType: t.id })}
-            >
-              <span style={{ fontSize: 20 }}>{t.icon}</span>
-              {t.label}
-            </div>
-          ))}
+          {MOORING_TYPES.map((t) => {
+            const selected = answers.mooringTypes[t.id] !== undefined;
+            return (
+              <div key={t.id}>
+                <div
+                  style={optionStyle(selected)}
+                  onClick={() => toggleMooringType(t.id)}
+                >
+                  <span style={{ fontSize: 20 }}>{t.icon}</span>
+                  {t.label}
+                  {selected && <span style={{ marginLeft: "auto", color: "#38bdf8", fontSize: 18 }}>✓</span>}
+                </div>
+                {/* Per-type quantity input, shown only when selected */}
+                {selected && (
+                  <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ color: "#94a3b8", fontSize: 13, whiteSpace: "nowrap" }}>
+                      How many {t.label}s?
+                    </span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="999"
+                      style={{
+                        ...S.input,
+                        marginTop: 0,
+                        width: 90,
+                        padding: "8px 12px",
+                        textAlign: "center",
+                      }}
+                      value={answers.mooringTypes[t.id]}
+                      onChange={(e) => setTypeQty(t.id, e.target.value)}
+                      placeholder="Qty"
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Quantity */}
-      <div style={S.qGroup}>
-        <div style={S.qLabel}>How many mooring spots do you have?</div>
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          {QUANTITIES.map((q) => (
-            <div
-              key={q}
-              style={optionCountStyle(answers.quantity === q)}
-              onClick={() => setAnswers({ ...answers, quantity: q })}
-            >
-              {q}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Country */}
-      <div style={S.qGroup}>
-        <div style={S.qLabel}>Which country is your mooring in?</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-          {COUNTRIES.map((c) => (
-            <div
-              key={c}
-              style={{
-                ...optionCountStyle(answers.country === c),
-                padding: "8px 14px",
-              }}
-              onClick={() => setAnswers({ ...answers, country: c })}
-            >
-              {c}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* City */}
-      <div style={S.qGroup}>
-        <label style={S.qLabel}>
-          <MapPin size={15} style={{ display: "inline", marginRight: 6 }} />
-          City / Port name
-        </label>
-        <input
-          style={S.input}
-          placeholder="e.g. Dubrovnik, Split, Hvar..."
-          value={answers.city}
-          onChange={(e) => setAnswers({ ...answers, city: e.target.value })}
-        />
-      </div>
-
-      {/* Phone (optional) */}
+      {/* Phone — required */}
       <div style={S.qGroup}>
         <label style={S.qLabel}>
           <Phone size={15} style={{ display: "inline", marginRight: 6 }} />
-          Your phone number <span style={{ color: "#475569", fontWeight: 400 }}>(optional)</span>
+          Phone number <span style={{ color: "#f87171", fontWeight: 500 }}>*</span>
         </label>
         <input
           style={S.input}
           placeholder="+385 91 234 5678"
           value={answers.phone}
           onChange={(e) => setAnswers({ ...answers, phone: e.target.value })}
+          required
         />
+      </div>
+
+      {/* Declaration checkbox */}
+      <div style={{ ...S.qGroup, marginBottom: 28 }}>
+        <label style={{
+          display: "flex", alignItems: "flex-start", gap: 12, cursor: "pointer",
+        }}>
+          <input
+            type="checkbox"
+            checked={answers.declarationAccepted}
+            onChange={(e) => setAnswers({ ...answers, declarationAccepted: e.target.checked })}
+            style={{ marginTop: 3, width: 18, height: 18, accentColor: "#38bdf8", flexShrink: 0 }}
+          />
+          <span style={{ color: "#94a3b8", fontSize: 13, lineHeight: 1.6 }}>
+            I confirm that I have the <strong style={{ color: "#e0f2fe" }}>legal right to rent out</strong> the
+            moorings listed above, whether through ownership, concession, or written
+            authorization from the owner or concessionaire.
+          </span>
+        </label>
       </div>
 
       <button
