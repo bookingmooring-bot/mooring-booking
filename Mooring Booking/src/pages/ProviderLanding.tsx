@@ -226,10 +226,28 @@ const ProviderLanding = () => {
         .update({
           role: "provider",
           phone: answers.phone || null,
+          provider_consent_at: new Date().toISOString(),
         })
         .eq("id", userId);
       if (!error) break;
       await new Promise((r) => setTimeout(r, 800));
+    }
+  };
+
+  // ── Save onboarding answers to provider_onboarding table ──────────────────────
+
+  const saveOnboardingData = async (userId: string) => {
+    try {
+      await supabase.from("provider_onboarding").upsert({
+        user_id: userId,
+        mooring_types: answers.mooringTypes,   // JSONB: { buoy: 2, berth: 5 }
+        phone: answers.phone || null,
+        declaration_accepted: answers.declarationAccepted,
+        declaration_accepted_at: answers.declarationAccepted ? new Date().toISOString() : null,
+      }, { onConflict: "user_id" });
+    } catch {
+      // Non-fatal
+      console.warn("Onboarding data could not be saved");
     }
   };
 
@@ -269,6 +287,8 @@ const ProviderLanding = () => {
       if (data.user) {
         // Set provider role (with retries since profile trigger may be slightly delayed)
         await setProviderRole(data.user.id);
+        // Save full onboarding form data to DB
+        await saveOnboardingData(data.user.id);
         // Send welcome email with portal link
         await sendWelcomeEmail(form.email.trim(), form.name.trim());
       }
