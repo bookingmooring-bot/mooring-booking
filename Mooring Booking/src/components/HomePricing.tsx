@@ -85,7 +85,7 @@ const HomePricing = () => {
                   ))}
                 </ul>
                 <Link to="/auth">
-                  <Button className={`w-full font-semibold ${tier.popular ? "bg-success hover:bg-success/90" : tier.name === t('homePricing.basicName') ? "bg-secondary hover:bg-secondary/90" : "bg-gradient-ocean"}`}>{tier.cta}</Button>
+                  <Button className={`w-full font-semibold ${tier.popular ? "bg-success hover:bg-success/90 text-white" : tier.name === t('homePricing.basicName') ? "bg-secondary hover:bg-secondary/90 text-white" : "bg-gradient-ocean text-white"}`}>{tier.cta}</Button>
                 </Link>
               </div>
             );

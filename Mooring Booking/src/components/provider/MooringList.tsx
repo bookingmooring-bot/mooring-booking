@@ -215,7 +215,7 @@ const MooringList = () => {
 
                                     {/* Action buttons */}
                                     <div className="mt-4 flex flex-wrap gap-2">
-                                        <Button variant="outline" size="sm" onClick={() => navigate(`/mooring/${mooring.id}`)}>
+                                        <Button variant="outline" size="sm" onClick={() => navigate(`/explore?search=${encodeURIComponent(mooring.name)}`)}>
                                             <Eye size={16} className="mr-2" /> View
                                         </Button>
                                         <Button variant="outline" size="sm" onClick={() => navigate(`/edit-mooring/${mooring.id}`)}>

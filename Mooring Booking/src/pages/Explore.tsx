@@ -185,9 +185,9 @@ const ExplorePage = () => {
     .sort((a, b) => {
       if (a.isPremiumListing && !b.isPremiumListing) return -1;
       if (!a.isPremiumListing && b.isPremiumListing) return 1;
-      // When geo search is active, default sort is distance (already ordered)
-      if (useGeo && sortBy === "rating") return 0; // preserve distance order
-      if (sortBy === "rating") return b.rating - a.rating;
+      // In geo mode, ONLY preserve distance order when sort is default "rating"
+      // Price and review sorts must always work regardless of geo mode
+      if (sortBy === "rating") return useGeo ? 0 : b.rating - a.rating;
       if (sortBy === "price-low") return a.price - b.price;
       if (sortBy === "price-high") return b.price - a.price;
       if (sortBy === "reviews") return b.reviewCount - a.reviewCount;
@@ -504,6 +504,7 @@ const ExplorePage = () => {
                             distance={mooring.distance}
                             lat={mooring.lat}
                             lng={mooring.lng}
+                            ownerId={mooring.ownerId}
                             ownerName={mooring.ownerName}
                             ownerPhone={mooring.ownerPhone}
                             description={mooring.description}

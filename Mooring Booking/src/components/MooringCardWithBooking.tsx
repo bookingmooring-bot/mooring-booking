@@ -23,6 +23,7 @@ interface MooringCardWithBookingProps {
   distance?: string;
   lat?: number;
   lng?: number;
+  ownerId?: string;
   ownerName?: string;
   ownerPhone?: string;
   description?: string;
@@ -64,6 +65,7 @@ const MooringCardWithBooking = ({
   distance,
   lat,
   lng,
+  ownerId,
   ownerName,
   ownerPhone,
   description,
@@ -73,7 +75,16 @@ const MooringCardWithBooking = ({
   initialCheckOut,
 }: MooringCardWithBookingProps) => {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
+
+  // ── Persistent favorites via localStorage (BUG-17 fix) ───────────────────────
+  const storageKey = `favorite_mooring_${id}`;
+  const [isFavorite, setIsFavoriteState] = useState<boolean>(
+    () => localStorage.getItem(storageKey) === 'true'
+  );
+  const setIsFavorite = (val: boolean) => {
+    localStorage.setItem(storageKey, String(val));
+    setIsFavoriteState(val);
+  };
 
   const discountedPrice = discountPercent
     ? Math.round(price * (1 - discountPercent / 100))
@@ -218,6 +229,7 @@ const MooringCardWithBooking = ({
           description,
           lat,
           lng,
+          ownerId,
           ownerName,
           ownerPhone,
           winterStorage,

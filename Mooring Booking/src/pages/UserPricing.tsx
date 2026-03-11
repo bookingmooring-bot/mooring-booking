@@ -30,7 +30,8 @@ const UserPricingPage = () => {
   const handleSelectPlan = (planId: string) => {
     if (planId === currentTier && !!user) return; // already on this plan
     if (planId === 'basic') {
-      setSelectedPlan(planId);
+      navigate('/explore');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
     // Require login
@@ -244,9 +245,9 @@ const UserPricingPage = () => {
                       onClick={() => handleSelectPlan(plan.id)}
                       disabled={(plan.id === currentTier && !!user) || checkout.isPending}
                       className={`w-full font-semibold ${plan.id === currentTier && user ? 'bg-muted text-muted-foreground cursor-default'
-                        : plan.popular ? 'bg-success hover:bg-success/90'
-                          : plan.id === 'basic' ? 'bg-secondary hover:bg-secondary/90'
-                            : 'bg-gradient-ocean'
+                        : plan.popular ? 'bg-success hover:bg-success/90 text-white'
+                          : plan.id === 'basic' ? 'bg-secondary hover:bg-secondary/90 text-white'
+                            : 'bg-gradient-ocean text-white'
                         }`}
                     >
                       {checkout.isPending && selectedPlan === plan.id ? (

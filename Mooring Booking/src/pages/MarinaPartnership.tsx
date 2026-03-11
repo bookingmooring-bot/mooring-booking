@@ -42,6 +42,18 @@ const MarinaPartnershipPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const required: (keyof typeof formData)[] = ['marinaName', 'location', 'contactName', 'email', 'phone', 'numberOfBerths'];
+    for (const field of required) {
+      if (!formData[field].trim()) {
+        toast.error('Please fill in all required fields (*) before submitting.');
+        return;
+      }
+    }
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim());
+    if (!emailOk) {
+      toast.error('Please enter a valid email address.');
+      return;
+    }
     toast.success(t('marina.submitSuccess', 'Partnership inquiry submitted! Our B2B team will contact you within 24 hours.'));
   };
 

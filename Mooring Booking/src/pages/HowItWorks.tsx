@@ -2,11 +2,17 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Search, Calendar, Navigation, CreditCard, Shield, Anchor, CheckCircle, Ship, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const HowItWorksPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const goTo = (path: string) => {
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const steps = [
     { icon: Search, number: "01", title: t('howItWorksPage.searchDiscover'), description: t('howItWorksPage.searchDiscoverDesc'), features: [t('howItWorksPage.realTimeAvail', 'Real-time availability'), t('howItWorksPage.advancedFilters', 'Advanced filters'), t('howItWorksPage.interactiveMap', 'Interactive map view'), t('howItWorksPage.lastMinuteDeals', 'Last-minute deals')] },
@@ -62,7 +68,7 @@ const HowItWorksPage = () => {
               ))}
             </div>
             <div className="text-center mt-16">
-              <Link to="/explore"><Button size="lg" className="bg-gradient-ocean font-semibold text-lg px-8 h-14"><Search className="mr-2" size={20} />{t('howItWorksPage.startSearching')}</Button></Link>
+              <Button size="lg" className="bg-gradient-ocean font-semibold text-lg px-8 h-14" onClick={() => goTo('/explore')}><Search className="mr-2" size={20} />{t('howItWorksPage.startSearching')}</Button>
             </div>
           </div>
         </section>
@@ -114,8 +120,8 @@ const HowItWorksPage = () => {
             <h2 className="font-heading text-3xl font-bold text-foreground mb-4">{t('howItWorksPage.stillHaveQuestions')}</h2>
             <p className="text-muted-foreground mb-8">{t('howItWorksPage.checkFAQ')}</p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link to="/support"><Button variant="outline" size="lg">{t('howItWorksPage.contactSupport')}</Button></Link>
-              <Link to="/about"><Button variant="ghost" size="lg">{t('howItWorksPage.learnMore')}</Button></Link>
+              <Button variant="outline" size="lg" onClick={() => goTo('/support')}>{t('howItWorksPage.contactSupport')}</Button>
+              <Button variant="ghost" size="lg" onClick={() => goTo('/about')}>{t('howItWorksPage.learnMore')}</Button>
             </div>
           </div>
         </section>

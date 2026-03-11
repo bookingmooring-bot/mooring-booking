@@ -33,7 +33,7 @@ const PricingPage = () => {
     { question: t('pricing.faq.q3', 'How does the Stripe fee split work?'), answer: t('pricing.faq.a3', 'Stripe processing fees (2.9% + €0.30) are deducted from the total booking amount first. Then the remaining net amount is split 15% to the platform and 85% to you.') },
     { question: t('pricing.faq.q4', 'How does the affiliate program work for providers?'), answer: t('pricing.faq.a4', 'The affiliate commission (5-15%) is paid by Mooring Booking from our 15% fee, not from your earnings. You still receive 85% of the net booking value.') },
     { question: t('pricing.faq.q5', 'Can I cancel a booking?'), answer: t('pricing.faq.a5', 'You can cancel within 24 hours of receiving the booking with no penalty. After that, cancellation may affect your ranking.') },
-    { question: t('pricing.faq.q6', 'What payment methods must I accept?'), answer: t('pricing.faq.a6', 'You choose which payment methods to accept - cash, Visa, Mastercard, PayPal, or Google Pay. We recommend accepting multiple options.') },
+    { question: t('pricing.faq.q6', 'What payment methods must I accept?'), answer: t('pricing.faq.a6', 'All card payments are processed securely via Stripe, supporting Visa, Mastercard, Apple Pay, and Google Pay. You can also choose to accept cash on arrival. We recommend enabling Stripe Connect for automatic payouts.') },
   ];
 
   const basicFeatures = [

@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export interface CreateBookingInput {
     mooring_id: string;
+    provider_id?: string;
     check_in: string;
     check_out: string;
     boat_name?: string;

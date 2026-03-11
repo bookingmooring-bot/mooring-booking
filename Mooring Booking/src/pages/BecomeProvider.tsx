@@ -1094,32 +1094,6 @@ const BecomeProviderPage = () => {
                 </div>
               </div>
 
-              {/* Stripe Integration */}
-              <div className="bg-card rounded-xl p-6 shadow-card">
-                <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
-                  <CreditCard className="text-secondary" size={24} />
-                  {t('provider.stripeIntegration')}
-                </h2>
-                <p className="text-muted-foreground text-sm mb-4">
-                  {t('provider.stripeDesc')} {t('provider.stripePayoutsNote')}
-                </p>
-                <div className="space-y-4">
-                  <div>
-                    <Label>{t('provider.stripeAccountId')}</Label>
-                    <Input
-                      placeholder="acct_xxxxxxxxxx"
-                      className="mt-2"
-                    />
-                  </div>
-                  <Button variant="outline" className="border-secondary text-secondary hover:bg-secondary/10">
-                    <CreditCard className="mr-2" size={18} />
-                    {t('provider.connectStripe')}
-                  </Button>
-                  <p className="text-xs text-muted-foreground">
-                    {t('provider.noStripeAccount')} <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">{t('provider.createStripeFree')}</a>
-                  </p>
-                </div>
-              </div>
 
               {/* Photos */}
               <div className="bg-card rounded-xl p-6 shadow-card">
@@ -1255,7 +1229,7 @@ const BecomeProviderPage = () => {
                     />
                     <div>
                       <Label htmlFor="ownership" className="text-sm font-semibold text-foreground cursor-pointer block mb-1">
-                        ⚖️ {t('provider.declarationRightOfDisposal', 'Izjava o pravu raspolaganja')}
+                        ⚖️ {t('provider.declarationRightOfDisposal', 'Right of Disposal Declaration')}
                       </Label>
                       <p className="text-xs text-muted-foreground leading-relaxed">
                         {t('provider.declaration1')}

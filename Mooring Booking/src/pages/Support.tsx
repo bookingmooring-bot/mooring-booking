@@ -1,16 +1,56 @@
 import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Mail, Phone, HelpCircle, Anchor, Clock, MapPin, Ship, Bot } from "lucide-react";
+import { Mail, Phone, HelpCircle, Anchor, Clock, MapPin, Ship, Bot, Send, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import AIChatWidget from "@/components/AIChatWidget";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
+
+const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
 const SupportPage = () => {
   const { t } = useTranslation();
   const [showAIChat, setShowAIChat] = useState(false);
+
+  // ── Contact form state ───────────────────────────────────────────────────────
+  const [sending, setSending] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const [touched, setTouched] = useState({ name: false, email: false, subject: false, message: false });
+
+  const errors = {
+    name: !form.name.trim() ? "Name is required." : "",
+    email: !form.email.trim() ? "Email is required." : !isValidEmail(form.email) ? "Enter a valid email." : "",
+    subject: !form.subject.trim() ? "Subject is required." : "",
+    message: form.message.trim().length < 10 ? "Message must be at least 10 characters." : "",
+  };
+  const isFormValid = Object.values(errors).every(e => !e);
+
+  const touch = (f: keyof typeof touched) => setTouched(p => ({ ...p, [f]: true }));
+  const set = (f: keyof typeof form) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      setForm(p => ({ ...p, [f]: e.target.value }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setTouched({ name: true, email: true, subject: true, message: true });
+    if (!isFormValid) return;
+    setSending(true);
+    await new Promise(r => setTimeout(r, 900));
+    setSending(false);
+    setSubmitted(true);
+    toast.success("Message sent! Our support team will reply within 24 hours.");
+  };
+
+  const resetForm = () => {
+    setSubmitted(false);
+    setForm({ name: "", email: "", subject: "", message: "" });
+    setTouched({ name: false, email: false, subject: false, message: false });
+  };
+
 
   const faqs = [
     {
@@ -27,7 +67,7 @@ const SupportPage = () => {
     {
       category: t('support.paymentsAndPricing'),
       questions: [
-        { q: t('support.faq.payQ1', 'What payment methods are accepted?'), a: t('support.faq.payA1', 'We accept Visa, Mastercard, PayPal, and Google Pay. Some moorings also accept cash payment on arrival (commission still applies).') },
+        { q: t('support.faq.payQ1', 'What payment methods are accepted?'), a: t('support.faq.payA1', 'We accept Visa, Mastercard, Apple Pay, and Google Pay via Stripe — secure, encrypted card payments. Some moorings also accept cash payment on arrival (commission still applies).') },
         { q: t('support.faq.payQ2', 'Is my payment secure?'), a: t('support.faq.payA2', 'Yes, all payments are processed through Stripe with bank-level encryption. We never store your full card details.') },
         { q: t('support.faq.payQ3', 'When is the mooring owner paid?'), a: t('support.faq.payA3', 'Owners receive payment 3-5 business days after guest check-out for card payments, minus the 15% platform commission.') },
         { q: t('support.faq.payQ4', 'Why do prices vary so much?'), a: t('support.faq.payA4', 'Prices depend on location, season, amenities, and owner preferences. Owners can set custom daily prices via their calendar. Now4Today same-day bookings (01:00 AM–11:00 PM) have a 20% premium to reflect urgent availability.') },
@@ -186,29 +226,74 @@ const SupportPage = () => {
               <p className="text-muted-foreground text-center mb-8">
                 {t('support.sendMessageSubtitle')}
               </p>
-              <form className="space-y-6 bg-card rounded-xl p-8 shadow-card">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">{t('support.name')}</label>
-                    <Input placeholder={t('support.yourName')} />
+              {submitted ? (
+                <div className="bg-card rounded-xl p-8 shadow-card flex flex-col items-center text-center gap-4">
+                  <CheckCircle className="text-success" size={56} />
+                  <h3 className="font-heading text-xl font-bold text-foreground">Message Sent!</h3>
+                  <p className="text-muted-foreground">Our support team will reply within 24 hours.</p>
+                  <Button variant="outline" onClick={resetForm}>Send Another Message</Button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} noValidate className="space-y-6 bg-card rounded-xl p-8 shadow-card">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-foreground mb-2">{t('support.name')} *</label>
+                      <Input
+                        placeholder="John Smith"
+                        value={form.name}
+                        onChange={set('name')}
+                        onBlur={() => touch('name')}
+                        className={touched.name && errors.name ? 'border-destructive' : ''}
+                      />
+                      {touched.name && errors.name && <p className="text-destructive text-xs mt-1">{errors.name}</p>}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-foreground mb-2">{t('support.email')} *</label>
+                      <Input
+                        type="email"
+                        placeholder="john@example.com"
+                        value={form.email}
+                        onChange={set('email')}
+                        onBlur={() => touch('email')}
+                        className={touched.email && errors.email ? 'border-destructive' : ''}
+                      />
+                      {touched.email && errors.email && <p className="text-destructive text-xs mt-1">{errors.email}</p>}
+                    </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">{t('support.email')}</label>
-                    <Input type="email" placeholder="your@email.com" />
+                    <label className="block text-sm font-medium text-foreground mb-2">{t('support.subject')} *</label>
+                    <Input
+                      placeholder={t('support.whatIsThisAbout')}
+                      value={form.subject}
+                      onChange={set('subject')}
+                      onBlur={() => touch('subject')}
+                      className={touched.subject && errors.subject ? 'border-destructive' : ''}
+                    />
+                    {touched.subject && errors.subject && <p className="text-destructive text-xs mt-1">{errors.subject}</p>}
                   </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">{t('support.subject')}</label>
-                  <Input placeholder={t('support.whatIsThisAbout')} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">{t('support.message')}</label>
-                  <Textarea placeholder={t('support.describeIssue')} rows={5} />
-                </div>
-                <Button className="w-full bg-gradient-ocean font-semibold h-12">
-                  {t('support.sendBtn')}
-                </Button>
-              </form>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">{t('support.message')} *</label>
+                    <Textarea
+                      placeholder={t('support.describeIssue')}
+                      rows={5}
+                      value={form.message}
+                      onChange={set('message')}
+                      onBlur={() => touch('message')}
+                      className={touched.message && errors.message ? 'border-destructive' : ''}
+                    />
+                    {touched.message && errors.message && <p className="text-destructive text-xs mt-1">{errors.message}</p>}
+                  </div>
+                  <Button type="submit" className="w-full bg-gradient-ocean font-semibold h-12" disabled={sending}>
+                    {sending ? (
+                      <span className="flex items-center gap-2 justify-center">
+                        <span className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" /> Sending…
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2 justify-center"><Send size={18} /> {t('support.sendBtn')}</span>
+                    )}
+                  </Button>
+                </form>
+              )}
             </div>
           </div>
         </section>

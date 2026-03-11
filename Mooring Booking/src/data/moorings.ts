@@ -19,6 +19,7 @@ export interface Mooring {
   distance?: string;
   lat: number;
   lng: number;
+  ownerId?: string;
   ownerName: string;
   ownerPhone: string;
   description?: string;

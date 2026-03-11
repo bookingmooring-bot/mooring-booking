@@ -50,6 +50,7 @@ const PopularMoorings = () => {
                 distance={mooring.distance}
                 lat={mooring.lat}
                 lng={mooring.lng}
+                ownerId={mooring.ownerId}
                 ownerName={mooring.ownerName}
                 ownerPhone={mooring.ownerPhone}
                 description={mooring.description}

@@ -41,11 +41,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const signUp = async (email: string, password: string, fullName?: string) => {
+        // Use current origin as redirect so confirmation works in both dev and prod
+        const redirectTo = `${window.location.origin}/auth?confirmed=true`;
         const { error } = await supabase.auth.signUp({
             email,
             password,
             options: {
                 data: { full_name: fullName || '' },
+                emailRedirectTo: redirectTo,
             },
         });
         return { error };

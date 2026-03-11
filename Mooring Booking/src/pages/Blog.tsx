@@ -3,10 +3,11 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Calendar, User, ArrowRight, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const featuredPost = {
+  id: 0,
   title: "Top 10 Hidden Mooring Gems in Croatia for 2026",
   excerpt: "Discover secret spots that even local sailors don't know about.",
   image: "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=1200&q=80",
@@ -28,9 +29,13 @@ const posts = [
   { id: 9, title: "Mooring Booking Launches in Albania and Malta", excerpt: "New countries join the Mediterranean's largest mooring marketplace.", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80", author: "M. Bosic", date: "November 1, 2025", category: "News", readTime: "5 min" },
 ];
 
+const PAGE_SIZE = 6;
+
 const BlogPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("All");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const categories = [
     { label: t('blog.all'), value: "All" },
@@ -44,6 +49,21 @@ const BlogPage = () => {
   const filteredPosts = activeCategory === "All"
     ? posts
     : posts.filter(p => p.category === activeCategory);
+
+  const visiblePosts = filteredPosts.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredPosts.length;
+
+  // BUG-20/21: navigate to a simple article view (using hash-based slug as identifier)
+  const openArticle = (postId: number) => {
+    navigate(`/blog/${postId}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // BUG-19: reset pagination when category changes
+  const handleCategoryChange = (cat: string) => {
+    setActiveCategory(cat);
+    setVisibleCount(PAGE_SIZE);
+  };
 
   return (
     <div className="min-h-screen">
@@ -66,8 +86,8 @@ const BlogPage = () => {
                   key={cat.value}
                   variant={activeCategory === cat.value ? "default" : "outline"}
                   size="sm"
-                  className={activeCategory === cat.value ? "bg-gradient-ocean" : ""}
-                  onClick={() => setActiveCategory(cat.value)}
+                  className={activeCategory === cat.value ? "bg-gradient-ocean text-white" : ""}
+                  onClick={() => handleCategoryChange(cat.value)}
                 >
                   {cat.label}
                 </Button>
@@ -76,12 +96,15 @@ const BlogPage = () => {
           </div>
         </section>
 
+        {/* BUG-21: Featured post with functional Read Article button */}
         {activeCategory === "All" && (
           <section className="py-12 bg-background">
             <div className="container mx-auto px-4">
-              <div className="bg-card rounded-2xl overflow-hidden shadow-hover max-w-5xl mx-auto">
+              <div className="bg-card rounded-2xl overflow-hidden shadow-hover max-w-5xl mx-auto cursor-pointer group" onClick={() => openArticle(featuredPost.id)}>
                 <div className="grid grid-cols-1 lg:grid-cols-2">
-                  <div className="aspect-video lg:aspect-auto"><img src={featuredPost.image} alt={featuredPost.title} className="w-full h-full object-cover" /></div>
+                  <div className="aspect-video lg:aspect-auto overflow-hidden">
+                    <img src={featuredPost.image} alt={featuredPost.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  </div>
                   <div className="p-8 flex flex-col justify-center">
                     <div className="flex items-center gap-4 mb-4">
                       <span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-sm font-medium">{featuredPost.category}</span>
@@ -93,7 +116,13 @@ const BlogPage = () => {
                       <div className="flex items-center gap-2 text-sm text-muted-foreground"><User size={16} />{featuredPost.author}</div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground"><Calendar size={16} />{featuredPost.date}</div>
                     </div>
-                    <Button className="bg-gradient-ocean w-fit">{t('blog.readArticle')}<ArrowRight className="ml-2" size={18} /></Button>
+                    {/* BUG-21 fix: button now has onClick */}
+                    <Button
+                      className="bg-gradient-ocean text-white w-fit"
+                      onClick={(e) => { e.stopPropagation(); openArticle(featuredPost.id); }}
+                    >
+                      {t('blog.readArticle')}<ArrowRight className="ml-2" size={18} />
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -105,25 +134,52 @@ const BlogPage = () => {
           <div className="container mx-auto px-4">
             <h2 className="font-heading text-2xl font-bold text-foreground mb-8">{t('blog.latestArticles')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredPosts.map((post) => (
-                <article key={post.id} className="bg-card rounded-xl overflow-hidden shadow-card hover:shadow-hover transition-shadow">
-                  <div className="aspect-video"><img src={post.image} alt={post.title} className="w-full h-full object-cover" /></div>
+              {/* BUG-20 fix: each article card is now fully clickable */}
+              {visiblePosts.map((post) => (
+                <article
+                  key={post.id}
+                  className="bg-card rounded-xl overflow-hidden shadow-card hover:shadow-hover transition-all cursor-pointer group"
+                  onClick={() => openArticle(post.id)}
+                >
+                  <div className="aspect-video overflow-hidden">
+                    <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  </div>
                   <div className="p-6">
                     <div className="flex items-center gap-2 mb-3">
                       <span className="bg-secondary/10 text-secondary px-2 py-0.5 rounded text-xs font-medium">{post.category}</span>
                       <span className="text-muted-foreground text-xs">{post.readTime}</span>
                     </div>
-                    <h3 className="font-heading font-semibold text-lg text-foreground mb-2 line-clamp-2">{post.title}</h3>
+                    <h3 className="font-heading font-semibold text-lg text-foreground mb-2 line-clamp-2 group-hover:text-secondary transition-colors">{post.title}</h3>
                     <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{post.excerpt}</p>
-                    <div className="flex items-center justify-between text-sm text-muted-foreground"><span>{post.author}</span><span>{post.date}</span></div>
+                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                      <span>{post.author}</span>
+                      <span>{post.date}</span>
+                    </div>
                   </div>
                 </article>
               ))}
             </div>
+
             {filteredPosts.length === 0 && (
               <p className="text-center text-muted-foreground py-12">{t('explore.noMoorings', 'No articles found in this category.')}</p>
             )}
-            <div className="text-center mt-12"><Button variant="outline" size="lg">{t('blog.loadMore')}</Button></div>
+
+            {/* BUG-19 fix: Load More shown only when more articles exist, hidden otherwise */}
+            <div className="text-center mt-12">
+              {hasMore ? (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => setVisibleCount(prev => prev + PAGE_SIZE)}
+                >
+                  {t('blog.loadMore')}
+                </Button>
+              ) : (
+                filteredPosts.length > 0 && (
+                  <p className="text-muted-foreground text-sm">{t('blog.allArticlesLoaded', 'All articles loaded.')}</p>
+                )
+              )}
+            </div>
           </div>
         </section>
 

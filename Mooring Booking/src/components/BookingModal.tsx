@@ -7,10 +7,35 @@ import { format, isBefore, startOfToday, addDays } from "date-fns";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { openNavigation } from "@/lib/navigation";
-import { useCreateBooking, useMooringAvailability } from "@/hooks/useBookings";
+import { useMooringAvailability } from "@/hooks/useBookings";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBookingPayment } from "@/hooks/useBookingPayment";
+
+// ── Validation helpers ─────────────────────────────────────────────────────────
+const validateName = (v: string) => {
+  if (!v.trim()) return "Full name is required.";
+  if (v.trim().length < 3) return "Name must be at least 3 characters.";
+  if (v.trim().split(/\s+/).length < 2) return "Please enter first and last name.";
+  return "";
+};
+const validateEmail = (v: string) => {
+  if (!v.trim()) return "Email is required.";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim())) return "Enter a valid email address.";
+  return "";
+};
+const validatePhone = (v: string) => {
+  if (!v.trim()) return "Phone number is required.";
+  const digits = v.replace(/[\s\-\(\)\+]/g, "");
+  if (!/^\d+$/.test(digits)) return "Phone may only contain digits, +, -, spaces, and parentheses.";
+  if (digits.length < 7) return "Phone number must have at least 7 digits.";
+  return "";
+};
+const validateBoatName = (v: string) => {
+  if (!v.trim()) return "Boat name is required.";
+  if (v.trim().length < 2) return "Boat name must be at least 2 characters.";
+  return "";
+};
 
 interface MooringData {
   id: string;
@@ -23,6 +48,7 @@ interface MooringData {
   image: string;
   lat?: number;
   lng?: number;
+  ownerId?: string;
   ownerName?: string;
   ownerPhone?: string;
 }
@@ -38,13 +64,13 @@ interface BookingModalProps {
 
 const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOut }: BookingModalProps) => {
   const { t } = useTranslation();
-  const createBooking = useCreateBooking();
   const bookingPayment = useBookingPayment();
   const { data: profile } = useProfile();
   const { user } = useAuth();
   const { data: availabilityData, isLoading: isLoadingAvailability } = useMooringAvailability(mooring.id);
 
   const [step, setStep] = useState(1);
+  const [confirmedCode, setConfirmedCode] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date | undefined }>({
     from: undefined,
     to: undefined,
@@ -56,8 +82,22 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
     guestName: "",
     guestEmail: "",
     guestPhone: "",
-    paymentMethod: "card" as "card" | "paypal" | "cash",
   });
+
+  // Touched state — show errors only after user has left a field
+  const [touched, setTouched] = useState({
+    boatName: false,
+    guestName: false,
+    guestEmail: false,
+    guestPhone: false,
+  });
+
+  const errors = {
+    boatName: validateBoatName(bookingData.boatName),
+    guestName: validateName(bookingData.guestName),
+    guestEmail: validateEmail(bookingData.guestEmail),
+    guestPhone: validatePhone(bookingData.guestPhone),
+  };
 
   // Autofill form when modal opens, using profile data if available
   useEffect(() => {
@@ -163,11 +203,12 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
   const checkInStr = dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : "";
   const checkOutStr = dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : checkInStr;
 
-  const canProceedStep1 = dateRange?.from && dateRange?.to && isRangeValid() && bookingData.boatName;
-  const canProceedStep2 = bookingData.guestName && bookingData.guestEmail && bookingData.guestPhone;
+  const canProceedStep1 = dateRange?.from && dateRange?.to && isRangeValid() && !errors.boatName;
+  const canProceedStep2 = !errors.guestName && !errors.guestEmail && !errors.guestPhone;
 
   const buildBookingPayload = () => ({
     mooring_id: mooring.id,
+    provider_id: mooring.ownerId,
     check_in: checkInStr,
     check_out: checkOutStr,
     boat_name: bookingData.boatName,
@@ -207,20 +248,7 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
     );
   };
 
-  const handlePayCash = async () => {
-    // Direct DB insert for cash/manual booking (same as before)
-    try {
-      await createBooking.mutateAsync({
-        ...buildBookingPayload(),
-        payment_method: 'cash',
-        payment_status: 'pending',
-      });
-      setStep(4);
-      toast.success(t('booking.confirmed', 'Booking Confirmed!'));
-    } catch (error: any) {
-      toast.error('Booking failed: ' + (error.message || 'Please try again'));
-    }
-  };
+
 
   const handleSubmit = async () => {
     if (step === 1 && canProceedStep1) {
@@ -252,6 +280,7 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
 
   const handleClose = () => {
     setStep(1);
+    setConfirmedCode(null);
     setDateRange({ from: undefined, to: undefined });
     setBookingData({
       boatName: "",
@@ -259,8 +288,8 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
       guestName: "",
       guestEmail: "",
       guestPhone: "",
-      paymentMethod: "card",
     });
+    setTouched({ boatName: false, guestName: false, guestEmail: false, guestPhone: false });
     onClose();
   };
 
@@ -356,8 +385,12 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
                   placeholder={t('booking.boatNamePlaceholder', 'e.g., Sea Spirit')}
                   value={bookingData.boatName}
                   onChange={(e) => setBookingData({ ...bookingData, boatName: e.target.value })}
-                  className="bg-muted/50 text-sm"
+                  onBlur={() => setTouched(prev => ({ ...prev, boatName: true }))}
+                  className={`bg-muted/50 text-sm ${touched.boatName && errors.boatName ? 'border-destructive' : ''}`}
                 />
+                {touched.boatName && errors.boatName && (
+                  <p className="text-destructive text-xs mt-1">{errors.boatName}</p>
+                )}
               </div>
               <div>
                 <label className="text-xs sm:text-sm text-muted-foreground mb-1 block">{t('booking.boatLength', 'Boat Length (meters)')}</label>
@@ -383,8 +416,12 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
                   placeholder="John Smith"
                   value={bookingData.guestName}
                   onChange={(e) => setBookingData({ ...bookingData, guestName: e.target.value })}
-                  className="bg-muted/50 text-sm"
+                  onBlur={() => setTouched(prev => ({ ...prev, guestName: true }))}
+                  className={`bg-muted/50 text-sm ${touched.guestName && errors.guestName ? 'border-destructive' : ''}`}
                 />
+                {touched.guestName && errors.guestName && (
+                  <p className="text-destructive text-xs mt-1">{errors.guestName}</p>
+                )}
               </div>
               <div>
                 <label className="text-xs sm:text-sm text-muted-foreground mb-1 block">{t('booking.email', 'Email')} *</label>
@@ -393,8 +430,12 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
                   placeholder="john@example.com"
                   value={bookingData.guestEmail}
                   onChange={(e) => setBookingData({ ...bookingData, guestEmail: e.target.value })}
-                  className="bg-muted/50 text-sm"
+                  onBlur={() => setTouched(prev => ({ ...prev, guestEmail: true }))}
+                  className={`bg-muted/50 text-sm ${touched.guestEmail && errors.guestEmail ? 'border-destructive' : ''}`}
                 />
+                {touched.guestEmail && errors.guestEmail && (
+                  <p className="text-destructive text-xs mt-1">{errors.guestEmail}</p>
+                )}
               </div>
               <div>
                 <label className="text-xs sm:text-sm text-muted-foreground mb-1 block">{t('booking.phone', 'Phone Number')} *</label>
@@ -403,18 +444,27 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
                   placeholder="+385 91 234 5678"
                   value={bookingData.guestPhone}
                   onChange={(e) => setBookingData({ ...bookingData, guestPhone: e.target.value })}
-                  className="bg-muted/50 text-sm"
+                  onBlur={() => setTouched(prev => ({ ...prev, guestPhone: true }))}
+                  className={`bg-muted/50 text-sm ${touched.guestPhone && errors.guestPhone ? 'border-destructive' : ''}`}
                 />
+                {touched.guestPhone && errors.guestPhone && (
+                  <p className="text-destructive text-xs mt-1">{errors.guestPhone}</p>
+                )}
               </div>
             </div>
           )}
 
           {step === 3 && (
             <div className="space-y-4">
-              <h3 className="font-heading font-semibold text-foreground flex items-center gap-2 text-sm sm:text-base">
-                <CreditCard size={18} className="text-secondary" />
-                {t('booking.paymentMethod', 'Payment Method')}
-              </h3>
+              <div className="flex items-center gap-3">
+                <Button variant="outline" size="sm" onClick={() => setStep(2)}>
+                  ← {t('booking.back', 'Back')}
+                </Button>
+                <h3 className="font-heading font-semibold text-foreground flex items-center gap-2 text-sm sm:text-base">
+                  <CreditCard size={18} className="text-secondary" />
+                  {t('booking.paymentMethod', 'Payment Method')}
+                </h3>
+              </div>
 
               {/* Price Breakdown */}
               <div className="bg-muted/50 rounded-lg p-3 sm:p-4 space-y-2">
@@ -440,31 +490,26 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
               >
                 {bookingPayment.isPending ? (
                   <span className="flex items-center gap-2 justify-center">
-                    <Loader2 size={18} className="animate-spin" /> Preusmjeravanje na plaćanje...
+                    <Loader2 size={18} className="animate-spin" /> Redirecting to payment...
                   </span>
                 ) : (
-                  '💳 Plati karticom (Stripe)'
+                  <span className="flex items-center gap-2 justify-center">
+                    <CreditCard size={18} /> Pay Securely with Stripe
+                  </span>
                 )}
               </Button>
 
-              {/* Cash fallback */}
-              <Button
-                onClick={handlePayCash}
-                disabled={createBooking.isPending}
-                variant="outline"
-                className="w-full h-10"
-              >
-                {createBooking.isPending ? (
-                  <span className="flex items-center gap-2 justify-center">
-                    <Loader2 size={16} className="animate-spin" /> Saving...
-                  </span>
-                ) : (
-                  '💵 Plati gotovinom / na licu mjesta'
-                )}
-              </Button>
+              {/* Accepted card brands */}
+              <div className="flex items-center justify-center gap-3 py-1">
+                <span className="text-xs text-muted-foreground">Accepted:</span>
+                <span className="text-xs font-semibold bg-muted px-2 py-0.5 rounded border border-border">VISA</span>
+                <span className="text-xs font-semibold bg-muted px-2 py-0.5 rounded border border-border">MC</span>
+                <span className="text-xs font-semibold bg-muted px-2 py-0.5 rounded border border-border">Apple Pay</span>
+                <span className="text-xs font-semibold bg-muted px-2 py-0.5 rounded border border-border">G Pay</span>
+              </div>
 
               <p className="text-xs text-muted-foreground text-center">
-                Stripe plaćanje je sigurno i šifrirano. Pritiskom na "Plati karticom" bit ćeš preusmjeren na Stripe.
+                Payments are processed securely by Stripe with bank-level encryption. You will be redirected to Stripe Checkout.
               </p>
             </div>
           )}
@@ -487,7 +532,7 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
               <div className="bg-muted/50 rounded-lg p-3 sm:p-4 text-xs sm:text-sm mb-4">
                 <div className="grid grid-cols-2 gap-2">
                   <span className="text-muted-foreground">{t('booking.confirmation', 'Confirmation')} #:</span>
-                  <span className="text-foreground font-mono text-xs">MB-{Date.now().toString(36).toUpperCase()}</span>
+                  <span className="text-foreground font-mono text-xs">{confirmedCode ?? 'Processing…'}</span>
                   <span className="text-muted-foreground">{t('booking.checkIn', 'Check-in')}:</span>
                   <span className="text-foreground">{checkInStr}</span>
                   <span className="text-muted-foreground">{t('booking.checkOut', 'Check-out')}:</span>
@@ -558,8 +603,8 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
           )}
         </div>
 
-        {/* Footer */}
-        {step < 4 && (
+        {/* Footer — hidden on step 3 where inline payment buttons are used */}
+        {step < 3 && (
           <div className="sticky bottom-0 bg-card border-t border-border p-3 sm:p-4 flex gap-3 sm:gap-4">
             {step > 1 && (
               <Button
@@ -575,7 +620,7 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
               className="flex-1 bg-gradient-ocean font-semibold"
               disabled={(step === 1 && !canProceedStep1) || (step === 2 && !canProceedStep2)}
             >
-              {step === 3 ? t('booking.confirmPay', 'Confirm & Pay') : t('booking.continue', 'Continue')}
+              {t('booking.continue', 'Continue')}
             </Button>
           </div>
         )}

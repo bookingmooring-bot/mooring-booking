@@ -205,6 +205,7 @@ const ExploreMap = ({ moorings }: ExploreMapProps) => {
             image: selectedMooring.image,
             lat: selectedMooring.lat,
             lng: selectedMooring.lng,
+            ownerId: selectedMooring.ownerId,
             ownerName: selectedMooring.ownerName,
             ownerPhone: selectedMooring.ownerPhone,
           }}

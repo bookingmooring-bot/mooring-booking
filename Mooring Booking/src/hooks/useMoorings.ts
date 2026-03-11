@@ -59,6 +59,7 @@ function dbToFrontend(m: DbMooring): Mooring {
         distance: '', // Not stored in DB
         lat: m.lat,
         lng: m.lng,
+        ownerId: m.owner_id || undefined,
         ownerName: m.owner_name || '',
         ownerPhone: m.owner_phone || '',
         description: m.description || '',

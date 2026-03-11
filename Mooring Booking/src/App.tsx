@@ -42,6 +42,7 @@ import Pricing from "./pages/Pricing";
 import Affiliate from "./pages/Affiliate";
 import Support from "./pages/Support";
 import Blog from "./pages/Blog";
+import BlogArticle from "./pages/BlogArticle";
 import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
@@ -89,6 +90,7 @@ const App = () => {
                 <Route path="/affiliate" element={<Affiliate />} />
                 <Route path="/support" element={<Support />} />
                 <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:id" element={<BlogArticle />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />

@@ -277,6 +277,7 @@ const ProviderLanding = () => {
         password: form.password,
         options: {
           data: { full_name: form.name.trim(), registered_as_provider: true },
+          emailRedirectTo: `${window.location.origin}/provider-portal`,
         },
       });
 

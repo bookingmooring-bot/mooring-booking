@@ -41,6 +41,7 @@ interface MooringDetailModalProps {
         description?: string;
         lat?: number;
         lng?: number;
+        ownerId?: string;
         ownerName?: string;
         ownerPhone?: string;
         winterStorage?: boolean;
@@ -134,6 +135,7 @@ const MooringDetailModal = ({
                     image: mooring.image,
                     lat: mooring.lat,
                     lng: mooring.lng,
+                    ownerId: mooring.ownerId,
                     ownerName: mooring.ownerName,
                     ownerPhone: mooring.ownerPhone,
                 }}

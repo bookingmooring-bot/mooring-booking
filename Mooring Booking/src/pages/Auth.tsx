@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Mail, Lock, User, Chrome, Apple, Anchor, Loader2 } from "lucide-react";
@@ -20,6 +20,8 @@ const AuthPage = () => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [searchParams] = useSearchParams();
+  const isConfirmed = searchParams.get("confirmed") === "true";
 
   // Redirect if already logged in
   useEffect(() => {
@@ -109,6 +111,13 @@ const AuthPage = () => {
           <div className="container mx-auto px-4">
             <div className="max-w-md mx-auto">
               <div className="text-center mb-8">
+                {/* BUG-23: confirmation banner shown after email link click */}
+                {isConfirmed && (
+                  <div className="mb-6 px-4 py-3 bg-green-50 border border-green-200 text-green-800 rounded-xl text-sm flex items-center gap-2 justify-center">
+                    <span>✅</span>
+                    <span><strong>Email confirmed!</strong> You can now sign in to your account.</span>
+                  </div>
+                )}
                 <div className="w-16 h-16 bg-gradient-ocean rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Anchor className="text-primary-foreground" size={32} />
                 </div>
@@ -134,15 +143,22 @@ const AuthPage = () => {
                     <Chrome className="mr-2" size={20} />
                     {t('auth.continueGoogle', 'Continue with Google')}
                   </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full h-12 font-medium"
-                    onClick={() => handleSocialLogin("apple")}
-                    disabled={loading}
-                  >
-                    <Apple className="mr-2" size={20} />
-                    {t('auth.continueApple', 'Continue with Apple')}
-                  </Button>
+                  {/* Apple login — disabled until Apple Developer account is purchased */}
+                  <div title="Coming soon — Apple sign-in is not yet available" className="relative">
+                    <Button
+                      variant="outline"
+                      className="w-full h-12 font-medium opacity-50 cursor-not-allowed"
+                      disabled
+                      tabIndex={-1}
+                      aria-disabled="true"
+                    >
+                      <Apple className="mr-2" size={20} />
+                      {t('auth.continueApple', 'Continue with Apple')}
+                      <span className="ml-2 text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded font-normal">Coming soon</span>
+                    </Button>
+                    {/* Invisible overlay to block any click events */}
+                    <div className="absolute inset-0 cursor-not-allowed" aria-hidden="true" />
+                  </div>
                 </div>
 
                 <div className="relative mb-6">
