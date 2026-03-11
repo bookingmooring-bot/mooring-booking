@@ -27,10 +27,8 @@ const MOORING_TYPES = [
 
 
 const BENEFITS = [
-  { icon: TrendingUp, label: "€5,000+", desc: "avg. annual earnings" },
-  { icon: Shield, label: "15%", desc: "only on earnings — no upfront cost" },
-  { icon: Users, label: "10,000+", desc: "providers already on board" },
-  { icon: Star, label: "Free", desc: "listing and onboarding" },
+  { icon: Shield,   label: "Bez skrivenih troškova", desc: "Listanje je potpuno besplatno" },
+  { icon: TrendingUp, label: "Samo 15%",             desc: "Provizija samo od ostvarene zarade" },
 ];
 
 // ─── Styles ────────────────────────────────────────────────────────────────────
@@ -305,13 +303,13 @@ const ProviderLanding = () => {
 
   const renderHero = () => (
     <div style={S.card}>
-      <div style={S.heroTitle}>List Your Mooring.<br />Earn Passively.</div>
+      <div style={S.heroTitle}>Iznajmite vaš vez.<br />Zaradite pasivno.</div>
       <p style={S.heroSub}>
-        Join thousands of mooring owners across the Mediterranean who earn extra income
-        by renting out their unused berths, buoys, and dock space.
+        Prijavite vaš privatni vez, bovu ili privezište i počnite zarađivati
+        bez skrivenih troškova i upfront naknada.
       </p>
 
-      <div style={S.benefitsGrid}>
+      <div style={{ ...S.benefitsGrid, gridTemplateColumns: "1fr 1fr", maxWidth: 400, margin: "0 auto 32px" }}>
         {BENEFITS.map((b) => (
           <div key={b.label} style={S.benefit}>
             <div style={S.benefitStat}>{b.label}</div>
@@ -321,11 +319,11 @@ const ProviderLanding = () => {
       </div>
 
       <button style={S.ctaBtn} onClick={() => setStep("questions")}>
-        Start for free <ArrowRight size={20} />
+        Počni besplatno <ArrowRight size={20} />
       </button>
 
       <p style={{ textAlign: "center", color: "#475569", fontSize: 13, marginTop: 16 }}>
-        No upfront fees · 15% commission only on earnings · Cancel anytime
+        Bez početnih troškova · 15% provizija samo od zarade · Otkaz u bilo kada
       </p>
     </div>
   );
@@ -353,14 +351,14 @@ const ProviderLanding = () => {
   const renderQuestions = () => (
     <div style={S.card}>
       <button style={S.backBtn} onClick={() => setStep("hero")}>
-        <ArrowLeft size={16} /> Back
+        <ArrowLeft size={16} /> Natrag
       </button>
-      <div style={S.stepLabel}>Step 1 of 2</div>
-      <div style={S.stepTitle}>Tell us about your mooring</div>
+      <div style={S.stepLabel}>Korak 1 od 2</div>
+      <div style={S.stepTitle}>Recite nam o vašem vezu</div>
 
       {/* Multi-select mooring types */}
       <div style={S.qGroup}>
-        <div style={S.qLabel}>What type(s) of mooring do you have? <span style={{ color: "#475569", fontWeight: 400 }}>(select all that apply)</span></div>
+        <div style={S.qLabel}>Koje vrste veza imate? <span style={{ color: "#475569", fontWeight: 400 }}>(odaberite sve što se primjenjuje)</span></div>
         <div style={S.optionGrid}>
           {MOORING_TYPES.map((t) => {
             const selected = answers.mooringTypes[t.id] !== undefined;
@@ -378,7 +376,7 @@ const ProviderLanding = () => {
                 {selected && (
                   <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 10 }}>
                     <span style={{ color: "#94a3b8", fontSize: 13, whiteSpace: "nowrap" }}>
-                      How many {t.label}s?
+                      Koliko {t.label}?
                     </span>
                     <input
                       type="number"
@@ -403,11 +401,11 @@ const ProviderLanding = () => {
         </div>
       </div>
 
-      {/* Phone — required */}
+      {/* Telefon — obavezan */}
       <div style={S.qGroup}>
         <label style={S.qLabel}>
           <Phone size={15} style={{ display: "inline", marginRight: 6 }} />
-          Phone number <span style={{ color: "#f87171", fontWeight: 500 }}>*</span>
+          Broj telefona <span style={{ color: "#f87171", fontWeight: 500 }}>*</span>
         </label>
         <input
           style={S.input}
@@ -418,7 +416,7 @@ const ProviderLanding = () => {
         />
       </div>
 
-      {/* Declaration checkbox */}
+      {/* Izjava o pravu raspolaganja */}
       <div style={{ ...S.qGroup, marginBottom: 28 }}>
         <label style={{
           display: "flex", alignItems: "flex-start", gap: 12, cursor: "pointer",
@@ -430,9 +428,8 @@ const ProviderLanding = () => {
             style={{ marginTop: 3, width: 18, height: 18, accentColor: "#38bdf8", flexShrink: 0 }}
           />
           <span style={{ color: "#94a3b8", fontSize: 13, lineHeight: 1.6 }}>
-            I confirm that I have the <strong style={{ color: "#e0f2fe" }}>legal right to rent out</strong> the
-            moorings listed above, whether through ownership, concession, or written
-            authorization from the owner or concessionaire.
+            Potvrđujem da imam <strong style={{ color: "#e0f2fe" }}>zakonsko pravo iznajmljivanja</strong> navedenih
+            vezova — temeljem vlasništva, koncesije ili pisane ovlasti vlasnika ili koncesionara.
           </span>
         </label>
       </div>
@@ -446,7 +443,7 @@ const ProviderLanding = () => {
         disabled={!questionsValid}
         onClick={() => setStep("register")}
       >
-        Continue <ArrowRight size={20} />
+        Nastavi <ArrowRight size={20} />
       </button>
 
       <div style={S.stepDots}>
@@ -459,23 +456,23 @@ const ProviderLanding = () => {
   const renderRegister = () => (
     <div style={S.card}>
       <button style={S.backBtn} onClick={() => setStep("questions")}>
-        <ArrowLeft size={16} /> Back
+        <ArrowLeft size={16} /> Natrag
       </button>
-      <div style={S.stepLabel}>Step 2 of 2</div>
+      <div style={S.stepLabel}>Korak 2 od 2</div>
       <div style={S.stepTitle}>
-        {isSignIn ? "Sign in to continue" : "Create your provider account"}
+        {isSignIn ? "Prijavite se za nastavak" : "Kreirajte provajder račun"}
       </div>
 
       <form onSubmit={handleRegister} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
         {!isSignIn && (
           <div>
-            <label style={S.inputLabel}>Full Name</label>
+            <label style={S.inputLabel}>Ime i prezime</label>
             <div style={S.inputWrap}>
               <User size={16} style={S.inputIcon} />
               <input
                 type="text"
                 style={S.inputWithIcon}
-                placeholder="Your full name"
+                placeholder="Vaše ime i prezime"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
@@ -485,13 +482,13 @@ const ProviderLanding = () => {
         )}
 
         <div>
-          <label style={S.inputLabel}>Email Address</label>
+          <label style={S.inputLabel}>E-mail adresa</label>
           <div style={S.inputWrap}>
             <Mail size={16} style={S.inputIcon} />
             <input
               type="email"
               style={S.inputWithIcon}
-              placeholder="you@example.com"
+              placeholder="vi@primjer.com"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               required
@@ -500,13 +497,13 @@ const ProviderLanding = () => {
         </div>
 
         <div>
-          <label style={S.inputLabel}>Password</label>
+          <label style={S.inputLabel}>Lozinka</label>
           <div style={S.inputWrap}>
             <Lock size={16} style={S.inputIcon} />
             <input
               type={showPassword ? "text" : "password"}
               style={{ ...S.inputWithIcon, paddingRight: 44 }}
-              placeholder={isSignIn ? "Your password" : "Minimum 6 characters"}
+              placeholder={isSignIn ? "Vaša lozinka" : "Najmanje 6 znakova"}
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               required
@@ -535,11 +532,11 @@ const ProviderLanding = () => {
           disabled={!formValid || loading}
         >
           {loading ? (
-            <><Loader2 size={20} style={{ animation: "spin 1s linear infinite" }} /> Please wait...</>
+            <><Loader2 size={20} style={{ animation: "spin 1s linear infinite" }} /> Molimo pričekajte...</>
           ) : isSignIn ? (
-            <>Sign in & acccess your portal <ArrowRight size={18} /></>
+            <><span>Prijava i pristup portalu</span> <ArrowRight size={18} /></>
           ) : (
-            <>Create account & get my portal link <ArrowRight size={18} /></>
+            <><span>Kreiraj račun i dobij link portala</span> <ArrowRight size={18} /></>
           )}
         </button>
 
@@ -548,7 +545,7 @@ const ProviderLanding = () => {
 
       <div style={S.divider}>
         <div style={S.dividerLine} />
-        <span style={S.dividerText}>or</span>
+        <span style={S.dividerText}>ili</span>
         <div style={S.dividerLine} />
       </div>
 
@@ -559,7 +556,7 @@ const ProviderLanding = () => {
         }}
         onClick={() => { setIsSignIn(!isSignIn); setError(""); }}
       >
-        {isSignIn ? "Don't have an account? Sign up instead" : "Already have an account? Sign in"}
+        {isSignIn ? "Nemate račun? Registrirajte se" : "Već imate račun? Prijavite se"}
       </button>
 
       <div style={S.stepDots}>
@@ -575,14 +572,14 @@ const ProviderLanding = () => {
         <CheckCircle2 size={40} color="#38bdf8" />
       </div>
       <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 12 }}>
-        Welcome aboard! 🎉
+        Dobrodošli! 🎉
       </h2>
       <p style={{ color: "#94a3b8", fontSize: 16, lineHeight: 1.7, marginBottom: 28 }}>
-        Your provider account has been created successfully.<br />
+        Vaš provajder račun je uspješno kreiran.<br />
         <strong style={{ color: "#e0f2fe" }}>
-          Check your email — we've sent you a private link to your Provider Portal
+          Provjerite e-mail — poslali smo vam privatni link za vaš Provider Portal
         </strong>{" "}
-        where you can start listing your mooring spots right away.
+        gdje možete odmah početi postavljati vaše vezove.
       </p>
 
       <div style={{
@@ -590,7 +587,7 @@ const ProviderLanding = () => {
         border: "1px solid rgba(56,189,248,0.18)",
         borderRadius: 14, padding: "20px 24px", marginBottom: 28, textAlign: "left",
       }}>
-        <p style={{ color: "#64748b", fontSize: 13, marginBottom: 6 }}>Your Provider Portal:</p>
+        <p style={{ color: "#64748b", fontSize: 13, marginBottom: 6 }}>Vaš Provider Portal:</p>
         <p style={{ color: "#38bdf8", fontSize: 15, fontWeight: 600, wordBreak: "break-all" }}>
           {getPortalUrl()}
         </p>
@@ -600,11 +597,11 @@ const ProviderLanding = () => {
         style={S.ctaBtn}
         onClick={() => window.location.href = "/provider-portal"}
       >
-        <Ship size={20} /> Go to My Provider Portal
+        <Ship size={20} /> Idi na moj Provider Portal
       </button>
 
       <p style={{ color: "#475569", fontSize: 13, marginTop: 16 }}>
-        Bookmark this link — it's your private workspace.
+        Spremite ovaj link — to je vaš privatni radni prostor.
       </p>
     </div>
   );
@@ -623,7 +620,7 @@ const ProviderLanding = () => {
             color: "#38bdf8", background: "rgba(56,189,248,0.12)",
             padding: "3px 10px", borderRadius: 20, textTransform: "uppercase",
           }}>
-            For Providers
+          Za Pružatelje
           </span>
         </div>
 
@@ -633,7 +630,7 @@ const ProviderLanding = () => {
         {step === "success" && renderSuccess()}
 
         <p style={{ textAlign: "center", color: "#1e293b", fontSize: 12, marginTop: 32 }}>
-          © {new Date().getFullYear()} Mooring Booking · Private provider portal
+          © {new Date().getFullYear()} Mooring Booking · Privatni provajder portal
         </p>
       </div>
     </div>
