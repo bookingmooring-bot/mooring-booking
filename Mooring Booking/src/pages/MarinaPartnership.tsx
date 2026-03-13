@@ -2,7 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import {
   Anchor, ArrowRight, ArrowLeft, CheckCircle2, Eye, EyeOff,
-  Loader2, Mail, User, Lock, Building, TrendingUp, Shield, Globe
+  Loader2, Mail, User, Lock,
 } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
@@ -27,16 +27,11 @@ const COUNTRIES = [
 ];
 
 const BENEFITS = [
-  { label: "15% komisija", desc: "Samo od ostvarenih rezervacija" },
-  { label: "10,000+ jedriličara", desc: "Odmah dostupna publika" },
-  { label: "Besplatno listanje", desc: "Nema početnih troškova" },
-  { label: "Besplatna registracija", desc: "Bez naknade za spajanje" },
+  { label: "12% Commission", desc: "Only on completed bookings" },
+  { label: "10,000+ Sailors", desc: "Estimated audience, 2026 season" },
+  { label: "Free Listing", desc: "No upfront costs" },
+  { label: "Free Registration", desc: "No hidden costs" },
 ];
-
-const AI_BENEFIT = {
-  label: "🤖 AI smart pretraga slobodnih vezova",
-  desc: "i u Vašoj marini",
-};
 
 // ─── Styles ─────────────────────────────────────────────────────────────────────
 const S: Record<string, React.CSSProperties> = {
@@ -68,26 +63,26 @@ const S: Record<string, React.CSSProperties> = {
     boxShadow: "0 25px 80px rgba(0,0,0,0.5)",
   },
   heroTitle: {
-    fontSize: 40, fontWeight: 900, lineHeight: 1.15,
+    fontSize: 38, fontWeight: 900, lineHeight: 1.15,
     background: "linear-gradient(135deg, #e0f2fe, #38bdf8, #7dd3fc)",
     WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
     backgroundClip: "text", marginBottom: 16, textAlign: "center" as const,
   },
   heroSub: {
-    color: "#94a3b8", textAlign: "center" as const, fontSize: 17, lineHeight: 1.7,
+    color: "#94a3b8", textAlign: "center" as const, fontSize: 16, lineHeight: 1.7,
     marginBottom: 36, maxWidth: 520, margin: "0 auto 36px",
   },
   benefitsGrid: {
     display: "grid", gridTemplateColumns: "1fr 1fr",
-    gap: 14, marginBottom: 36,
+    gap: 14, marginBottom: 28,
   },
   benefit: {
     background: "rgba(56,189,248,0.06)",
     border: "1px solid rgba(56,189,248,0.12)",
     borderRadius: 14, padding: "16px 18px",
   },
-  benefitStat: { fontSize: 18, fontWeight: 800, color: "#38bdf8" },
-  benefitDesc: { fontSize: 13, color: "#64748b", marginTop: 2 },
+  benefitStat: { fontSize: 17, fontWeight: 800, color: "#38bdf8" },
+  benefitDesc: { fontSize: 13, color: "#64748b", marginTop: 3 },
   ctaBtn: {
     display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
     width: "100%", padding: "16px 24px",
@@ -205,14 +200,11 @@ const MarinaPartnershipPage = () => {
         });
         if (signInError) throw signInError;
         const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          await saveMarinaApplication(user.id);
-        }
+        if (user) await saveMarinaApplication(user.id);
         window.location.href = "/";
         return;
       }
 
-      // New registration
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: form.email.trim(),
         password: form.password,
@@ -225,10 +217,7 @@ const MarinaPartnershipPage = () => {
       });
 
       if (signUpError) throw signUpError;
-
-      if (data.user) {
-        await saveMarinaApplication(data.user.id);
-      }
+      if (data.user) await saveMarinaApplication(data.user.id);
 
       setStep("success");
     } catch (err: any) {
@@ -240,7 +229,6 @@ const MarinaPartnershipPage = () => {
 
   const saveMarinaApplication = async (userId: string) => {
     try {
-      // Use upsert to avoid duplicates
       await supabase.from("marina_applications").insert({
         marina_name: answers.marinaName.trim(),
         location: answers.city.trim(),
@@ -254,7 +242,6 @@ const MarinaPartnershipPage = () => {
         user_id: userId,
       });
     } catch {
-      // Non-fatal
       console.warn("Marina application could not be saved");
     }
   };
@@ -262,10 +249,12 @@ const MarinaPartnershipPage = () => {
   // ── Render Hero ─────────────────────────────────────────────────────────────────
   const renderHero = () => (
     <div style={S.card}>
-      <div style={{ ...S.heroTitle }}>AI smart pretraga slobodnih vezova<br />i u Vašoj marini</div>
+      <div style={S.heroTitle}>
+        AI Smart Search for Available Berths<br />in Your Marina
+      </div>
       <p style={S.heroSub}>
-        Prijavite vašu marinu na Mooring Booking i spojite se sa 10,000+
-        aktivnih jedriličara širom Mediterana — bez startnih troškova.
+        List your marina on Mooring Booking and connect with 10,000+{" "}
+        potential sailors across the Mediterranean — no upfront costs.
       </p>
 
       <div style={S.benefitsGrid}>
@@ -277,13 +266,12 @@ const MarinaPartnershipPage = () => {
         ))}
       </div>
 
-
       <button style={S.ctaBtn} onClick={() => setStep("questions")}>
-        Prijavite marinu besplatno <ArrowRight size={20} />
+        List your marina for free <ArrowRight size={20} />
       </button>
 
       <p style={{ textAlign: "center", color: "#475569", fontSize: 13, marginTop: 16 }}>
-        Besplatna registracija · 15% komisija samo od zarade · Otkaz u bilo kada
+        Free registration · 12% commission on earnings only · Cancel anytime
       </p>
     </div>
   );
@@ -292,17 +280,17 @@ const MarinaPartnershipPage = () => {
   const renderQuestions = () => (
     <div style={S.card}>
       <button style={S.backBtn} onClick={() => setStep("hero")}>
-        <ArrowLeft size={16} /> Natrag
+        <ArrowLeft size={16} /> Back
       </button>
-      <div style={S.stepLabel}>Korak 1 od 2</div>
-      <div style={S.stepTitle}>Recite nam o vašoj marini</div>
+      <div style={S.stepLabel}>Step 1 of 2</div>
+      <div style={S.stepTitle}>Tell us about your marina</div>
 
       {/* Marina Name */}
       <div style={S.qGroup}>
-        <label style={S.qLabel}>Naziv marine *</label>
+        <label style={S.qLabel}>Marina name *</label>
         <input
           style={S.input}
-          placeholder="npr. ACI Marina Split"
+          placeholder="e.g. ACI Marina Split"
           value={answers.marinaName}
           onChange={(e) => setAnswers({ ...answers, marinaName: e.target.value })}
           required
@@ -312,22 +300,22 @@ const MarinaPartnershipPage = () => {
       {/* Country + City */}
       <div style={{ ...S.qGroup, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
         <div>
-          <label style={S.qLabel}>Država *</label>
+          <label style={S.qLabel}>Country *</label>
           <select
             style={S.select}
             value={answers.country}
             onChange={(e) => setAnswers({ ...answers, country: e.target.value })}
             required
           >
-            <option value="">Odaberite...</option>
+            <option value="">Select...</option>
             {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
         <div>
-          <label style={S.qLabel}>Grad / Region *</label>
+          <label style={S.qLabel}>City / Region *</label>
           <input
             style={S.input}
-            placeholder="npr. Split"
+            placeholder="e.g. Split"
             value={answers.city}
             onChange={(e) => setAnswers({ ...answers, city: e.target.value })}
             required
@@ -337,12 +325,12 @@ const MarinaPartnershipPage = () => {
 
       {/* Number of Berths */}
       <div style={S.qGroup}>
-        <label style={S.qLabel}>Ukupan broj vezova *</label>
+        <label style={S.qLabel}>Total number of berths *</label>
         <input
           style={S.input}
           type="number"
           min="1"
-          placeholder="npr. 250"
+          placeholder="e.g. 250"
           value={answers.numberOfBerths}
           onChange={(e) => setAnswers({ ...answers, numberOfBerths: e.target.value })}
           required
@@ -352,17 +340,17 @@ const MarinaPartnershipPage = () => {
       {/* Contact Name + Phone */}
       <div style={{ ...S.qGroup, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
         <div>
-          <label style={S.qLabel}>Kontakt osoba *</label>
+          <label style={S.qLabel}>Contact person *</label>
           <input
             style={S.input}
-            placeholder="Ime i prezime"
+            placeholder="Full name"
             value={answers.contactName}
             onChange={(e) => setAnswers({ ...answers, contactName: e.target.value })}
             required
           />
         </div>
         <div>
-          <label style={S.qLabel}>Telefon *</label>
+          <label style={S.qLabel}>Phone *</label>
           <input
             style={S.input}
             type="tel"
@@ -374,9 +362,9 @@ const MarinaPartnershipPage = () => {
         </div>
       </div>
 
-      {/* Website (optional) */}
+      {/* Website */}
       <div style={S.qGroup}>
-        <label style={S.qLabel}>Website marine (opciono)</label>
+        <label style={S.qLabel}>Marina website (optional)</label>
         <input
           style={S.input}
           placeholder="https://marina.com"
@@ -395,9 +383,10 @@ const MarinaPartnershipPage = () => {
             style={{ marginTop: 3, width: 18, height: 18, accentColor: "#38bdf8", flexShrink: 0 }}
           />
           <span style={{ color: "#94a3b8", fontSize: 13, lineHeight: 1.6 }}>
-            Potvrđujem da sam <strong style={{ color: "#e0f2fe" }}>ovlašteni predstavnik</strong> prijavljene marine
-            i imam zakonski autoritet za sklapanje ovog partnerskog ugovora. Slažem se
-            sa 10% provizijom na rezervacije ostvarene putem platforme.
+            I confirm that I am an{" "}
+            <strong style={{ color: "#e0f2fe" }}>authorised representative</strong>{" "}
+            of the listed marina and have legal authority to enter this partnership agreement.
+            I agree to a 12% commission on bookings made through the platform.
           </span>
         </label>
       </div>
@@ -411,7 +400,7 @@ const MarinaPartnershipPage = () => {
         disabled={!questionsValid}
         onClick={() => setStep("register")}
       >
-        Nastavi <ArrowRight size={20} />
+        Continue <ArrowRight size={20} />
       </button>
 
       <div style={S.stepDots}>
@@ -425,23 +414,23 @@ const MarinaPartnershipPage = () => {
   const renderRegister = () => (
     <div style={S.card}>
       <button style={S.backBtn} onClick={() => setStep("questions")}>
-        <ArrowLeft size={16} /> Natrag
+        <ArrowLeft size={16} /> Back
       </button>
-      <div style={S.stepLabel}>Korak 2 od 2</div>
+      <div style={S.stepLabel}>Step 2 of 2</div>
       <div style={S.stepTitle}>
-        {isSignIn ? "Prijavite se za nastavak" : "Kreirajte marina račun"}
+        {isSignIn ? "Sign in to continue" : "Create your marina account"}
       </div>
 
       <form onSubmit={handleRegister} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
         {!isSignIn && (
           <div>
-            <label style={S.inputLabel}>Ime i prezime</label>
+            <label style={S.inputLabel}>Full name</label>
             <div style={S.inputWrap}>
               <User size={16} style={S.inputIcon} />
               <input
                 type="text"
                 style={S.inputWithIcon}
-                placeholder="Vaše ime i prezime"
+                placeholder="Your full name"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
@@ -451,13 +440,13 @@ const MarinaPartnershipPage = () => {
         )}
 
         <div>
-          <label style={S.inputLabel}>E-mail adresa</label>
+          <label style={S.inputLabel}>Email address</label>
           <div style={S.inputWrap}>
             <Mail size={16} style={S.inputIcon} />
             <input
               type="email"
               style={S.inputWithIcon}
-              placeholder="marina@primjer.com"
+              placeholder="marina@example.com"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               required
@@ -466,13 +455,13 @@ const MarinaPartnershipPage = () => {
         </div>
 
         <div>
-          <label style={S.inputLabel}>Lozinka</label>
+          <label style={S.inputLabel}>Password</label>
           <div style={S.inputWrap}>
             <Lock size={16} style={S.inputIcon} />
             <input
               type={showPassword ? "text" : "password"}
               style={{ ...S.inputWithIcon, paddingRight: 44 }}
-              placeholder={isSignIn ? "Vaša lozinka" : "Najmanje 6 znakova"}
+              placeholder={isSignIn ? "Your password" : "At least 6 characters"}
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               required
@@ -501,11 +490,11 @@ const MarinaPartnershipPage = () => {
           disabled={!formValid || loading}
         >
           {loading ? (
-            <><Loader2 size={20} style={{ animation: "spin 1s linear infinite" }} /> Molimo pričekajte...</>
+            <><Loader2 size={20} style={{ animation: "spin 1s linear infinite" }} /> Please wait...</>
           ) : isSignIn ? (
-            <><span>Prijava i pristup</span> <ArrowRight size={18} /></>
+            <><span>Sign in</span> <ArrowRight size={18} /></>
           ) : (
-            <><span>Pošalji prijavu</span> <ArrowRight size={18} /></>
+            <><span>Submit application</span> <ArrowRight size={18} /></>
           )}
         </button>
 
@@ -514,7 +503,7 @@ const MarinaPartnershipPage = () => {
 
       <div style={S.divider}>
         <div style={S.dividerLine} />
-        <span style={S.dividerText}>ili</span>
+        <span style={S.dividerText}>or</span>
         <div style={S.dividerLine} />
       </div>
 
@@ -525,7 +514,7 @@ const MarinaPartnershipPage = () => {
         }}
         onClick={() => { setIsSignIn(!isSignIn); setError(""); }}
       >
-        {isSignIn ? "Nemate račun? Registrirajte se" : "Već imate račun? Prijavite se"}
+        {isSignIn ? "No account? Register here" : "Already have an account? Sign in"}
       </button>
 
       <div style={S.stepDots}>
@@ -542,14 +531,14 @@ const MarinaPartnershipPage = () => {
         <CheckCircle2 size={40} color="#38bdf8" />
       </div>
       <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 12 }}>
-        Prijava primljena! 🎉
+        Application received! 🎉
       </h2>
       <p style={{ color: "#94a3b8", fontSize: 16, lineHeight: 1.7, marginBottom: 28 }}>
-        Vaša marina je uspješno prijavljena za partnerstvo.<br />
+        Your marina has been successfully submitted for partnership.<br />
         <strong style={{ color: "#e0f2fe" }}>
-          Naš B2B tim će vas kontaktirati u roku od 24 sata
+          Our B2B team will contact you within 24 hours
         </strong>{" "}
-        kako bismo dogovorili detalje suradnje.
+        to discuss the details and get you onboarded.
       </p>
 
       <div style={{
@@ -557,21 +546,18 @@ const MarinaPartnershipPage = () => {
         border: "1px solid rgba(56,189,248,0.18)",
         borderRadius: 14, padding: "20px 24px", marginBottom: 28, textAlign: "left",
       }}>
-        <p style={{ color: "#64748b", fontSize: 13, marginBottom: 8 }}>Vaša prijava:</p>
+        <p style={{ color: "#64748b", fontSize: 13, marginBottom: 8 }}>Your application:</p>
         <p style={{ color: "#e0f2fe", fontSize: 15, fontWeight: 600 }}>{answers.marinaName}</p>
         <p style={{ color: "#94a3b8", fontSize: 14 }}>{answers.city}, {answers.country}</p>
-        <p style={{ color: "#94a3b8", fontSize: 14 }}>{answers.numberOfBerths} vezova · {answers.phone}</p>
+        <p style={{ color: "#94a3b8", fontSize: 14 }}>{answers.numberOfBerths} berths · {answers.phone}</p>
       </div>
 
-      <button
-        style={S.ctaBtn}
-        onClick={() => window.location.href = "/"}
-      >
-        <Anchor size={20} /> Povratak na početnu
+      <button style={S.ctaBtn} onClick={() => window.location.href = "/"}>
+        <Anchor size={20} /> Back to home
       </button>
 
       <p style={{ color: "#475569", fontSize: 13, marginTop: 16 }}>
-        Pratite e-mail za daljnje korake od naše B2B ekipe.
+        Check your email for next steps from our B2B team.
       </p>
     </div>
   );
@@ -580,11 +566,10 @@ const MarinaPartnershipPage = () => {
   return (
     <div style={S.page}>
       <div style={S.container}>
-        {/* Logo */}
         <div style={S.logo}>
           <Anchor size={28} />
           Mooring Booking
-          <span style={S.badge}>Za Marine</span>
+          <span style={S.badge}>For Marinas</span>
         </div>
 
         {step === "hero" && renderHero()}
@@ -593,7 +578,7 @@ const MarinaPartnershipPage = () => {
         {step === "success" && renderSuccess()}
 
         <p style={{ textAlign: "center", color: "#1e293b", fontSize: 12, marginTop: 32 }}>
-          © {new Date().getFullYear()} Mooring Booking · Marina partnerski portal
+          © {new Date().getFullYear()} Mooring Booking · Marina Partnership Portal
         </p>
       </div>
     </div>
