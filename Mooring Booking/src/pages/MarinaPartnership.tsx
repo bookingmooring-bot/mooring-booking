@@ -27,9 +27,9 @@ const COUNTRIES = [
 ];
 
 const BENEFITS = [
-  { label: "12% Commission", desc: "Only on completed bookings" },
+  { label: "15% Commission", desc: "Standard rate (under 50 berths)" },
   { label: "10,000+ Sailors", desc: "Estimated audience, 2026 season" },
-  { label: "Free Listing", desc: "No upfront costs" },
+  { label: "12% Commission", desc: "For marinas with 50+ berths" },
   { label: "Free Registration", desc: "No hidden costs" },
 ];
 
@@ -250,7 +250,7 @@ const MarinaPartnershipPage = () => {
   const renderHero = () => (
     <div style={S.card}>
       <div style={S.heroTitle}>
-        AI Smart Search for Available Berths<br />in Your Marina
+        AI Smart Search for Available Berths
       </div>
       <p style={S.heroSub}>
         List your marina on Mooring Booking and connect with 10,000+{" "}
@@ -271,7 +271,7 @@ const MarinaPartnershipPage = () => {
       </button>
 
       <p style={{ textAlign: "center", color: "#475569", fontSize: 13, marginTop: 16 }}>
-        Free registration · 12% commission on earnings only · Cancel anytime
+        Free registration · 12% for 50+ berths · 15% standard · Cancel anytime
       </p>
     </div>
   );
