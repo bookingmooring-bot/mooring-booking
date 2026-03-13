@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import {
   TrendingUp, Users, DollarSign, Calendar, AlertCircle, CheckCircle,
   Clock, Download, Filter, Search, Eye, Mail, MoreVertical,
-  ArrowUpRight, Anchor, CreditCard, Check, X
+  ArrowUpRight, Anchor, CreditCard, Check, X, Building
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,6 +35,7 @@ import {
 import { useAllBookings } from "@/hooks/useBookings";
 import { format } from "date-fns";
 import AffiliateAdminTable from "@/components/admin/AffiliateAdminTable";
+import { useMarinaApplications, useUpdateMarinaStatus } from "@/hooks/useMarinas";
 
 const AdminDashboard = () => {
   const { t } = useTranslation();
@@ -45,9 +46,11 @@ const AdminDashboard = () => {
   const { data: commissions = [], isLoading: loadingCommissions } = useAdminCommissions();
   const { data: pendingMoorings = [], isLoading: loadingPending } = useAdminPendingMoorings();
   const { data: bookings = [], isLoading: loadingBookings } = useAllBookings();
+  const { data: marinaApps = [], isLoading: loadingMarinas } = useMarinaApplications();
 
   const updateMooring = useUpdateMooringStatus();
   const updateCommission = useUpdateCommissionStatus();
+  const updateMarina = useUpdateMarinaStatus();
 
   // Calculated Stats
   const totalRevenue = useMemo(() => {
@@ -173,6 +176,14 @@ const AdminDashboard = () => {
               <TabsTrigger value="bookings">{t('admin.recentBookings') || "Bookings"}</TabsTrigger>
               <TabsTrigger value="commissions">{t('admin.pendingCommissions') || "Commissions"}</TabsTrigger>
               <TabsTrigger value="affiliates">🔗 Affiliates</TabsTrigger>
+              <TabsTrigger value="marinas" className="relative">
+                🏛️ Marinas
+                {marinaApps.filter(m => m.status === 'pending').length > 0 && (
+                  <span className="ml-2 bg-destructive text-destructive-foreground text-[10px] px-2 py-0.5 rounded-full">
+                    {marinaApps.filter(m => m.status === 'pending').length}
+                  </span>
+                )}
+              </TabsTrigger>
             </TabsList>
 
             {/* Overview Tab */}
@@ -496,6 +507,99 @@ const AdminDashboard = () => {
                   <p className="text-muted-foreground text-sm">Review applications, approve affiliates, and monitor referral commissions.</p>
                 </div>
                 <AffiliateAdminTable />
+              </div>
+            </TabsContent>
+
+            {/* Marina Applications Tab */}
+            <TabsContent value="marinas">
+              <div className="bg-card rounded-xl p-6 shadow-card">
+                <div className="mb-6">
+                  <h3 className="font-heading font-semibold text-lg flex items-center gap-2">
+                    <Building className="text-secondary" size={20} />
+                    Marina Partnership Applications
+                  </h3>
+                  <p className="text-muted-foreground text-sm">Review and approve marina partnership inquiries.</p>
+                </div>
+                {loadingMarinas ? (
+                  <p className="text-muted-foreground text-sm py-4">Loading...</p>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Marina</TableHead>
+                        <TableHead>Location</TableHead>
+                        <TableHead>Contact</TableHead>
+                        <TableHead>Berths</TableHead>
+                        <TableHead>Submitted</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {marinaApps.map((app) => (
+                        <TableRow key={app.id}>
+                          <TableCell>
+                            <div>
+                              <p className="font-medium">{app.marina_name}</p>
+                              {app.website && (
+                                <a href={app.website} target="_blank" rel="noopener noreferrer" className="text-xs text-secondary hover:underline">
+                                  {app.website}
+                                </a>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>{app.location}</TableCell>
+                          <TableCell>
+                            <div className="text-sm">
+                              <p>{app.contact_name}</p>
+                              <p className="text-muted-foreground">{app.email}</p>
+                              <p className="text-muted-foreground">{app.phone}</p>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <span className="font-semibold text-secondary">{app.number_of_berths}</span>
+                          </TableCell>
+                          <TableCell>{format(new Date(app.submitted_at), 'MMM d, yyyy')}</TableCell>
+                          <TableCell>{getStatusBadge(app.status)}</TableCell>
+                          <TableCell className="text-right space-x-2">
+                            {app.status === 'pending' && (
+                              <>
+                                <Button
+                                  size="sm"
+                                  className="bg-success hover:bg-success/90"
+                                  onClick={() => updateMarina.mutate({ id: app.id, status: 'approved' })}
+                                  disabled={updateMarina.isPending}
+                                >
+                                  <Check size={14} className="mr-1" /> Approve
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => updateMarina.mutate({ id: app.id, status: 'rejected' })}
+                                  disabled={updateMarina.isPending}
+                                >
+                                  <X size={14} className="mr-1" /> Reject
+                                </Button>
+                              </>
+                            )}
+                            {app.status !== 'pending' && (
+                              <span className="text-xs text-muted-foreground">
+                                {app.reviewed_at ? format(new Date(app.reviewed_at), 'MMM d, yyyy') : '—'}
+                              </span>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {marinaApps.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                            No marina applications yet.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                )}
               </div>
             </TabsContent>
 
