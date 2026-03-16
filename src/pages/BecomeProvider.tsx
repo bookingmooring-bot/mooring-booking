@@ -402,11 +402,14 @@ const BecomeProviderPage = () => {
   if (leadSubmitted && !user) {
     return (
       <div className="min-h-screen">
-        <Header />
-        <main className="pt-24">
-          <section className="min-h-[70vh] flex items-center justify-center bg-gradient-ocean relative overflow-hidden">
+        <main>
+          <section className="min-h-screen flex items-center justify-center bg-gradient-ocean relative overflow-hidden">
             <div className="container mx-auto px-4 relative z-10">
               <div className="max-w-lg mx-auto text-center">
+                <div className="mb-8">
+                  <Anchor size={40} className="text-gold mx-auto mb-2" />
+                  <span className="text-primary-foreground/60 text-sm font-medium">Mooring Booking</span>
+                </div>
                 <div className="w-20 h-20 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Check className="text-gold" size={40} />
                 </div>
@@ -440,7 +443,6 @@ const BecomeProviderPage = () => {
             </div>
           </section>
         </main>
-        <Footer />
       </div>
     );
   }
@@ -449,8 +451,7 @@ const BecomeProviderPage = () => {
     // Unauthenticated user — show lead capture form
     return (
       <div className="min-h-screen">
-        <Header />
-        <main className="pt-24">
+        <main>
           {/* Hero with Lead Form */}
           <section className="py-16 bg-gradient-ocean relative overflow-hidden">
             <div className="absolute top-10 left-10 opacity-10 animate-float">
@@ -701,7 +702,6 @@ const BecomeProviderPage = () => {
             </div>
           </section>
         </main>
-        <Footer />
       </div>
     );
   }
