@@ -1,328 +1,286 @@
 import { useState, useEffect } from "react";
+import { Anchor, Lock } from "lucide-react";
 
-const STORAGE_KEY = "mb_gate_auth";
-const CORRECT_PASSWORD = "Brod.96.vez";
+const SITE_PASSWORD = "mooring2026";
+const STORAGE_KEY = "mb_site_access";
+
+// Routes that are publicly accessible without password
+const PUBLIC_ROUTES = ["/join-as-provider", "/auth"];
 
 interface PasswordGateProps {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 const PasswordGate = ({ children }: PasswordGateProps) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState(false);
-    const [shake, setShake] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const [checking, setChecking] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
-    useEffect(() => {
-        const stored = sessionStorage.getItem(STORAGE_KEY);
-        if (stored === "true") {
-            setIsAuthenticated(true);
-        }
-        setChecking(false);
-    }, []);
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === "true") {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (password === CORRECT_PASSWORD) {
-            sessionStorage.setItem(STORAGE_KEY, "true");
-            setIsAuthenticated(true);
-            setError(false);
-        } else {
-            setError(true);
-            setShake(true);
-            setPassword("");
-            setTimeout(() => setShake(false), 600);
-        }
-    };
+  // Check if current route is public (using window.location since we're outside BrowserRouter)
+  const isPublicRoute = PUBLIC_ROUTES.some((route) =>
+    window.location.pathname.startsWith(route)
+  );
 
-    if (checking) return null;
-    if (isAuthenticated) return <>{children}</>;
+  // Allow public routes without password
+  if (isPublicRoute || isAuthenticated) {
+    return <>{children}</>;
+  }
 
-    return (
-        <div style={styles.overlay}>
-            {/* Animated background waves */}
-            <div style={styles.wavesContainer}>
-                <svg style={styles.wavesSvg} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
-                    <defs>
-                        <style>{`
-              @keyframes wave1 { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-              @keyframes wave2 { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
-              @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-              @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
-              @keyframes floatAnchor { 0%, 100% { transform: translateY(0px) rotate(-5deg); } 50% { transform: translateY(-12px) rotate(5deg); } }
-              @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); } 20%, 40%, 60%, 80% { transform: translateX(8px); } }
-              @keyframes glowPulse { 0%, 100% { box-shadow: 0 0 20px rgba(56, 189, 248, 0.3); } 50% { box-shadow: 0 0 40px rgba(56, 189, 248, 0.6); } }
-            `}</style>
-                    </defs>
-                </svg>
-            </div>
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === SITE_PASSWORD) {
+      localStorage.setItem(STORAGE_KEY, "true");
+      setIsAuthenticated(true);
+      setError(false);
+    } else {
+      setError(true);
+      setIsAnimating(true);
+      setTimeout(() => setIsAnimating(false), 600);
+    }
+  };
 
-            {/* Stars background */}
-            <div style={styles.starsLayer} aria-hidden="true">
-                {[...Array(50)].map((_, i) => (
-                    <div
-                        key={i}
-                        style={{
-                            position: "absolute",
-                            width: Math.random() * 3 + 1 + "px",
-                            height: Math.random() * 3 + 1 + "px",
-                            background: "white",
-                            borderRadius: "50%",
-                            top: Math.random() * 60 + "%",
-                            left: Math.random() * 100 + "%",
-                            opacity: Math.random() * 0.7 + 0.3,
-                            animation: `pulse ${Math.random() * 3 + 2}s ease-in-out infinite`,
-                            animationDelay: Math.random() * 2 + "s",
-                        }}
-                    />
-                ))}
-            </div>
-
-            {/* Main card */}
-            <div style={{ ...styles.card, animation: shake ? "shake 0.6s ease-in-out" : "fadeInUp 0.8s ease-out forwards" }}>
-                {/* Anchor icon */}
-                <div style={styles.iconWrapper}>
-                    <span style={styles.anchorIcon}>⚓</span>
-                </div>
-
-                {/* Title */}
-                <h1 style={styles.title}>Mooring Booking</h1>
-                <p style={styles.subtitle}>Site is currently under construction</p>
-
-                {/* Divider */}
-                <div style={styles.divider}>
-                    <div style={styles.dividerLine} />
-                    <span style={styles.dividerText}>🔒 access</span>
-                    <div style={styles.dividerLine} />
-                </div>
-
-                <p style={styles.description}>
-                    To continue, please enter the access password.
-                </p>
-
-                {/* Form */}
-                <form onSubmit={handleSubmit} style={styles.form}>
-                    <div style={styles.inputWrapper}>
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            value={password}
-                            onChange={(e) => {
-                                setPassword(e.target.value);
-                                setError(false);
-                            }}
-                            placeholder="Enter password..."
-                            style={{
-                                ...styles.input,
-                                ...(error ? styles.inputError : {}),
-                            }}
-                            autoFocus
-                            autoComplete="off"
-                        />
-                        <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            style={styles.eyeButton}
-                            tabIndex={-1}
-                        >
-                            {showPassword ? "👁️" : "🔒"}
-                        </button>
-                    </div>
-
-                    {error && (
-                        <p style={styles.errorText}>❌ Incorrect password. Please try again.</p>
-                    )}
-
-                    <button type="submit" style={styles.submitButton}>
-                        <span>Access Site</span>
-                        <span style={styles.arrow}>→</span>
-                    </button>
-                </form>
-
-                {/* Footer */}
-                <p style={styles.footerText}>
-                    🌊 Coming soon — Mooring Booking Platform
-                </p>
-            </div>
-        </div>
-    );
-};
-
-const styles: Record<string, React.CSSProperties> = {
-    overlay: {
-        position: "fixed",
-        inset: 0,
-        zIndex: 99999,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "linear-gradient(135deg, #020817 0%, #0c1a3a 40%, #0a2a4a 70%, #051525 100%)",
-        fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif",
-        overflow: "hidden",
+  return (
+    <div
+      style={{
         minHeight: "100vh",
-    },
-    wavesContainer: {
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: "200px",
+        background: "linear-gradient(135deg, #0a1628 0%, #0d2137 30%, #0a1628 60%, #061018 100%)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+        position: "relative",
         overflow: "hidden",
-        opacity: 0.15,
-    },
-    wavesSvg: {
-        width: "200%",
-        height: "100%",
-        fill: "#38bdf8",
-    },
-    starsLayer: {
-        position: "absolute",
-        inset: 0,
-        pointerEvents: "none",
-    },
-    card: {
-        position: "relative",
-        zIndex: 10,
-        background: "rgba(255, 255, 255, 0.04)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        border: "1px solid rgba(56, 189, 248, 0.2)",
-        borderRadius: "24px",
-        padding: "48px 44px",
-        maxWidth: "440px",
-        width: "90%",
-        boxShadow: "0 0 60px rgba(56, 189, 248, 0.15), 0 25px 80px rgba(0,0,0,0.5)",
-        textAlign: "center",
-        animation: "glowPulse 4s ease-in-out infinite",
-    },
-    iconWrapper: {
-        display: "flex",
-        justifyContent: "center",
-        marginBottom: "16px",
-    },
-    anchorIcon: {
-        fontSize: "56px",
-        display: "inline-block",
-        animation: "floatAnchor 4s ease-in-out infinite",
-        filter: "drop-shadow(0 0 12px rgba(56, 189, 248, 0.6))",
-    },
-    title: {
-        fontSize: "28px",
-        fontWeight: "800",
-        color: "#f0f9ff",
-        margin: "0 0 6px 0",
-        letterSpacing: "-0.5px",
-        background: "linear-gradient(135deg, #e0f2fe, #38bdf8, #0ea5e9)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-        backgroundClip: "text",
-    },
-    subtitle: {
-        fontSize: "14px",
-        color: "#94a3b8",
-        margin: "0 0 24px 0",
-        letterSpacing: "0.5px",
-        textTransform: "uppercase",
-    },
-    divider: {
-        display: "flex",
-        alignItems: "center",
-        gap: "12px",
-        marginBottom: "20px",
-    },
-    dividerLine: {
-        flex: 1,
-        height: "1px",
-        background: "linear-gradient(90deg, transparent, rgba(56,189,248,0.3), transparent)",
-    },
-    dividerText: {
-        fontSize: "12px",
-        color: "#64748b",
-        whiteSpace: "nowrap",
-        letterSpacing: "1px",
-        textTransform: "uppercase",
-    },
-    description: {
-        fontSize: "15px",
-        color: "#cbd5e1",
-        marginBottom: "28px",
-        lineHeight: "1.6",
-    },
-    form: {
-        display: "flex",
-        flexDirection: "column",
-        gap: "12px",
-    },
-    inputWrapper: {
-        position: "relative",
-        display: "flex",
-        alignItems: "center",
-    },
-    input: {
-        width: "100%",
-        padding: "14px 50px 14px 18px",
-        background: "rgba(255,255,255,0.06)",
-        border: "1.5px solid rgba(56,189,248,0.25)",
-        borderRadius: "12px",
-        color: "#f0f9ff",
-        fontSize: "16px",
-        outline: "none",
-        transition: "border-color 0.2s, box-shadow 0.2s",
-        boxSizing: "border-box",
-        letterSpacing: "0.5px",
-    },
-    inputError: {
-        borderColor: "rgba(239,68,68,0.6)",
-        boxShadow: "0 0 0 3px rgba(239,68,68,0.1)",
-    },
-    eyeButton: {
-        position: "absolute",
-        right: "14px",
-        background: "none",
-        border: "none",
-        cursor: "pointer",
-        fontSize: "18px",
-        padding: "0",
-        lineHeight: "1",
-        opacity: 0.6,
-        transition: "opacity 0.2s",
-    },
-    errorText: {
-        color: "#f87171",
-        fontSize: "13px",
-        margin: "0",
-        textAlign: "left",
-        padding: "0 4px",
-    },
-    submitButton: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "10px",
-        padding: "15px 24px",
-        background: "linear-gradient(135deg, #0284c7, #0ea5e9, #38bdf8)",
-        border: "none",
-        borderRadius: "12px",
-        color: "#fff",
-        fontSize: "16px",
-        fontWeight: "700",
-        cursor: "pointer",
-        transition: "transform 0.2s, box-shadow 0.2s",
-        letterSpacing: "0.3px",
-        boxShadow: "0 4px 20px rgba(14,165,233,0.4)",
-        marginTop: "4px",
-    },
-    arrow: {
-        fontSize: "18px",
-        transition: "transform 0.2s",
-    },
-    footerText: {
-        marginTop: "28px",
-        fontSize: "12px",
-        color: "#475569",
-        letterSpacing: "0.5px",
-    },
+      }}
+    >
+      {/* Animated particles */}
+      <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+        {Array.from({ length: 30 }).map((_, i) => (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              width: `${2 + Math.random() * 3}px`,
+              height: `${2 + Math.random() * 3}px`,
+              background: "rgba(255,255,255,0.15)",
+              borderRadius: "50%",
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animation: `float ${5 + Math.random() * 10}s ease-in-out infinite`,
+              animationDelay: `${Math.random() * 5}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.3; }
+          25% { transform: translateY(-20px) translateX(10px); opacity: 0.8; }
+          50% { transform: translateY(-10px) translateX(-5px); opacity: 0.5; }
+          75% { transform: translateY(-25px) translateX(15px); opacity: 0.7; }
+        }
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          20% { transform: translateX(-10px); }
+          40% { transform: translateX(10px); }
+          60% { transform: translateX(-6px); }
+          80% { transform: translateX(6px); }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes anchorBob {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          50% { transform: translateY(-8px) rotate(3deg); }
+        }
+      `}</style>
+
+      <div
+        style={{
+          background: "linear-gradient(180deg, rgba(13,33,55,0.95) 0%, rgba(10,22,40,0.98) 100%)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          borderRadius: "24px",
+          padding: "48px 40px",
+          maxWidth: "440px",
+          width: "90%",
+          textAlign: "center",
+          boxShadow: "0 24px 80px rgba(0,0,0,0.5), 0 0 40px rgba(0,150,255,0.05)",
+          animation: "fadeIn 0.6s ease-out",
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        {/* Anchor Icon */}
+        <div
+          style={{
+            marginBottom: "24px",
+            animation: "anchorBob 3s ease-in-out infinite",
+          }}
+        >
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "72px",
+              height: "72px",
+              background: "linear-gradient(135deg, rgba(0,180,255,0.15), rgba(0,100,200,0.1))",
+              borderRadius: "20px",
+              border: "1px solid rgba(0,180,255,0.2)",
+            }}
+          >
+            <Anchor size={36} color="#00b4ff" />
+          </div>
+        </div>
+
+        {/* Title */}
+        <h1
+          style={{
+            color: "#00b4ff",
+            fontSize: "28px",
+            fontWeight: 700,
+            margin: "0 0 8px",
+            letterSpacing: "0.5px",
+          }}
+        >
+          Mooring Booking
+        </h1>
+
+        <p
+          style={{
+            color: "rgba(255,255,255,0.4)",
+            fontSize: "12px",
+            textTransform: "uppercase",
+            letterSpacing: "3px",
+            margin: "0 0 32px",
+          }}
+        >
+          Site is currently under construction
+        </p>
+
+        {/* Divider */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            marginBottom: "24px",
+          }}
+        >
+          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "rgba(255,255,255,0.3)", fontSize: "11px", textTransform: "uppercase", letterSpacing: "2px" }}>
+            <Lock size={12} />
+            <span>Access</span>
+          </div>
+          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
+        </div>
+
+        <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px", margin: "0 0 24px" }}>
+          To continue, please enter the access password.
+        </p>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit}>
+          <div
+            style={{
+              position: "relative",
+              marginBottom: "16px",
+              animation: isAnimating ? "shake 0.5s ease-in-out" : "none",
+            }}
+          >
+            <input
+              type="password"
+              placeholder="Enter password..."
+              value={password}
+              onChange={(e) => { setPassword(e.target.value); setError(false); }}
+              style={{
+                width: "100%",
+                padding: "16px 48px 16px 20px",
+                background: "rgba(255,255,255,0.04)",
+                border: `1px solid ${error ? "rgba(255,80,80,0.5)" : "rgba(255,255,255,0.08)"}`,
+                borderRadius: "12px",
+                color: "#fff",
+                fontSize: "15px",
+                outline: "none",
+                transition: "border-color 0.3s, box-shadow 0.3s",
+                boxSizing: "border-box",
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = error ? "rgba(255,80,80,0.5)" : "rgba(0,180,255,0.4)";
+                e.target.style.boxShadow = error ? "0 0 0 3px rgba(255,80,80,0.1)" : "0 0 0 3px rgba(0,180,255,0.1)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = error ? "rgba(255,80,80,0.5)" : "rgba(255,255,255,0.08)";
+                e.target.style.boxShadow = "none";
+              }}
+              autoFocus
+            />
+            <Lock
+              size={18}
+              style={{
+                position: "absolute",
+                right: "16px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                color: error ? "rgba(255,80,80,0.5)" : "rgba(255,255,255,0.2)",
+              }}
+            />
+          </div>
+
+          {error && (
+            <p style={{ color: "#ff5050", fontSize: "13px", margin: "-8px 0 12px", textAlign: "left" }}>
+              Incorrect password. Please try again.
+            </p>
+          )}
+
+          <button
+            type="submit"
+            style={{
+              width: "100%",
+              padding: "16px",
+              background: "linear-gradient(135deg, #00a0e3 0%, #00c4ff 50%, #00a0e3 100%)",
+              border: "none",
+              borderRadius: "12px",
+              color: "#fff",
+              fontSize: "16px",
+              fontWeight: 600,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              transition: "transform 0.2s, box-shadow 0.2s",
+              boxShadow: "0 4px 16px rgba(0,160,227,0.3)",
+            }}
+            onMouseEnter={(e) => {
+              (e.target as HTMLButtonElement).style.transform = "translateY(-1px)";
+              (e.target as HTMLButtonElement).style.boxShadow = "0 6px 24px rgba(0,160,227,0.4)";
+            }}
+            onMouseLeave={(e) => {
+              (e.target as HTMLButtonElement).style.transform = "translateY(0)";
+              (e.target as HTMLButtonElement).style.boxShadow = "0 4px 16px rgba(0,160,227,0.3)";
+            }}
+          >
+            Access Site →
+          </button>
+        </form>
+
+        {/* Footer */}
+        <p style={{ color: "rgba(255,255,255,0.25)", fontSize: "12px", marginTop: "32px" }}>
+          ⚓ Coming soon — Mooring Booking Platform
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export default PasswordGate;
