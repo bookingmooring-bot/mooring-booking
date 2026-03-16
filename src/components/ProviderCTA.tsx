@@ -14,7 +14,7 @@ const ProviderCTA = () => {
   ];
 
   const handleBecomeProvider = () => {
-    navigate('/join-as-provider');
+    navigate('/become-provider');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

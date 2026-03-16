@@ -81,7 +81,7 @@ const AboutPage = () => {
             <h2 className="font-heading text-3xl font-bold text-primary-foreground mb-6">{t('about.readyToFind')}</h2>
             <div className="flex flex-wrap justify-center gap-4">
               <Link to="/explore"><Button size="lg" className="bg-gold text-gold-foreground hover:bg-gold/90 font-semibold"><MapPin className="mr-2" size={20} />{t('about.exploreMoorings')}</Button></Link>
-              <Link to="/join-as-provider"><Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"><Anchor className="mr-2" size={20} />{t('about.listYourMooring')}</Button></Link>
+              <Link to="/become-provider"><Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"><Anchor className="mr-2" size={20} />{t('about.listYourMooring')}</Button></Link>
             </div>
           </div>
         </section>
