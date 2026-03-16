@@ -1,0 +1,387 @@
+{
+  "name": "Mooring Booking — Follow-up Email Sekvenca",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Svaki Sat",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 360],
+      "notes": "Provjerava svaki sat da li ima emailova za slanje.\n\nMožeš promijeniti interval po potrebi."
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://bblxawscmyzelinidkmb.supabase.co/rest/v1/email_sequences",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "eq.pending"
+            },
+            {
+              "name": "scheduled_for",
+              "value": "=lte.{{ new Date().toISOString().split('T')[0] }}"
+            },
+            {
+              "name": "sequence_type",
+              "value": "eq.provider_onboarding"
+            },
+            {
+              "name": "select",
+              "value": "id,user_id,email,sequence_type,step,scheduled_for"
+            },
+            {
+              "name": "order",
+              "value": "step.asc"
+            },
+            {
+              "name": "limit",
+              "value": "50"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $credentials.httpHeaderAuth.value }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $credentials.httpHeaderAuth.value }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "fetch-pending-emails",
+      "name": "Dohvati Pending Emailove",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 360],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Supabase Service Role Key"
+        }
+      },
+      "notes": "Dohvata sve email sekvence koje su 'pending' i čiji je scheduled_for <= danas.\n\n⚙️ SETUP: Kreiraj 'Header Auth' credential:\n- Header Name: apikey\n- Header Value: tvoj Supabase SERVICE_ROLE_KEY"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": ""
+          },
+          "conditions": [
+            {
+              "id": "check-has-emails",
+              "leftValue": "={{ $json.length || 0 }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ]
+        }
+      },
+      "id": "has-pending",
+      "name": "Ima Pending?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [720, 360]
+    },
+    {
+      "parameters": {},
+      "id": "no-emails",
+      "name": "Nema Emailova",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [960, 480],
+      "notes": "Nema pending emailova za slanje. Čeka do sljedeće provjere."
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "={{ $json }}",
+        "options": {}
+      },
+      "id": "split-items",
+      "name": "Split po Emailu",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [960, 260]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": ""
+          },
+          "conditions": [
+            {
+              "id": "check-step-1",
+              "leftValue": "={{ $json.step }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "check-step",
+      "name": "Koji Step?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1200, 260],
+      "parameters2": {
+        "rules": {
+          "rules": [
+            {
+              "output": 0,
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.step }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Step 1: Podsjetnik"
+            },
+            {
+              "output": 1,
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.step }}",
+                    "rightValue": 2,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Step 2: Social Proof"
+            },
+            {
+              "output": 2,
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.step }}",
+                    "rightValue": 3,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Step 3: Final Nudge"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://bblxawscmyzelinidkmb.supabase.co/functions/v1/send-followup-email",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "x-webhook-secret",
+              "value": "={{ $credentials.httpHeaderAuth.value }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"sequence_id\": \"{{ $json.id }}\",\n  \"email\": \"{{ $json.email }}\",\n  \"user_id\": \"{{ $json.user_id }}\",\n  \"step\": {{ $json.step }},\n  \"sequence_type\": \"{{ $json.sequence_type }}\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "send-followup",
+      "name": "Pošalji Follow-up Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1440, 260],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "FB Lead Webhook Secret"
+        }
+      },
+      "notes": "Poziva Edge Function za slanje follow-up emaila.\n\nEdge Function automatski:\n- Provjerava da li se user registrirao (skip if yes)\n- Bira pravi email template po step-u\n- Šalje email via Resend\n- Ažurira status na 'sent'"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://bblxawscmyzelinidkmb.supabase.co/rest/v1/email_sequences?id=eq.{{ $('Split po Emailu').item.json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $credentials.httpHeaderAuth.value }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $credentials.httpHeaderAuth.value }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"sent\",\n  \"sent_at\": \"{{ new Date().toISOString() }}\"\n}",
+        "options": {}
+      },
+      "id": "mark-as-sent",
+      "name": "Označi kao Poslano",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1680, 260],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Supabase Service Role Key"
+        }
+      },
+      "notes": "Ažurira email_sequences status na 'sent' i bilježi timestamp."
+    }
+  ],
+  "connections": {
+    "Svaki Sat": {
+      "main": [
+        [
+          {
+            "node": "Dohvati Pending Emailove",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dohvati Pending Emailove": {
+      "main": [
+        [
+          {
+            "node": "Ima Pending?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ima Pending?": {
+      "main": [
+        [
+          {
+            "node": "Split po Emailu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Nema Emailova",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split po Emailu": {
+      "main": [
+        [
+          {
+            "node": "Pošalji Follow-up Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pošalji Follow-up Email": {
+      "main": [
+        [
+          {
+            "node": "Označi kao Poslano",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "Mooring Booking",
+      "id": "mooring-booking"
+    },
+    {
+      "name": "Email Sequence",
+      "id": "email-sequence"
+    }
+  ],
+  "triggerCount": 1,
+  "pinData": {}
+}

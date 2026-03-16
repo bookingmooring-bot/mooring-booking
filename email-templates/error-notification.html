@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Greška pri obradi prijave</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f0f4f8;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;margin-top:32px;margin-bottom:32px;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+    
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#BF360C 0%,#D84315 100%);padding:32px;text-align:center;">
+      <div style="font-size:36px;margin-bottom:8px;">🚨</div>
+      <h1 style="color:#ffffff;font-size:22px;margin:0;font-weight:700;">Greška pri obradi FB leada</h1>
+    </div>
+
+    <!-- Body -->
+    <div style="padding:32px;">
+      <p style="font-size:16px;color:#1a1a1a;line-height:1.6;margin:0 0 16px;">
+        Došlo je do greške pri obradi novog Facebook leada. Potrebna ručna intervencija.
+      </p>
+
+      <!-- Lead Info -->
+      <div style="background:#FFF3E0;border-radius:10px;padding:20px;margin:0 0 20px;border-left:4px solid #E65100;">
+        <p style="font-size:14px;font-weight:700;color:#E65100;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;">
+          Podaci o leadu
+        </p>
+        <table style="width:100%;border-collapse:collapse;">
+          <tr>
+            <td style="padding:6px 0;font-size:14px;color:#666;width:100px;">👤 Ime:</td>
+            <td style="padding:6px 0;font-size:14px;color:#333;font-weight:600;">{{ $json.lead_name }}</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;font-size:14px;color:#666;">📧 Email:</td>
+            <td style="padding:6px 0;font-size:14px;color:#333;font-weight:600;">{{ $json.lead_email }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Error Details -->
+      <div style="background:#FFEBEE;border-radius:10px;padding:20px;margin:0 0 20px;border-left:4px solid #C62828;">
+        <p style="font-size:14px;font-weight:700;color:#C62828;margin:0 0 8px;">
+          ❌ Greška:
+        </p>
+        <p style="font-size:14px;color:#333;margin:0;font-family:monospace;word-break:break-all;">
+          {{ $json.error }}
+        </p>
+      </div>
+
+      <!-- Timestamp -->
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;margin:0 0 20px;">
+        <p style="font-size:13px;color:#666;margin:0;">
+          ⏰ <strong>Vrijeme:</strong> {{ new Date().toLocaleString('hr-HR', {timeZone: 'Europe/Zagreb'}) }}
+        </p>
+      </div>
+
+      <!-- Actions -->
+      <div style="background:#E3F2FD;border-radius:10px;padding:20px;margin:0 0 20px;border-left:4px solid #1565C0;">
+        <p style="font-size:14px;font-weight:700;color:#1565C0;margin:0 0 8px;">
+          🔧 Što napraviti:
+        </p>
+        <p style="font-size:14px;color:#333;margin:0;line-height:1.8;">
+          1. Provjeri Supabase Edge Function logove<br>
+          2. Provjeri da li lead već postoji u bazi<br>
+          3. Ručno kreiraj korisnika ako treba<br>
+          4. Pošalji welcome email ručno
+        </p>
+      </div>
+
+      <div style="text-align:center;margin:24px 0;">
+        <a href="https://supabase.com/dashboard/project/bblxawscmyzelinidkmb/logs/edge-functions" style="display:inline-block;background:linear-gradient(135deg,#1565C0 0%,#0D47A1 100%);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:14px;font-weight:600;">
+          📋 Otvori Supabase logove
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="background:#f8fafc;padding:20px 32px;text-align:center;border-top:1px solid #e2e8f0;">
+      <p style="font-size:12px;color:#999;margin:0;">
+        Automatska notifikacija iz n8n workflowa "FB Lead Ads → Mooring Booking Provider"
+      </p>
+    </div>
+  </div>
+</body>
+</html>

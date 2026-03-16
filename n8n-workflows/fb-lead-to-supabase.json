@@ -1,0 +1,430 @@
+{
+  "name": "FB Lead Ads → Mooring Booking Provider",
+  "nodes": [
+    {
+      "parameters": {
+        "event": "newLead",
+        "page": {
+          "mode": "list",
+          "value": ""
+        },
+        "form": {
+          "mode": "list",
+          "value": ""
+        },
+        "options": {
+          "simplifyOutput": true
+        }
+      },
+      "id": "fb-lead-trigger",
+      "name": "Facebook Lead Ads Trigger",
+      "type": "n8n-nodes-base.facebookLeadAdsTrigger",
+      "typeVersion": 1,
+      "position": [240, 360],
+      "webhookId": "fb-lead-webhook",
+      "credentials": {
+        "facebookLeadAdsOAuth2Api": {
+          "id": "",
+          "name": "Facebook Lead Ads account"
+        }
+      },
+      "notes": "⚡ SETUP: Poveži svoj Facebook Lead Ads OAuth2 account.\n\nOvaj node automatski hvata nove leadove iz tvojih Facebook Lead Ad formi.\n\nKoraci:\n1. Dodaj Facebook OAuth2 credentials u n8n Settings → Credentials\n2. Izaberi svoju Facebook Page\n3. Izaberi Lead Form koji si kreirao"
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "set-full-name",
+              "name": "full_name",
+              "value": "={{ $json.data.full_name || ($json.data.first_name || '') + ' ' + ($json.data.last_name || '') }}",
+              "type": "string"
+            },
+            {
+              "id": "set-email",
+              "name": "email",
+              "value": "={{ $json.data.email }}",
+              "type": "string"
+            },
+            {
+              "id": "set-phone",
+              "name": "phone",
+              "value": "={{ $json.data.phone_number || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "set-city",
+              "name": "city",
+              "value": "={{ $json.data.city || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "set-country",
+              "name": "country",
+              "value": "={{ $json.data.country || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "set-has-mooring",
+              "name": "has_mooring",
+              "value": "={{ $json.data['da_li_imaš_vez?'] === 'da' || $json.data['da_li_imaš_vez?'] === 'Da' || $json.data.has_mooring === 'yes' || $json.data.has_mooring === true }}",
+              "type": "boolean"
+            },
+            {
+              "id": "set-mooring-type",
+              "name": "mooring_type",
+              "value": "={{ $json.data.mooring_type || $json.data['koliko_imaš__vezova'] || $json.data.tip_veza || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "set-fb-lead-id",
+              "name": "fb_lead_id",
+              "value": "={{ $json.id || $json.data.id || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "set-fb-form-id",
+              "name": "fb_form_id",
+              "value": "={{ $json.form.id || $json.form_id || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "set-fb-ad-id",
+              "name": "fb_ad_id",
+              "value": "={{ $json.ad.id || $json.ad_id || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "set-fb-campaign",
+              "name": "fb_campaign_name",
+              "value": "={{ $json.ad.name || $json.campaign_name || 'Facebook Lead Ad' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-lead-data",
+      "name": "Pripremi Podatke",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [480, 360],
+      "notes": "Mapira Facebook Lead polja u format koji Edge Function očekuje.\n\nFacebook šalje razne formate zavisno od forme — ovaj node normalizira sve."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://bblxawscmyzelinidkmb.supabase.co/functions/v1/process-fb-lead",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "x-webhook-secret",
+              "value": "={{ $credentials.httpHeaderAuth.value }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "process-lead",
+      "name": "Procesiraj Lead (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [720, 360],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "FB Lead Webhook Secret"
+        }
+      },
+      "notes": "Poziva Supabase Edge Function 'process-fb-lead' koja:\n\n1. ✅ Provjerava da li lead već postoji\n2. ✅ Kreira novog Supabase usera (role: provider)\n3. ✅ Sprema lead u fb_leads tabelu\n4. ✅ Generira magic link\n5. ✅ Šalje welcome email\n6. ✅ Zakazuje 3 follow-up emaila\n\n⚙️ SETUP:\n- Kreiraj 'Header Auth' credential u n8n\n- Header Name: x-webhook-secret\n- Header Value: tvoj tajni ključ (isti kao FB_LEAD_WEBHOOK_SECRET u Supabase)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": ""
+          },
+          "conditions": [
+            {
+              "id": "check-success",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ]
+        }
+      },
+      "id": "check-success",
+      "name": "Uspješno?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [960, 360]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "success-msg",
+              "name": "status",
+              "value": "SUCCESS",
+              "type": "string"
+            },
+            {
+              "id": "success-lead-id",
+              "name": "lead_id",
+              "value": "={{ $json.lead_id }}",
+              "type": "string"
+            },
+            {
+              "id": "success-user-id",
+              "name": "user_id",
+              "value": "={{ $json.user_id }}",
+              "type": "string"
+            },
+            {
+              "id": "success-new-user",
+              "name": "is_new_user",
+              "value": "={{ $json.is_new_user }}",
+              "type": "boolean"
+            },
+            {
+              "id": "success-email",
+              "name": "email_sent",
+              "value": "={{ $json.email_sent }}",
+              "type": "boolean"
+            },
+            {
+              "id": "success-followups",
+              "name": "follow_ups_scheduled",
+              "value": "={{ $json.follow_ups_scheduled }}",
+              "type": "number"
+            },
+            {
+              "id": "success-original-email",
+              "name": "lead_email",
+              "value": "={{ $('Pripremi Podatke').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "success-original-name",
+              "name": "lead_name",
+              "value": "={{ $('Pripremi Podatke').item.json.full_name }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "success-data",
+      "name": "✅ Lead Obrađen",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1200, 260],
+      "notes": "Lead je uspješno obrađen!\n\nOdavde WhatsApp šalje notifikaciju na tvoj broj."
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "error-msg",
+              "name": "status",
+              "value": "ERROR",
+              "type": "string"
+            },
+            {
+              "id": "error-details",
+              "name": "error",
+              "value": "={{ $json.error || 'Unknown error' }}",
+              "type": "string"
+            },
+            {
+              "id": "error-email",
+              "name": "lead_email",
+              "value": "={{ $('Pripremi Podatke').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "error-name",
+              "name": "lead_name",
+              "value": "={{ $('Pripremi Podatke').item.json.full_name }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "error-data",
+      "name": "❌ Greška",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1200, 460],
+      "notes": "Nešto je pošlo krivo. WhatsApp ti šalje alert."
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "phoneNumberId": "",
+        "recipientPhoneNumber": "=YOUR_WHATSAPP_NUMBER",
+        "textBody": "=🚨 *Greška pri obradi FB leada!*\n\n👤 Lead: {{ $json.lead_name }} ({{ $json.lead_email }})\n❌ Greška: {{ $json.error }}\n\n⏰ Vrijeme: {{ new Date().toLocaleString('hr-HR', {timeZone: 'Europe/Zagreb'}) }}"
+      },
+      "id": "whatsapp-error",
+      "name": "WhatsApp: Error Alert",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [1440, 460],
+      "credentials": {
+        "whatsAppApi": {
+          "id": "",
+          "name": "WhatsApp Business account"
+        }
+      },
+      "notes": "⚙️ SETUP za WhatsApp notifikacije:\n\n1. Meta Business Suite → WhatsApp → API Setup\n2. Kreiraj 'WhatsApp Business' credential u n8n:\n   - Access Token: tvoj Meta API token\n   - Business Account ID: tvoj WhatsApp Business Account ID\n3. Zamijeni YOUR_WHATSAPP_NUMBER s tvojim brojem (format: 385911234567)\n4. Phone Number ID: ID tvog WhatsApp Business broja\n\n📖 Detalji: https://developers.facebook.com/docs/whatsapp/cloud-api"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "phoneNumberId": "",
+        "recipientPhoneNumber": "=YOUR_WHATSAPP_NUMBER",
+        "textBody": "=✅ *Novi FB Lead obrađen!*\n\n👤 {{ $json.lead_name }} ({{ $json.lead_email }})\n🆕 Novi user: {{ $json.is_new_user ? 'Da' : 'Ne' }}\n📧 Email poslan: {{ $json.email_sent ? 'Da' : 'Ne' }}\n📬 Follow-up emailova: {{ $json.follow_ups_scheduled }}\n🔗 Lead ID: {{ $json.lead_id }}\n\n⏰ {{ new Date().toLocaleString('hr-HR', {timeZone: 'Europe/Zagreb'}) }}"
+      },
+      "id": "whatsapp-success",
+      "name": "WhatsApp: Novi Lead",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [1440, 260],
+      "credentials": {
+        "whatsAppApi": {
+          "id": "",
+          "name": "WhatsApp Business account"
+        }
+      },
+      "notes": "Šalje WhatsApp poruku na tvoj broj kad stigne novi lead.\n\n⚙️ SETUP:\n1. Zamijeni YOUR_WHATSAPP_NUMBER s tvojim brojem\n2. Poveži WhatsApp Business credential\n3. Unesi Phone Number ID"
+    }
+  ],
+  "connections": {
+    "Facebook Lead Ads Trigger": {
+      "main": [
+        [
+          {
+            "node": "Pripremi Podatke",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pripremi Podatke": {
+      "main": [
+        [
+          {
+            "node": "Procesiraj Lead (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesiraj Lead (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Uspješno?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Uspješno?": {
+      "main": [
+        [
+          {
+            "node": "✅ Lead Obrađen",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "❌ Greška",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✅ Lead Obrađen": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp: Novi Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "❌ Greška": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp: Error Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "Mooring Booking",
+      "id": "mooring-booking"
+    },
+    {
+      "name": "Facebook Leads",
+      "id": "fb-leads"
+    },
+    {
+      "name": "WhatsApp",
+      "id": "whatsapp"
+    }
+  ],
+  "triggerCount": 1,
+  "pinData": {}
+}

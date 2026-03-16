@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dovršite registraciju</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f0f4f8;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;margin-top:32px;margin-bottom:32px;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+    
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#0052A3 0%,#003D7A 100%);padding:32px;text-align:center;">
+      <div style="font-size:36px;margin-bottom:8px;">⏱️</div>
+      <h1 style="color:#ffffff;font-size:22px;margin:0;font-weight:700;">Još niste završili registraciju</h1>
+    </div>
+
+    <!-- Body -->
+    <div style="padding:32px;">
+      <p style="font-size:16px;color:#1a1a1a;line-height:1.6;margin:0 0 16px;">
+        Pozdrav <strong>{{full_name}}</strong>,
+      </p>
+      <p style="font-size:16px;color:#333;line-height:1.6;margin:0 0 16px;">
+        Primijetili smo da se još niste prijavili na Mooring Booking. Nema problema — vaš račun je spreman i čeka vas! 🎯
+      </p>
+      <p style="font-size:16px;color:#333;line-height:1.6;margin:0 0 24px;">
+        Evo koliko je jednostavno:
+      </p>
+
+      <!-- Steps -->
+      <table style="width:100%;border-collapse:collapse;margin:0 0 24px;">
+        <tr>
+          <td style="width:48px;padding:12px 0;vertical-align:top;">
+            <div style="background:#0066CC;color:#fff;border-radius:50%;width:32px;height:32px;text-align:center;line-height:32px;font-weight:700;font-size:14px;">1</div>
+          </td>
+          <td style="padding:12px 0 12px 8px;vertical-align:top;">
+            <p style="margin:0;font-size:15px;color:#333;font-weight:600;">Kliknite link ispod</p>
+            <p style="margin:4px 0 0;font-size:14px;color:#666;">Automatski se prijavljujete — bez lozinke.</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width:48px;padding:12px 0;vertical-align:top;">
+            <div style="background:#0066CC;color:#fff;border-radius:50%;width:32px;height:32px;text-align:center;line-height:32px;font-weight:700;font-size:14px;">2</div>
+          </td>
+          <td style="padding:12px 0 12px 8px;vertical-align:top;">
+            <p style="margin:0;font-size:15px;color:#333;font-weight:600;">Dodajte svoj vez</p>
+            <p style="margin:4px 0 0;font-size:14px;color:#666;">Fotografije, lokacija, cijena — sve u 10 minuta.</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width:48px;padding:12px 0;vertical-align:top;">
+            <div style="background:#0066CC;color:#fff;border-radius:50%;width:32px;height:32px;text-align:center;line-height:32px;font-weight:700;font-size:14px;">3</div>
+          </td>
+          <td style="padding:12px 0 12px 8px;vertical-align:top;">
+            <p style="margin:0;font-size:15px;color:#333;font-weight:600;">Počnite primati rezervacije</p>
+            <p style="margin:4px 0 0;font-size:14px;color:#666;">Pomorci iz 11 zemalja pronalaze vaš vez.</p>
+          </td>
+        </tr>
+      </table>
+
+      <!-- CTA -->
+      <div style="text-align:center;margin:32px 0;">
+        <a href="http://mooring-booking.com/become-provider" style="display:inline-block;background:linear-gradient(135deg,#0066CC 0%,#0052A3 100%);color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:8px;font-size:16px;font-weight:600;box-shadow:0 4px 12px rgba(0,102,204,0.3);">
+          ✅ Dovršite registraciju sada
+        </a>
+      </div>
+
+      <!-- Urgency box -->
+      <div style="background:#FFF8E1;border-radius:10px;padding:20px;margin:24px 0;border-left:4px solid #FFA000;">
+        <p style="font-size:14px;color:#333;margin:0;line-height:1.6;">
+          🔥 <strong>Sezona počinje uskoro!</strong> Provajderi koji listaju vezove sada imat će prednost — 
+          vaš vez će biti vidljiv kad pomorci počnu planirati ljetna putovanja.
+        </p>
+      </div>
+
+      <p style="font-size:14px;color:#666;line-height:1.6;margin:24px 0 0;">
+        Ne želite više primati ove emailove? 
+        <a href="{{unsubscribe_link}}" style="color:#999;text-decoration:underline;">Odjavite se</a>
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="background:#f8fafc;padding:24px 32px;text-align:center;border-top:1px solid #e2e8f0;">
+      <p style="font-size:13px;color:#999;margin:0;">
+        © 2026 Mooring Booking · Mediteranski marketplace za vezove
+      </p>
+    </div>
+  </div>
+</body>
+</html>

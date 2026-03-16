@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Mail, Lock, User, Chrome, Apple, Anchor, Loader2 } from "lucide-react";
@@ -15,6 +15,8 @@ const AuthPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { signUp, signIn, signInWithGoogle, signInWithApple, user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/dashboard';
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,9 +26,9 @@ const AuthPage = () => {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      navigate("/dashboard");
+      navigate(redirectTo);
     }
-  }, [user, navigate]);
+  }, [user, navigate, redirectTo]);
 
   if (user) {
     return null;
@@ -65,7 +67,7 @@ const AuthPage = () => {
             title: "Welcome Back! \u2693",
             description: "You are now signed in.",
           });
-          navigate("/dashboard");
+          navigate(redirectTo);
         }
       }
     } catch (err) {

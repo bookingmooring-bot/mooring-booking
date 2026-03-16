@@ -339,10 +339,375 @@ const BecomeProviderPage = () => {
     }
   };
 
+  const [leadFormData, setLeadFormData] = useState({
+    full_name: "",
+    email: "",
+    phone: "",
+    city: "",
+    country: "",
+    has_mooring: false,
+    mooring_type: "",
+  });
+  const [leadSubmitting, setLeadSubmitting] = useState(false);
+  const [leadSubmitted, setLeadSubmitted] = useState(false);
+
+  const mooringTypes = [
+    { id: "vez_u_marini", label: "Vez u marini / Marina berth", icon: "⚓" },
+    { id: "privatna_bova", label: "Privatna bova / Private buoy", icon: "🔴" },
+    { id: "privatni_dok", label: "Privatni dok / Private dock", icon: "🏗️" },
+    { id: "sidriste", label: "Sidrište / Anchorage", icon: "⛵" },
+    { id: "obalni_vez", label: "Obalni vez / Shore mooring", icon: "🪢" },
+  ];
+
+  const handleLeadSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLeadSubmitting(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL || 'https://bblxawscmyzelinidkmb.supabase.co'}/functions/v1/process-fb-lead`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...leadFormData,
+            fb_campaign_name: 'Website Lead Form',
+          }),
+        }
+      );
+      const result = await response.json();
+      if (result.success) {
+        setLeadSubmitted(true);
+        toast({
+          title: "✅ Prijava uspješna!",
+          description: "Provjerite email za link za pristup.",
+        });
+      } else {
+        throw new Error(result.error || 'Submission failed');
+      }
+    } catch (err: any) {
+      toast({
+        title: "Greška",
+        description: err.message || "Nešto je pošlo po zlu. Pokušajte ponovo.",
+        variant: "destructive",
+      });
+    } finally {
+      setLeadSubmitting(false);
+    }
+  };
+
   const monthlyAddOnCost = (formData.marketingTools ? 5 : 0) + (formData.premiumListing ? 9.99 : 0);
   const yearlyAddOnCost = formData.insuranceMediation ? 9.99 : 0;
 
+  // Lead submitted success screen
+  if (leadSubmitted && !user) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <main className="pt-24">
+          <section className="min-h-[70vh] flex items-center justify-center bg-gradient-ocean relative overflow-hidden">
+            <div className="container mx-auto px-4 relative z-10">
+              <div className="max-w-lg mx-auto text-center">
+                <div className="w-20 h-20 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Check className="text-gold" size={40} />
+                </div>
+                <h1 className="font-heading text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
+                  Prijava uspješna! 🎉
+                </h1>
+                <p className="text-primary-foreground/80 text-lg mb-6">
+                  Poslali smo vam email na <strong className="text-gold">{leadFormData.email}</strong> s linkom za pristup.
+                </p>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-left mb-8">
+                  <p className="text-primary-foreground font-medium mb-3">Sljedeći koraci:</p>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <span className="bg-gold text-gold-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold">1</span>
+                      <span className="text-primary-foreground/80">Otvorite email i kliknite na link</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="bg-gold text-gold-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold">2</span>
+                      <span className="text-primary-foreground/80">Dodajte slike i detalje o vezu</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="bg-gold text-gold-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold">3</span>
+                      <span className="text-primary-foreground/80">Počnite primati rezervacije!</span>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-primary-foreground/60 text-sm">
+                  Niste primili email? Provjerite spam folder ili <a href="mailto:support@mooring-booking.com" className="text-gold hover:underline">kontaktirajte nas</a>.
+                </p>
+              </div>
+            </div>
+          </section>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!showForm && !user) {
+    // Unauthenticated user — show lead capture form
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <main className="pt-24">
+          {/* Hero with Lead Form */}
+          <section className="py-16 bg-gradient-ocean relative overflow-hidden">
+            <div className="absolute top-10 left-10 opacity-10 animate-float">
+              <Anchor size={100} className="text-gold" />
+            </div>
+            <div className="container mx-auto px-4 relative z-10">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+                {/* Left - Text */}
+                <div>
+                  <div className="inline-flex items-center gap-2 bg-gold/20 text-gold px-4 py-2 rounded-full mb-6">
+                    <Star size={16} />
+                    <span className="text-sm font-medium">Join 10,000+ Providers</span>
+                  </div>
+                  <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
+                    {t('providerCta.title')}
+                    <span className="block text-gold">{t('providerCta.titleHighlight')}</span>
+                  </h1>
+                  <p className="text-lg text-primary-foreground/80 mb-8">
+                    {t('providerCta.subtitle')}
+                  </p>
+                  <div className="space-y-3 text-primary-foreground/90">
+                    <div className="flex items-center gap-3">
+                      <Check className="text-gold flex-shrink-0" size={20} />
+                      <span>Besplatno listanje — bez pretplate</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Check className="text-gold flex-shrink-0" size={20} />
+                      <span>85% zarade je vaše (samo 15% komisija)</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Check className="text-gold flex-shrink-0" size={20} />
+                      <span>Pomorci iz 11 mediteranskih zemalja</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Check className="text-gold flex-shrink-0" size={20} />
+                      <span>Prosječna zarada: €5.000+ po sezoni</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right - Lead Form */}
+                <div className="bg-card rounded-2xl p-8 shadow-hover">
+                  <div className="text-center mb-6">
+                    <h2 className="font-heading text-2xl font-bold text-foreground mb-2">
+                      Registrirajte se besplatno
+                    </h2>
+                    <p className="text-muted-foreground text-sm">
+                      Popunite formu i dobit ćete pristup na email
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleLeadSubmit} className="space-y-4">
+                    <div>
+                      <Label htmlFor="lead_name">Ime i prezime *</Label>
+                      <div className="relative mt-1">
+                        <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                        <Input
+                          id="lead_name"
+                          placeholder="Ivan Horvat"
+                          value={leadFormData.full_name}
+                          onChange={(e) => setLeadFormData(prev => ({ ...prev, full_name: e.target.value }))}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="lead_email">Email adresa *</Label>
+                      <div className="relative mt-1">
+                        <Zap className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                        <Input
+                          id="lead_email"
+                          type="email"
+                          placeholder="ivan@email.com"
+                          value={leadFormData.email}
+                          onChange={(e) => setLeadFormData(prev => ({ ...prev, email: e.target.value }))}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="lead_phone">Telefon *</Label>
+                      <div className="relative mt-1">
+                        <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                        <Input
+                          id="lead_phone"
+                          type="tel"
+                          placeholder="+385 91 234 5678"
+                          value={leadFormData.phone}
+                          onChange={(e) => setLeadFormData(prev => ({ ...prev, phone: e.target.value }))}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="lead_city">Grad *</Label>
+                        <Input
+                          id="lead_city"
+                          placeholder="Split"
+                          value={leadFormData.city}
+                          onChange={(e) => setLeadFormData(prev => ({ ...prev, city: e.target.value }))}
+                          className="mt-1"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label>Država *</Label>
+                        <Select
+                          value={leadFormData.country}
+                          onValueChange={(value) => setLeadFormData(prev => ({ ...prev, country: value }))}
+                        >
+                          <SelectTrigger className="mt-1">
+                            <SelectValue placeholder="Izaberite" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {countries.map((c) => (
+                              <SelectItem key={c.code} value={c.code}>
+                                {c.flag} {c.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label>Tip veza *</Label>
+                      <Select
+                        value={leadFormData.mooring_type}
+                        onValueChange={(value) => setLeadFormData(prev => ({ ...prev, mooring_type: value, has_mooring: true }))}
+                      >
+                        <SelectTrigger className="mt-1">
+                          <SelectValue placeholder="Izaberite tip veza" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mooringTypes.map((mt) => (
+                            <SelectItem key={mt.id} value={mt.id}>
+                              {mt.icon} {mt.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+                      <Checkbox
+                        id="lead_has_mooring"
+                        checked={leadFormData.has_mooring}
+                        onCheckedChange={(checked) => setLeadFormData(prev => ({ ...prev, has_mooring: checked as boolean }))}
+                      />
+                      <Label htmlFor="lead_has_mooring" className="text-sm cursor-pointer">
+                        Trenutno imam vez koji želim iznajmljivati
+                      </Label>
+                    </div>
+
+                    <Button
+                      type="submit"
+                      className="w-full h-14 bg-gold text-gold-foreground hover:bg-gold/90 font-semibold text-lg"
+                      disabled={leadSubmitting}
+                    >
+                      {leadSubmitting ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2" />
+                          Šaljem...
+                        </>
+                      ) : (
+                        <>
+                          🚀 Registrirajte se besplatno
+                          <ArrowRight className="ml-2" size={20} />
+                        </>
+                      )}
+                    </Button>
+
+                    <p className="text-xs text-muted-foreground text-center">
+                      Besplatno · Bez kreditne kartice · 15% komisija samo na rezervacije
+                    </p>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Benefits Grid */}
+          <section className="py-20 bg-background">
+            <div className="container mx-auto px-4">
+              <h2 className="font-heading text-3xl font-bold text-foreground text-center mb-12">
+                Why Providers Love Mooring Booking
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {benefits.map((benefit) => (
+                  <div key={benefit.title} className="bg-card rounded-xl p-6 shadow-card hover:shadow-hover transition-shadow">
+                    <div className="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center mb-4">
+                      <benefit.icon className="text-secondary" size={28} />
+                    </div>
+                    <h3 className="font-heading font-semibold text-lg text-foreground mb-2">{benefit.title}</h3>
+                    <p className="text-muted-foreground text-sm mb-4">{benefit.description}</p>
+                    <div className="border-t border-border pt-4">
+                      <div className="font-heading text-2xl font-bold text-secondary">{benefit.stat}</div>
+                      <div className="text-muted-foreground text-xs">{benefit.statLabel}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Testimonials */}
+          <section className="py-20 bg-muted">
+            <div className="container mx-auto px-4">
+              <h2 className="font-heading text-3xl font-bold text-foreground text-center mb-4">
+                Success Stories from Providers
+              </h2>
+              <p className="text-muted-foreground text-center mb-12">
+                Real earnings from real mooring owners across the Mediterranean.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {testimonials.map((testimonial) => (
+                  <div key={testimonial.author} className="bg-card rounded-xl p-6 shadow-card">
+                    <div className="flex items-center gap-1 mb-4">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className="fill-gold text-gold" size={16} />
+                      ))}
+                    </div>
+                    <p className="text-foreground italic mb-6">"{testimonial.quote}"</p>
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={testimonial.avatar}
+                        alt={testimonial.author}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                      <div>
+                        <h4 className="font-heading font-semibold text-foreground">{testimonial.author}</h4>
+                        <p className="text-muted-foreground text-sm">{testimonial.location}</p>
+                      </div>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-border">
+                      <span className="text-success font-semibold">{testimonial.earnings}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   if (!showForm) {
+    // Authenticated user — show CTA to start listing
     return (
       <div className="min-h-screen">
         <Header />

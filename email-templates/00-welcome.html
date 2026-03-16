@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dobrodošli na Mooring Booking</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f0f4f8;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;margin-top:32px;margin-bottom:32px;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+    
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#0066CC 0%,#004A99 100%);padding:40px 32px;text-align:center;">
+      <div style="font-size:40px;margin-bottom:8px;">⚓</div>
+      <h1 style="color:#ffffff;font-size:24px;margin:0;font-weight:700;letter-spacing:-0.5px;">Dobrodošli na Mooring Booking!</h1>
+      <p style="color:rgba(255,255,255,0.85);font-size:15px;margin:12px 0 0;">Mediteranski marketplace za privatne vezove</p>
+    </div>
+
+    <!-- Body -->
+    <div style="padding:32px;">
+      <p style="font-size:16px;color:#1a1a1a;line-height:1.6;margin:0 0 16px;">
+        Pozdrav <strong>{{ $json.lead_name }}</strong>,
+      </p>
+      <p style="font-size:16px;color:#333;line-height:1.6;margin:0 0 16px;">
+        Hvala vam što ste se prijavili! 🎉 Vaša prijava je uspješno zaprimljena.
+      </p>
+      <p style="font-size:16px;color:#333;line-height:1.6;margin:0 0 24px;">
+        Kreirali smo vam račun i sve je spremno. Kliknite donji gumb da se prijavite i postavite svoj prvi vez — <strong>traje samo 10 minuta</strong>.
+      </p>
+
+      <!-- CTA Button -->
+      <div style="text-align:center;margin:32px 0;">
+        <a href="http://mooring-booking.com/become-provider" style="display:inline-block;background:linear-gradient(135deg,#0066CC 0%,#0052A3 100%);color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:8px;font-size:16px;font-weight:600;letter-spacing:0.3px;box-shadow:0 4px 12px rgba(0,102,204,0.3);">
+          🚀 Prijavite se i počnite zarađivati
+        </a>
+      </div>
+
+      <!-- Info Box -->
+      <div style="background:#EBF5FF;border-radius:10px;padding:20px;margin:24px 0;border-left:4px solid #0066CC;">
+        <p style="font-size:14px;color:#333;margin:0;line-height:1.6;">
+          📋 <strong>Vaši podaci iz prijave:</strong><br>
+          👤 Ime: {{ $json.lead_name }}<br>
+          📧 Email: {{ $json.lead_email }}<br>
+          🏙️ Grad: {{ $('Pripremi Podatke').item.json.city }}<br>
+          🌊 Tip veza: {{ $('Pripremi Podatke').item.json.mooring_type }}
+        </p>
+      </div>
+
+      <!-- Benefits Box -->
+      <div style="background:#f8fafc;border-radius:10px;padding:24px;margin:24px 0;border-left:4px solid #2E7D32;">
+        <p style="font-size:14px;font-weight:700;color:#2E7D32;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;">
+          Zašto Mooring Booking?
+        </p>
+        <table style="width:100%;border-collapse:collapse;">
+          <tr>
+            <td style="padding:8px 0;font-size:15px;color:#333;width:30px;vertical-align:top;">💰</td>
+            <td style="padding:8px 0 8px 12px;font-size:15px;color:#333;"><strong>Besplatno listanje</strong> — plaćate samo 15% komisije kad zarađujete</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0;font-size:15px;color:#333;width:30px;vertical-align:top;">🌍</td>
+            <td style="padding:8px 0 8px 12px;font-size:15px;color:#333;"><strong>11 zemalja, 15 jezika</strong> — pomorci iz cijelog Mediterana vas pronalaze</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0;font-size:15px;color:#333;width:30px;vertical-align:top;">📅</td>
+            <td style="padding:8px 0 8px 12px;font-size:15px;color:#333;"><strong>Kalendar dostupnosti</strong> — vi kontrolirate kad je vez slobodan</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0;font-size:15px;color:#333;width:30px;vertical-align:top;">⭐</td>
+            <td style="padding:8px 0 8px 12px;font-size:15px;color:#333;"><strong>Sustav recenzija</strong> — gradite povjerenje s gostima</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- 3 Steps -->
+      <p style="font-size:16px;color:#1a1a1a;font-weight:600;margin:24px 0 16px;">Kako početi zarađivati:</p>
+      <table style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td style="width:48px;padding:10px 0;vertical-align:top;">
+            <div style="background:#0066CC;color:#fff;border-radius:50%;width:32px;height:32px;text-align:center;line-height:32px;font-weight:700;font-size:14px;">1</div>
+          </td>
+          <td style="padding:10px 0 10px 8px;vertical-align:top;">
+            <p style="margin:0;font-size:15px;color:#333;"><strong>Prijavite se</strong> — kliknite gumb gore, traje 2 sekunde</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width:48px;padding:10px 0;vertical-align:top;">
+            <div style="background:#0066CC;color:#fff;border-radius:50%;width:32px;height:32px;text-align:center;line-height:32px;font-weight:700;font-size:14px;">2</div>
+          </td>
+          <td style="padding:10px 0 10px 8px;vertical-align:top;">
+            <p style="margin:0;font-size:15px;color:#333;"><strong>Listajte vez</strong> — dodajte fotografije, lokaciju i cijenu (10 min)</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width:48px;padding:10px 0;vertical-align:top;">
+            <div style="background:#0066CC;color:#fff;border-radius:50%;width:32px;height:32px;text-align:center;line-height:32px;font-weight:700;font-size:14px;">3</div>
+          </td>
+          <td style="padding:10px 0 10px 8px;vertical-align:top;">
+            <p style="margin:0;font-size:15px;color:#333;"><strong>Zarađujte</strong> — primajte rezervacije od pomoraca iz 11 zemalja</p>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Earnings callout -->
+      <div style="background:#E8F5E9;border-radius:10px;padding:20px;margin:24px 0;text-align:center;">
+        <p style="font-size:14px;color:#2E7D32;margin:0 0 4px;font-weight:600;">PROSJEČNA GODIŠNJA ZARADA</p>
+        <p style="font-size:36px;color:#1B5E20;margin:0;font-weight:700;">€5.000+</p>
+        <p style="font-size:13px;color:#666;margin:8px 0 0;">bez unaprijednih troškova · vi postavljate cijenu</p>
+      </div>
+
+      <!-- Second CTA -->
+      <div style="text-align:center;margin:32px 0;">
+        <a href="http://mooring-booking.com/become-provider" style="display:inline-block;background:linear-gradient(135deg,#2E7D32 0%,#1B5E20 100%);color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:8px;font-size:16px;font-weight:600;box-shadow:0 4px 12px rgba(46,125,50,0.3);">
+          💰 Počnite zarađivati od svog veza
+        </a>
+      </div>
+
+      <p style="font-size:14px;color:#666;line-height:1.6;margin:24px 0 0;">
+        Imate pitanja? Slobodno nam pišite na 
+        <a href="mailto:support@mooring-booking.com" style="color:#0066CC;">support@mooring-booking.com</a>
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="background:#f8fafc;padding:24px 32px;text-align:center;border-top:1px solid #e2e8f0;">
+      <p style="font-size:13px;color:#999;margin:0;">
+        © 2026 Mooring Booking · Mediteranski marketplace za vezove
+      </p>
+      <p style="font-size:12px;color:#bbb;margin:8px 0 0;">
+        <a href="http://mooring-booking.com/become-provider" style="color:#0066CC;text-decoration:none;">mooring-booking.com</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
