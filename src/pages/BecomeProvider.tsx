@@ -156,6 +156,25 @@ const generateCalendarDays = (): CalendarDay[] => {
   return days;
 };
 
+const ProviderMiniHeader = ({ mooringCount }: { mooringCount: number }) => (
+  <div className="bg-gradient-ocean py-4 px-6">
+    <div className="container mx-auto flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <Anchor size={28} className="text-gold" />
+        <span className="text-primary-foreground font-heading font-bold text-lg">Mooring Booking</span>
+      </div>
+      <div className="flex items-center gap-4">
+        <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 flex items-center gap-2">
+          <MapPin size={16} className="text-gold" />
+          <span className="text-primary-foreground text-sm">
+            <strong className="text-gold">{mooringCount}</strong> {mooringCount === 1 ? 'vez postavljen' : 'vezova postavljeno'}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const BecomeProviderPage = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -165,6 +184,8 @@ const BecomeProviderPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadingPhotos, setUploadingPhotos] = useState(false);
   const [showConsent, setShowConsent] = useState(false);
+  const [mooringCount, setMooringCount] = useState(0);
+  const [justSubmitted, setJustSubmitted] = useState(false);
   const [consentAccepted, setConsentAccepted] = useState(false);
   const [formData, setFormData] = useState({
     mooringName: "",
@@ -320,13 +341,30 @@ const BecomeProviderPage = () => {
 
       if (error) throw error;
 
-      setConsentAccepted(true);
+      setConsentAccepted(false);
       setShowConsent(false);
-      toast({
-        title: "✅ Profile Published!",
-        description: "Your mooring is now pending review. You'll be notified once it's approved.",
+      setShowForm(false);
+      setJustSubmitted(true);
+      setMooringCount(prev => prev + 1);
+      // Reset form for adding another mooring
+      setFormData({
+        mooringName: "", country: "", region: "", latitude: "", longitude: "",
+        description: "", concessionNumber: "", windProtection: "good",
+        amenities: [], maxBoatLength: "", maxDraft: "", pricePerNight: "",
+        discount: [10], paymentMethods: [], photos: [],
+        address: "", phone: "", whatsapp: "",
+        winterStorage: false, winterStorageType: "wet",
+        winterPriceMonthly: "", winterServices: [],
+        marketingTools: false, premiumListing: false,
+        insuranceMediation: false, now4today: false, mooringUnits: "1",
       });
-      navigate('/');
+      setDeclarations({ ownership: false, commission: false, terms: false, data: false, winterResponsibility: false });
+      setPhotoPreviews([]);
+      setCalendarDays(generateCalendarDays());
+      toast({
+        title: "✅ Vez objavljen!",
+        description: "Vaš vez je sada na pregledu. Obavijestit ćemo vas kad bude odobren.",
+      });
     } catch (err: any) {
       console.error('Publish error:', err);
       toast({
@@ -706,136 +744,72 @@ const BecomeProviderPage = () => {
     );
   }
 
-  if (!showForm) {
-    // Authenticated user — show CTA to start listing
+  if (!showForm && user) {
+    // Authenticated user — show success or prompt to add mooring
     return (
-      <div className="min-h-screen">
-        <Header />
-        <main className="pt-24">
-          {/* Hero Section */}
-          <section className="py-20 bg-gradient-ocean relative overflow-hidden">
-            <div className="absolute top-10 left-10 opacity-10 animate-float">
-              <Anchor size={100} className="text-gold" />
-            </div>
-            <div className="container mx-auto px-4 relative z-10">
-              <div className="max-w-4xl mx-auto text-center">
-                <div className="inline-flex items-center gap-2 bg-gold/20 text-gold px-4 py-2 rounded-full mb-6">
-                  <Star size={16} />
-                  <span className="text-sm font-medium">Join 10,000+ Providers</span>
+      <div className="min-h-screen bg-muted">
+        <ProviderMiniHeader mooringCount={mooringCount} />
+        <main className="py-12">
+          <div className="container mx-auto px-4">
+            <div className="max-w-2xl mx-auto">
+              {justSubmitted && (
+                <div className="bg-green-50 border border-green-200 rounded-2xl p-8 mb-8 text-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Check className="text-green-600" size={32} />
+                  </div>
+                  <h2 className="font-heading text-2xl font-bold text-foreground mb-2">
+                    Vez uspješno objavljen! 🎉
+                  </h2>
+                  <p className="text-muted-foreground mb-2">
+                    Vaš vez je sada na pregledu. Obavijestit ćemo vas kad bude odobren.
+                  </p>
+                  <p className="text-sm text-green-700 font-medium">
+                    Ukupno vezova: {mooringCount}
+                  </p>
                 </div>
-                <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
-                  {t('providerCta.title')}
-                  <span className="block text-gold">{t('providerCta.titleHighlight')}</span>
+              )}
+
+              <div className="bg-card rounded-2xl p-8 shadow-hover text-center">
+                <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Anchor className="text-gold" size={32} />
+                </div>
+                <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-3">
+                  {justSubmitted ? 'Dodajte još jedan vez' : 'Dodajte vaš vez'}
                 </h1>
-                <p className="text-lg text-primary-foreground/80 max-w-2xl mx-auto mb-10">
-                  {t('providerCta.subtitle')}
+                <p className="text-muted-foreground mb-8">
+                  {justSubmitted
+                    ? 'Imate više vezova? Dodajte ih sve i povećajte zaradu!'
+                    : 'Popunite podatke o vašem vezu i počnite zarađivati. Besplatno, bez rizika.'
+                  }
                 </p>
-                <div className="flex flex-wrap justify-center gap-4">
-                  <Button
-                    size="lg"
-                    className="bg-gold text-gold-foreground hover:bg-gold/90 font-semibold text-lg px-8 h-14"
-                    onClick={() => setShowForm(true)}
-                  >
-                    Start Listing Now
-                    <ArrowRight className="ml-2" size={20} />
-                  </Button>
-                  <Link to="/pricing">
-                    <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 h-14">
-                      View Pricing Details
-                    </Button>
-                  </Link>
+
+                <div className="space-y-3 text-left mb-8 max-w-md mx-auto">
+                  <div className="flex items-center gap-3 text-sm">
+                    <Check className="text-gold flex-shrink-0" size={18} />
+                    <span>Besplatno listanje — bez pretplate</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm">
+                    <Check className="text-gold flex-shrink-0" size={18} />
+                    <span>85% zarade je vaše (samo 15% komisija)</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm">
+                    <Check className="text-gold flex-shrink-0" size={18} />
+                    <span>Pomorci iz 11 mediteranskih zemalja</span>
+                  </div>
                 </div>
-                <p className="text-primary-foreground/60 text-sm mt-4">
-                  {t('providerCta.note')}
-                </p>
+
+                <Button
+                  size="lg"
+                  className="bg-gold text-gold-foreground hover:bg-gold/90 font-semibold text-lg px-10 h-14"
+                  onClick={() => { setShowForm(true); setJustSubmitted(false); }}
+                >
+                  {justSubmitted ? '➕ Dodaj još jedan vez' : '⚓ Dodaj vez'}
+                  <ArrowRight className="ml-2" size={20} />
+                </Button>
               </div>
             </div>
-          </section>
-
-          {/* Benefits Grid */}
-          <section className="py-20 bg-background">
-            <div className="container mx-auto px-4">
-              <h2 className="font-heading text-3xl font-bold text-foreground text-center mb-12">
-                Why Providers Love Mooring Booking
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {benefits.map((benefit) => (
-                  <div key={benefit.title} className="bg-card rounded-xl p-6 shadow-card hover:shadow-hover transition-shadow">
-                    <div className="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center mb-4">
-                      <benefit.icon className="text-secondary" size={28} />
-                    </div>
-                    <h3 className="font-heading font-semibold text-lg text-foreground mb-2">{benefit.title}</h3>
-                    <p className="text-muted-foreground text-sm mb-4">{benefit.description}</p>
-                    <div className="border-t border-border pt-4">
-                      <div className="font-heading text-2xl font-bold text-secondary">{benefit.stat}</div>
-                      <div className="text-muted-foreground text-xs">{benefit.statLabel}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Testimonials */}
-          <section className="py-20 bg-muted">
-            <div className="container mx-auto px-4">
-              <h2 className="font-heading text-3xl font-bold text-foreground text-center mb-4">
-                Success Stories from Providers
-              </h2>
-              <p className="text-muted-foreground text-center mb-12">
-                Real earnings from real mooring owners across the Mediterranean.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {testimonials.map((testimonial) => (
-                  <div key={testimonial.author} className="bg-card rounded-xl p-6 shadow-card">
-                    <div className="flex items-center gap-1 mb-4">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} className="fill-gold text-gold" size={16} />
-                      ))}
-                    </div>
-                    <p className="text-foreground italic mb-6">"{testimonial.quote}"</p>
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={testimonial.avatar}
-                        alt={testimonial.author}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                      <div>
-                        <h4 className="font-heading font-semibold text-foreground">{testimonial.author}</h4>
-                        <p className="text-muted-foreground text-sm">{testimonial.location}</p>
-                      </div>
-                    </div>
-                    <div className="mt-4 pt-4 border-t border-border">
-                      <span className="text-success font-semibold">{testimonial.earnings}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* CTA */}
-          <section className="py-20 bg-gradient-ocean">
-            <div className="container mx-auto px-4 text-center">
-              <h2 className="font-heading text-3xl md:text-4xl font-bold text-primary-foreground mb-6">
-                Ready to Start Earning?
-              </h2>
-              <p className="text-primary-foreground/80 mb-10 max-w-2xl mx-auto">
-                Join thousands of mooring owners already earning passive income.
-                Free registration, no monthly fees, just 15% on successful bookings.
-              </p>
-              <Button
-                size="lg"
-                className="bg-gold text-gold-foreground hover:bg-gold/90 font-semibold text-lg px-10 h-14"
-                onClick={() => setShowForm(true)}
-              >
-                Create Your Provider Account
-                <ArrowRight className="ml-2" size={20} />
-              </Button>
-            </div>
-          </section>
+          </div>
         </main>
-        <Footer />
       </div>
     );
   }
@@ -844,8 +818,8 @@ const BecomeProviderPage = () => {
   if (showConsent) {
     return (
       <div className="min-h-screen bg-muted">
-        <Header />
-        <main className="pt-28 pb-20">
+        <ProviderMiniHeader mooringCount={mooringCount} />
+        <main className="py-12">
           <div className="container mx-auto px-4">
             <div className="max-w-2xl mx-auto">
               <div className="bg-card rounded-2xl p-8 shadow-hover">
@@ -926,7 +900,6 @@ const BecomeProviderPage = () => {
             </div>
           </div>
         </main>
-        <Footer />
       </div>
     );
   }
@@ -934,8 +907,8 @@ const BecomeProviderPage = () => {
   // Registration Form
   return (
     <div className="min-h-screen bg-muted">
-      <Header />
-      <main className="pt-28 pb-20">
+      <ProviderMiniHeader mooringCount={mooringCount} />
+      <main className="py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             {/* Form Header */}
@@ -1686,7 +1659,6 @@ const BecomeProviderPage = () => {
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   );
 };
