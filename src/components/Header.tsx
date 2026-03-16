@@ -45,7 +45,7 @@ const Header = () => {
                 {t('nav.howItWorks')}
               </Link>
               <Link
-                to="/become-provider"
+                to="/join-as-provider"
                 className="font-medium text-foreground/80 hover:text-primary transition-colors"
               >
                 {t('nav.becomeProvider')}
@@ -125,7 +125,7 @@ const Header = () => {
                   {t('nav.howItWorks')}
                 </Link>
                 <Link
-                  to="/become-provider"
+                  to="/join-as-provider"
                   className="font-medium text-foreground/80 hover:text-primary transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >

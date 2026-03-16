@@ -85,7 +85,7 @@ const HowItWorksPage = () => {
               ))}
             </div>
             <div className="text-center mt-12">
-              <Link to="/become-provider"><Button size="lg" className="bg-gold text-gold-foreground hover:bg-gold/90 font-semibold text-lg px-8 h-14"><Anchor className="mr-2" size={20} />{t('howItWorksPage.becomeProvider')}</Button></Link>
+              <Link to="/join-as-provider"><Button size="lg" className="bg-gold text-gold-foreground hover:bg-gold/90 font-semibold text-lg px-8 h-14"><Anchor className="mr-2" size={20} />{t('howItWorksPage.becomeProvider')}</Button></Link>
               <p className="text-muted-foreground text-sm mt-4">{t('howItWorksPage.freeRegistration')}</p>
             </div>
           </div>

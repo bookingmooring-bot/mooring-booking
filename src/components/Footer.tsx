@@ -65,7 +65,7 @@ const Footer = () => {
           <div className="space-y-4">
             <h4 className="font-heading font-semibold text-lg">{t('footer.forYou', 'For You')}</h4>
             <nav className="flex flex-col gap-3">
-              <button onClick={() => handleLinkClick('/become-provider')} className="text-left text-primary-foreground/70 hover:text-gold transition-colors text-sm">
+              <button onClick={() => handleLinkClick('/join-as-provider')} className="text-left text-primary-foreground/70 hover:text-gold transition-colors text-sm">
                 {t('footer.registerMooring')}
               </button>
               <button onClick={() => handleLinkClick('/pricing')} className="text-left text-primary-foreground/70 hover:text-gold transition-colors text-sm">

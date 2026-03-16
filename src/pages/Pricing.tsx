@@ -141,7 +141,7 @@ const PricingPage = () => {
                   </div>
 
                   <div className="pt-8 border-t border-border text-center">
-                    <Link to="/become-provider">
+                    <Link to="/join-as-provider">
                       <Button size="lg" className="bg-gradient-ocean font-semibold text-lg px-10 h-14">
                         {t('pricing.startEarning')}
                       </Button>
@@ -297,7 +297,7 @@ const PricingPage = () => {
             <p className="text-primary-foreground/80 mb-8 max-w-xl mx-auto">
               {t('pricing.readyToListSubtitle')}
             </p>
-            <Link to="/become-provider">
+            <Link to="/join-as-provider">
               <Button size="lg" className="bg-gold text-gold-foreground hover:bg-gold/90 font-semibold text-lg px-10 h-14">
                 <TrendingUp className="mr-2" size={20} />
                 {t('pricing.startEarningNow')}

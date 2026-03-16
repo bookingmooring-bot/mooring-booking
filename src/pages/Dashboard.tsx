@@ -347,7 +347,7 @@ const Dashboard = () => {
                                 Manage your moorings, view received bookings, and track earnings here.
                             </p>
                         </div>
-                        <Button variant="secondary" onClick={() => navigate('/become-provider')}>
+                        <Button variant="secondary" onClick={() => navigate('/join-as-provider')}>
                             Add New Mooring
                         </Button>
                     </div>
