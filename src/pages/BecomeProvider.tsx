@@ -399,6 +399,24 @@ const BecomeProviderPage = () => {
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Manual validation for fields that HTML5 can't validate
+    if (!leadFormData.country) {
+      toast({ title: "Odaberite državu", description: "Molimo odaberite državu iz popisa.", variant: "destructive" });
+      return;
+    }
+    if (leadFormData.mooring_types.length === 0) {
+      toast({ title: "Odaberite tip veza", description: "Molimo označite barem jedan tip veza.", variant: "destructive" });
+      return;
+    }
+
+    // Validate quantities - set any empty ones to 1
+    const cleanedQuantities: Record<string, number> = {};
+    for (const typeId of leadFormData.mooring_types) {
+      const val = leadFormData.mooring_quantities[typeId];
+      cleanedQuantities[typeId] = (val && val > 0) ? val : 1;
+    }
+
     setLeadSubmitting(true);
     try {
       const response = await fetch(
@@ -409,7 +427,7 @@ const BecomeProviderPage = () => {
           body: JSON.stringify({
             ...leadFormData,
             mooring_type: leadFormData.mooring_types.join(', '),
-            mooring_quantities: leadFormData.mooring_quantities,
+            mooring_quantities: cleanedQuantities,
             fb_campaign_name: 'Website Lead Form',
           }),
         }
@@ -661,14 +679,24 @@ const BecomeProviderPage = () => {
                                   <Input
                                     type="number"
                                     min={1}
-                                    max={100}
-                                    value={leadFormData.mooring_quantities[mt.id] || 1}
+                                    value={leadFormData.mooring_quantities[mt.id] ?? ''}
                                     onChange={(e) => {
-                                      const val = parseInt(e.target.value) || 1;
+                                      const raw = e.target.value;
+                                      const val = raw === '' ? 0 : parseInt(raw);
+                                      if (raw !== '' && (isNaN(val) || val < 0)) return;
                                       setLeadFormData(prev => ({
                                         ...prev,
                                         mooring_quantities: { ...prev.mooring_quantities, [mt.id]: val },
                                       }));
+                                    }}
+                                    onBlur={(e) => {
+                                      const val = parseInt(e.target.value);
+                                      if (!val || val < 1) {
+                                        setLeadFormData(prev => ({
+                                          ...prev,
+                                          mooring_quantities: { ...prev.mooring_quantities, [mt.id]: 1 },
+                                        }));
+                                      }
                                     }}
                                     className="w-16 h-8 text-center text-sm"
                                   />
