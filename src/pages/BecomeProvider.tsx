@@ -1241,8 +1241,8 @@ const BecomeProviderPage = () => {
                 </div>
               </div>
 
-              {/* Paid Add-Ons */}
-              <div className="bg-card rounded-xl p-6 shadow-card">
+              {/* Paid Add-Ons — hidden for new providers until they have moorings */}
+              {false && <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <Crown className="text-gold" size={24} />
                   {t('provider.premiumAddOns')}
@@ -1369,10 +1369,10 @@ const BecomeProviderPage = () => {
                     </div>
                   )}
                 </div>
-              </div>
+              </div>}
 
-              {/* Stripe Integration */}
-              <div className="bg-card rounded-xl p-6 shadow-card">
+              {/* Stripe Integration — hidden for new providers */}
+              {false && <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <CreditCard className="text-secondary" size={24} />
                   {t('provider.stripeIntegration')}
@@ -1396,7 +1396,7 @@ const BecomeProviderPage = () => {
                     {t('provider.noStripeAccount')} <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">{t('provider.createStripeFree')}</a>
                   </p>
                 </div>
-              </div>
+              </div>}
 
               {/* Photos */}
               <div className="bg-card rounded-xl p-6 shadow-card">
