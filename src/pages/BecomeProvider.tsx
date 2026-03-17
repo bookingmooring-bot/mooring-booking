@@ -392,7 +392,6 @@ const BecomeProviderPage = () => {
         p_premium_listing: formData.premiumListing,
         p_insurance_mediation: formData.insuranceMediation,
         p_image_urls: imageUrls,
-        p_address: formData.address,
         p_phone: formData.phone,
         p_whatsapp: formData.whatsapp,
         p_availability: availability,
