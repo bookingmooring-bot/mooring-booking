@@ -265,7 +265,32 @@ const BecomeProviderPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!declarations.ownership || !declarations.commission || !declarations.terms || !declarations.dataTransfer) return;
+
+    // Validate required fields
+    if (!formData.mooringName.trim()) {
+      toast({ title: "Unesite naziv veza", description: "Molimo unesite naziv vašeg veza.", variant: "destructive" });
+      return;
+    }
+    if (!formData.country) {
+      toast({ title: "Odaberite državu", description: "Molimo odaberite državu iz popisa.", variant: "destructive" });
+      return;
+    }
+    if (!formData.region.trim()) {
+      toast({ title: "Unesite lokaciju", description: "Molimo unesite grad/luku.", variant: "destructive" });
+      return;
+    }
+    if (!formData.pricePerNight || parseFloat(formData.pricePerNight) <= 0) {
+      toast({ title: "Unesite cijenu", description: "Molimo unesite cijenu po noći.", variant: "destructive" });
+      return;
+    }
+    if (!formData.phone.trim()) {
+      toast({ title: "Unesite telefon", description: "Molimo unesite kontakt telefon.", variant: "destructive" });
+      return;
+    }
+    if (!declarations.ownership || !declarations.commission || !declarations.terms || !declarations.dataTransfer) {
+      toast({ title: "Prihvatite uvjete", description: "Molimo označite sve izjave i suglasnosti na dnu forme.", variant: "destructive" });
+      return;
+    }
     setShowConsent(true);
   };
 
