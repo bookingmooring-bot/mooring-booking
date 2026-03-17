@@ -383,15 +383,15 @@ const BecomeProviderPage = () => {
     city: "",
     country: "",
     has_mooring: false,
-    mooring_type: "",
+    mooring_types: [] as string[],
   });
   const [leadSubmitting, setLeadSubmitting] = useState(false);
   const [leadSubmitted, setLeadSubmitted] = useState(false);
 
   const mooringTypes = [
     { id: "vez_u_marini", label: "Vez u marini", icon: "⚓" },
-    { id: "privatna_bova", label: "Privatna bova", icon: "🔴" },
-    { id: "privatni_dok", label: "Privatni dok", icon: "🏗️" },
+    { id: "bova", label: "Bova", icon: "🔴" },
+    { id: "dok", label: "Dok", icon: "🏗️" },
     { id: "sidriste", label: "Sidrište", icon: "⛵" },
     { id: "obalni_vez", label: "Obalni vez", icon: "🩢" },
   ];
@@ -407,6 +407,7 @@ const BecomeProviderPage = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             ...leadFormData,
+            mooring_type: leadFormData.mooring_types.join(', '),
             fb_campaign_name: 'Website Lead Form',
           }),
         }
@@ -500,14 +501,14 @@ const BecomeProviderPage = () => {
                 <div>
                   <div className="inline-flex items-center gap-2 bg-gold/20 text-gold px-4 py-2 rounded-full mb-6">
                     <Star size={16} />
-                    <span className="text-sm font-medium">Join 10,000+ Providers</span>
+                    <span className="text-sm font-medium">Pridružite se 10.000+ davatelja</span>
                   </div>
                   <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
-                    {t('providerCta.title')}
-                    <span className="block text-gold">{t('providerCta.titleHighlight')}</span>
+                    Pretvorite svoj neiskorišteni vez u
+                    <span className="block text-gold">izvanredan izvor prihoda</span>
                   </h1>
                   <p className="text-lg text-primary-foreground/80 mb-8">
-                    {t('providerCta.subtitle')}
+                    Objavite svoj vez na doku, bovi ili u marini za samo 10 minuta i gledajte kako rezervacije dolaze.
                   </p>
                   <div className="space-y-3 text-primary-foreground/90">
                     <div className="flex items-center gap-3">
@@ -621,22 +622,29 @@ const BecomeProviderPage = () => {
                     </div>
 
                     <div>
-                      <Label>Tip veza *</Label>
-                      <Select
-                        value={leadFormData.mooring_type}
-                        onValueChange={(value) => setLeadFormData(prev => ({ ...prev, mooring_type: value, has_mooring: true }))}
-                      >
-                        <SelectTrigger className="mt-1">
-                          <SelectValue placeholder="Izaberite tip veza" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {mooringTypes.map((mt) => (
-                            <SelectItem key={mt.id} value={mt.id}>
-                              {mt.icon} {mt.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Label>Tip veza (označite jedan ili više) *</Label>
+                      <div className="grid grid-cols-2 gap-2 mt-2">
+                        {mooringTypes.map((mt) => (
+                          <div key={mt.id} className="flex items-center gap-2 p-2 bg-muted rounded-lg">
+                            <Checkbox
+                              id={`lead_mooring_${mt.id}`}
+                              checked={leadFormData.mooring_types.includes(mt.id)}
+                              onCheckedChange={(checked) => {
+                                setLeadFormData(prev => ({
+                                  ...prev,
+                                  mooring_types: checked
+                                    ? [...prev.mooring_types, mt.id]
+                                    : prev.mooring_types.filter(t => t !== mt.id),
+                                  has_mooring: true,
+                                }));
+                              }}
+                            />
+                            <Label htmlFor={`lead_mooring_${mt.id}`} className="text-sm cursor-pointer flex items-center gap-1">
+                              <span>{mt.icon}</span> {mt.label}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
                     </div>
 
                     <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
