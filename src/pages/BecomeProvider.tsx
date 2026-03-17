@@ -384,6 +384,7 @@ const BecomeProviderPage = () => {
     country: "",
     has_mooring: false,
     mooring_types: [] as string[],
+    mooring_quantities: {} as Record<string, number>,
   });
   const [leadSubmitting, setLeadSubmitting] = useState(false);
   const [leadSubmitted, setLeadSubmitted] = useState(false);
@@ -408,6 +409,7 @@ const BecomeProviderPage = () => {
           body: JSON.stringify({
             ...leadFormData,
             mooring_type: leadFormData.mooring_types.join(', '),
+            mooring_quantities: leadFormData.mooring_quantities,
             fb_campaign_name: 'Website Lead Form',
           }),
         }
@@ -623,27 +625,58 @@ const BecomeProviderPage = () => {
 
                     <div>
                       <Label>Tip veza (označite jedan ili više) *</Label>
-                      <div className="grid grid-cols-2 gap-2 mt-2">
-                        {mooringTypes.map((mt) => (
-                          <div key={mt.id} className="flex items-center gap-2 p-2 bg-muted rounded-lg">
-                            <Checkbox
-                              id={`lead_mooring_${mt.id}`}
-                              checked={leadFormData.mooring_types.includes(mt.id)}
-                              onCheckedChange={(checked) => {
-                                setLeadFormData(prev => ({
-                                  ...prev,
-                                  mooring_types: checked
-                                    ? [...prev.mooring_types, mt.id]
-                                    : prev.mooring_types.filter(t => t !== mt.id),
-                                  has_mooring: true,
-                                }));
-                              }}
-                            />
-                            <Label htmlFor={`lead_mooring_${mt.id}`} className="text-sm cursor-pointer flex items-center gap-1">
-                              <span>{mt.icon}</span> {mt.label}
-                            </Label>
-                          </div>
-                        ))}
+                      <div className="space-y-2 mt-2">
+                        {mooringTypes.map((mt) => {
+                          const isChecked = leadFormData.mooring_types.includes(mt.id);
+                          return (
+                            <div key={mt.id} className={`flex items-center gap-2 p-2 rounded-lg border transition-all ${isChecked ? 'bg-secondary/10 border-secondary' : 'bg-muted border-transparent'}`}>
+                              <Checkbox
+                                id={`lead_mooring_${mt.id}`}
+                                checked={isChecked}
+                                onCheckedChange={(checked) => {
+                                  setLeadFormData(prev => {
+                                    const newQuantities = { ...prev.mooring_quantities };
+                                    if (checked) {
+                                      newQuantities[mt.id] = 1;
+                                    } else {
+                                      delete newQuantities[mt.id];
+                                    }
+                                    return {
+                                      ...prev,
+                                      mooring_types: checked
+                                        ? [...prev.mooring_types, mt.id]
+                                        : prev.mooring_types.filter(t => t !== mt.id),
+                                      mooring_quantities: newQuantities,
+                                      has_mooring: true,
+                                    };
+                                  });
+                                }}
+                              />
+                              <Label htmlFor={`lead_mooring_${mt.id}`} className="text-sm cursor-pointer flex items-center gap-1 flex-1">
+                                <span>{mt.icon}</span> {mt.label}
+                              </Label>
+                              {isChecked && (
+                                <div className="flex items-center gap-1">
+                                  <span className="text-xs text-muted-foreground">Kom:</span>
+                                  <Input
+                                    type="number"
+                                    min={1}
+                                    max={100}
+                                    value={leadFormData.mooring_quantities[mt.id] || 1}
+                                    onChange={(e) => {
+                                      const val = parseInt(e.target.value) || 1;
+                                      setLeadFormData(prev => ({
+                                        ...prev,
+                                        mooring_quantities: { ...prev.mooring_quantities, [mt.id]: val },
+                                      }));
+                                    }}
+                                    className="w-16 h-8 text-center text-sm"
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
 
