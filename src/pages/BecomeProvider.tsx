@@ -202,7 +202,6 @@ const BecomeProviderPage = () => {
     discount: [10],
     paymentMethods: [] as string[],
     photos: [] as File[],
-    address: "",
     phone: "",
     whatsapp: "",
     winterStorage: false,
@@ -376,7 +375,7 @@ const BecomeProviderPage = () => {
         description: "", windProtection: "good",
         amenities: [], maxBoatLength: "", maxDraft: "", pricePerNight: "",
         discount: [10], paymentMethods: [], photos: [],
-        address: "", phone: "", whatsapp: "",
+        phone: "", whatsapp: "",
         winterStorage: false, winterStorageType: "wet",
         winterPriceMonthly: "", winterServices: [],
         marketingTools: false, premiumListing: false,
@@ -859,29 +858,29 @@ const BecomeProviderPage = () => {
                     <FileText className="text-secondary" size={32} />
                   </div>
                   <h1 className="font-heading text-2xl font-bold text-foreground mb-2">
-                    Digital Consent Agreement
+                    Digitalni ugovor o suglasnosti
                   </h1>
                   <p className="text-muted-foreground">
-                    {t('provider.reviewTerms')}
+                    Molimo pregledajte uvjete prije objavljivanja vašeg veza.
                   </p>
                 </div>
 
                 <div className="space-y-4 mb-8">
                   <div className="bg-muted rounded-lg p-4 text-sm text-foreground leading-relaxed max-h-60 overflow-y-auto">
-                    <h3 className="font-semibold mb-2">{t('provider.consentSummaryTitle')}</h3>
+                    <h3 className="font-semibold mb-2">Sažetak uvjeta korištenja</h3>
                     <ul className="space-y-2 list-disc list-inside text-muted-foreground">
-                      <li>{t('provider.consentTerm1')}</li>
-                      <li>{t('provider.consentTerm2')}</li>
-                      <li>{t('provider.consentTerm3')}</li>
-                      <li>{t('provider.consentTerm4')}</li>
-                      <li>{t('provider.consentTerm5')}</li>
-                      <li>{t('provider.consentTerm6')}</li>
-                      <li>{t('provider.consentTerm7')}</li>
-                      <li>{t('provider.consentTerm8')}</li>
-                      {formData.marketingTools && <li>{t('provider.consentTermMarketing')}</li>}
-                      {formData.premiumListing && <li>{t('provider.consentTermPremium')}</li>}
-                      {formData.insuranceMediation && <li>{t('provider.consentTermInsurance')}</li>}
-                      {formData.now4today && <li>{t('provider.consentTermNow4Today')}</li>}
+                      <li>Potvrđujem da sam vlasnik ili ovlašteni korisnik navedenog veza.</li>
+                      <li>Suglasan/na sam s provizijom od 15% na svaku potvrđenu rezervaciju.</li>
+                      <li>Prihvaćam Opće uvjete korištenja platforme Mooring Booking.</li>
+                      <li>Suglasan/na sam s prijenosom podataka u skladu s GDPR-om.</li>
+                      <li>Objavljene fotografije su moje vlasništvo ili imam pravo korištenja.</li>
+                      <li>Cijena po noći je konačna i uključuje sve naknade sa strane davatelja.</li>
+                      <li>Ažurirat ću dostupnost kalendara redovito.</li>
+                      <li>U slučaju otkazivanja, primjenjuju se politike otkazivanja platforme.</li>
+                      {formData.marketingTools && <li>Suglasan/na sam s dodatnom uslugom marketinških alata (€5/mj).</li>}
+                      {formData.premiumListing && <li>Suglasan/na sam s uslugom premium listanja (€9.99/mj).</li>}
+                      {formData.insuranceMediation && <li>Suglasan/na sam s uslugom posredovanja osiguranja (€9.99/god).</li>}
+                      {formData.now4today && <li>Suglasan/na sam s uslugom Now4Today — last-minute dostupnost.</li>}
                     </ul>
                   </div>
 
@@ -892,7 +891,7 @@ const BecomeProviderPage = () => {
                       onCheckedChange={(checked) => setConsentAccepted(checked as boolean)}
                     />
                     <Label htmlFor="finalConsent" className="text-sm leading-relaxed cursor-pointer font-medium">
-                      {t('provider.consentRequired')}
+                      Pročitao/la sam i prihvaćam sve navedene uvjete korištenja i suglasan/na sam s objavom mog veza na platformi Mooring Booking.
                     </Label>
                   </div>
                 </div>
@@ -903,7 +902,7 @@ const BecomeProviderPage = () => {
                     className="flex-1"
                     onClick={() => { setShowConsent(false); setConsentAccepted(false); }}
                   >
-                    {t('provider.backToEdit')}
+                    ← Natrag na uređivanje
                   </Button>
                   <Button
                     className="flex-1 bg-gradient-ocean font-semibold h-12"
@@ -913,19 +912,19 @@ const BecomeProviderPage = () => {
                     {isSubmitting ? (
                       <>
                         <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2" />
-                        {uploadingPhotos ? t('provider.uploadingPhotos') : t('provider.publishing')}
+                        {uploadingPhotos ? 'Učitavanje fotografija...' : 'Objavljujem...'}
                       </>
                     ) : (
                       <>
                         <Check className="mr-2" size={20} />
-                        {t('provider.acceptPublish')}
+                        Potvrđujem i objavljujem
                       </>
                     )}
                   </Button>
                 </div>
 
                 <p className="text-xs text-muted-foreground text-center mt-4">
-                  {t('provider.eIdas')}
+                  Ovaj digitalni potpis ima pravnu snagu sukladno eIDAS regulativi EU.
                 </p>
               </div>
             </div>
@@ -1554,17 +1553,6 @@ const BecomeProviderPage = () => {
                   {t('provider.contactInfo')}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="address">{t('provider.address')} *</Label>
-                    <Input
-                      id="address"
-                      placeholder={t('provider.addressPlaceholder')}
-                      value={formData.address}
-                      onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                      className="mt-2"
-                      required
-                    />
-                  </div>
                   <div>
                     <Label htmlFor="phone">{t('provider.phone')} *</Label>
                     <Input
