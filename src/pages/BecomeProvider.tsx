@@ -24,31 +24,31 @@ import AdBanner from "@/components/AdBanner";
 import CoordinatePickerMap from "@/components/provider/CoordinatePickerMap";
 
 const countries = [
-  { code: "HR", name: "Croatia", flag: "🇭🇷" },
-  { code: "GR", name: "Greece", flag: "🇬🇷" },
-  { code: "IT", name: "Italy", flag: "🇮🇹" },
-  { code: "ES", name: "Spain", flag: "🇪🇸" },
-  { code: "FR", name: "France", flag: "🇫🇷" },
-  { code: "TR", name: "Turkey", flag: "🇹🇷" },
-  { code: "AL", name: "Albania", flag: "🇦🇱" },
+  { code: "HR", name: "Hrvatska", flag: "🇭🇷" },
+  { code: "GR", name: "Grčka", flag: "🇬🇷" },
+  { code: "IT", name: "Italija", flag: "🇮🇹" },
+  { code: "ES", name: "Španjolska", flag: "🇪🇸" },
+  { code: "FR", name: "Francuska", flag: "🇫🇷" },
+  { code: "TR", name: "Turska", flag: "🇹🇷" },
+  { code: "AL", name: "Albanija", flag: "🇦🇱" },
   { code: "MT", name: "Malta", flag: "🇲🇹" },
-  { code: "SI", name: "Slovenia", flag: "🇸🇮" },
-  { code: "ME", name: "Montenegro", flag: "🇲🇪" },
-  { code: "CY", name: "Cyprus", flag: "🇨🇾" },
+  { code: "SI", name: "Slovenija", flag: "🇸🇮" },
+  { code: "ME", name: "Crna Gora", flag: "🇲🇪" },
+  { code: "CY", name: "Cipar", flag: "🇨🇾" },
 ];
 
 const amenities = [
-  { id: "water", label: "Fresh Water", icon: "💧" },
-  { id: "electricity", label: "Electricity", icon: "⚡" },
+  { id: "water", label: "Pitka voda", icon: "💧" },
+  { id: "electricity", label: "Struja", icon: "⚡" },
   { id: "wifi", label: "WiFi", icon: "📶" },
-  { id: "toilet", label: "Toilet", icon: "🚽" },
-  { id: "shower", label: "Shower", icon: "🚿" },
-  { id: "fuel", label: "Fuel", icon: "⛽" },
-  { id: "restaurant", label: "Restaurant", icon: "🍽️" },
+  { id: "toilet", label: "WC", icon: "🚽" },
+  { id: "shower", label: "Tuš", icon: "🚿" },
+  { id: "fuel", label: "Gorivo", icon: "⛽" },
+  { id: "restaurant", label: "Restoran", icon: "🍽️" },
 ];
 
 const paymentMethods = [
-  { id: "cash", label: "Cash", icon: "💵" },
+  { id: "cash", label: "Gotovina", icon: "💵" },
   { id: "maestro", label: "Maestro", icon: "💳" },
   { id: "visa", label: "Visa/Mastercard", icon: "💳" },
   { id: "paypal", label: "PayPal", icon: "🅿️" },
@@ -56,86 +56,86 @@ const paymentMethods = [
 ];
 
 const winterServices = [
-  { id: "winterization", label: "Winterization", icon: "🔧" },
-  { id: "hull_cleaning", label: "Hull Cleaning", icon: "🧹" },
-  { id: "mast_storage", label: "Mast Storage", icon: "🏗️" },
-  { id: "electricity_winter", label: "Electricity", icon: "⚡" },
-  { id: "water_winter", label: "Water", icon: "💧" },
-  { id: "security", label: "24/7 Security", icon: "🔒" },
+  { id: "winterization", label: "Zimska priprema", icon: "🔧" },
+  { id: "hull_cleaning", label: "Čišćenje trupa", icon: "🧹" },
+  { id: "mast_storage", label: "Skladištenje jarbola", icon: "🏗️" },
+  { id: "electricity_winter", label: "Struja", icon: "⚡" },
+  { id: "water_winter", label: "Voda", icon: "💧" },
+  { id: "security", label: "24/7 Osiguranje", icon: "🔒" },
 ];
 
 const benefits = [
   {
     icon: TrendingUp,
-    title: "Increase Your Income",
-    description: "Providers report 300% average revenue increase. Your unused mooring is worth money.",
-    stat: "€5,000+",
-    statLabel: "Avg. annual earnings"
+    title: "Povećajte Svoj Prihod",
+    description: "Davatelji prijavljuju prosječno povećanje prihoda od 300%. Vaš neiskorišteni vez vrijedi novac.",
+    stat: "€5.000+",
+    statLabel: "Prosj. godišnja zarada"
   },
   {
     icon: Shield,
-    title: "Simple & Transparent",
-    description: "Only 15% commission on successful bookings. No upfront costs, no hidden fees.",
+    title: "Jednostavno i Transparentno",
+    description: "Samo 15% provizije na uspješne rezervacije. Bez početnih troškova, bez skrivenih naknada.",
     stat: "15%",
-    statLabel: "Fair commission"
+    statLabel: "Poštena provizija"
   },
   {
     icon: Megaphone,
-    title: "Marketing Tools",
-    description: "Get your unique QR code and affiliate link. Share on social media and earn more.",
-    stat: "€5/mo",
-    statLabel: "Marketing kit"
+    title: "Marketing Alati",
+    description: "Dobijte jedinstven QR kod i affiliate link. Dijelite na društvenim mrežama i zaradite više.",
+    stat: "€5/mj",
+    statLabel: "Marketing paket"
   },
   {
     icon: Users,
-    title: "Join 10,000+ Providers",
-    description: "Be part of the Mediterranean's largest mooring community. Support included.",
-    stat: "10,000+",
-    statLabel: "Active providers"
+    title: "Pridružite se 10.000+ Davatelja",
+    description: "Budite dio najveće mediteranske zajednice vezova. Podrška uključena.",
+    stat: "10.000+",
+    statLabel: "Aktivnih davatelja"
   },
 ];
 
 const testimonials = [
   {
-    quote: "I was skeptical at first, but Mooring Booking changed everything. My private buoy now brings in €6,000 extra per season!",
+    quote: "Bio sam skeptičan u početku, ali Mooring Booking je promijenio sve. Moja privatna bova sada donosi €6.000 dodatno po sezoni!",
     author: "Marko K.",
-    location: "Dubrovnik, Croatia",
-    earnings: "€6,200/season",
+    location: "Dubrovnik, Hrvatska",
+    earnings: "€6.200/sezona",
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop"
   },
   {
-    quote: "The platform is so easy to use. I listed my dock in 10 minutes and had my first booking within 2 days.",
+    quote: "Platforma je toliko jednostavna za korištenje. Postavio sam svoj dok za 10 minuta i imao prvu rezervaciju za 2 dana.",
     author: "Giuseppe R.",
-    location: "Portofino, Italy",
-    earnings: "€4,800/season",
+    location: "Portofino, Italija",
+    earnings: "€4.800/sezona",
     avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop"
   },
   {
-    quote: "Finally a fair alternative to giving my mooring away for nothing to friends. Now I get paid properly.",
+    quote: "Konačno poštena alternativa davanju veza prijateljima besplatno. Sada me plaćaju kako treba.",
     author: "Elena P.",
-    location: "Santorini, Greece",
-    earnings: "€3,500/season",
+    location: "Santorini, Grčka",
+    earnings: "€3.500/sezona",
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop"
   },
   {
-    quote: "My marina berth was sitting empty 6 months a year. Now I earn €15,000+ annually from bookings I never expected!",
+    quote: "Moj vez u marini je stajao prazan 6 mjeseci godišnje. Sada zarađujem €15.000+ godišnje od rezervacija koje nikad nisam očekivao!",
     author: "Luka M.",
-    location: "Dubrovnik, Croatia",
-    earnings: "€15,400/year",
+    location: "Dubrovnik, Hrvatska",
+    earnings: "€15.400/god",
     avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop"
   },
   {
-    quote: "50% of my income now comes from Mooring Booking. The QR code feature makes it so easy for walk-in sailors!",
+    quote: "50% mog prihoda sada dolazi od Mooring Bookinga. QR kod funkcija olakšava pristup nautičarima koji dolaze!",
     author: "Dimitris K.",
-    location: "Mykonos, Greece",
-    earnings: "€25,000/season",
+    location: "Mykonos, Grčka",
+    earnings: "€25.000/sezona",
     avatar: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=150&h=150&fit=crop"
   },
   {
-    quote: "I have 3 private buoys and earn more from them than my regular job. Mooring Booking made this possible!",
+    quote: "Imam 3 privatne bove i zarađujem od njih više nego na redovnom poslu. Mooring Booking je to omogućio!",
     author: "Marco T.",
-    location: "Amalfi, Italy",
-    earnings: "€18,500/season",
+    location: "Amalfi, Italija",
+    earnings: "€18.500/sezona",
     avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop"
   },
 ];
@@ -358,8 +358,7 @@ const BecomeProviderPage = () => {
         marketingTools: false, premiumListing: false,
         insuranceMediation: false, now4today: false, mooringUnits: "1",
       });
-      setDeclarations({ ownership: false, commission: false, terms: false, data: false, winterResponsibility: false });
-      setPhotoPreviews([]);
+      setDeclarations({ ownership: false, commission: false, terms: false, dataTransfer: false });
       setCalendarDays(generateCalendarDays());
       toast({
         title: "✅ Vez objavljen!",
@@ -390,11 +389,11 @@ const BecomeProviderPage = () => {
   const [leadSubmitted, setLeadSubmitted] = useState(false);
 
   const mooringTypes = [
-    { id: "vez_u_marini", label: "Vez u marini / Marina berth", icon: "⚓" },
-    { id: "privatna_bova", label: "Privatna bova / Private buoy", icon: "🔴" },
-    { id: "privatni_dok", label: "Privatni dok / Private dock", icon: "🏗️" },
-    { id: "sidriste", label: "Sidrište / Anchorage", icon: "⛵" },
-    { id: "obalni_vez", label: "Obalni vez / Shore mooring", icon: "🪢" },
+    { id: "vez_u_marini", label: "Vez u marini", icon: "⚓" },
+    { id: "privatna_bova", label: "Privatna bova", icon: "🔴" },
+    { id: "privatni_dok", label: "Privatni dok", icon: "🏗️" },
+    { id: "sidriste", label: "Sidrište", icon: "⛵" },
+    { id: "obalni_vez", label: "Obalni vez", icon: "🩢" },
   ];
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
