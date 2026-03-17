@@ -678,67 +678,6 @@ const BecomeProviderPage = () => {
             </div>
           </section>
 
-          {/* Benefits Grid */}
-          <section className="py-20 bg-background">
-            <div className="container mx-auto px-4">
-              <h2 className="font-heading text-3xl font-bold text-foreground text-center mb-12">
-                Why Providers Love Mooring Booking
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {benefits.map((benefit) => (
-                  <div key={benefit.title} className="bg-card rounded-xl p-6 shadow-card hover:shadow-hover transition-shadow">
-                    <div className="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center mb-4">
-                      <benefit.icon className="text-secondary" size={28} />
-                    </div>
-                    <h3 className="font-heading font-semibold text-lg text-foreground mb-2">{benefit.title}</h3>
-                    <p className="text-muted-foreground text-sm mb-4">{benefit.description}</p>
-                    <div className="border-t border-border pt-4">
-                      <div className="font-heading text-2xl font-bold text-secondary">{benefit.stat}</div>
-                      <div className="text-muted-foreground text-xs">{benefit.statLabel}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Testimonials */}
-          <section className="py-20 bg-muted">
-            <div className="container mx-auto px-4">
-              <h2 className="font-heading text-3xl font-bold text-foreground text-center mb-4">
-                Success Stories from Providers
-              </h2>
-              <p className="text-muted-foreground text-center mb-12">
-                Real earnings from real mooring owners across the Mediterranean.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {testimonials.map((testimonial) => (
-                  <div key={testimonial.author} className="bg-card rounded-xl p-6 shadow-card">
-                    <div className="flex items-center gap-1 mb-4">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} className="fill-gold text-gold" size={16} />
-                      ))}
-                    </div>
-                    <p className="text-foreground italic mb-6">"{testimonial.quote}"</p>
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={testimonial.avatar}
-                        alt={testimonial.author}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                      <div>
-                        <h4 className="font-heading font-semibold text-foreground">{testimonial.author}</h4>
-                        <p className="text-muted-foreground text-sm">{testimonial.location}</p>
-                      </div>
-                    </div>
-                    <div className="mt-4 pt-4 border-t border-border">
-                      <span className="text-success font-semibold">{testimonial.earnings}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
         </main>
       </div>
     );
