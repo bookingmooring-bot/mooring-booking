@@ -1,23 +1,36 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { FileText, AlertTriangle, Scale, CreditCard, Shield, Users, Globe, Gavel, Ban, RefreshCw, Building, Lock } from "lucide-react";
+import { FileText, AlertTriangle, Scale, CreditCard, Shield, Users, Globe, Gavel, Ban, RefreshCw, Building, Lock, Download } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
 
 const TermsPage = () => {
   const { t } = useTranslation();
+
+  const handleDownloadPdf = () => {
+    window.print();
+  };
 
   return (
     <div className="min-h-screen">
       <Header />
       <main className="pt-20">
-        <section className="py-16 bg-gradient-ocean">
+        <section className="py-16 bg-gradient-ocean print:hidden">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
               <FileText className="text-gold mx-auto mb-6" size={48} />
               <h1 className="font-heading text-4xl md:text-5xl font-bold text-primary-foreground mb-4">
-                {t('legal.termsTitle')}
+                Opći uvjeti korištenja
               </h1>
-              <p className="text-primary-foreground/80">{t('terms.lastUpdated', 'Last updated: February 19, 2026')}</p>
+              <p className="text-primary-foreground/80 mb-6">Zadnje ažurirano: 18. ožujka 2026.</p>
+              <Button
+                onClick={handleDownloadPdf}
+                variant="outline"
+                className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+              >
+                <Download className="mr-2" size={18} />
+                Preuzmi PDF
+              </Button>
             </div>
           </div>
         </section>
