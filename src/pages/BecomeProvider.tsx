@@ -64,6 +64,14 @@ const winterServices = [
   { id: "security", label: "24/7 Osiguranje", icon: "🔒" },
 ];
 
+const mooringTypes = [
+  { id: "vez_u_marini", label: "Vez u marini", icon: "⚓" },
+  { id: "bova", label: "Bova", icon: "🔴" },
+  { id: "dok", label: "Dok", icon: "🏗️" },
+  { id: "sidriste", label: "Sidrište", icon: "⛵" },
+  { id: "obalni_vez", label: "Obalni vez", icon: "🪢" },
+];
+
 const benefits = [
   {
     icon: TrendingUp,
@@ -440,13 +448,6 @@ const BecomeProviderPage = () => {
   const [leadSubmitting, setLeadSubmitting] = useState(false);
   const [leadSubmitted, setLeadSubmitted] = useState(false);
 
-  const mooringTypes = [
-    { id: "vez_u_marini", label: "Vez u marini", icon: "⚓" },
-    { id: "bova", label: "Bova", icon: "🔴" },
-    { id: "dok", label: "Dok", icon: "🏗️" },
-    { id: "sidriste", label: "Sidrište", icon: "⛵" },
-    { id: "obalni_vez", label: "Obalni vez", icon: "🩢" },
-  ];
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1141,23 +1142,56 @@ const BecomeProviderPage = () => {
                       required
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="mooringUnits">{t('provider.mooringUnits')}</Label>
-                    <Select
-                      value={formData.mooringUnits}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, mooringUnits: value }))}
-                    >
-                      <SelectTrigger className="mt-2">
-                        <SelectValue placeholder="1" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: 20 }, (_, i) => i + 1).map(num => (
-                          <SelectItem key={num} value={String(num)}>{num}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <div className="md:col-span-2">
+                    <Label>Tip veza i broj komada</Label>
+                    <div className="space-y-2 mt-2">
+                      {mooringTypes.map((mt) => {
+                        const isChecked = formData.amenities.includes(`type_${mt.id}`) || false;
+                        return (
+                          <div key={mt.id} className={`flex items-center gap-2 p-3 rounded-lg border transition-all ${isChecked ? 'bg-secondary/10 border-secondary' : 'bg-muted border-transparent'}`}>
+                            <Checkbox
+                              id={`form_mooring_${mt.id}`}
+                              checked={isChecked}
+                              onCheckedChange={(checked) => {
+                                setFormData(prev => {
+                                  const typeKey = `type_${mt.id}`;
+                                  const newAmenities = checked
+                                    ? [...prev.amenities, typeKey]
+                                    : prev.amenities.filter(a => a !== typeKey);
+                                  return { ...prev, amenities: newAmenities };
+                                });
+                              }}
+                            />
+                            <Label htmlFor={`form_mooring_${mt.id}`} className="text-sm cursor-pointer flex items-center gap-1 flex-1">
+                              <span>{mt.icon}</span> {mt.label}
+                            </Label>
+                            {isChecked && (
+                              <div className="flex items-center gap-1">
+                                <span className="text-xs text-muted-foreground">Kom:</span>
+                                <Input
+                                  type="number"
+                                  min={1}
+                                  defaultValue={1}
+                                  onChange={(e) => {
+                                    // Update total mooring units
+                                    setTimeout(() => {
+                                      const allInputs = document.querySelectorAll('[data-mooring-qty]') as NodeListOf<HTMLInputElement>;
+                                      let total = 0;
+                                      allInputs.forEach(inp => { total += parseInt(inp.value) || 0; });
+                                      setFormData(prev => ({ ...prev, mooringUnits: String(total || 1) }));
+                                    }, 0);
+                                  }}
+                                  data-mooring-qty={mt.id}
+                                  className="w-16 h-8 text-center text-sm"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {t('provider.mooringUnitsDesc')}
+                      Označite tipove vezova koje nudite i unesite broj komada za svaki.
                     </p>
                   </div>
                   <div className="md:col-span-2">
