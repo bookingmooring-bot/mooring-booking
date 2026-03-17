@@ -1000,22 +1000,20 @@ const BecomeProviderPage = () => {
                   </div>
 
                   <div>
-                    <Label>{t('provider.country')} *</Label>
-                    <Select
+                    <Label>Država *</Label>
+                    <select
                       value={formData.country}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, country: value }))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
+                      className="mt-2 w-full h-10 px-3 rounded-md border border-input bg-background text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                      required
                     >
-                      <SelectTrigger className="mt-2">
-                        <SelectValue placeholder={t('provider.selectCountry')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {countries.map((country) => (
-                          <SelectItem key={country.code} value={country.name}>
-                            {country.flag} {country.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      <option value="">Odaberite državu</option>
+                      {countries.map((country) => (
+                        <option key={country.code} value={country.name}>
+                          {country.flag} {country.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <Label htmlFor="region">{t('provider.region')} *</Label>
@@ -1646,14 +1644,13 @@ const BecomeProviderPage = () => {
                 </div>
               </div>
 
-              {/* Declarations */}
+              {/* Izjave i suglasnosti */}
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <FileText className="text-secondary" size={24} />
-                  {t('provider.declarations')}
+                  Izjave i suglasnosti
                 </h2>
                 <div className="space-y-4">
-                  {/* First declaration: Right of Disposal — visually prominent */}
                   <div className="flex items-start gap-3 p-4 bg-warning/10 border-2 border-warning/40 rounded-lg">
                     <Checkbox
                       id="ownership"
@@ -1662,13 +1659,10 @@ const BecomeProviderPage = () => {
                     />
                     <div>
                       <Label htmlFor="ownership" className="text-sm font-semibold text-foreground cursor-pointer block mb-1">
-                        ⚖️ {t('provider.declarationRightOfDisposal', 'Izjava o pravu raspolaganja')}
+                        ⚖️ Izjava o pravu raspolaganja
                       </Label>
                       <p className="text-xs text-muted-foreground leading-relaxed">
-                        {t('provider.declaration1')}
-                      </p>
-                      <p className="text-xs text-muted-foreground/70 leading-relaxed mt-2 italic border-t border-warning/20 pt-2">
-                        {t('provider.disposalDisclaimer', 'By submitting this declaration, you confirm that you have the legal right of disposal over this mooring and are responsible for the accuracy of the provided data. Mooring Booking platform is not responsible for false declarations.')}
+                        Potvrđujem da sam vlasnik ili ovlašteni korisnik navedenog veza i da imam zakonsko pravo raspolaganja istim. Odgovoran/na sam za točnost unesenih podataka.
                       </p>
                     </div>
                   </div>
@@ -1679,7 +1673,7 @@ const BecomeProviderPage = () => {
                       onCheckedChange={(checked) => setDeclarations(prev => ({ ...prev, commission: checked as boolean }))}
                     />
                     <Label htmlFor="commission" className="text-sm leading-relaxed cursor-pointer">
-                      {t('provider.declaration2')}
+                      💰 Suglasan/na sam s provizijom od 15% na svaku potvrđenu rezervaciju putem Mooring Booking platforme. Preostalih 85% zarade je moje.
                     </Label>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-muted rounded-lg">
@@ -1689,7 +1683,7 @@ const BecomeProviderPage = () => {
                       onCheckedChange={(checked) => setDeclarations(prev => ({ ...prev, dataTransfer: checked as boolean }))}
                     />
                     <Label htmlFor="dataTransfer" className="text-sm leading-relaxed cursor-pointer">
-                      {t('provider.dataTransferConsent2')}
+                      🔒 Suglasan/na sam da Mooring Booking obrađuje moje osobne podatke (ime, kontakt, lokacija veza) u svrhu pružanja usluge, u skladu s GDPR regulativom i Politikom privatnosti.
                     </Label>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-muted rounded-lg">
@@ -1699,7 +1693,7 @@ const BecomeProviderPage = () => {
                       onCheckedChange={(checked) => setDeclarations(prev => ({ ...prev, terms: checked as boolean }))}
                     />
                     <Label htmlFor="terms" className="text-sm leading-relaxed cursor-pointer">
-                      {t('provider.termsAgree')}
+                      📋 Pročitao/la sam i prihvaćam <a href="/terms" target="_blank" className="text-secondary underline">Opće uvjete korištenja</a> i <a href="/privacy" target="_blank" className="text-secondary underline">Politiku privatnosti</a> platforme Mooring Booking.
                     </Label>
                   </div>
                 </div>
@@ -1713,7 +1707,7 @@ const BecomeProviderPage = () => {
                   className="flex-1"
                   onClick={() => setShowForm(false)}
                 >
-                  {t('provider.cancel')}
+                  Odustani
                 </Button>
                 <Button
                   type="submit"
@@ -1721,7 +1715,7 @@ const BecomeProviderPage = () => {
                   disabled={!declarations.ownership || !declarations.commission || !declarations.terms || !declarations.dataTransfer}
                 >
                   <QrCode className="mr-2" size={20} />
-                  {t('provider.publishProfile')}
+                  Objavi vez
                 </Button>
               </div>
             </form>
