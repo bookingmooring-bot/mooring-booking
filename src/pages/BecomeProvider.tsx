@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import {
@@ -221,6 +221,34 @@ const BecomeProviderPage = () => {
     dataTransfer: false,
   });
   const [calendarDays, setCalendarDays] = useState(generateCalendarDays());
+
+  // Pre-fill form from lead data when authenticated user loads page
+  useEffect(() => {
+    if (!user?.email) return;
+    const fetchLeadData = async () => {
+      try {
+        const { data: lead } = await supabase
+          .from('fb_leads')
+          .select('full_name, email, phone, city, country, mooring_type, mooring_quantities')
+          .eq('email', user.email)
+          .maybeSingle();
+        if (lead) {
+          const quantities = (lead.mooring_quantities as Record<string, number>) || {};
+          const totalUnits = Object.values(quantities).reduce((sum: number, v: number) => sum + (v || 0), 0);
+          setFormData(prev => ({
+            ...prev,
+            country: lead.country || prev.country,
+            region: lead.city || prev.region,
+            phone: lead.phone || prev.phone,
+            mooringUnits: totalUnits > 0 ? String(totalUnits) : prev.mooringUnits,
+          }));
+        }
+      } catch (err) {
+        console.error('Failed to fetch lead data:', err);
+      }
+    };
+    fetchLeadData();
+  }, [user?.email]);
 
   const toggleAmenity = (id: string) => {
     setFormData(prev => ({
