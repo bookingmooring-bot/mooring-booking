@@ -194,7 +194,6 @@ const BecomeProviderPage = () => {
     latitude: "",
     longitude: "",
     description: "",
-    concessionNumber: "",
     windProtection: "good",
     amenities: [] as string[],
     maxBoatLength: "",
@@ -374,7 +373,7 @@ const BecomeProviderPage = () => {
       // Reset form for adding another mooring
       setFormData({
         mooringName: "", country: "", region: "", latitude: "", longitude: "",
-        description: "", concessionNumber: "", windProtection: "good",
+        description: "", windProtection: "good",
         amenities: [], maxBoatLength: "", maxDraft: "", pricePerNight: "",
         discount: [10], paymentMethods: [], photos: [],
         address: "", phone: "", whatsapp: "",
@@ -972,18 +971,7 @@ const BecomeProviderPage = () => {
                       required
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="concessionNumber">{t('provider.concessionNumber')} *</Label>
-                    <Input
-                      id="concessionNumber"
-                      placeholder={t('provider.concessionNumberPlaceholder')}
-                      value={formData.concessionNumber}
-                      onChange={(e) => setFormData(prev => ({ ...prev, concessionNumber: e.target.value }))}
-                      className="mt-2"
-                      required
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">{t('provider.concessionNumberDesc')}</p>
-                  </div>
+
                   <div>
                     <Label>{t('provider.country')} *</Label>
                     <Select
