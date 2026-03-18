@@ -1408,9 +1408,19 @@ Adresa: Prag, Češka
                         );
                       })}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Označite tipove vezova koje nudite i unesite broj komada za svaki.
-                    </p>
+                    <div className="mt-3 p-4 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900 rounded-lg text-sm text-blue-800 dark:text-blue-300">
+                      <p className="font-semibold flex items-center gap-1.5 mb-2">
+                        💡 Kako prijaviti više vezova?
+                      </p>
+                      <ul className="space-y-2 list-none">
+                        <li className="flex gap-2 relative pl-4 before:content-['•'] before:absolute before:left-0 before:text-blue-500">
+                          <strong>Kada prijaviti ODJEDNOM:</strong> Ako imate više ISTIH vezova na istoj lokaciji (npr. 5 istih bova iste cijene), odaberite Bova i navedite <strong>Kom: 5</strong>. Oglas će primati rezervacije dok ne popunite kapacitet.
+                        </li>
+                        <li className="flex gap-2 relative pl-4 before:content-['•'] before:absolute before:left-0 before:text-blue-500">
+                          <strong>Kada prijaviti ODVOJENO:</strong> Budući da forma podržava samo 1 cijenu i 1 maks. dužinu broda, ako imate vezove <strong>različitih cijena ili veličina</strong> (npr. Veliki Dok i Mala Bova), prijavite ih zasebno. Isprva prijavite samo Dok, a nakon objave kreirajte novu prijavu za Bove.
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                   <div className="md:col-span-2">
                     <Label>Pogodnosti</Label>
