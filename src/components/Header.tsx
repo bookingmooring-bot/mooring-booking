@@ -12,7 +12,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const openCaptain = () => window.dispatchEvent(new Event('open-ai-captain'));
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border">
@@ -64,11 +64,16 @@ const Header = () => {
               <ThemeToggle />
               <LanguageSwitcher />
               {user ? (
-                <Link to="/dashboard">
-                  <Button className="bg-gradient-ocean font-medium shadow-card hover:shadow-hover transition-shadow">
-                    Dashboard
+                <div className="flex items-center gap-2">
+                  <Link to="/dashboard">
+                    <Button className="bg-gradient-ocean font-medium shadow-card hover:shadow-hover transition-shadow">
+                      Dashboard
+                    </Button>
+                  </Link>
+                  <Button variant="ghost" onClick={signOut} className="font-medium text-destructive hover:text-destructive/80">
+                    {t('nav.signOut', 'Logout')}
                   </Button>
-                </Link>
+                </div>
               ) : (
                 <>
                   <Link to="/auth">
@@ -133,11 +138,16 @@ const Header = () => {
                 </Link>
                 <div className="flex flex-col gap-2 pt-4 border-t border-border">
                   {user ? (
-                    <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
-                      <Button className="bg-gradient-ocean w-full">
-                        Dashboard
+                    <div className="flex flex-col gap-2">
+                      <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
+                        <Button className="bg-gradient-ocean w-full">
+                          Dashboard
+                        </Button>
+                      </Link>
+                      <Button variant="ghost" onClick={() => { signOut(); setIsMenuOpen(false); }} className="w-full text-destructive hover:text-destructive/80">
+                        {t('nav.signOut', 'Logout')}
                       </Button>
-                    </Link>
+                    </div>
                   ) : (
                     <>
                       <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
