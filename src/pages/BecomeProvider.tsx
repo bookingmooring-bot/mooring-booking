@@ -258,6 +258,143 @@ const BecomeProviderPage = () => {
     fetchLeadData();
   }, [user?.email]);
 
+  const downloadTerms = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const content = `MOORING BOOKING - OPĆI UVJETI KORIŠTENJA
+========================================
+Zadnje ažurirano: 18. ožujka 2026.
+Operater: Intelligent Matrix
+
+1. PLATFORMA
+Mooring Booking je online tržište koje povezuje davatelje vezova s korisnicima koji traže vez za plovilo. Platforma djeluje kao posrednik i ne posjeduje, ne upravlja niti kontrolira vezove navedene na platformi.
+
+2. KORISNIČKI RAČUNI
+Za korištenje određenih funkcionalnosti potrebna je registracija. Korisnik se obvezuje:
+- Pružiti točne, aktualne i potpune informacije
+- Održavati i redovito ažurirati svoje podatke
+- Čuvati lozinku sigurnom i povjerljivom
+- Preuzeti punu odgovornost za sve aktivnosti na računu
+- Odmah nas obavijestiti o neovlaštenom korištenju
+
+3. REZERVACIJE I PLAĆANJA
+Za korisnike:
+- Rezervacije se potvrđuju nakon uspješne obrade plaćanja
+- Prikazane cijene uključuju sve primjenjive popuste platforme
+- Pravila otkazivanja variraju po vezu; pregledajte prije rezervacije
+- Koordinate za navigaciju dostupne tek nakon potvrđene rezervacije i plaćanja
+
+Za davatelje:
+- Provizija od 15% naplaćuje se na SVE rezervacije obrađene putem Platforme
+- Stripe naknade (~2.9% + €0.30) oduzimaju se od ukupnog iznosa PRIJE podjele 15/85
+- Davatelji mogu ponuditi popust 0-50% putem Platforme
+- Isplate se obrađuju unutar 3-5 radnih dana nakon prijave
+
+4. OBVEZE DAVATELJA
+Davatelji se obvezuju:
+- Pružiti točne opise i fotografije vezova
+- Održavati točan kalendar dostupnosti
+- Pravovremeno odgovarati na zahtjeve za rezervaciju
+- Osigurati da vezovi zadovoljavaju lokalne sigurnosne standarde
+- Poštivati sve potvrđene rezervacije
+- Plaćati proviziju od 15% na sve rezervacije bez iznimke
+- Potpisati izjavu o pravu raspolaganja
+- Održavati valjano osiguranje odgovornosti gdje to zakon zahtijeva
+
+5. PRIJENOS PODATAKA
+Korištenjem Platforme korisnici pristaju na prijenos osobnih podataka nasljedniku u slučaju prodaje, spajanja ili promjene vlasništva. Nasljednik je vezan istim obvezama privatnosti. Korisnici će biti obaviješteni unutar 30 dana.
+
+6. OGRANIČENJE ODGOVORNOSTI
+Intelligent Matrix NIJE odgovoran za:
+- Stanje, sigurnost ili zakonitost bilo kojeg veza
+- Osobne ozljede ili štetu na imovini
+- Financijske gubitke
+- Vremenske/okolišne događaje
+- Radnje trećih strana
+MAKSIMALNA ODGOVORNOST: manja od ukupnih naknada plaćenih u 12 mjeseci ili €500.
+
+7. ZABRANJENE AKTIVNOSTI
+- Listanje vezova bez zakonskog prava raspolaganja
+- Pružanje lažnih informacija
+- Zaobilaženje platforme radi izbjegavanja provizije
+- Uznemiravanje drugih korisnika
+- Kršenje primjenjivih zakona
+
+8. RJEŠAVANJE SPOROVA
+Sporovi se najprije rješavaju pregovorima u roku od 30 dana. Ako pregovori ne uspiju, sporovi se rješavaju arbitražom prema češkom pravu. Sudovi u Pragu imaju isključivu nadležnost.
+
+9. KONTAKT
+Intelligent Matrix
+Email: legal@mooring-booking.com
+Email: info@intelligent-matrix.com
+Adresa: Prag, Češka
+Telefon: +420 739 328 337
+
+© 2026 Mooring Booking. Sva prava pridržana.`;
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Mooring_Booking_Opci_Uvjeti.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const downloadPrivacy = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const content = `MOORING BOOKING - POLITIKA PRIVATNOSTI
+=======================================
+Zadnje ažurirano: 18. ožujka 2026.
+Operater: Intelligent Matrix
+
+1. PRIKUPLJANJE PODATAKA
+Prikupljamo sljedeće osobne podatke:
+- Ime i prezime, email adresu, broj telefona
+- Lokaciju veza (GPS koordinate)
+- Podatke o rezervacijama i plaćanjima
+- Fotografije vezova
+
+2. KORIŠTENJE PODATAKA
+Vaše podatke koristimo za:
+- Pružanje i poboljšanje usluge platforme
+- Obradu rezervacija i plaćanja
+- Komunikaciju s vama o vašim rezervacijama
+- Slanje obavijesti i promocija (uz vašu suglasnost)
+
+3. DIJELJENJE PODATAKA
+Vaše podatke dijelimo:
+- S drugim korisnicima platforme (ime, kontakt za rezervaciju)
+- S pružateljima platnih usluga (Stripe)
+- Prema zakonskim zahtjevima
+
+4. VAŠA PRAVA (GDPR)
+Imate pravo na:
+- Pristup vašim osobnim podacima
+- Ispravak netočnih podataka
+- Brisanje podataka ("pravo na zaborav")
+- Ograničenje obrade
+- Prenosivost podataka
+- Prigovor na obradu
+
+5. SIGURNOST PODATAKA
+Koristimo industrijsko-standardne mjere zaštite uključujući enkripciju, siguran pristup i redovite revizije.
+
+6. KONTAKT
+Za pitanja o privatnosti:
+Email: privacy@mooring-booking.com
+Adresa: Prag, Češka
+
+© 2026 Mooring Booking. Sva prava pridržana.`;
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Mooring_Booking_Politika_Privatnosti.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const toggleAmenity = (id: string) => {
     setFormData(prev => ({
       ...prev,
@@ -1687,7 +1824,7 @@ const BecomeProviderPage = () => {
                       onCheckedChange={(checked) => setDeclarations(prev => ({ ...prev, terms: checked as boolean }))}
                     />
                     <Label htmlFor="terms" className="text-sm leading-relaxed cursor-pointer">
-                      📋 Pročitao/la sam i prihvaćam <a href="/terms" target="_blank" className="text-secondary underline">Opće uvjete korištenja</a> i <a href="/privacy" target="_blank" className="text-secondary underline">Politiku privatnosti</a> platforme Mooring Booking.
+                      📋 Pročitao/la sam i prihvaćam <a href="#" onClick={downloadTerms} className="text-secondary underline">Opće uvjete korištenja</a> i <a href="#" onClick={downloadPrivacy} className="text-secondary underline">Politiku privatnosti</a> platforme Mooring Booking.
                     </Label>
                   </div>
                 </div>
