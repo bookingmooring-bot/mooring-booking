@@ -21,12 +21,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Get initial session
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        // Handle PKCE OAuth callback if ?code= is in URL
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        
+        const initSession = async () => {
+            if (code) {
+                // Exchange PKCE code for session
+                const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+                if (!error && data.session) {
+                    setSession(data.session);
+                    setUser(data.session.user);
+                    // Clean URL
+                    window.history.replaceState(null, '', window.location.pathname);
+                }
+            }
+            
+            // Get current session (handles existing sessions + implicit flow)
+            const { data: { session } } = await supabase.auth.getSession();
             setSession(session);
             setUser(session?.user ?? null);
             setLoading(false);
-        });
+        };
+        
+        initSession();
 
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(

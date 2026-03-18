@@ -973,17 +973,10 @@ Adresa: Prag, Češka
                       variant="outline"
                       className="w-full h-12 font-medium"
                       onClick={async () => {
-                        const { signInWithGoogle } = await import('@/contexts/AuthContext').then(() => {
-                          // Use the hook's function directly
-                          return { signInWithGoogle: async () => {
-                            const { error } = await supabase.auth.signInWithOAuth({
-                              provider: 'google',
-                              options: { redirectTo: `${window.location.origin}/become-provider` },
-                            });
-                            return { error };
-                          }};
+                        const { error } = await supabase.auth.signInWithOAuth({
+                          provider: 'google',
+                          options: { redirectTo: `${window.location.origin}/become-provider` },
                         });
-                        const { error } = await signInWithGoogle();
                         if (error) {
                           toast({
                             title: "Greška",
