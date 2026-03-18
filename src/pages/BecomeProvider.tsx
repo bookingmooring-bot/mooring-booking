@@ -76,9 +76,9 @@ const benefits = [
   {
     icon: TrendingUp,
     title: "Povećajte Svoj Prihod",
-    description: "Davatelji prijavljuju prosječno povećanje prihoda od 300%. Vaš neiskorišteni vez vrijedi novac.",
-    stat: "€5.000+",
-    statLabel: "Prosj. godišnja zarada"
+    description: "Objavite vaše vezove na dokovima, bovama ili u marini i gledajte kako AI kapetan pronalazi goste.",
+    stat: "85%",
+    statLabel: "Zarade ostaje vama"
   },
   {
     icon: Shield,
@@ -96,10 +96,10 @@ const benefits = [
   },
   {
     icon: Users,
-    title: "Pridružite se 10.000+ Davatelja",
-    description: "Budite dio najveće mediteranske zajednice vezova. Podrška uključena.",
-    stat: "10.000+",
-    statLabel: "Aktivnih davatelja"
+    title: "Pridružite se Davateljima",
+    description: "Budite dio rastuće mediteranske zajednice vezova. Podrška uključena.",
+    stat: "11",
+    statLabel: "Mediteranskih zemalja"
   },
 ];
 
@@ -572,14 +572,14 @@ const BecomeProviderPage = () => {
                 <div>
                   <div className="inline-flex items-center gap-2 bg-gold/20 text-gold px-4 py-2 rounded-full mb-6">
                     <Star size={16} />
-                    <span className="text-sm font-medium">Pridružite se 10.000+ davatelja</span>
+                    <span className="text-sm font-medium">Pridružite se davateljima vezova</span>
                   </div>
                   <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
-                    Pretvorite svoj neiskorišteni vez u
-                    <span className="block text-gold">izvanredan izvor prihoda</span>
+                    Objavite svoje vezove koje imate
+                    <span className="block text-gold">i pretvorite ih u prihod</span>
                   </h1>
                   <p className="text-lg text-primary-foreground/80 mb-8">
-                    Objavite svoj vez na doku, bovi ili u marini za samo 10 minuta i gledajte kako rezervacije dolaze.
+                    Objavite vaše vezove na dokovima, bovama ili u marini i gledajte kako ih AI kapetan pronalazi — rezervacije dolaze.
                   </p>
                   <div className="space-y-3 text-primary-foreground/90">
                     <div className="flex items-center gap-3">
@@ -592,11 +592,7 @@ const BecomeProviderPage = () => {
                     </div>
                     <div className="flex items-center gap-3">
                       <Check className="text-gold flex-shrink-0" size={20} />
-                      <span>Pomorci iz 11 mediteranskih zemalja</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Check className="text-gold flex-shrink-0" size={20} />
-                      <span>Prosječna zarada: €5.000+ po sezoni</span>
+                      <span>Dostupno u 11 mediteranskih zemalja</span>
                     </div>
                   </div>
                 </div>
@@ -674,21 +670,19 @@ const BecomeProviderPage = () => {
                       </div>
                       <div>
                         <Label>Država *</Label>
-                        <Select
+                        <select
                           value={leadFormData.country}
-                          onValueChange={(value) => setLeadFormData(prev => ({ ...prev, country: value }))}
+                          onChange={(e) => setLeadFormData(prev => ({ ...prev, country: e.target.value }))}
+                          className="mt-1 w-full h-10 px-3 rounded-md border border-input bg-background text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                          required
                         >
-                          <SelectTrigger className="mt-1">
-                            <SelectValue placeholder="Izaberite" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {countries.map((c) => (
-                              <SelectItem key={c.code} value={c.code}>
-                                {c.flag} {c.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          <option value="">Izaberite</option>
+                          {countries.map((c) => (
+                            <option key={c.code} value={c.code}>
+                              {c.flag} {c.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
 
