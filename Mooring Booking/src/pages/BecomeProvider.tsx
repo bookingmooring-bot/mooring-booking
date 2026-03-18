@@ -164,8 +164,6 @@ const BecomeProviderPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadingPhotos, setUploadingPhotos] = useState(false);
-  const [showConsent, setShowConsent] = useState(false);
-  const [consentAccepted, setConsentAccepted] = useState(false);
   const [formData, setFormData] = useState({
     mooringName: "",
     country: "",
@@ -195,12 +193,7 @@ const BecomeProviderPage = () => {
     now4today: false,
     mooringUnits: "1",
   });
-  const [declarations, setDeclarations] = useState({
-    ownership: false,
-    commission: false,
-    terms: false,
-    dataTransfer: false,
-  });
+  const [consentAccepted, setConsentAccepted] = useState(false);
   const [calendarDays, setCalendarDays] = useState(generateCalendarDays());
 
   const toggleAmenity = (id: string) => {
@@ -244,8 +237,8 @@ const BecomeProviderPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!declarations.ownership || !declarations.commission || !declarations.terms || !declarations.dataTransfer) return;
-    setShowConsent(true);
+    if (!consentAccepted) return;
+    handleFinalConsent();
   };
 
   const uploadPhotos = useCallback(async (): Promise<string[]> => {
@@ -321,7 +314,6 @@ const BecomeProviderPage = () => {
       if (error) throw error;
 
       setConsentAccepted(true);
-      setShowConsent(false);
       toast({
         title: "✅ Profile Published!",
         description: "Your mooring is now pending review. You'll be notified once it's approved.",
@@ -475,96 +467,6 @@ const BecomeProviderPage = () => {
     );
   }
 
-  // Digital Consent Modal
-  if (showConsent) {
-    return (
-      <div className="min-h-screen bg-muted">
-        <Header />
-        <main className="pt-28 pb-20">
-          <div className="container mx-auto px-4">
-            <div className="max-w-2xl mx-auto">
-              <div className="bg-card rounded-2xl p-8 shadow-hover">
-                <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FileText className="text-secondary" size={32} />
-                  </div>
-                  <h1 className="font-heading text-2xl font-bold text-foreground mb-2">
-                    Digital Consent Agreement
-                  </h1>
-                  <p className="text-muted-foreground">
-                    {t('provider.reviewTerms')}
-                  </p>
-                </div>
-
-                <div className="space-y-4 mb-8">
-                  <div className="bg-muted rounded-lg p-4 text-sm text-foreground leading-relaxed max-h-60 overflow-y-auto">
-                    <h3 className="font-semibold mb-2">{t('provider.consentSummaryTitle')}</h3>
-                    <ul className="space-y-2 list-disc list-inside text-muted-foreground">
-                      <li>{t('provider.consentTerm1')}</li>
-                      <li>{t('provider.consentTerm2')}</li>
-                      <li>{t('provider.consentTerm3')}</li>
-                      <li>{t('provider.consentTerm4')}</li>
-                      <li>{t('provider.consentTerm5')}</li>
-                      <li>{t('provider.consentTerm6')}</li>
-                      <li>{t('provider.consentTerm7')}</li>
-                      <li>{t('provider.consentTerm8')}</li>
-                      {formData.marketingTools && <li>{t('provider.consentTermMarketing')}</li>}
-                      {formData.premiumListing && <li>{t('provider.consentTermPremium')}</li>}
-                      {formData.insuranceMediation && <li>{t('provider.consentTermInsurance')}</li>}
-                      {formData.now4today && <li>{t('provider.consentTermNow4Today')}</li>}
-                    </ul>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-4 bg-gold/10 rounded-lg border border-gold/20">
-                    <Checkbox
-                      id="finalConsent"
-                      checked={consentAccepted}
-                      onCheckedChange={(checked) => setConsentAccepted(checked as boolean)}
-                    />
-                    <Label htmlFor="finalConsent" className="text-sm leading-relaxed cursor-pointer font-medium">
-                      {t('provider.consentRequired')}
-                    </Label>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <Button
-                    variant="outline"
-                    className="flex-1"
-                    onClick={() => { setShowConsent(false); setConsentAccepted(false); }}
-                  >
-                    {t('provider.backToEdit')}
-                  </Button>
-                  <Button
-                    className="flex-1 bg-gradient-ocean font-semibold h-12"
-                    disabled={!consentAccepted || isSubmitting}
-                    onClick={handleFinalConsent}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2" />
-                        {uploadingPhotos ? t('provider.uploadingPhotos') : t('provider.publishing')}
-                      </>
-                    ) : (
-                      <>
-                        <Check className="mr-2" size={20} />
-                        {t('provider.acceptPublish')}
-                      </>
-                    )}
-                  </Button>
-                </div>
-
-                <p className="text-xs text-muted-foreground text-center mt-4">
-                  {t('provider.eIdas')}
-                </p>
-              </div>
-            </div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
 
   // Registration Form
   return (
@@ -1213,61 +1115,39 @@ const BecomeProviderPage = () => {
                 </div>
               </div>
 
-              {/* Declarations */}
+              {/* Declarations & Consent */}
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <FileText className="text-secondary" size={24} />
                   {t('provider.declarations')}
                 </h2>
-                <div className="space-y-4">
-                  {/* First declaration: Right of Disposal — visually prominent */}
-                  <div className="flex items-start gap-3 p-4 bg-warning/10 border-2 border-warning/40 rounded-lg">
-                    <Checkbox
-                      id="ownership"
-                      checked={declarations.ownership}
-                      onCheckedChange={(checked) => setDeclarations(prev => ({ ...prev, ownership: checked as boolean }))}
-                    />
-                    <div>
-                      <Label htmlFor="ownership" className="text-sm font-semibold text-foreground cursor-pointer block mb-1">
-                        ⚖️ {t('provider.declarationRightOfDisposal', 'Right of Disposal Declaration')}
-                      </Label>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        {t('provider.declaration1')}
-                      </p>
-                      <p className="text-xs text-muted-foreground/70 leading-relaxed mt-2 italic border-t border-warning/20 pt-2">
+                
+                <div className="bg-muted rounded-lg p-4 text-sm text-foreground leading-relaxed mb-6 max-h-40 overflow-y-auto w-full">
+                    <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+                      <li>{t('provider.consentTerm1', 'I have the legal right to dispose of this mooring.')}</li>
+                      <li>{t('provider.consentTerm2', 'I agree to the 15% commission on successful bookings.')}</li>
+                      <li>{t('provider.consentTerm6', 'I accept the Terms of Service and Privacy Policy.')}</li>
+                      <li>{t('provider.consentTerm7', 'I consent to the processing of my data for booking purposes.')}</li>
+                      {formData.marketingTools && <li>{t('provider.consentTermMarketing', 'I agree to the marketing tools fee.')}</li>}
+                      {formData.premiumListing && <li>{t('provider.consentTermPremium', 'I agree to the premium listing fee.')}</li>}
+                      {formData.insuranceMediation && <li>{t('provider.consentTermInsurance', 'I agree to the insurance mediation fee.')}</li>}
+                      {formData.now4today && <li>{t('provider.consentTermNow4Today', 'I agree to the Now4Today terms.')}</li>}
+                    </ul>
+                </div>
+
+                <div className="flex items-start gap-3 p-4 bg-warning/10 border-2 border-warning/40 rounded-lg">
+                  <Checkbox
+                    id="finalConsent"
+                    checked={consentAccepted}
+                    onCheckedChange={(checked) => setConsentAccepted(checked as boolean)}
+                  />
+                  <div>
+                    <Label htmlFor="finalConsent" className="text-sm font-semibold text-foreground cursor-pointer block mb-1">
+                      {t('provider.consentRequired', 'I have read and accept all the above terms and agree to publish my mooring.')}
+                    </Label>
+                    <p className="text-xs text-muted-foreground/70 leading-relaxed mt-2 italic border-t border-warning/20 pt-2">
                         {t('provider.disposalDisclaimer', 'By submitting this declaration, you confirm that you have the legal right of disposal over this mooring and are responsible for the accuracy of the provided data. Mooring Booking platform is not responsible for false declarations.')}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 p-4 bg-muted rounded-lg">
-                    <Checkbox
-                      id="commission"
-                      checked={declarations.commission}
-                      onCheckedChange={(checked) => setDeclarations(prev => ({ ...prev, commission: checked as boolean }))}
-                    />
-                    <Label htmlFor="commission" className="text-sm leading-relaxed cursor-pointer">
-                      {t('provider.declaration2')}
-                    </Label>
-                  </div>
-                  <div className="flex items-start gap-3 p-4 bg-muted rounded-lg">
-                    <Checkbox
-                      id="dataTransfer"
-                      checked={declarations.dataTransfer}
-                      onCheckedChange={(checked) => setDeclarations(prev => ({ ...prev, dataTransfer: checked as boolean }))}
-                    />
-                    <Label htmlFor="dataTransfer" className="text-sm leading-relaxed cursor-pointer">
-                      {t('provider.dataTransferConsent2')}
-                    </Label>
-                  </div>
-                  <div className="flex items-start gap-3 p-4 bg-muted rounded-lg">
-                    <Checkbox
-                      id="terms"
-                      checked={declarations.terms}
-                      onCheckedChange={(checked) => setDeclarations(prev => ({ ...prev, terms: checked as boolean }))}
-                    />
-                    <Label htmlFor="terms" className="text-sm leading-relaxed cursor-pointer">
-                      {t('provider.termsAgree')}
-                    </Label>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1285,10 +1165,19 @@ const BecomeProviderPage = () => {
                 <Button
                   type="submit"
                   className="flex-1 bg-gradient-ocean font-semibold h-12"
-                  disabled={!declarations.ownership || !declarations.commission || !declarations.terms || !declarations.dataTransfer}
+                  disabled={!consentAccepted || isSubmitting}
                 >
-                  <QrCode className="mr-2" size={20} />
-                  {t('provider.publishProfile')}
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2" />
+                      {uploadingPhotos ? t('provider.uploadingPhotos') : t('provider.publishing')}
+                    </>
+                  ) : (
+                    <>
+                      <QrCode className="mr-2" size={20} />
+                      {t('provider.publishProfile')}
+                    </>
+                  )}
                 </Button>
               </div>
             </form>

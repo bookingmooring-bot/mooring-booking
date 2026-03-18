@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Mail, Lock, User, Chrome, Apple, Anchor, Loader2 } from "lucide-react";
+import { Mail, Lock, Chrome, Anchor, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,11 +14,9 @@ const AuthPage = () => {
   const { t } = useTranslation();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { signUp, signIn, signInWithGoogle, signInWithApple, user } = useAuth();
-  const [isSignUp, setIsSignUp] = useState(false);
+  const { signIn, signInWithGoogle, user } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const isConfirmed = searchParams.get("confirmed") === "true";
@@ -39,38 +37,21 @@ const AuthPage = () => {
     setLoading(true);
 
     try {
-      if (isSignUp) {
-        const { error } = await signUp(email, password, name);
-        if (error) {
-          toast({
-            title: "Registration Failed",
-            description: error.message,
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Account Created! 🎉",
-            description: "Check your email to confirm your account, then sign in.",
-          });
-          setIsSignUp(false);
-        }
+      const { error } = await signIn(email, password);
+      if (error) {
+        toast({
+          title: "Sign In Failed",
+          description: error.message,
+          variant: "destructive",
+        });
       } else {
-        const { error } = await signIn(email, password);
-        if (error) {
-          toast({
-            title: "Sign In Failed",
-            description: error.message,
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Welcome Back! \u2693",
-            description: "You are now signed in.",
-          });
-          navigate("/dashboard");
-        }
+        toast({
+          title: "Welcome Back! ⚓",
+          description: "You are now signed in.",
+        });
+        navigate("/dashboard");
       }
-    } catch (err) {
+    } catch {
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",
@@ -81,18 +62,18 @@ const AuthPage = () => {
     }
   };
 
-  const handleSocialLogin = async (provider: "google" | "apple") => {
+  const handleGoogleLogin = async () => {
     setLoading(true);
     try {
-      const { error } = provider === "google" ? await signInWithGoogle() : await signInWithApple();
+      const { error } = await signInWithGoogle();
       if (error) {
         toast({
-          title: `${provider === "google" ? "Google" : "Apple"} Login Failed`,
+          title: "Google Login Failed",
           description: error.message,
           variant: "destructive",
         });
       }
-    } catch (err) {
+    } catch {
       toast({
         title: "Error",
         description: "Social login failed. Please try again.",
@@ -111,7 +92,7 @@ const AuthPage = () => {
           <div className="container mx-auto px-4">
             <div className="max-w-md mx-auto">
               <div className="text-center mb-8">
-                {/* BUG-23: confirmation banner shown after email link click */}
+                {/* confirmation banner shown after email link click */}
                 {isConfirmed && (
                   <div className="mb-6 px-4 py-3 bg-green-50 border border-green-200 text-green-800 rounded-xl text-sm flex items-center gap-2 justify-center">
                     <span>✅</span>
@@ -122,43 +103,25 @@ const AuthPage = () => {
                   <Anchor className="text-primary-foreground" size={32} />
                 </div>
                 <h1 className="font-heading text-3xl font-bold text-foreground mb-2">
-                  {isSignUp ? t('auth.signUp', 'Create Account') : t('auth.signIn', 'Welcome Back')}
+                  {t('auth.signIn', 'Welcome Back')}
                 </h1>
                 <p className="text-muted-foreground">
-                  {isSignUp
-                    ? t('auth.signUpSubtitle', 'Registration is required for all users')
-                    : t('auth.signInSubtitle', 'Sign in to access your account')}
+                  {t('auth.signInSubtitle', 'Sign in to access your account')}
                 </p>
               </div>
 
               <div className="bg-card rounded-2xl p-8 shadow-card">
-                {/* Social Login */}
-                <div className="space-y-3 mb-6">
+                {/* Google Login */}
+                <div className="mb-6">
                   <Button
                     variant="outline"
                     className="w-full h-12 font-medium"
-                    onClick={() => handleSocialLogin("google")}
+                    onClick={handleGoogleLogin}
                     disabled={loading}
                   >
                     <Chrome className="mr-2" size={20} />
                     {t('auth.continueGoogle', 'Continue with Google')}
                   </Button>
-                  {/* Apple login — disabled until Apple Developer account is purchased */}
-                  <div title="Coming soon — Apple sign-in is not yet available" className="relative">
-                    <Button
-                      variant="outline"
-                      className="w-full h-12 font-medium opacity-50 cursor-not-allowed"
-                      disabled
-                      tabIndex={-1}
-                      aria-disabled="true"
-                    >
-                      <Apple className="mr-2" size={20} />
-                      {t('auth.continueApple', 'Continue with Apple')}
-                      <span className="ml-2 text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded font-normal">Coming soon</span>
-                    </Button>
-                    {/* Invisible overlay to block any click events */}
-                    <div className="absolute inset-0 cursor-not-allowed" aria-hidden="true" />
-                  </div>
                 </div>
 
                 <div className="relative mb-6">
@@ -174,24 +137,6 @@ const AuthPage = () => {
 
                 {/* Email Form */}
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  {isSignUp && (
-                    <div>
-                      <Label htmlFor="name">{t('auth.fullName', 'Full Name')}</Label>
-                      <div className="relative mt-1">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-                        <Input
-                          id="name"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          placeholder={t('auth.namePlaceholder', 'Captain Jack')}
-                          className="pl-10"
-                          required
-                          disabled={loading}
-                        />
-                      </div>
-                    </div>
-                  )}
-
                   <div>
                     <Label htmlFor="email">{t('auth.email', 'Email')}</Label>
                     <div className="relative mt-1">
@@ -231,21 +176,14 @@ const AuthPage = () => {
                     {loading ? (
                       <Loader2 className="animate-spin mr-2" size={20} />
                     ) : null}
-                    {isSignUp ? t('auth.createAccount', 'Create Account') : t('auth.signInBtn', 'Sign In')}
+                    {t('auth.signInBtn', 'Sign In')}
                   </Button>
                 </form>
 
-                <div className="text-center mt-6">
-                  <button
-                    onClick={() => setIsSignUp(!isSignUp)}
-                    className="text-sm text-secondary hover:underline"
-                    disabled={loading}
-                  >
-                    {isSignUp
-                      ? t('auth.haveAccount', 'Already have an account? Sign In')
-                      : t('auth.noAccount', "Don't have an account? Sign Up")}
-                  </button>
-                </div>
+                {/* Beta notice */}
+                <p className="text-center text-xs text-muted-foreground mt-6">
+                  🔒 This is a closed beta. Access is by invite only.
+                </p>
               </div>
             </div>
           </div>

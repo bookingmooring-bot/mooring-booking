@@ -175,7 +175,7 @@ const LoginScreen = ({ onLogin }: { onLogin: () => void }) => {
       </form>
       <p style={{ textAlign: "center", marginTop: 20, fontSize: 13, color: "#475569" }}>
         Don't have an account?{" "}
-        <a href="/join-as-provider" style={{ color: "#38bdf8", textDecoration: "none" }}>
+        <a href="/become-provider" style={{ color: "#38bdf8", textDecoration: "none" }}>
           Register as a provider
         </a>
       </p>
@@ -413,7 +413,7 @@ const ProviderPortal = () => {
           <p style={{ color: "#64748b", marginBottom: 24 }}>
             Your account doesn't have provider access. Register as a provider to access this portal.
           </p>
-          <a href="/join-as-provider" style={{ color: "#38bdf8", fontSize: 15 }}>
+          <a href="/become-provider" style={{ color: "#38bdf8", fontSize: 15 }}>
             → Register as a Provider
           </a>
         </div>

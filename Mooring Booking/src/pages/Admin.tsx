@@ -1,10 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import {
   TrendingUp, Users, DollarSign, Calendar, AlertCircle, CheckCircle,
   Clock, Download, Filter, Search, Eye, Mail, MoreVertical,
-  ArrowUpRight, Anchor, CreditCard, Check, X, Building
+  ArrowUpRight, Anchor, CreditCard, Check, X, Building, UserPlus, Trash2, ShieldCheck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,21 +36,33 @@ import { useAllBookings } from "@/hooks/useBookings";
 import { format } from "date-fns";
 import AffiliateAdminTable from "@/components/admin/AffiliateAdminTable";
 import { useMarinaApplications, useUpdateMarinaStatus } from "@/hooks/useMarinas";
+import { useAdminUsers } from "@/hooks/useAdminUsers";
 
 const AdminDashboard = () => {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
 
+  // Beta user creation form state
+  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newName, setNewName] = useState("");
+
   const { data: providers = [], isLoading: loadingProviders } = useAdminProviders();
   const { data: commissions = [], isLoading: loadingCommissions } = useAdminCommissions();
   const { data: pendingMoorings = [], isLoading: loadingPending } = useAdminPendingMoorings();
   const { data: bookings = [], isLoading: loadingBookings } = useAllBookings();
   const { data: marinaApps = [], isLoading: loadingMarinas } = useMarinaApplications();
+  const { users: betaUsers, loading: loadingBetaUsers, creating, fetchUsers, createUser, deleteUser } = useAdminUsers();
 
   const updateMooring = useUpdateMooringStatus();
   const updateCommission = useUpdateCommissionStatus();
   const updateMarina = useUpdateMarinaStatus();
+
+  // Load beta users when tab becomes active
+  useEffect(() => {
+    if (activeTab === 'betausers') fetchUsers();
+  }, [activeTab]);
 
   // Calculated Stats
   const totalRevenue = useMemo(() => {
@@ -183,6 +195,9 @@ const AdminDashboard = () => {
                     {marinaApps.filter(m => m.status === 'pending').length}
                   </span>
                 )}
+              </TabsTrigger>
+              <TabsTrigger value="betausers">
+                <ShieldCheck size={14} className="mr-1" /> Beta Users
               </TabsTrigger>
             </TabsList>
 
@@ -600,6 +615,111 @@ const AdminDashboard = () => {
                     </TableBody>
                   </Table>
                 )}
+              </div>
+            </TabsContent>
+
+            {/* Beta Users Tab */}
+            <TabsContent value="betausers">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Create user form */}
+                <div className="bg-card rounded-xl p-6 shadow-card">
+                  <div className="flex items-center gap-2 mb-4">
+                    <UserPlus className="text-secondary" size={20} />
+                    <h3 className="font-heading font-semibold text-lg">Create Beta User</h3>
+                  </div>
+                  <p className="text-muted-foreground text-sm mb-5">
+                    Add a tester account. The user can log in immediately — no email confirmation needed.
+                  </p>
+                  <form
+                    className="space-y-4"
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      const ok = await createUser(newEmail, newPassword, newName);
+                      if (ok.success) { setNewEmail(""); setNewPassword(""); setNewName(""); }
+                    }}
+                  >
+                    <div>
+                      <label className="text-sm font-medium text-foreground block mb-1">Full Name</label>
+                      <Input
+                        placeholder="e.g. Pero Perić"
+                        value={newName}
+                        onChange={e => setNewName(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-foreground block mb-1">Email</label>
+                      <Input
+                        type="email"
+                        placeholder="pero@example.com"
+                        value={newEmail}
+                        onChange={e => setNewEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-foreground block mb-1">Password</label>
+                      <Input
+                        type="password"
+                        placeholder="Min 6 characters"
+                        value={newPassword}
+                        minLength={6}
+                        onChange={e => setNewPassword(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <Button
+                      type="submit"
+                      className="w-full bg-gradient-ocean"
+                      disabled={creating}
+                    >
+                      {creating ? <><span className="animate-spin mr-2">⏳</span>Creating...</> : <><UserPlus size={16} className="mr-2" />Create User</>}
+                    </Button>
+                  </form>
+                </div>
+
+                {/* User list */}
+                <div className="bg-card rounded-xl p-6 shadow-card">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-heading font-semibold text-lg">All Users ({betaUsers.length})</h3>
+                    <Button variant="ghost" size="sm" onClick={fetchUsers} disabled={loadingBetaUsers}>
+                      🔄 Refresh
+                    </Button>
+                  </div>
+                  {loadingBetaUsers ? (
+                    <p className="text-muted-foreground text-sm py-4">Loading...</p>
+                  ) : (
+                    <div className="space-y-3 max-h-[440px] overflow-y-auto pr-1">
+                      {betaUsers.map((u) => (
+                        <div key={u.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                          <div className="min-w-0">
+                            <p className="font-medium text-sm truncate">{u.full_name || '—'}</p>
+                            <p className="text-muted-foreground text-xs truncate">{u.email}</p>
+                            <p className="text-muted-foreground text-xs">
+                              {u.role === 'admin' || u.is_admin ? '🛡️ Admin' : '👤 User'}
+                              {' · '}{format(new Date(u.created_at), 'MMM d, yyyy')}
+                            </p>
+                          </div>
+                          {!u.is_admin && u.role !== 'admin' && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-destructive hover:bg-destructive/10 ml-2 flex-shrink-0"
+                              onClick={() => {
+                                if (confirm(`Delete ${u.email}?`)) deleteUser(u.id, u.email);
+                              }}
+                            >
+                              <Trash2 size={16} />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                      {betaUsers.length === 0 && (
+                        <p className="text-muted-foreground text-sm py-4 text-center">No users yet.</p>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </TabsContent>
 
