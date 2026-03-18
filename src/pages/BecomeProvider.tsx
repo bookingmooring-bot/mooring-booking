@@ -229,6 +229,29 @@ const BecomeProviderPage = () => {
   });
   const [calendarDays, setCalendarDays] = useState(generateCalendarDays());
 
+  // Handle OAuth callback — when Google redirects back after login
+  useEffect(() => {
+    const hash = window.location.hash;
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    
+    if (code) {
+      // PKCE flow: exchange code for session
+      supabase.auth.exchangeCodeForSession(code).then(({ data, error }) => {
+        if (!error && data.session) {
+          window.history.replaceState(null, '', window.location.pathname);
+        }
+      });
+    } else if (hash && (hash.includes('access_token') || hash.includes('refresh_token'))) {
+      // Implicit flow: tokens in hash
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          window.history.replaceState(null, '', window.location.pathname);
+        }
+      });
+    }
+  }, []);
+
   // Pre-fill form from lead data when authenticated user loads page
   useEffect(() => {
     if (!user?.email) return;
