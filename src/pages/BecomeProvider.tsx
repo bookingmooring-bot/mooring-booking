@@ -1488,25 +1488,7 @@ Adresa: Prag, Češka
                       )}
                     </div>
                   </div>
-                  <div className="md:col-span-2">
-                    <Label>Načini plaćanja *</Label>
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-3">
-                      {paymentMethods.map((method) => (
-                        <button
-                          key={method.id}
-                          type="button"
-                          onClick={() => togglePayment(method.id)}
-                          className={`flex items-center gap-2 p-3 rounded-lg border transition-all ${formData.paymentMethods.includes(method.id)
-                            ? "bg-secondary/10 border-secondary text-secondary"
-                            : "bg-muted border-border text-muted-foreground hover:border-secondary/50"
-                            }`}
-                        >
-                          <span>{method.icon}</span>
-                          <span className="text-sm font-medium">{method.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+
                 </div>
               </div>
 
