@@ -253,31 +253,52 @@ const BecomeProviderPage = () => {
   }, []);
 
   // Pre-fill form from lead data when authenticated user loads page
+  // Also: ensure Google OAuth users get provider role + lead entry
   useEffect(() => {
     if (!user?.email) return;
-    const fetchLeadData = async () => {
+    const setupUser = async () => {
       try {
-        const { data: lead } = await supabase
+        // Set user_role to 'provider' if not already set
+        const currentRole = user.user_metadata?.user_role;
+        if (!currentRole) {
+          await supabase.auth.updateUser({
+            data: { user_role: 'provider' }
+          });
+        }
+
+        // Check if lead exists, create if not (e.g. Google OAuth users)
+        const { data: existingLead } = await supabase
           .from('fb_leads')
-          .select('full_name, email, phone, city, country, mooring_type, mooring_quantities')
+          .select('id, full_name, email, phone, city, country, mooring_type, mooring_quantities')
           .eq('email', user.email)
           .maybeSingle();
-        if (lead) {
-          const quantities = (lead.mooring_quantities as Record<string, number>) || {};
+
+        if (existingLead) {
+          // Pre-fill form from existing lead
+          const quantities = (existingLead.mooring_quantities as Record<string, number>) || {};
           const totalUnits = Object.values(quantities).reduce((sum: number, v: number) => sum + (v || 0), 0);
           setFormData(prev => ({
             ...prev,
-            country: lead.country || prev.country,
-            region: lead.city || prev.region,
-            phone: lead.phone || prev.phone,
+            country: existingLead.country || prev.country,
+            region: existingLead.city || prev.region,
+            phone: existingLead.phone || prev.phone,
             mooringUnits: totalUnits > 0 ? String(totalUnits) : prev.mooringUnits,
           }));
+        } else {
+          // Create lead entry for Google OAuth user
+          const fullName = user.user_metadata?.full_name || user.user_metadata?.name || '';
+          await supabase.from('fb_leads').insert({
+            full_name: fullName,
+            email: user.email,
+            status: 'registered',
+            has_mooring: false,
+          });
         }
       } catch (err) {
-        console.error('Failed to fetch lead data:', err);
+        console.error('Failed to setup user:', err);
       }
     };
-    fetchLeadData();
+    setupUser();
   }, [user?.email]);
 
   const downloadTerms = (e: React.MouseEvent) => {
