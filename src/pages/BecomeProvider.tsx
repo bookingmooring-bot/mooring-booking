@@ -163,24 +163,34 @@ const generateCalendarDays = (): CalendarDay[] => {
   return days;
 };
 
-const ProviderMiniHeader = ({ mooringCount }: { mooringCount: number }) => (
-  <div className="bg-gradient-ocean py-4 px-6">
-    <div className="container mx-auto flex items-center justify-between">
-      <div className="flex items-center gap-3">
-        <Anchor size={28} className="text-gold" />
-        <span className="text-primary-foreground font-heading font-bold text-lg">Mooring Booking</span>
-      </div>
-      <div className="flex items-center gap-4">
-        <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 flex items-center gap-2">
-          <MapPin size={16} className="text-gold" />
-          <span className="text-primary-foreground text-sm">
-            Ukupno prijava: <strong className="text-gold">{mooringCount}</strong>
-          </span>
+const ProviderMiniHeader = ({ mooringCount }: { mooringCount: number }) => {
+  const { signOut } = useAuth();
+  return (
+    <div className="bg-gradient-ocean py-4 px-6">
+      <div className="container mx-auto flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Anchor size={28} className="text-gold" />
+          <span className="text-primary-foreground font-heading font-bold text-lg">Mooring Booking</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 flex items-center gap-2 hidden sm:flex">
+            <MapPin size={16} className="text-gold" />
+            <span className="text-primary-foreground text-sm">
+              Ukupno prijava: <strong className="text-gold">{mooringCount}</strong>
+            </span>
+          </div>
+          <Button 
+            variant="ghost" 
+            onClick={signOut} 
+            className="text-white hover:text-white/80 hover:bg-white/10 ml-2"
+          >
+            Logout
+          </Button>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const BecomeProviderPage = () => {
   const { t } = useTranslation();
