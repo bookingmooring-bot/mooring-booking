@@ -49,8 +49,7 @@ const amenities = [
 
 const paymentMethods = [
   { id: "cash", label: "Gotovina", icon: "💵" },
-  { id: "maestro", label: "Maestro", icon: "💳" },
-  { id: "visa", label: "Visa/Mastercard", icon: "💳" },
+  { id: "card", label: "Kreditna kartica", icon: "💳" },
   { id: "paypal", label: "PayPal", icon: "🅿️" },
   { id: "googlepay", label: "Google Pay", icon: "📱" },
 ];
@@ -175,7 +174,7 @@ const ProviderMiniHeader = ({ mooringCount }: { mooringCount: number }) => (
         <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 flex items-center gap-2">
           <MapPin size={16} className="text-gold" />
           <span className="text-primary-foreground text-sm">
-            <strong className="text-gold">{mooringCount}</strong> {mooringCount === 1 ? 'vez postavljen' : 'vezova postavljeno'}
+            Ukupno prijava: <strong className="text-gold">{mooringCount}</strong>
           </span>
         </div>
       </div>
@@ -1103,10 +1102,10 @@ Adresa: Prag, Češka
             {/* Form Header */}
             <div className="text-center mb-10">
               <h1 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
-                {t('provider.title')}
+                Objavite vaš vez
               </h1>
               <p className="text-muted-foreground">
-                {t('provider.subtitle')}
+                Ispunite podatke o vašem vezu da biste ga objavili na platformi
               </p>
             </div>
 
@@ -1115,14 +1114,14 @@ Adresa: Prag, Češka
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <Anchor className="text-secondary" size={24} />
-                  Basic Information
+                  Osnovni podaci
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="md:col-span-2">
-                    <Label htmlFor="mooringName">{t('provider.mooringName')} *</Label>
+                    <Label htmlFor="mooringName">Naziv veza *</Label>
                     <Input
                       id="mooringName"
-                      placeholder={t('provider.mooringNamePlaceholder')}
+                      placeholder="npr. Marina Split - vez A12"
                       value={formData.mooringName}
                       onChange={(e) => setFormData(prev => ({ ...prev, mooringName: e.target.value }))}
                       className="mt-2"
@@ -1147,10 +1146,10 @@ Adresa: Prag, Češka
                     </select>
                   </div>
                   <div>
-                    <Label htmlFor="region">{t('provider.region')} *</Label>
+                    <Label htmlFor="region">Grad / Regija *</Label>
                     <Input
                       id="region"
-                      placeholder={t('provider.regionPlaceholder')}
+                      placeholder="npr. Split"
                       value={formData.region}
                       onChange={(e) => setFormData(prev => ({ ...prev, region: e.target.value }))}
                       className="mt-2"
@@ -1160,11 +1159,11 @@ Adresa: Prag, Češka
                   <div className="md:col-span-2">
                     <Label className="flex items-center gap-2">
                       <MapPin size={16} className="text-secondary" />
-                      {t('provider.coordinates')} *
+                      GPS koordinate *
                     </Label>
                     <div className="grid grid-cols-2 gap-4 mt-2 mb-3">
                       <div>
-                        <label className="text-xs text-muted-foreground mb-1 block">Latitude</label>
+                        <label className="text-xs text-muted-foreground mb-1 block">Geografska širina</label>
                         <Input
                           placeholder="e.g. 43.5081"
                           value={formData.latitude}
@@ -1177,7 +1176,7 @@ Adresa: Prag, Češka
                         />
                       </div>
                       <div>
-                        <label className="text-xs text-muted-foreground mb-1 block">Longitude</label>
+                        <label className="text-xs text-muted-foreground mb-1 block">Geografska dužina</label>
                         <Input
                           placeholder="e.g. 16.4402"
                           value={formData.longitude}
@@ -1204,10 +1203,10 @@ Adresa: Prag, Češka
                     )}
                   </div>
                   <div className="md:col-span-2">
-                    <Label htmlFor="description">{t('provider.description')} *</Label>
+                    <Label htmlFor="description">Opis veza *</Label>
                     <Textarea
                       id="description"
-                      placeholder={t('provider.descriptionPlaceholder')}
+                      placeholder="Opišite vaš vez, lokaciju, pogodnosti..."
                       value={formData.description}
                       onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                       className="mt-2 min-h-[120px]"
@@ -1215,7 +1214,7 @@ Adresa: Prag, Češka
                       required
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      {formData.description.length}/500 {t('provider.charCount')}
+                      {formData.description.length}/500 znakova
                     </p>
                   </div>
                 </div>
@@ -1225,11 +1224,11 @@ Adresa: Prag, Češka
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <Shield className="text-secondary" size={24} />
-                  Mooring Details
+                  Detalji veza
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label>{t('provider.windProtection')} *</Label>
+                    <Label>Zaštita od vjetra *</Label>
                     <Select
                       value={formData.windProtection}
                       onValueChange={(value) => setFormData(prev => ({ ...prev, windProtection: value }))}
@@ -1238,15 +1237,15 @@ Adresa: Prag, Češka
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="excellent">🛡️ {t('provider.excellent')}</SelectItem>
-                        <SelectItem value="good">✅ {t('provider.good')}</SelectItem>
-                        <SelectItem value="moderate">⚠️ {t('provider.moderate')}</SelectItem>
-                        <SelectItem value="poor">❌ {t('provider.poor')}</SelectItem>
+                        <SelectItem value="excellent">🛡️ Izvrsna</SelectItem>
+                        <SelectItem value="good">✅ Dobra</SelectItem>
+                        <SelectItem value="moderate">⚠️ Umjerena</SelectItem>
+                        <SelectItem value="poor">❌ Slaba</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="maxBoatLength">{t('provider.maxBoatLength')} *</Label>
+                    <Label htmlFor="maxBoatLength">Maks. dužina plovila (m) *</Label>
                     <Input
                       id="maxBoatLength"
                       type="number"
@@ -1258,7 +1257,7 @@ Adresa: Prag, Češka
                     />
                   </div>
                   <div>
-                    <Label htmlFor="maxDraft">{t('provider.maxDraft')} *</Label>
+                    <Label htmlFor="maxDraft">Maks. gaz (m) *</Label>
                     <Input
                       id="maxDraft"
                       type="number"
@@ -1323,7 +1322,7 @@ Adresa: Prag, Češka
                     </p>
                   </div>
                   <div className="md:col-span-2">
-                    <Label>{t('provider.amenities')}</Label>
+                    <Label>Pogodnosti</Label>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
                       {amenities.map((amenity) => (
                         <button
@@ -1348,12 +1347,12 @@ Adresa: Prag, Češka
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <Snowflake className="text-secondary" size={24} />
-                  {t('provider.winterBerth')}
+                  Zimski vez / Skladištenje
                 </h2>
                 <div className="flex items-center justify-between mb-6 p-4 bg-muted rounded-lg">
                   <div>
-                    <Label className="text-base font-semibold">{t('provider.offerWinterStorage')}</Label>
-                    <p className="text-sm text-muted-foreground">{t('provider.winterSeason')}</p>
+                    <Label className="text-base font-semibold">Nudite li zimsko skladištenje?</Label>
+                    <p className="text-sm text-muted-foreground">Sezona: studeni - ožujak</p>
                   </div>
                   <Switch
                     checked={formData.winterStorage}
@@ -1363,7 +1362,7 @@ Adresa: Prag, Češka
                 {formData.winterStorage && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <Label>{t('provider.winterStorageType')} *</Label>
+                      <Label>Tip skladištenja *</Label>
                       <Select
                         value={formData.winterStorageType}
                         onValueChange={(value: "wet" | "dry" | "both") => setFormData(prev => ({ ...prev, winterStorageType: value }))}
@@ -1372,14 +1371,14 @@ Adresa: Prag, Češka
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="wet">🌊 {t('provider.wetStorage')}</SelectItem>
-                          <SelectItem value="dry">🏗️ {t('provider.dryStorage')}</SelectItem>
-                          <SelectItem value="both">🔄 {t('provider.bothStorage')}</SelectItem>
+                          <SelectItem value="wet">🌊 U moru</SelectItem>
+                          <SelectItem value="dry">🏗️ Na suhom</SelectItem>
+                          <SelectItem value="both">🔄 Oboje</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div>
-                      <Label htmlFor="winterPrice">{t('provider.winterPriceMonthly')} *</Label>
+                      <Label htmlFor="winterPrice">Cijena zimskog veza (€/mjesec) *</Label>
                       <Input
                         id="winterPrice"
                         type="number"
@@ -1390,7 +1389,7 @@ Adresa: Prag, Češka
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <Label>{t('provider.winterServices')}</Label>
+                      <Label>Zimske usluge</Label>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
                         {winterServices.map((service) => (
                           <button
@@ -1416,11 +1415,11 @@ Adresa: Prag, Češka
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <CreditCard className="text-secondary" size={24} />
-                  {t('provider.pricingPayment')}
+                  Cijena i plaćanje
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="pricePerNight">{t('provider.pricePerNight')} *</Label>
+                    <Label htmlFor="pricePerNight">Cijena po noći (€) *</Label>
                     <Input
                       id="pricePerNight"
                       type="number"
@@ -1432,7 +1431,7 @@ Adresa: Prag, Češka
                     />
                   </div>
                   <div>
-                    <Label>{t('provider.discount')}: {formData.discount[0]}%</Label>
+                    <Label>Popust: {formData.discount[0]}%</Label>
                     <Slider
                       value={formData.discount}
                       onValueChange={(value) => setFormData(prev => ({ ...prev, discount: value }))}
@@ -1460,10 +1459,10 @@ Adresa: Prag, Češka
                           <div>
                             <h3 className="font-semibold text-foreground flex items-center gap-2">
                               Now4Today
-                              <span className="text-xs bg-orange-500/20 text-orange-600 px-2 py-0.5 rounded-full">{t('provider.now4todaySurcharge')}</span>
+                              <span className="text-xs bg-orange-500/20 text-orange-600 px-2 py-0.5 rounded-full">+20% premija</span>
                             </h3>
                             <p className="text-sm text-muted-foreground">
-                              {t('provider.now4todayDesc')}
+                              Omogućite rezervacije za isti dan uz premiju od 20%
                             </p>
                           </div>
                         </div>
@@ -1475,22 +1474,22 @@ Adresa: Prag, Češka
                       {formData.now4today && formData.pricePerNight && (
                         <div className="mt-3 bg-orange-500/10 rounded-lg p-3">
                           <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">{t('provider.basePrice')}:</span>
+                            <span className="text-muted-foreground">Osnovna cijena:</span>
                             <span className="text-foreground">€{formData.pricePerNight}</span>
                           </div>
                           <div className="flex justify-between text-sm font-semibold">
-                            <span className="text-orange-600">{t('provider.now4todayPrice')}:</span>
+                            <span className="text-orange-600">Now4Today cijena:</span>
                             <span className="text-orange-600">€{(parseFloat(formData.pricePerNight) * 1.2).toFixed(2)}</span>
                           </div>
                           <p className="text-xs text-muted-foreground mt-2">
-                            ⚡ {t('provider.now4todayAvailable')} €{(parseFloat(formData.pricePerNight) * 1.2).toFixed(2)}.
+                            ⚡ Dostupno danas za €{(parseFloat(formData.pricePerNight) * 1.2).toFixed(2)}.
                           </p>
                         </div>
                       )}
                     </div>
                   </div>
                   <div className="md:col-span-2">
-                    <Label>{t('provider.paymentMethods')} *</Label>
+                    <Label>Načini plaćanja *</Label>
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-3">
                       {paymentMethods.map((method) => (
                         <button
@@ -1672,15 +1671,15 @@ Adresa: Prag, Češka
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <Camera className="text-secondary" size={24} />
-                  {t('provider.uploadPhotos')}
+                  Fotografije veza
                 </h2>
-                <p className="text-muted-foreground text-sm mb-4">{t('provider.uploadPhotosDesc')}</p>
+                <p className="text-muted-foreground text-sm mb-4">Dodajte fotografije vašeg veza. Kvalitetne slike privlače više gostiju.</p>
                 <div
                   className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-secondary/50 transition-colors cursor-pointer relative"
                   onClick={() => document.getElementById('photo-upload')?.click()}
                 >
                   <Upload className="mx-auto text-muted-foreground mb-4" size={40} />
-                  <p className="text-muted-foreground">{t('provider.dragDrop')}</p>
+                  <p className="text-muted-foreground">Kliknite ili povucite slike ovdje</p>
                   <input
                     id="photo-upload"
                     type="file"
@@ -1722,10 +1721,10 @@ Adresa: Prag, Češka
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <Calendar className="text-secondary" size={24} />
-                  {t('provider.calendar')}
+                  Kalendar dostupnosti
                 </h2>
                 <p className="text-muted-foreground text-sm mb-4">
-                  {t('provider.calendarDesc')} {t('provider.calendarCustomPrice')}
+                  Označite dane kada je vaš vez dostupan. Možete postaviti i prilagođenu cijenu za pojedine dane.
                 </p>
                 <MonthlyCalendar
                   year={2026}
@@ -1740,11 +1739,11 @@ Adresa: Prag, Češka
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <MapPin className="text-secondary" size={24} />
-                  {t('provider.contactInfo')}
+                  Kontakt informacije
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="phone">{t('provider.phone')} *</Label>
+                    <Label htmlFor="phone">Telefon *</Label>
                     <Input
                       id="phone"
                       type="tel"
@@ -1758,7 +1757,7 @@ Adresa: Prag, Češka
                   <div>
                     <Label htmlFor="whatsapp" className="flex items-center gap-2">
                       <MessageSquare size={14} className="text-success" />
-                      {t('provider.whatsappNumber')}
+                      WhatsApp broj (opcionalno)
                     </Label>
                     <Input
                       id="whatsapp"
@@ -1769,7 +1768,7 @@ Adresa: Prag, Češka
                       className="mt-2"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      {t('provider.notificationsWhatsapp')}
+                      Primajte obavijesti o rezervacijama putem WhatsAppa
                     </p>
                   </div>
                 </div>
