@@ -1145,16 +1145,16 @@ Adresa: Prag, Češka
                   </div>
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-4 w-full mt-6">
                   <Button
                     variant="outline"
-                    className="flex-1"
+                    className="w-full sm:flex-1 h-12"
                     onClick={() => { setShowConsent(false); setConsentAccepted(false); }}
                   >
                     ← Natrag na uređivanje
                   </Button>
                   <Button
-                    className="flex-1 bg-gradient-ocean font-semibold h-12"
+                    className="w-full sm:flex-1 bg-gradient-ocean font-semibold h-12"
                     disabled={!consentAccepted || isSubmitting}
                     onClick={handleFinalConsent}
                   >
@@ -1166,7 +1166,7 @@ Adresa: Prag, Češka
                     ) : (
                       <>
                         <Check className="mr-2" size={20} />
-                        Potvrđujem i objavljujem
+                        Potvrđujem
                       </>
                     )}
                   </Button>
@@ -1412,12 +1412,14 @@ Adresa: Prag, Češka
                       <p className="font-semibold flex items-center gap-1.5 mb-2">
                         💡 Kako prijaviti više vezova?
                       </p>
-                      <ul className="space-y-2 list-none">
-                        <li className="flex gap-2 relative pl-4 before:content-['•'] before:absolute before:left-0 before:text-blue-500">
-                          <strong>Kada prijaviti ODJEDNOM:</strong> Ako imate više ISTIH vezova na istoj lokaciji (npr. 5 istih bova iste cijene), odaberite Bova i navedite <strong>Kom: 5</strong>. Oglas će primati rezervacije dok ne popunite kapacitet.
+                      <ul className="space-y-3 list-none">
+                        <li className="relative pl-4">
+                          <span className="absolute left-0 top-0 text-blue-500 font-bold">•</span>
+                          <strong>Kada prijaviti ODJEDNOM:</strong> Ako imate više ISTIH vezova na istoj lokaciji (npr. 5 istih bova iste cijene), odaberite Bova i navedite <strong>Kom: 5</strong>.
                         </li>
-                        <li className="flex gap-2 relative pl-4 before:content-['•'] before:absolute before:left-0 before:text-blue-500">
-                          <strong>Kada prijaviti ODVOJENO:</strong> Budući da forma podržava samo 1 cijenu i 1 maks. dužinu broda, ako imate vezove <strong>različitih cijena ili veličina</strong> (npr. Veliki Dok i Mala Bova), prijavite ih zasebno. Isprva prijavite samo Dok, a nakon objave kreirajte novu prijavu za Bove.
+                        <li className="relative pl-4">
+                          <span className="absolute left-0 top-0 text-blue-500 font-bold">•</span>
+                          <strong>Kada prijaviti ODVOJENO:</strong> Ukoliko imate vezove <strong>različitih cijena ili veličina</strong> (npr. Veliki Dok i Mala Bova), prijavite ih zasebno (isprva samo Dok, a onda novom prijavom Bove).
                         </li>
                       </ul>
                     </div>
@@ -1832,7 +1834,14 @@ Adresa: Prag, Češka
                       type="tel"
                       placeholder="+385 99 123 4567"
                       value={formData.phone}
-                      onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          phone: val,
+                          whatsapp: (!prev.whatsapp || prev.whatsapp === prev.phone) ? val : prev.whatsapp
+                        }));
+                      }}
                       className="mt-2"
                       required
                     />
