@@ -78,7 +78,6 @@ const App = () => {
             <BrowserRouter>
               <Routes>
                 {/* ─── PUBLIC PROVIDER ROUTES (PasswordGate bypass handles these) ─── */}
-                <Route path="/join-as-provider" element={<Navigate to="/become-provider" replace />} />
                 <Route path="/provider-portal" element={<ProviderPortal />} />
                 {/* ─── MAIN APP ROUTES ─── */}
                 <Route path="/" element={<Index />} />

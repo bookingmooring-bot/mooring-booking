@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/join-as-provider",
+      "destination": "/become-provider",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
