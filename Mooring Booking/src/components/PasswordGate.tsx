@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // Routes that bypass PasswordGate entirely (public provider pages)
-const PUBLIC_PROVIDER_PATHS = ["/become-provider", "/provider-portal", "/marina-partnership"];
+const PUBLIC_PROVIDER_PATHS = ["/become-provider", "/provider-portal", "/marina-partnership", "/join-as-provider"];
 
 const STORAGE_KEY = "mb_gate_auth";
 const CORRECT_PASSWORD = "Brod.96.vez";
