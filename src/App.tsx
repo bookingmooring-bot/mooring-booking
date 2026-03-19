@@ -58,36 +58,31 @@ import AddMooring from "./pages/AddMooring";
 import EditMooring from "./pages/EditMooring";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
-import PasswordGate from "./components/PasswordGate";
+import AppRouteGuard from "./components/AppRouteGuard";
 import AIChatWidget from "./components/AIChatWidget";
-import { useLocation } from "react-router-dom";
-
-// Hide chat widget on public provider/auth pages
-const ConditionalChatWidget = () => {
-  const location = useLocation();
-  const hiddenRoutes = ["/become-provider", "/auth"];
-  if (hiddenRoutes.some(r => location.pathname.startsWith(r))) return null;
-  return <AIChatWidget />;
-};
 
 const queryClient = new QueryClient();
 
 const App = () => {
   useLovableBadgeRemover();
   return (
-    <PasswordGate>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AppRouteGuard>
               <Routes>
+                {/* ─── ALWAYS ACCESSIBLE ─── */}
+                <Route path="/become-provider" element={<BecomeProvider />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/marina-partnership" element={<MarinaPartnership />} />
+                <Route path="/join-as-provider" element={<Navigate to="/become-provider" replace />} />
+                {/* ─── FULL ACCESS (provider / admin only) ─── */}
                 <Route path="/" element={<Index />} />
                 <Route path="/how-it-works" element={<HowItWorks />} />
                 <Route path="/about" element={<About />} />
-                <Route path="/become-provider" element={<BecomeProvider />} />
-                <Route path="/join-as-provider" element={<Navigate to="/become-provider" replace />} />
                 <Route path="/explore" element={<Explore />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/affiliate" element={<Affiliate />} />
@@ -101,21 +96,18 @@ const App = () => {
                 <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
                 <Route path="/user-pricing" element={<UserPricing />} />
                 <Route path="/sailing-manual" element={<SailingManual />} />
-                <Route path="/marina-partnership" element={<MarinaPartnership />} />
                 <Route path="/ai-captain" element={<AICaptainPage />} />
-                <Route path="/auth" element={<Auth />} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/add-mooring" element={<ProtectedRoute><AddMooring /></ProtectedRoute>} />
                 <Route path="/edit-mooring/:id" element={<ProtectedRoute><EditMooring /></ProtectedRoute>} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
-              <ConditionalChatWidget />
-            </BrowserRouter>
-          </TooltipProvider>
-        </AuthProvider>
-      </QueryClientProvider>
-    </PasswordGate>
+              <AIChatWidget />
+            </AppRouteGuard>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 };
 
