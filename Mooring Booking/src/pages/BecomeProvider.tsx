@@ -314,11 +314,11 @@ const BecomeProviderPage = () => {
       if (error) throw error;
 
       setConsentAccepted(true);
+      setShowForm(false); // go back to the landing view of become-provider
       toast({
-        title: "✅ Profile Published!",
-        description: "Your mooring is now pending review. You'll be notified once it's approved.",
+        title: "✅ Application Submitted!",
+        description: "Your mooring listing is pending review. We'll contact you once it's approved.",
       });
-      navigate('/');
     } catch (err: any) {
       console.error('Publish error:', err);
       toast({
