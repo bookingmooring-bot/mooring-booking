@@ -165,6 +165,10 @@ const generateCalendarDays = (): CalendarDay[] => {
 
 const ProviderMiniHeader = ({ mooringCount }: { mooringCount: number }) => {
   const { signOut } = useAuth();
+  const handleLogout = async () => {
+    await signOut();
+    window.location.reload(); // Force full page reload to reset React state
+  };
   return (
     <div className="bg-gradient-ocean py-4 px-6">
       <div className="container mx-auto flex items-center justify-between">
@@ -181,7 +185,7 @@ const ProviderMiniHeader = ({ mooringCount }: { mooringCount: number }) => {
           </div>
           <Button 
             variant="ghost" 
-            onClick={signOut} 
+            onClick={handleLogout} 
             className="text-white hover:text-white/80 hover:bg-white/10 ml-2"
           >
             Logout
