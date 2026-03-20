@@ -1062,7 +1062,7 @@ Adresa: Prag, Češka
                 <p className="text-muted-foreground mb-8">
                   {justSubmitted
                     ? 'Imate više vezova? Dodajte ih sve i povećajte zaradu!'
-                    : 'Popunite podatke o vašim vezovima i počnite zarađivati. Besplatno, bez rizika.'
+                    : 'Popunite podatke o vašim vezovima i povećajte vaše prihode. Besplatno, bez rizika.'
                   }
                 </p>
 
