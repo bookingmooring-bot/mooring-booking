@@ -1056,13 +1056,13 @@ Adresa: Prag, Češka
                 <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Anchor className="text-gold" size={32} />
                 </div>
-                <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-3">
+                <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-3" translate="no">
                   {justSubmitted ? 'Dodajte još jedan vez' : 'Dodajte vaše vezove'}
                 </h1>
                 <p className="text-muted-foreground mb-8">
                   {justSubmitted
                     ? 'Imate više vezova? Dodajte ih sve i povećajte zaradu!'
-                    : 'Popunite podatke o vašem vezu i počnite zarađivati. Besplatno, bez rizika.'
+                    : 'Popunite podatke o vašim vezovima i počnite zarađivati. Besplatno, bez rizika.'
                   }
                 </p>
 
@@ -1086,7 +1086,7 @@ Adresa: Prag, Češka
                   className="bg-gold text-gold-foreground hover:bg-gold/90 font-semibold text-lg px-10 h-14"
                   onClick={() => { setShowForm(true); setJustSubmitted(false); }}
                 >
-                  {justSubmitted ? '➕ Dodaj još jedan vez' : '⚓ Dodaj vezove'}
+                  <span translate="no">{justSubmitted ? '➕ Dodaj još jedan vez' : '⚓ Dodaj vezove'}</span>
                   <ArrowRight className="ml-2" size={20} />
                 </Button>
               </div>
