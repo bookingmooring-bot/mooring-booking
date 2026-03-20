@@ -1057,7 +1057,7 @@ Adresa: Prag, Češka
                   <Anchor className="text-gold" size={32} />
                 </div>
                 <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-3">
-                  {justSubmitted ? 'Dodajte još jedan vez' : 'Dodajte vaš vez'}
+                  {justSubmitted ? 'Dodajte još jedan vez' : 'Dodajte vaše vezove'}
                 </h1>
                 <p className="text-muted-foreground mb-8">
                   {justSubmitted
@@ -1086,7 +1086,7 @@ Adresa: Prag, Češka
                   className="bg-gold text-gold-foreground hover:bg-gold/90 font-semibold text-lg px-10 h-14"
                   onClick={() => { setShowForm(true); setJustSubmitted(false); }}
                 >
-                  {justSubmitted ? '➕ Dodaj još jedan vez' : '⚓ Dodaj vez'}
+                  {justSubmitted ? '➕ Dodaj još jedan vez' : '⚓ Dodaj vezove'}
                   <ArrowRight className="ml-2" size={20} />
                 </Button>
               </div>
