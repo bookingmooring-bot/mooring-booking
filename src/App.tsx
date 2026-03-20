@@ -60,6 +60,15 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import AppRouteGuard from "./components/AppRouteGuard";
 import AIChatWidget from "./components/AIChatWidget";
+import { useLocation } from "react-router-dom";
+
+// Hide chat widget on public provider/auth pages
+const ConditionalChatWidget = () => {
+  const location = useLocation();
+  const hiddenRoutes = ["/become-provider", "/auth"];
+  if (hiddenRoutes.some(r => location.pathname.startsWith(r))) return null;
+  return <AIChatWidget />;
+};
 
 const queryClient = new QueryClient();
 
@@ -102,7 +111,7 @@ const App = () => {
                 <Route path="/edit-mooring/:id" element={<ProtectedRoute><EditMooring /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
-              <AIChatWidget />
+              <ConditionalChatWidget />
             </AppRouteGuard>
           </BrowserRouter>
         </TooltipProvider>
