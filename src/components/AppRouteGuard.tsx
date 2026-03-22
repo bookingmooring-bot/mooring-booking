@@ -19,9 +19,10 @@ interface AppRouteGuardProps {
 /**
  * Global route guard.
  *
- * - Not logged in  → redirect to /become-provider
- * - Logged in, role = 'user' (lead) → redirect to /become-provider
- * - Logged in, role = 'provider' | 'admin' → full access
+ * - Not logged in         → redirect to /become-provider
+ * - role = 'user'         → redirect to /become-provider
+ * - role = 'provider'     → redirect to /become-provider (provider portal only)
+ * - role = 'admin'        → full access
  */
 export default function AppRouteGuard({ children }: AppRouteGuardProps) {
   const { user, loading: authLoading } = useAuth();
@@ -46,12 +47,12 @@ export default function AppRouteGuard({ children }: AppRouteGuardProps) {
       return;
     }
 
-    // Logged in but role is 'user' (default lead) → send to become-provider
-    if (profile && profile.role === "user") {
+    // Logged in but role is 'user' or 'provider' → send to become-provider
+    if (profile && (profile.role === "user" || profile.role === "provider")) {
       navigate("/become-provider", { replace: true });
     }
 
-    // role = 'provider' or 'admin' → allow, nothing to do
+    // role = 'admin' → allow, nothing to do
   }, [authLoading, profileLoading, user, profile, isAllowedPath, navigate]);
 
   // Show a loading spinner while we determine access
