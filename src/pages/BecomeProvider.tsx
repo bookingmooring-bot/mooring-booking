@@ -1801,8 +1801,8 @@ Address: Prague, Czech Republic
                 )}
               </div>
 
-              {/* Ad Banner */}
-              <AdBanner position="inline" size="medium" />
+              {/* Ad Banner — hidden */}
+              {false && <AdBanner position="inline" size="medium" />}
 
               {/* Calendar — hidden for quick registration */}
               {false && <div className="bg-card rounded-xl p-6 shadow-card">
