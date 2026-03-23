@@ -24,125 +24,125 @@ import AdBanner from "@/components/AdBanner";
 import CoordinatePickerMap from "@/components/provider/CoordinatePickerMap";
 
 const countries = [
-  { code: "HR", name: "Hrvatska", flag: "🇭🇷" },
-  { code: "GR", name: "Grčka", flag: "🇬🇷" },
-  { code: "IT", name: "Italija", flag: "🇮🇹" },
-  { code: "ES", name: "Španjolska", flag: "🇪🇸" },
-  { code: "FR", name: "Francuska", flag: "🇫🇷" },
-  { code: "TR", name: "Turska", flag: "🇹🇷" },
-  { code: "AL", name: "Albanija", flag: "🇦🇱" },
+  { code: "HR", name: "Croatia", flag: "🇭🇷" },
+  { code: "GR", name: "Greece", flag: "🇬🇷" },
+  { code: "IT", name: "Italy", flag: "🇮🇹" },
+  { code: "ES", name: "Spain", flag: "🇪🇸" },
+  { code: "FR", name: "France", flag: "🇫🇷" },
+  { code: "TR", name: "Turkey", flag: "🇹🇷" },
+  { code: "AL", name: "Albania", flag: "🇦🇱" },
   { code: "MT", name: "Malta", flag: "🇲🇹" },
-  { code: "SI", name: "Slovenija", flag: "🇸🇮" },
-  { code: "ME", name: "Crna Gora", flag: "🇲🇪" },
-  { code: "CY", name: "Cipar", flag: "🇨🇾" },
+  { code: "SI", name: "Slovenia", flag: "🇸🇮" },
+  { code: "ME", name: "Montenegro", flag: "🇲🇪" },
+  { code: "CY", name: "Cyprus", flag: "🇨🇾" },
 ];
 
 const amenities = [
-  { id: "water", label: "Pitka voda", icon: "💧" },
-  { id: "electricity", label: "Struja", icon: "⚡" },
+  { id: "water", label: "Fresh Water", icon: "💧" },
+  { id: "electricity", label: "Electricity", icon: "⚡" },
   { id: "wifi", label: "WiFi", icon: "📶" },
-  { id: "toilet", label: "WC", icon: "🚽" },
-  { id: "shower", label: "Tuš", icon: "🚿" },
-  { id: "fuel", label: "Gorivo", icon: "⛽" },
-  { id: "restaurant", label: "Restoran", icon: "🍽️" },
+  { id: "toilet", label: "Toilet", icon: "🚽" },
+  { id: "shower", label: "Shower", icon: "🚿" },
+  { id: "fuel", label: "Fuel", icon: "⛽" },
+  { id: "restaurant", label: "Restaurant", icon: "🍽️" },
 ];
 
 const paymentMethods = [
-  { id: "cash", label: "Gotovina", icon: "💵" },
-  { id: "card", label: "Kreditna kartica", icon: "💳" },
+  { id: "cash", label: "Cash", icon: "💵" },
+  { id: "card", label: "Credit Card", icon: "💳" },
   { id: "paypal", label: "PayPal", icon: "🅿️" },
   { id: "googlepay", label: "Google Pay", icon: "📱" },
 ];
 
 const winterServices = [
-  { id: "winterization", label: "Zimska priprema", icon: "🔧" },
-  { id: "hull_cleaning", label: "Čišćenje trupa", icon: "🧹" },
-  { id: "mast_storage", label: "Skladištenje jarbola", icon: "🏗️" },
-  { id: "electricity_winter", label: "Struja", icon: "⚡" },
-  { id: "water_winter", label: "Voda", icon: "💧" },
-  { id: "security", label: "24/7 Osiguranje", icon: "🔒" },
+  { id: "winterization", label: "Winterization", icon: "🔧" },
+  { id: "hull_cleaning", label: "Hull Cleaning", icon: "🧹" },
+  { id: "mast_storage", label: "Mast Storage", icon: "🏗️" },
+  { id: "electricity_winter", label: "Electricity", icon: "⚡" },
+  { id: "water_winter", label: "Water", icon: "💧" },
+  { id: "security", label: "24/7 Security", icon: "🔒" },
 ];
 
 const mooringTypes = [
-  { id: "vez_u_marini", label: "Vez u marini", icon: "⚓" },
-  { id: "bova", label: "Bova", icon: "🔴" },
-  { id: "dok", label: "Dok", icon: "🏗️" },
-  { id: "sidriste", label: "Sidrište", icon: "⛵" },
-  { id: "obalni_vez", label: "Obalni vez", icon: "🪢" },
+  { id: "vez_u_marini", label: "Marina Berth", icon: "⚓" },
+  { id: "bova", label: "Buoy", icon: "🔴" },
+  { id: "dok", label: "Dock", icon: "🏗️" },
+  { id: "sidriste", label: "Anchorage", icon: "⛵" },
+  { id: "obalni_vez", label: "Shore Mooring", icon: "🪢" },
 ];
 
 const benefits = [
   {
     icon: TrendingUp,
-    title: "Povećajte Svoj Prihod",
-    description: "Objavite vaše vezove na dokovima, bovama ili u marini i gledajte kako AI kapetan pronalazi goste.",
+    title: "Boost Your Income",
+    description: "List your berths on docks, buoys or marinas and watch the AI captain find guests for you.",
     stat: "85%",
-    statLabel: "Zarade ostaje vama"
+    statLabel: "Earnings stay with you"
   },
   {
     icon: Shield,
-    title: "Jednostavno i Transparentno",
-    description: "Samo 15% provizije na uspješne rezervacije. Bez početnih troškova, bez skrivenih naknada.",
+    title: "Simple & Transparent",
+    description: "Only 15% commission on successful bookings. No upfront costs, no hidden fees.",
     stat: "15%",
-    statLabel: "Poštena provizija"
+    statLabel: "Fair commission"
   },
   {
     icon: Megaphone,
-    title: "Marketing Alati",
-    description: "Dobijte jedinstven QR kod i affiliate link. Dijelite na društvenim mrežama i zaradite više.",
-    stat: "€5/mj",
-    statLabel: "Marketing paket"
+    title: "Marketing Tools",
+    description: "Get a unique QR code and affiliate link. Share on social media and earn more.",
+    stat: "€5/mo",
+    statLabel: "Marketing package"
   },
   {
     icon: Users,
-    title: "Pridružite se Davateljima",
-    description: "Budite dio rastuće mediteranske zajednice vezova. Podrška uključena.",
+    title: "Join Our Providers",
+    description: "Be part of the growing Mediterranean mooring community. Support included.",
     stat: "11",
-    statLabel: "Mediteranskih zemalja"
+    statLabel: "Mediterranean countries"
   },
 ];
 
 const testimonials = [
   {
-    quote: "Bio sam skeptičan u početku, ali Mooring Booking je promijenio sve. Moja privatna bova sada donosi €6.000 dodatno po sezoni!",
+    quote: "I was skeptical at first, but Mooring Booking changed everything. My private buoy now brings in an extra €6,000 per season!",
     author: "Marko K.",
-    location: "Dubrovnik, Hrvatska",
-    earnings: "€6.200/sezona",
+    location: "Dubrovnik, Croatia",
+    earnings: "€6,200/season",
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop"
   },
   {
-    quote: "Platforma je toliko jednostavna za korištenje. Postavio sam svoj dok za 10 minuta i imao prvu rezervaciju za 2 dana.",
+    quote: "The platform is so easy to use. I set up my dock in 10 minutes and had my first booking within 2 days.",
     author: "Giuseppe R.",
-    location: "Portofino, Italija",
-    earnings: "€4.800/sezona",
+    location: "Portofino, Italy",
+    earnings: "€4,800/season",
     avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop"
   },
   {
-    quote: "Konačno poštena alternativa davanju veza prijateljima besplatno. Sada me plaćaju kako treba.",
+    quote: "Finally a fair alternative to giving berths to friends for free. Now I get paid properly.",
     author: "Elena P.",
-    location: "Santorini, Grčka",
-    earnings: "€3.500/sezona",
+    location: "Santorini, Greece",
+    earnings: "€3,500/season",
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop"
   },
   {
-    quote: "Moj vez u marini je stajao prazan 6 mjeseci godišnje. Sada zarađujem €15.000+ godišnje od rezervacija koje nikad nisam očekivao!",
+    quote: "My marina berth was sitting empty for 6 months a year. Now I earn €15,000+ annually from bookings I never expected!",
     author: "Luka M.",
-    location: "Dubrovnik, Hrvatska",
-    earnings: "€15.400/god",
+    location: "Dubrovnik, Croatia",
+    earnings: "€15,400/year",
     avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop"
   },
   {
-    quote: "50% mog prihoda sada dolazi od Mooring Bookinga. QR kod funkcija olakšava pristup nautičarima koji dolaze!",
+    quote: "50% of my income now comes from Mooring Booking. The QR code feature makes it so easy for visiting sailors!",
     author: "Dimitris K.",
-    location: "Mykonos, Grčka",
-    earnings: "€25.000/sezona",
+    location: "Mykonos, Greece",
+    earnings: "€25,000/season",
     avatar: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=150&h=150&fit=crop"
   },
   {
-    quote: "Imam 3 privatne bove i zarađujem od njih više nego na redovnom poslu. Mooring Booking je to omogućio!",
+    quote: "I have 3 private buoys and I earn more from them than from my regular job. Mooring Booking made that possible!",
     author: "Marco T.",
-    location: "Amalfi, Italija",
-    earnings: "€18.500/sezona",
+    location: "Amalfi, Italy",
+    earnings: "€18,500/season",
     avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop"
   },
 ];
@@ -180,7 +180,7 @@ const ProviderMiniHeader = ({ mooringCount }: { mooringCount: number }) => {
           <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 flex items-center gap-2 hidden sm:flex">
             <MapPin size={16} className="text-gold" />
             <span className="text-primary-foreground text-sm">
-              Ukupno prijava: <strong className="text-gold">{mooringCount}</strong>
+              Total Listings: <strong className="text-gold">{mooringCount}</strong>
             </span>
           </div>
           <Button 
@@ -318,81 +318,81 @@ const BecomeProviderPage = () => {
   const downloadTerms = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const content = `MOORING BOOKING - OPĆI UVJETI KORIŠTENJA
-========================================
-Zadnje ažurirano: 18. ožujka 2026.
-Operater: Intelligent Matrix
+    const content = `MOORING BOOKING - GENERAL TERMS OF USE
+=======================================
+Last updated: 18 March 2026.
+Operator: Intelligent Matrix
 
-1. PLATFORMA
-Mooring Booking je online tržište koje povezuje davatelje vezova s korisnicima koji traže vez za plovilo. Platforma djeluje kao posrednik i ne posjeduje, ne upravlja niti kontrolira vezove navedene na platformi.
+1. PLATFORM
+Mooring Booking is an online marketplace connecting mooring providers with users looking for a berth for their vessel. The platform acts as an intermediary and does not own, operate, or control any moorings listed on the platform.
 
-2. KORISNIČKI RAČUNI
-Za korištenje određenih funkcionalnosti potrebna je registracija. Korisnik se obvezuje:
-- Pružiti točne, aktualne i potpune informacije
-- Održavati i redovito ažurirati svoje podatke
-- Čuvati lozinku sigurnom i povjerljivom
-- Preuzeti punu odgovornost za sve aktivnosti na računu
-- Odmah nas obavijestiti o neovlaštenom korištenju
+2. USER ACCOUNTS
+Use of certain features requires registration. The user agrees to:
+- Provide accurate, current, and complete information
+- Maintain and regularly update their data
+- Keep their password secure and confidential
+- Take full responsibility for all activities on the account
+- Notify us immediately of any unauthorised use
 
-3. REZERVACIJE I PLAĆANJA
-Za korisnike:
-- Rezervacije se potvrđuju nakon uspješne obrade plaćanja
-- Prikazane cijene uključuju sve primjenjive popuste platforme
-- Pravila otkazivanja variraju po vezu; pregledajte prije rezervacije
-- Koordinate za navigaciju dostupne tek nakon potvrđene rezervacije i plaćanja
+3. BOOKINGS AND PAYMENTS
+For users:
+- Bookings are confirmed after successful payment processing
+- Displayed prices include all applicable platform discounts
+- Cancellation policies vary by mooring; review before booking
+- Navigation coordinates are available only after a confirmed, paid booking
 
-Za davatelje:
-- Provizija od 15% naplaćuje se na SVE rezervacije obrađene putem Platforme
-- Stripe naknade (~2.9% + €0.30) oduzimaju se od ukupnog iznosa PRIJE podjele 15/85
-- Davatelji mogu ponuditi popust 0-50% putem Platforme
-- Isplate se obrađuju unutar 3-5 radnih dana nakon prijave
+For providers:
+- A 15% commission is charged on ALL bookings processed via the Platform
+- Stripe fees (~2.9% + €0.30) are deducted from the total BEFORE the 15/85 split
+- Providers may offer discounts of 0–50% via the Platform
+- Payouts are processed within 3–5 business days after request
 
-4. OBVEZE DAVATELJA
-Davatelji se obvezuju:
-- Pružiti točne opise i fotografije vezova
-- Održavati točan kalendar dostupnosti
-- Pravovremeno odgovarati na zahtjeve za rezervaciju
-- Osigurati da vezovi zadovoljavaju lokalne sigurnosne standarde
-- Poštivati sve potvrđene rezervacije
-- Plaćati proviziju od 15% na sve rezervacije bez iznimke
-- Potpisati izjavu o pravu raspolaganja
-- Održavati valjano osiguranje odgovornosti gdje to zakon zahtijeva
+4. PROVIDER OBLIGATIONS
+Providers agree to:
+- Provide accurate descriptions and photos of moorings
+- Maintain an accurate availability calendar
+- Respond promptly to booking requests
+- Ensure moorings meet local safety standards
+- Honour all confirmed bookings
+- Pay the 15% commission on all bookings without exception
+- Sign a declaration of right of disposal
+- Maintain valid liability insurance where required by law
 
-5. PRIJENOS PODATAKA
-Korištenjem Platforme korisnici pristaju na prijenos osobnih podataka nasljedniku u slučaju prodaje, spajanja ili promjene vlasništva. Nasljednik je vezan istim obvezama privatnosti. Korisnici će biti obaviješteni unutar 30 dana.
+5. DATA TRANSFER
+By using the Platform, users consent to the transfer of personal data to a successor in the event of a sale, merger, or change of ownership. The successor is bound by the same privacy obligations. Users will be notified within 30 days.
 
-6. OGRANIČENJE ODGOVORNOSTI
-Intelligent Matrix NIJE odgovoran za:
-- Stanje, sigurnost ili zakonitost bilo kojeg veza
-- Osobne ozljede ili štetu na imovini
-- Financijske gubitke
-- Vremenske/okolišne događaje
-- Radnje trećih strana
-MAKSIMALNA ODGOVORNOST: manja od ukupnih naknada plaćenih u 12 mjeseci ili €500.
+6. LIMITATION OF LIABILITY
+Intelligent Matrix is NOT liable for:
+- The condition, safety, or legality of any mooring
+- Personal injury or property damage
+- Financial losses
+- Weather/environmental events
+- Third-party actions
+MAXIMUM LIABILITY: the lesser of all fees paid in 12 months or €500.
 
-7. ZABRANJENE AKTIVNOSTI
-- Listanje vezova bez zakonskog prava raspolaganja
-- Pružanje lažnih informacija
-- Zaobilaženje platforme radi izbjegavanja provizije
-- Uznemiravanje drugih korisnika
-- Kršenje primjenjivih zakona
+7. PROHIBITED ACTIVITIES
+- Listing moorings without legal right of disposal
+- Providing false information
+- Bypassing the platform to avoid commission
+- Harassing other users
+- Violating applicable laws
 
-8. RJEŠAVANJE SPOROVA
-Sporovi se najprije rješavaju pregovorima u roku od 30 dana. Ako pregovori ne uspiju, sporovi se rješavaju arbitražom prema češkom pravu. Sudovi u Pragu imaju isključivu nadležnost.
+8. DISPUTE RESOLUTION
+Disputes are first resolved through negotiation within 30 days. If negotiations fail, disputes are settled by arbitration under Czech law. Courts in Prague have exclusive jurisdiction.
 
-9. KONTAKT
+9. CONTACT
 Intelligent Matrix
 Email: legal@mooring-booking.com
 Email: info@intelligent-matrix.com
-Adresa: Prag, Češka
-Telefon: +420 739 328 337
+Address: Prague, Czech Republic
+Phone: +420 739 328 337
 
-© 2026 Mooring Booking. Sva prava pridržana.`;
+© 2026 Mooring Booking. All rights reserved.`;
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'Mooring_Booking_Opci_Uvjeti.txt';
+    a.download = 'Mooring_Booking_Terms_of_Use.txt';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -400,54 +400,54 @@ Telefon: +420 739 328 337
   const downloadPrivacy = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const content = `MOORING BOOKING - POLITIKA PRIVATNOSTI
-=======================================
-Zadnje ažurirano: 18. ožujka 2026.
-Operater: Intelligent Matrix
+    const content = `MOORING BOOKING - PRIVACY POLICY
+=================================
+Last updated: 18 March 2026.
+Operator: Intelligent Matrix
 
-1. PRIKUPLJANJE PODATAKA
-Prikupljamo sljedeće osobne podatke:
-- Ime i prezime, email adresu, broj telefona
-- Lokaciju veza (GPS koordinate)
-- Podatke o rezervacijama i plaćanjima
-- Fotografije vezova
+1. DATA COLLECTION
+We collect the following personal data:
+- Full name, email address, phone number
+- Mooring location (GPS coordinates)
+- Booking and payment data
+- Mooring photos
 
-2. KORIŠTENJE PODATAKA
-Vaše podatke koristimo za:
-- Pružanje i poboljšanje usluge platforme
-- Obradu rezervacija i plaćanja
-- Komunikaciju s vama o vašim rezervacijama
-- Slanje obavijesti i promocija (uz vašu suglasnost)
+2. USE OF DATA
+We use your data to:
+- Provide and improve the platform service
+- Process bookings and payments
+- Communicate with you about your bookings
+- Send notifications and promotions (with your consent)
 
-3. DIJELJENJE PODATAKA
-Vaše podatke dijelimo:
-- S drugim korisnicima platforme (ime, kontakt za rezervaciju)
-- S pružateljima platnih usluga (Stripe)
-- Prema zakonskim zahtjevima
+3. DATA SHARING
+We share your data:
+- With other platform users (name, contact for booking)
+- With payment service providers (Stripe)
+- As required by law
 
-4. VAŠA PRAVA (GDPR)
-Imate pravo na:
-- Pristup vašim osobnim podacima
-- Ispravak netočnih podataka
-- Brisanje podataka ("pravo na zaborav")
-- Ograničenje obrade
-- Prenosivost podataka
-- Prigovor na obradu
+4. YOUR RIGHTS (GDPR)
+You have the right to:
+- Access your personal data
+- Correct inaccurate data
+- Delete data ("right to be forgotten")
+- Restrict processing
+- Data portability
+- Object to processing
 
-5. SIGURNOST PODATAKA
-Koristimo industrijsko-standardne mjere zaštite uključujući enkripciju, siguran pristup i redovite revizije.
+5. DATA SECURITY
+We use industry-standard protection measures including encryption, secure access, and regular audits.
 
-6. KONTAKT
-Za pitanja o privatnosti:
+6. CONTACT
+For privacy questions:
 Email: privacy@mooring-booking.com
-Adresa: Prag, Češka
+Address: Prague, Czech Republic
 
-© 2026 Mooring Booking. Sva prava pridržana.`;
+© 2026 Mooring Booking. All rights reserved.`;
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'Mooring_Booking_Politika_Privatnosti.txt';
+    a.download = 'Mooring_Booking_Privacy_Policy.txt';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -496,27 +496,27 @@ Adresa: Prag, Češka
 
     // Validate required fields
     if (!formData.mooringName.trim()) {
-      toast({ title: "Unesite naziv veza", description: "Molimo unesite naziv vašeg veza.", variant: "destructive" });
+      toast({ title: "Enter mooring name", description: "Please enter the name of your mooring.", variant: "destructive" });
       return;
     }
     if (!formData.country) {
-      toast({ title: "Odaberite državu", description: "Molimo odaberite državu iz popisa.", variant: "destructive" });
+      toast({ title: "Select country", description: "Please select a country from the list.", variant: "destructive" });
       return;
     }
     if (!formData.region.trim()) {
-      toast({ title: "Unesite lokaciju", description: "Molimo unesite grad/luku.", variant: "destructive" });
+      toast({ title: "Enter location", description: "Please enter the city/port.", variant: "destructive" });
       return;
     }
     if (!formData.pricePerNight || parseFloat(formData.pricePerNight) <= 0) {
-      toast({ title: "Unesite cijenu", description: "Molimo unesite cijenu po noći.", variant: "destructive" });
+      toast({ title: "Enter price", description: "Please enter the price per night.", variant: "destructive" });
       return;
     }
     if (!formData.phone.trim()) {
-      toast({ title: "Unesite telefon", description: "Molimo unesite kontakt telefon.", variant: "destructive" });
+      toast({ title: "Enter phone", description: "Please enter a contact phone number.", variant: "destructive" });
       return;
     }
     if (!declarations.ownership || !declarations.commission || !declarations.terms || !declarations.dataTransfer) {
-      toast({ title: "Prihvatite uvjete", description: "Molimo označite sve izjave i suglasnosti na dnu forme.", variant: "destructive" });
+      toast({ title: "Accept the terms", description: "Please check all declarations and consents at the bottom of the form.", variant: "destructive" });
       return;
     }
     setShowConsent(true);
@@ -613,8 +613,8 @@ Adresa: Prag, Češka
       setDeclarations({ ownership: false, commission: false, terms: false, dataTransfer: false });
       setCalendarDays(generateCalendarDays());
       toast({
-        title: "✅ Vez objavljen!",
-        description: "Vaš vez je sada na pregledu. Obavijestit ćemo vas kad bude odobren.",
+        title: "✅ Mooring Published!",
+        description: "Your mooring is now under review. We will notify you once it is approved.",
       });
     } catch (err: any) {
       console.error('Publish error:', err);
@@ -647,11 +647,11 @@ Adresa: Prag, Češka
 
     // Manual validation for fields that HTML5 can't validate
     if (!leadFormData.country) {
-      toast({ title: "Odaberite državu", description: "Molimo odaberite državu iz popisa.", variant: "destructive" });
+      toast({ title: "Select country", description: "Please select a country from the list.", variant: "destructive" });
       return;
     }
     if (leadFormData.mooring_types.length === 0) {
-      toast({ title: "Odaberite tip veza", description: "Molimo označite barem jedan tip veza.", variant: "destructive" });
+      toast({ title: "Select mooring type", description: "Please check at least one mooring type.", variant: "destructive" });
       return;
     }
 
@@ -681,16 +681,16 @@ Adresa: Prag, Češka
       if (result.success) {
         setLeadSubmitted(true);
         toast({
-          title: "✅ Prijava uspješna!",
-          description: "Provjerite email za link za pristup.",
+          title: "✅ Registration successful!",
+          description: "Check your email for the access link.",
         });
       } else {
         throw new Error(result.error || 'Submission failed');
       }
     } catch (err: any) {
       toast({
-        title: "Greška",
-        description: err.message || "Nešto je pošlo po zlu. Pokušajte ponovo.",
+        title: "Error",
+        description: err.message || "Something went wrong. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -717,30 +717,30 @@ Adresa: Prag, Češka
                   <Check className="text-gold" size={40} />
                 </div>
                 <h1 className="font-heading text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-                  Prijava uspješna! 🎉
+                  Registration successful! 🎉
                 </h1>
                 <p className="text-primary-foreground/80 text-lg mb-6">
-                  Poslali smo vam email na <strong className="text-gold">{leadFormData.email}</strong> s linkom za pristup.
+                  We sent an email to <strong className="text-gold">{leadFormData.email}</strong> with your access link.
                 </p>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-left mb-8">
-                  <p className="text-primary-foreground font-medium mb-3">Sljedeći koraci:</p>
+                  <p className="text-primary-foreground font-medium mb-3">Next steps:</p>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <span className="bg-gold text-gold-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold">1</span>
-                      <span className="text-primary-foreground/80">Otvorite email i kliknite na link</span>
+                      <span className="text-primary-foreground/80">Open the email and click the link</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="bg-gold text-gold-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold">2</span>
-                      <span className="text-primary-foreground/80">Dodajte slike i detalje o vezu</span>
+                      <span className="text-primary-foreground/80">Add photos and details about your mooring</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="bg-gold text-gold-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold">3</span>
-                      <span className="text-primary-foreground/80">Počnite primati rezervacije!</span>
+                      <span className="text-primary-foreground/80">Start receiving bookings!</span>
                     </div>
                   </div>
                 </div>
                 <p className="text-primary-foreground/60 text-sm">
-                  Niste primili email? Provjerite spam folder ili <a href="mailto:support@mooring-booking.com" className="text-gold hover:underline">kontaktirajte nas</a>.
+                  Didn't receive the email? Check your spam folder or <a href="mailto:support@mooring-booking.com" className="text-gold hover:underline">contact us</a>.
                 </p>
               </div>
             </div>
@@ -766,27 +766,27 @@ Adresa: Prag, Češka
                 <div>
                   <div className="inline-flex items-center gap-2 bg-gold/20 text-gold px-4 py-2 rounded-full mb-6">
                     <Star size={16} />
-                    <span className="text-sm font-medium">Pridružite se davateljima vezova</span>
+                    <span className="text-sm font-medium">Join our mooring providers</span>
                   </div>
                   <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
-                    Objavite svoje vezove koje imate
-                    <span className="block text-gold">i pretvorite ih u prihod</span>
+                    List your moorings
+                    <span className="block text-gold">and turn them into income</span>
                   </h1>
                   <p className="text-lg text-primary-foreground/80 mb-8">
-                    Objavite vaše vezove na dokovima, bovama ili u marini i gledajte kako ih AI kapetan pronalazi — rezervacije dolaze.
+                    List your berths on docks, buoys or in a marina and watch the AI captain find them — bookings come to you.
                   </p>
                   <div className="space-y-3 text-primary-foreground/90">
                     <div className="flex items-center gap-3">
                       <Check className="text-gold flex-shrink-0" size={20} />
-                      <span>Besplatno listanje — bez pretplate</span>
+                      <span>Free listing — no subscription</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <Check className="text-gold flex-shrink-0" size={20} />
-                      <span>85% zarade je vaše (samo 15% komisija)</span>
+                      <span>85% earnings are yours (only 15% commission)</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <Check className="text-gold flex-shrink-0" size={20} />
-                      <span>Dostupno u 11 mediteranskih zemalja</span>
+                      <span>Available in 11 Mediterranean countries</span>
                     </div>
                   </div>
                 </div>
@@ -795,10 +795,10 @@ Adresa: Prag, Češka
                 <div className="bg-card rounded-2xl p-8 shadow-hover">
                   <div className="text-center mb-6">
                     <h2 className="font-heading text-2xl font-bold text-foreground mb-2">
-                      Registrirajte se besplatno
+                      Register for free
                     </h2>
                     <p className="text-muted-foreground text-sm">
-                      Popunite formu i dobit ćete pristup na email
+                      Fill in the form and you'll receive access via email
                     </p>
                   </div>
 
@@ -814,8 +814,8 @@ Adresa: Prag, Češka
                         });
                         if (error) {
                           toast({
-                            title: "Greška",
-                            description: "Google prijava nije uspjela. Pokušajte ponovo.",
+                            title: "Error",
+                            description: "Google sign-in failed. Please try again.",
                             variant: "destructive",
                           });
                         }
@@ -832,14 +832,14 @@ Adresa: Prag, Češka
                     
                     <div className="flex items-center gap-3 my-4">
                       <div className="h-px bg-border flex-1" />
-                      <span className="text-xs text-muted-foreground uppercase font-medium">ili popunite formu</span>
+                      <span className="text-xs text-muted-foreground uppercase font-medium">or fill in the form</span>
                       <div className="h-px bg-border flex-1" />
                     </div>
                   </div>
 
                   <form onSubmit={handleLeadSubmit} className="space-y-4">
                     <div>
-                      <Label htmlFor="lead_name">Ime i prezime *</Label>
+                      <Label htmlFor="lead_name">Full Name *</Label>
                       <div className="relative mt-1">
                         <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                         <Input
@@ -854,7 +854,7 @@ Adresa: Prag, Češka
                     </div>
 
                     <div>
-                      <Label htmlFor="lead_email">Email adresa *</Label>
+                      <Label htmlFor="lead_email">Email Address *</Label>
                       <div className="relative mt-1">
                         <Zap className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                         <Input
@@ -870,7 +870,7 @@ Adresa: Prag, Češka
                     </div>
 
                     <div>
-                      <Label htmlFor="lead_phone">Telefon *</Label>
+                      <Label htmlFor="lead_phone">Phone *</Label>
                       <div className="relative mt-1">
                         <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                         <Input
@@ -887,7 +887,7 @@ Adresa: Prag, Češka
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="lead_city">Grad *</Label>
+                        <Label htmlFor="lead_city">City *</Label>
                         <Input
                           id="lead_city"
                           placeholder="Split"
@@ -898,14 +898,14 @@ Adresa: Prag, Češka
                         />
                       </div>
                       <div>
-                        <Label>Država *</Label>
+                        <Label>Country *</Label>
                         <select
                           value={leadFormData.country}
                           onChange={(e) => setLeadFormData(prev => ({ ...prev, country: e.target.value }))}
                           className="mt-1 w-full h-10 px-3 rounded-md border border-input bg-background text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                           required
                         >
-                          <option value="">Izaberite</option>
+                          <option value="">Select</option>
                           {countries.map((c) => (
                             <option key={c.code} value={c.code}>
                               {c.flag} {c.name}
@@ -916,7 +916,7 @@ Adresa: Prag, Češka
                     </div>
 
                     <div>
-                      <Label>Tip veza (označite jedan ili više) *</Label>
+                      <Label>Mooring Type (select one or more) *</Label>
                       <div className="space-y-2 mt-2">
                         {mooringTypes.map((mt) => {
                           const isChecked = leadFormData.mooring_types.includes(mt.id);
@@ -949,7 +949,7 @@ Adresa: Prag, Češka
                               </Label>
                               {isChecked && (
                                 <div className="flex items-center gap-1">
-                                  <span className="text-xs text-muted-foreground">Kom:</span>
+                                  <span className="text-xs text-muted-foreground">Qty:</span>
                                   <Input
                                     type="number"
                                     min={1}
@@ -989,7 +989,7 @@ Adresa: Prag, Češka
                         onCheckedChange={(checked) => setLeadFormData(prev => ({ ...prev, has_mooring: checked as boolean }))}
                       />
                       <Label htmlFor="lead_has_mooring" className="text-sm cursor-pointer">
-                        Trenutno imam vez koji želim iznajmljivati
+                        I currently have a mooring I want to rent out
                       </Label>
                     </div>
 
@@ -1001,11 +1001,11 @@ Adresa: Prag, Češka
                       {leadSubmitting ? (
                         <>
                           <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2" />
-                          Šaljem...
+                          Submitting...
                         </>
                       ) : (
                         <>
-                          🚀 Registrirajte se besplatno
+                          🚀 Register for Free
                           <ArrowRight className="ml-2" size={20} />
                         </>
                       )}
@@ -1014,7 +1014,7 @@ Adresa: Prag, Češka
 
 
                     <p className="text-xs text-muted-foreground text-center mt-3">
-                      Besplatno · Bez kreditne kartice · 15% komisija samo na rezervacije
+                      Free · No credit card · 15% commission only on bookings
                     </p>
                   </form>
                 </div>
@@ -1041,13 +1041,13 @@ Adresa: Prag, Češka
                     <Check className="text-green-600" size={32} />
                   </div>
                   <h2 className="font-heading text-2xl font-bold text-foreground mb-2">
-                    Vez uspješno objavljen! 🎉
+                    Mooring Published! 🎉
                   </h2>
                   <p className="text-muted-foreground mb-2">
-                    Vaš vez je sada na pregledu. Obavijestit ćemo vas kad bude odobren.
+                    Your mooring is now under review. We'll notify you once it's approved.
                   </p>
                   <p className="text-sm text-green-700 font-medium">
-                    Ukupno vezova: {mooringCount}
+                    Total moorings: {mooringCount}
                   </p>
                 </div>
               )}
@@ -1057,27 +1057,27 @@ Adresa: Prag, Češka
                   <Anchor className="text-gold" size={32} />
                 </div>
                 <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-3" translate="no">
-                  {justSubmitted ? 'Dodajte još jedan vez' : 'Dodajte vaše vezove'}
+                  {justSubmitted ? 'Add Another Mooring' : 'Add Your Moorings'}
                 </h1>
                 <p className="text-muted-foreground mb-8">
                   {justSubmitted
-                    ? 'Imate više vezova? Dodajte ih sve i povećajte zaradu!'
-                    : 'Popunite podatke o vašim vezovima i povećajte vaše prihode. Besplatno, bez rizika.'
+                    ? 'Have more moorings? Add them all and increase your earnings!'
+                    : 'Fill in the details about your moorings and increase your income. Free, no risk.'
                   }
                 </p>
 
                 <div className="space-y-3 text-left mb-8 max-w-md mx-auto">
                   <div className="flex items-center gap-3 text-sm">
                     <Check className="text-gold flex-shrink-0" size={18} />
-                    <span>Besplatno listanje — bez pretplate</span>
+                    <span>Free listing — no subscription</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <Check className="text-gold flex-shrink-0" size={18} />
-                    <span>85% zarade je vaše (samo 15% komisija)</span>
+                    <span>85% earnings are yours (only 15% commission)</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <Check className="text-gold flex-shrink-0" size={18} />
-                    <span>Pomorci iz 11 mediteranskih zemalja</span>
+                    <span>Sailors from 11 Mediterranean countries</span>
                   </div>
                 </div>
 
@@ -1086,7 +1086,7 @@ Adresa: Prag, Češka
                   className="bg-gold text-gold-foreground hover:bg-gold/90 font-semibold text-lg px-10 h-14"
                   onClick={() => { setShowForm(true); setJustSubmitted(false); }}
                 >
-                  <span translate="no">{justSubmitted ? '➕ Dodaj još jedan vez' : '⚓ Dodaj vezove'}</span>
+                  <span translate="no">{justSubmitted ? '➕ Add Another Mooring' : '⚓ Add Moorings'}</span>
                   <ArrowRight className="ml-2" size={20} />
                 </Button>
               </div>
@@ -1111,10 +1111,10 @@ Adresa: Prag, Češka
                     <FileText className="text-secondary" size={32} />
                   </div>
                   <h1 className="font-heading text-2xl font-bold text-foreground mb-2">
-                    Digitalni ugovor o suglasnosti
+                    Digital Consent Agreement
                   </h1>
                   <p className="text-muted-foreground">
-                    Molimo pregledajte uvjete prije objavljivanja vašeg veza.
+                    Please review the terms before publishing your mooring.
                   </p>
                 </div>
 
@@ -1155,7 +1155,7 @@ Adresa: Prag, Češka
                     className="w-full sm:flex-1 h-12"
                     onClick={() => { setShowConsent(false); setConsentAccepted(false); }}
                   >
-                    ← Natrag na uređivanje
+                    ← Back to editing
                   </Button>
                   <Button
                     className="w-full sm:flex-1 bg-gradient-ocean font-semibold h-12"
@@ -1165,19 +1165,19 @@ Adresa: Prag, Češka
                     {isSubmitting ? (
                       <>
                         <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2" />
-                        {uploadingPhotos ? 'Učitavanje fotografija...' : 'Objavljujem...'}
+                        {uploadingPhotos ? 'Uploading photos...' : 'Publishing...'}
                       </>
                     ) : (
                       <>
                         <Check className="mr-2" size={20} />
-                        Potvrđujem
+                        Confirm
                       </>
                     )}
                   </Button>
                 </div>
 
                 <p className="text-xs text-muted-foreground text-center mt-4">
-                  Ovaj digitalni potpis ima pravnu snagu sukladno eIDAS regulativi EU.
+                  This digital signature has legal force under the EU eIDAS regulation.
                 </p>
               </div>
             </div>
@@ -1197,10 +1197,10 @@ Adresa: Prag, Češka
             {/* Form Header */}
             <div className="text-center mb-10">
               <h1 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Objavite vaš vez
+                Publish Your Mooring
               </h1>
               <p className="text-muted-foreground">
-                Ispunite podatke o vašem vezu da biste ga objavili na platformi
+                Fill in the details about your mooring to publish it on the platform
               </p>
             </div>
 
@@ -1209,14 +1209,14 @@ Adresa: Prag, Češka
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <Anchor className="text-secondary" size={24} />
-                  Osnovni podaci
+                  Basic Information
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="md:col-span-2">
-                    <Label htmlFor="mooringName">Naziv veza *</Label>
+                    <Label htmlFor="mooringName">Mooring Name *</Label>
                     <Input
                       id="mooringName"
-                      placeholder="npr. Marina Split - vez A12"
+                      placeholder="e.g. Marina Split - Berth A12"
                       value={formData.mooringName}
                       onChange={(e) => setFormData(prev => ({ ...prev, mooringName: e.target.value }))}
                       className="mt-2"
@@ -1225,14 +1225,14 @@ Adresa: Prag, Češka
                   </div>
 
                   <div>
-                    <Label>Država *</Label>
+                    <Label>Country *</Label>
                     <select
                       value={formData.country}
                       onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
                       className="mt-2 w-full h-10 px-3 rounded-md border border-input bg-background text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                       required
                     >
-                      <option value="">Odaberite državu</option>
+                      <option value="">Select country</option>
                       {countries.map((country) => (
                         <option key={country.code} value={country.name}>
                           {country.flag} {country.name}
@@ -1241,10 +1241,10 @@ Adresa: Prag, Češka
                     </select>
                   </div>
                   <div>
-                    <Label htmlFor="region">Grad / Regija *</Label>
+                    <Label htmlFor="region">City / Region *</Label>
                     <Input
                       id="region"
-                      placeholder="npr. Split"
+                      placeholder="e.g. Split"
                       value={formData.region}
                       onChange={(e) => setFormData(prev => ({ ...prev, region: e.target.value }))}
                       className="mt-2"
@@ -1254,11 +1254,11 @@ Adresa: Prag, Češka
                   <div className="md:col-span-2">
                     <Label className="flex items-center gap-2">
                       <MapPin size={16} className="text-secondary" />
-                      GPS koordinate *
+                      GPS Coordinates *
                     </Label>
                     <div className="grid grid-cols-2 gap-4 mt-2 mb-3">
                       <div>
-                        <label className="text-xs text-muted-foreground mb-1 block">Geografska širina</label>
+                        <label className="text-xs text-muted-foreground mb-1 block">Latitude</label>
                         <Input
                           placeholder="e.g. 43.5081"
                           value={formData.latitude}
@@ -1271,7 +1271,7 @@ Adresa: Prag, Češka
                         />
                       </div>
                       <div>
-                        <label className="text-xs text-muted-foreground mb-1 block">Geografska dužina</label>
+                        <label className="text-xs text-muted-foreground mb-1 block">Longitude</label>
                         <Input
                           placeholder="e.g. 16.4402"
                           value={formData.longitude}
@@ -1298,10 +1298,10 @@ Adresa: Prag, Češka
                     )}
                   </div>
                   <div className="md:col-span-2">
-                    <Label htmlFor="description">Opis veza *</Label>
+                    <Label htmlFor="description">Mooring Description *</Label>
                     <Textarea
                       id="description"
-                      placeholder="Opišite vaš vez, lokaciju, pogodnosti..."
+                      placeholder="Describe your mooring, location, amenities..."
                       value={formData.description}
                       onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                       className="mt-2 min-h-[120px]"
@@ -1309,7 +1309,7 @@ Adresa: Prag, Češka
                       required
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      {formData.description.length}/500 znakova
+                      {formData.description.length}/500 characters
                     </p>
                   </div>
                 </div>
@@ -1319,11 +1319,11 @@ Adresa: Prag, Češka
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <Shield className="text-secondary" size={24} />
-                  Detalji veza
+                  Mooring Details
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label>Zaštita od vjetra *</Label>
+                    <Label>Wind Protection *</Label>
                     <Select
                       value={formData.windProtection}
                       onValueChange={(value) => setFormData(prev => ({ ...prev, windProtection: value }))}
@@ -1332,15 +1332,15 @@ Adresa: Prag, Češka
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="excellent">🛡️ Izvrsna</SelectItem>
-                        <SelectItem value="good">✅ Dobra</SelectItem>
-                        <SelectItem value="moderate">⚠️ Umjerena</SelectItem>
-                        <SelectItem value="poor">❌ Slaba</SelectItem>
+                        <SelectItem value="excellent">🛡️ Excellent</SelectItem>
+                        <SelectItem value="good">✅ Good</SelectItem>
+                        <SelectItem value="moderate">⚠️ Moderate</SelectItem>
+                        <SelectItem value="poor">❌ Poor</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="maxBoatLength">Maks. dužina plovila (m) *</Label>
+                    <Label htmlFor="maxBoatLength">Max. Boat Length (m) *</Label>
                     <Input
                       id="maxBoatLength"
                       type="number"
@@ -1352,7 +1352,7 @@ Adresa: Prag, Češka
                     />
                   </div>
                   <div>
-                    <Label htmlFor="maxDraft">Maks. gaz (m) *</Label>
+                    <Label htmlFor="maxDraft">Max. Draft (m) *</Label>
                     <Input
                       id="maxDraft"
                       type="number"
@@ -1365,7 +1365,7 @@ Adresa: Prag, Češka
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <Label>Tip veza i broj komada</Label>
+                    <Label>Mooring Type and Quantity</Label>
                     <div className="space-y-2 mt-2">
                       {mooringTypes.map((mt) => {
                         const isChecked = formData.amenities.includes(`type_${mt.id}`) || false;
@@ -1389,7 +1389,7 @@ Adresa: Prag, Češka
                             </Label>
                             {isChecked && (
                               <div className="flex items-center gap-1">
-                                <span className="text-xs text-muted-foreground">Kom:</span>
+                                <span className="text-xs text-muted-foreground">Qty:</span>
                                 <Input
                                   type="number"
                                   min={1}
@@ -1414,22 +1414,22 @@ Adresa: Prag, Češka
                     </div>
                     <div className="mt-3 p-4 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900 rounded-lg text-sm text-blue-800 dark:text-blue-300">
                       <p className="font-semibold flex items-center gap-1.5 mb-2">
-                        💡 Kako prijaviti više vezova?
+                        💡 How to list multiple moorings?
                       </p>
                       <ul className="space-y-3 list-none">
                         <li className="relative pl-4">
                           <span className="absolute left-0 top-0 text-blue-500 font-bold">•</span>
-                          <strong>Kada prijaviti ODJEDNOM:</strong> Ako imate više ISTIH vezova na istoj lokaciji (npr. 5 istih bova iste cijene), odaberite Bova i navedite <strong>Kom: 5</strong>.
+                          <strong>List TOGETHER when:</strong> You have multiple IDENTICAL moorings at the same location (e.g. 5 identical buoys at the same price) — select Buoy and set <strong>Qty: 5</strong>.
                         </li>
                         <li className="relative pl-4">
                           <span className="absolute left-0 top-0 text-blue-500 font-bold">•</span>
-                          <strong>Kada prijaviti ODVOJENO:</strong> Ukoliko imate vezove <strong>različitih cijena ili veličina</strong> (npr. Veliki Dok i Mala Bova), prijavite ih zasebno (isprva samo Dok, a onda novom prijavom Bove).
+                          <strong>List SEPARATELY when:</strong> Your moorings have <strong>different prices or sizes</strong> (e.g. Large Dock and Small Buoy) — list them separately (first just the Dock, then the Buoy in a new submission).
                         </li>
                       </ul>
                     </div>
                   </div>
                   <div className="md:col-span-2">
-                    <Label>Pogodnosti</Label>
+                    <Label>Amenities</Label>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
                       {amenities.map((amenity) => (
                         <button
@@ -1454,12 +1454,12 @@ Adresa: Prag, Češka
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <Snowflake className="text-secondary" size={24} />
-                  Zimski vez / Skladištenje
+                  Winter Mooring / Storage
                 </h2>
                 <div className="flex items-center justify-between mb-6 p-4 bg-muted rounded-lg">
                   <div>
-                    <Label className="text-base font-semibold">Nudite li zimsko skladištenje?</Label>
-                    <p className="text-sm text-muted-foreground">Sezona: studeni - ožujak</p>
+                    <Label className="text-base font-semibold">Do you offer winter storage?</Label>
+                    <p className="text-sm text-muted-foreground">Season: November – March</p>
                   </div>
                   <Switch
                     checked={formData.winterStorage}
@@ -1469,7 +1469,7 @@ Adresa: Prag, Češka
                 {formData.winterStorage && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <Label>Tip skladištenja *</Label>
+                      <Label>Storage Type *</Label>
                       <Select
                         value={formData.winterStorageType}
                         onValueChange={(value: "wet" | "dry" | "both") => setFormData(prev => ({ ...prev, winterStorageType: value }))}
@@ -1478,14 +1478,14 @@ Adresa: Prag, Češka
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="wet">🌊 U moru</SelectItem>
-                          <SelectItem value="dry">🏗️ Na suhom</SelectItem>
-                          <SelectItem value="both">🔄 Oboje</SelectItem>
+                          <SelectItem value="wet">🌊 In the water</SelectItem>
+                          <SelectItem value="dry">🏗️ On land (dry)</SelectItem>
+                          <SelectItem value="both">🔄 Both</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div>
-                      <Label htmlFor="winterPrice">Cijena zimskog veza (€/mjesec) *</Label>
+                      <Label htmlFor="winterPrice">Winter Mooring Price (€/month) *</Label>
                       <Input
                         id="winterPrice"
                         type="number"
@@ -1496,7 +1496,7 @@ Adresa: Prag, Češka
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <Label>Zimske usluge</Label>
+                      <Label>Winter Services</Label>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
                         {winterServices.map((service) => (
                           <button
@@ -1522,11 +1522,11 @@ Adresa: Prag, Češka
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <CreditCard className="text-secondary" size={24} />
-                  Cijena i plaćanje
+                  Pricing & Payment
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="pricePerNight">Cijena po noći (€) *</Label>
+                    <Label htmlFor="pricePerNight">Price per Night (€) *</Label>
                     <Input
                       id="pricePerNight"
                       type="number"
@@ -1538,7 +1538,7 @@ Adresa: Prag, Češka
                     />
                   </div>
                   <div>
-                    <Label>Popust: {formData.discount[0]}%</Label>
+                    <Label>Discount: {formData.discount[0]}%</Label>
                     <Slider
                       value={formData.discount}
                       onValueChange={(value) => setFormData(prev => ({ ...prev, discount: value }))}
@@ -1566,10 +1566,10 @@ Adresa: Prag, Češka
                           <div>
                             <h3 className="font-semibold text-foreground flex items-center gap-2">
                               Now4Today
-                              <span className="text-xs bg-orange-500/20 text-orange-600 px-2 py-0.5 rounded-full">+20% premija</span>
+                              <span className="text-xs bg-orange-500/20 text-orange-600 px-2 py-0.5 rounded-full">+20% premium</span>
                             </h3>
                             <p className="text-sm text-muted-foreground">
-                              Omogućite rezervacije za isti dan uz premiju od 20%
+                              Enable same-day bookings with a 20% premium
                             </p>
                           </div>
                         </div>
@@ -1760,9 +1760,9 @@ Adresa: Prag, Češka
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <Camera className="text-secondary" size={24} />
-                  Fotografije veza
+                  Mooring Photos
                 </h2>
-                <p className="text-muted-foreground text-sm mb-4">Dodajte fotografije vašeg veza. Kvalitetne slike privlače više gostiju.</p>
+                <p className="text-muted-foreground text-sm mb-4">Add photos of your mooring. High-quality images attract more guests.</p>
                 <div
                   className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-secondary/50 transition-colors cursor-pointer relative"
                   onClick={() => document.getElementById('photo-upload')?.click()}
@@ -1810,7 +1810,7 @@ Adresa: Prag, Češka
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <Calendar className="text-secondary" size={24} />
-                  Kalendar dostupnosti
+                  Availability Calendar
                 </h2>
                 <p className="text-muted-foreground text-sm mb-4">
                   Označite dane kada je vaš vez dostupan. Možete postaviti i prilagođenu cijenu za pojedine dane.
@@ -1828,11 +1828,11 @@ Adresa: Prag, Češka
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <MapPin className="text-secondary" size={24} />
-                  Kontakt informacije
+                  Contact Information
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="phone">Telefon *</Label>
+                    <Label htmlFor="phone">Phone *</Label>
                     <Input
                       id="phone"
                       type="tel"
@@ -1853,7 +1853,7 @@ Adresa: Prag, Češka
                   <div>
                     <Label htmlFor="whatsapp" className="flex items-center gap-2">
                       <MessageSquare size={14} className="text-success" />
-                      WhatsApp broj (opcionalno)
+                      WhatsApp number (optional)
                     </Label>
                     <Input
                       id="whatsapp"
@@ -1864,7 +1864,7 @@ Adresa: Prag, Češka
                       className="mt-2"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      Primajte obavijesti o rezervacijama putem WhatsAppa
+                      Receive booking notifications via WhatsApp
                     </p>
                   </div>
                 </div>
@@ -1874,7 +1874,7 @@ Adresa: Prag, Češka
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <FileText className="text-secondary" size={24} />
-                  Izjave i suglasnosti
+                  Declarations & Consents
                 </h2>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3 p-4 bg-warning/10 border-2 border-warning/40 rounded-lg">
@@ -1885,10 +1885,10 @@ Adresa: Prag, Češka
                     />
                     <div>
                       <Label htmlFor="ownership" className="text-sm font-semibold text-foreground cursor-pointer block mb-1">
-                        ⚖️ Izjava o pravu raspolaganja
+                        ⚖️ Declaration of Right of Disposal
                       </Label>
                       <p className="text-xs text-muted-foreground leading-relaxed">
-                        Potvrđujem da sam vlasnik ili ovlašteni korisnik navedenog veza i da imam zakonsko pravo raspolaganja istim. Odgovoran/na sam za točnost unesenih podataka.
+                        I confirm that I am the owner or authorised user of the listed mooring and have the legal right of disposal. I am responsible for the accuracy of the information provided.
                       </p>
                     </div>
                   </div>
@@ -1899,7 +1899,7 @@ Adresa: Prag, Češka
                       onCheckedChange={(checked) => setDeclarations(prev => ({ ...prev, commission: checked as boolean }))}
                     />
                     <Label htmlFor="commission" className="text-sm leading-relaxed cursor-pointer">
-                      💰 Suglasan/na sam s provizijom od 15% na svaku potvrđenu rezervaciju putem Mooring Booking platforme. Preostalih 85% zarade je moje.
+                      💰 I agree to the 15% commission on every confirmed booking via the Mooring Booking platform. The remaining 85% is mine.
                     </Label>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-muted rounded-lg">
@@ -1909,7 +1909,7 @@ Adresa: Prag, Češka
                       onCheckedChange={(checked) => setDeclarations(prev => ({ ...prev, dataTransfer: checked as boolean }))}
                     />
                     <Label htmlFor="dataTransfer" className="text-sm leading-relaxed cursor-pointer">
-                      🔒 Suglasan/na sam da Mooring Booking obrađuje moje osobne podatke (ime, kontakt, lokacija veza) u svrhu pružanja usluge, u skladu s GDPR regulativom i Politikom privatnosti.
+                      🔒 I agree that Mooring Booking processes my personal data (name, contact, mooring location) for the purpose of providing the service, in accordance with the GDPR regulation and Privacy Policy.
                     </Label>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-muted rounded-lg">
@@ -1919,7 +1919,7 @@ Adresa: Prag, Češka
                       onCheckedChange={(checked) => setDeclarations(prev => ({ ...prev, terms: checked as boolean }))}
                     />
                     <Label htmlFor="terms" className="text-sm leading-relaxed cursor-pointer">
-                      📋 Pročitao/la sam i prihvaćam <a href="#" onClick={downloadTerms} className="text-secondary underline">Opće uvjete korištenja</a> i <a href="#" onClick={downloadPrivacy} className="text-secondary underline">Politiku privatnosti</a> platforme Mooring Booking.
+                      📋 I have read and accept the <a href="#" onClick={downloadTerms} className="text-secondary underline">General Terms of Use</a> and <a href="#" onClick={downloadPrivacy} className="text-secondary underline">Privacy Policy</a> of the Mooring Booking platform.
                     </Label>
                   </div>
                 </div>
@@ -1933,7 +1933,7 @@ Adresa: Prag, Češka
                   className="flex-1"
                   onClick={() => setShowForm(false)}
                 >
-                  Odustani
+                  Cancel
                 </Button>
                 <Button
                   type="submit"
@@ -1941,7 +1941,7 @@ Adresa: Prag, Češka
                   disabled={!declarations.ownership || !declarations.commission || !declarations.terms || !declarations.dataTransfer}
                 >
                   <QrCode className="mr-2" size={20} />
-                  Objavi vez
+                  Publish Mooring
                 </Button>
               </div>
             </form>
