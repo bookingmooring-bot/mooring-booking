@@ -1251,7 +1251,7 @@ Address: Prague, Czech Republic
                       required
                     />
                   </div>
-                  <div className="md:col-span-2">
+                  {false && <div className="md:col-span-2">
                     <Label className="flex items-center gap-2">
                       <MapPin size={16} className="text-secondary" />
                       GPS Coordinates *
@@ -1263,7 +1263,6 @@ Address: Prague, Czech Republic
                           placeholder="e.g. 43.5081"
                           value={formData.latitude}
                           onChange={(e) => setFormData(prev => ({ ...prev, latitude: e.target.value }))}
-                          required
                           type="number"
                           step="0.000001"
                           min="-90"
@@ -1276,7 +1275,6 @@ Address: Prague, Czech Republic
                           placeholder="e.g. 16.4402"
                           value={formData.longitude}
                           onChange={(e) => setFormData(prev => ({ ...prev, longitude: e.target.value }))}
-                          required
                           type="number"
                           step="0.000001"
                           min="-180"
@@ -1296,7 +1294,7 @@ Address: Prague, Czech Republic
                         📍 <span className="font-mono">{parseFloat(formData.latitude).toFixed(6)}°N, {parseFloat(formData.longitude).toFixed(6)}°E</span>
                       </p>
                     )}
-                  </div>
+                  </div>}
                   <div className="md:col-span-2">
                     <Label htmlFor="description">Mooring Description *</Label>
                     <Textarea
@@ -1450,8 +1448,8 @@ Address: Prague, Czech Republic
                 </div>
               </div>
 
-              {/* Winter Storage */}
-              <div className="bg-card rounded-xl p-6 shadow-card">
+              {/* Winter Storage — hidden for quick registration */}
+              {false && <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <Snowflake className="text-secondary" size={24} />
                   Winter Mooring / Storage
@@ -1516,10 +1514,10 @@ Address: Prague, Czech Republic
                     </div>
                   </div>
                 )}
-              </div>
+              </div>}
 
-              {/* Pricing */}
-              <div className="bg-card rounded-xl p-6 shadow-card">
+              {/* Pricing — hidden for quick registration */}
+              {false && <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <CreditCard className="text-secondary" size={24} />
                   Pricing & Payment
@@ -1597,7 +1595,7 @@ Address: Prague, Czech Republic
                   </div>
 
                 </div>
-              </div>
+              </div>}
 
               {/* Paid Add-Ons — hidden for new providers until they have moorings */}
               {false && <div className="bg-card rounded-xl p-6 shadow-card">
@@ -1768,7 +1766,7 @@ Address: Prague, Czech Republic
                   onClick={() => document.getElementById('photo-upload')?.click()}
                 >
                   <Upload className="mx-auto text-muted-foreground mb-4" size={40} />
-                  <p className="text-muted-foreground">Kliknite ili povucite slike ovdje</p>
+                  <p className="text-muted-foreground">Click or drag images here</p>
                   <input
                     id="photo-upload"
                     type="file"
@@ -1806,14 +1804,14 @@ Address: Prague, Czech Republic
               {/* Ad Banner */}
               <AdBanner position="inline" size="medium" />
 
-              {/* Calendar */}
-              <div className="bg-card rounded-xl p-6 shadow-card">
+              {/* Calendar — hidden for quick registration */}
+              {false && <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <Calendar className="text-secondary" size={24} />
                   Availability Calendar
                 </h2>
                 <p className="text-muted-foreground text-sm mb-4">
-                  Označite dane kada je vaš vez dostupan. Možete postaviti i prilagođenu cijenu za pojedine dane.
+                  Mark the days when your mooring is available. You can also set a custom price for individual days.
                 </p>
                 <MonthlyCalendar
                   year={2026}
@@ -1822,7 +1820,7 @@ Address: Prague, Czech Republic
                   onPriceChange={handleDayPriceChange}
                   basePrice={formData.pricePerNight ? parseFloat(formData.pricePerNight) : undefined}
                 />
-              </div>
+              </div>}
 
               {/* Contact Info */}
               <div className="bg-card rounded-xl p-6 shadow-card">
