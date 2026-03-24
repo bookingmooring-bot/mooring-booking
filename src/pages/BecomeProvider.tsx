@@ -209,6 +209,7 @@ const BecomeProviderPage = () => {
   const [justSubmitted, setJustSubmitted] = useState(false);
   const [lastMooringId, setLastMooringId] = useState<string | null>(null);
   const [consentAccepted, setConsentAccepted] = useState(false);
+  const [userMoorings, setUserMoorings] = useState<{ id: string; name: string; status: string }[]>([]);
   const [formData, setFormData] = useState({
     mooringName: "",
     country: "",
@@ -315,6 +316,22 @@ const BecomeProviderPage = () => {
     };
     setupUser();
   }, [user?.email]);
+
+  // Load user's existing moorings
+  useEffect(() => {
+    if (!user?.id) return;
+    supabase
+      .from('moorings')
+      .select('id, name, status')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          setUserMoorings(data);
+          setMooringCount(data.length);
+        }
+      });
+  }, [user?.id]);
 
   const downloadTerms = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -1069,6 +1086,42 @@ Address: Prague, Czech Republic
                       <ArrowRight className="ml-2" size={20} />
                     </Button>
                   )}
+                </div>
+              )}
+
+              {/* Existing moorings list */}
+              {userMoorings.length > 0 && (
+                <div className="mb-8">
+                  <h2 className="font-heading text-xl font-bold text-foreground mb-4">Your Moorings</h2>
+                  <div className="space-y-3">
+                    {userMoorings.map((m) => (
+                      <div key={m.id} className="bg-card rounded-xl p-4 shadow-sm flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                            <Anchor className="text-primary" size={18} />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-foreground">{m.name || 'Mooring'}</p>
+                            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                              m.status === 'approved' ? 'bg-green-100 text-green-700' :
+                              m.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-gray-100 text-gray-600'
+                            }`}>
+                              {m.status}
+                            </span>
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="flex-shrink-0"
+                          onClick={() => navigate(`/edit-mooring/${m.id}`)}
+                        >
+                          ✏️ Edit
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 
