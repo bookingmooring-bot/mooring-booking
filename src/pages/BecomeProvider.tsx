@@ -558,22 +558,43 @@ Address: Prague, Czech Republic
           custom_price: day.customPrice || 0,
         }));
 
-      // 3. Call RPC
-      // Direct insert — minimal safe columns only
-      const { error: mooringError } = await supabase
-        .from('moorings')
-        .insert({
-          name: formData.mooringName,
-          country: formData.country,
-          location: formData.region,
-          lat: parseFloat(formData.latitude) || 0,
-          lng: parseFloat(formData.longitude) || 0,
-          description: formData.description,
-          price_per_night: parseFloat(formData.pricePerNight) || 0,
-          status: 'approved',
-        });
+      // Use RPC (SECURITY DEFINER bypasses RLS)
+      // discount_percent and other optional fields set to 0 to avoid numeric overflow
+      const { data: rpcData, error: rpcError } = await supabase.rpc('publish_provider_profile', {
+        p_mooring_name: formData.mooringName,
+        p_country: formData.country,
+        p_region: formData.region,
+        p_latitude: parseFloat(formData.latitude) || 0,
+        p_longitude: parseFloat(formData.longitude) || 0,
+        p_description: formData.description,
+        p_wind_protection: formData.windProtection || 'good',
+        p_amenities: formData.amenities,
+        p_max_boat_length: 0,
+        p_max_draft: 0,
+        p_mooring_units: 1,
+        p_price_per_night: 0,
+        p_discount_percent: 0,
+        p_payment_methods: [],
+        p_now4today: false,
+        p_winter_storage: false,
+        p_winter_storage_type: 'wet',
+        p_winter_price_monthly: 0,
+        p_winter_services: [],
+        p_marketing_tools: false,
+        p_premium_listing: false,
+        p_insurance_mediation: false,
+        p_image_urls: imageUrls,
+        p_phone: formData.phone,
+        p_whatsapp: formData.whatsapp || '',
+        p_availability: [],
+      });
 
-      if (mooringError) throw mooringError;
+      if (rpcError) throw rpcError;
+
+      // Auto-approve the newly created mooring
+      if (rpcData) {
+        await supabase.from('moorings').update({ status: 'approved' }).eq('id', rpcData);
+      }
 
       // Update user role to provider + save phone to profile
       await supabase
