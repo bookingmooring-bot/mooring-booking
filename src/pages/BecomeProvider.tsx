@@ -1125,20 +1125,20 @@ Address: Prague, Czech Republic
 
                 <div className="space-y-4 mb-8">
                   <div className="bg-muted rounded-lg p-4 text-sm text-foreground leading-relaxed max-h-60 overflow-y-auto">
-                    <h3 className="font-semibold mb-2">Sažetak uvjeta korištenja</h3>
+                    <h3 className="font-semibold mb-2">Summary of Terms of Use</h3>
                     <ul className="space-y-2 list-disc list-inside text-muted-foreground">
-                      <li>Potvrđujem da sam vlasnik ili ovlašteni korisnik navedenog veza.</li>
-                      <li>Suglasan/na sam s provizijom od 15% na svaku potvrđenu rezervaciju.</li>
-                      <li>Prihvaćam Opće uvjete korištenja platforme Mooring Booking.</li>
-                      <li>Suglasan/na sam s prijenosom podataka u skladu s GDPR-om.</li>
-                      <li>Objavljene fotografije su moje vlasništvo ili imam pravo korištenja.</li>
-                      <li>Cijena po noći je konačna i uključuje sve naknade sa strane davatelja.</li>
-                      <li>Ažurirat ću dostupnost kalendara redovito.</li>
-                      <li>U slučaju otkazivanja, primjenjuju se politike otkazivanja platforme.</li>
-                      {formData.marketingTools && <li>Suglasan/na sam s dodatnom uslugom marketinških alata (€5/mj).</li>}
-                      {formData.premiumListing && <li>Suglasan/na sam s uslugom premium listanja (€9.99/mj).</li>}
-                      {formData.insuranceMediation && <li>Suglasan/na sam s uslugom posredovanja osiguranja (€9.99/god).</li>}
-                      {formData.now4today && <li>Suglasan/na sam s uslugom Now4Today — last-minute dostupnost.</li>}
+                      <li>I confirm that I am the owner or authorised user of the listed mooring.</li>
+                      <li>I agree to a 15% commission on every confirmed booking.</li>
+                      <li>I accept the General Terms and Conditions of the Mooring Booking platform.</li>
+                      <li>I agree to the transfer of my data in accordance with GDPR.</li>
+                      <li>Published photos are my property or I have the right to use them.</li>
+                      <li>The price per night is final and includes all costs on the provider's side.</li>
+                      <li>I will keep my availability calendar up to date regularly.</li>
+                      <li>In the event of cancellation, the platform's cancellation policies apply.</li>
+                      {formData.marketingTools && <li>I agree to the additional Marketing Tools service (€5/mo).</li>}
+                      {formData.premiumListing && <li>I agree to the Premium Listing service (€9.99/mo).</li>}
+                      {formData.insuranceMediation && <li>I agree to the Insurance Mediation service (€9.99/yr).</li>}
+                      {formData.now4today && <li>I agree to the Now4Today service — last-minute availability.</li>}
                     </ul>
                   </div>
 
@@ -1149,7 +1149,7 @@ Address: Prague, Czech Republic
                       onCheckedChange={(checked) => setConsentAccepted(checked as boolean)}
                     />
                     <Label htmlFor="finalConsent" className="text-sm leading-relaxed cursor-pointer font-medium">
-                      Pročitao/la sam i prihvaćam sve navedene uvjete korištenja i suglasan/na sam s objavom mog veza na platformi Mooring Booking.
+                      I have read and accept all the terms listed above and agree to the publication of my mooring on the Mooring Booking platform.
                     </Label>
                   </div>
                 </div>
