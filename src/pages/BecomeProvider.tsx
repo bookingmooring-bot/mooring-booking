@@ -558,8 +558,14 @@ Address: Prague, Czech Republic
           custom_price: day.customPrice || 0,
         }));
 
+      // Set user role to 'provider' FIRST — RLS on moorings checks this
+      await supabase
+        .from('profiles')
+        .update({ role: 'provider', phone: formData.phone })
+        .eq('id', user!.id);
+
       // Use RPC (SECURITY DEFINER bypasses RLS)
-      // discount_percent and other optional fields set to 0 to avoid numeric overflow
+      // All optional hidden fields set to 0/false to avoid numeric overflow
       const { data: rpcData, error: rpcError } = await supabase.rpc('publish_provider_profile', {
         p_mooring_name: formData.mooringName,
         p_country: formData.country,
@@ -595,13 +601,6 @@ Address: Prague, Czech Republic
       if (rpcData) {
         await supabase.from('moorings').update({ status: 'approved' }).eq('id', rpcData);
       }
-
-      // Update user role to provider + save phone to profile
-      await supabase
-        .from('profiles')
-        .update({ role: 'provider', phone: formData.phone })
-        .eq('id', user!.id);
-
       setConsentAccepted(false);
       setShowConsent(false);
       setShowForm(false);
