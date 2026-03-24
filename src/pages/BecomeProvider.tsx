@@ -323,7 +323,7 @@ const BecomeProviderPage = () => {
     supabase
       .from('moorings')
       .select('id, name, status')
-      .eq('user_id', user.id)
+      .eq('owner_id', user.id)
       .order('created_at', { ascending: false })
       .then(({ data }) => {
         if (data && data.length > 0) {
