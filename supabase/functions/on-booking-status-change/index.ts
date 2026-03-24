@@ -38,7 +38,7 @@ serve(async (req) => {
       .eq("id", booking_id)
       .single();
 
-    const mooringName = booking?.moorings?.name || "Vez";
+    const mooringName = booking?.moorings?.name || "Mooring";
     const mooringLocation = booking?.moorings?.location || "";
     const providerEmail = booking?.profiles?.email;
 
@@ -50,25 +50,25 @@ serve(async (req) => {
         emails.push({
           from: "Mooring Booking <onboarding@resend.dev>",
           to: guest_email,
-          subject: `✅ Rezervacija potvrđena: ${mooringName}`,
+          subject: `✅ Booking Confirmed: ${mooringName}`,
           html: `
             <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-              <h2 style="color: #16a34a;">Vaša rezervacija je potvrđena! ✅</h2>
-              <p style="color: #334155;">Poštovani/a ${guest_name || "Gosti"},</p>
-              <p style="color: #334155;">Vaša rezervacija na vezu <strong>${mooringName}</strong>${mooringLocation ? ` (${mooringLocation})` : ""} je potvrđena.</p>
+              <h2 style="color: #16a34a;">Your booking is confirmed! ✅</h2>
+              <p style="color: #334155;">Dear ${guest_name || "Guest"},</p>
+              <p style="color: #334155;">Your booking at <strong>${mooringName}</strong>${mooringLocation ? ` (${mooringLocation})` : ""} has been confirmed.</p>
               <div style="background-color: #f0fdf4; border-left: 4px solid #16a34a; padding: 15px; border-radius: 6px; margin: 20px 0;">
-                <p style="margin: 5px 0;"><strong>Kod potvrde:</strong> ${confirmation_code || "N/A"}</p>
+                <p style="margin: 5px 0;"><strong>Confirmation code:</strong> ${confirmation_code || "N/A"}</p>
                 <p style="margin: 5px 0;"><strong>Check-in:</strong> ${check_in}</p>
                 <p style="margin: 5px 0;"><strong>Check-out:</strong> ${check_out}</p>
-                <p style="margin: 5px 0;"><strong>Ukupno:</strong> €${total_price}</p>
+                <p style="margin: 5px 0;"><strong>Total:</strong> €${total_price}</p>
               </div>
               <div style="text-align: center; margin: 30px 0;">
                 <a href="https://mooringbooking.com/dashboard"
                    style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-                  Prikaži moje rezervacije
+                  View My Bookings
                 </a>
               </div>
-              <p style="color: #64748b; font-size: 14px;">Hvala što koristite Mooring Booking!</p>
+              <p style="color: #64748b; font-size: 14px;">Thank you for using Mooring Booking!</p>
             </div>
           `,
         });
@@ -77,21 +77,21 @@ serve(async (req) => {
         emails.push({
           from: "Mooring Booking <onboarding@resend.dev>",
           to: providerEmail,
-          subject: `🎉 Nova potvrđena rezervacija: ${mooringName}`,
+          subject: `🎉 New Confirmed Booking: ${mooringName}`,
           html: `
             <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-              <h2 style="color: #0f172a;">Nova potvrđena rezervacija! 🎉</h2>
-              <p style="color: #334155;">Vaš vez <strong>${mooringName}</strong> ima novu potvrđenu rezervaciju.</p>
+              <h2 style="color: #0f172a;">New Confirmed Booking! 🎉</h2>
+              <p style="color: #334155;">Your mooring <strong>${mooringName}</strong> has a new confirmed booking.</p>
               <div style="background-color: #f8fafc; padding: 15px; border-radius: 6px; margin: 20px 0;">
-                <p style="margin: 5px 0;"><strong>Gost:</strong> ${guest_name || "Nepoznato"}</p>
+                <p style="margin: 5px 0;"><strong>Guest:</strong> ${guest_name || "Unknown"}</p>
                 <p style="margin: 5px 0;"><strong>Check-in:</strong> ${check_in}</p>
                 <p style="margin: 5px 0;"><strong>Check-out:</strong> ${check_out}</p>
-                <p style="margin: 5px 0;"><strong>Ukupno:</strong> €${total_price}</p>
+                <p style="margin: 5px 0;"><strong>Total:</strong> €${total_price}</p>
               </div>
               <div style="text-align: center; margin: 30px 0;">
                 <a href="https://mooringbooking.com/dashboard"
                    style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-                  Kontrolna tabla
+                  Dashboard
                 </a>
               </div>
             </div>
@@ -106,24 +106,24 @@ serve(async (req) => {
         emails.push({
           from: "Mooring Booking <onboarding@resend.dev>",
           to: guest_email,
-          subject: `❌ Rezervacija otkazana: ${mooringName}`,
+          subject: `❌ Booking Cancelled: ${mooringName}`,
           html: `
             <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-              <h2 style="color: #dc2626;">Rezervacija je otkazana</h2>
-              <p style="color: #334155;">Poštovani/a ${guest_name || "Gosti"},</p>
-              <p style="color: #334155;">Vaša rezervacija na vezu <strong>${mooringName}</strong> je otkazana.</p>
+              <h2 style="color: #dc2626;">Booking Cancelled</h2>
+              <p style="color: #334155;">Dear ${guest_name || "Guest"},</p>
+              <p style="color: #334155;">Your booking at <strong>${mooringName}</strong> has been cancelled.</p>
               <div style="background-color: #fef2f2; border-left: 4px solid #dc2626; padding: 15px; border-radius: 6px; margin: 20px 0;">
-                <p style="margin: 5px 0;"><strong>Kod rezervacije:</strong> ${confirmation_code || "N/A"}</p>
+                <p style="margin: 5px 0;"><strong>Booking code:</strong> ${confirmation_code || "N/A"}</p>
                 <p style="margin: 5px 0;"><strong>Check-in:</strong> ${check_in}</p>
                 <p style="margin: 5px 0;"><strong>Check-out:</strong> ${check_out}</p>
               </div>
               <div style="text-align: center; margin: 30px 0;">
                 <a href="https://mooringbooking.com/explore"
                    style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-                  Pronađi drugi vez
+                  Find Another Mooring
                 </a>
               </div>
-              <p style="color: #64748b; font-size: 14px;">Za pitanja kontaktirajte nas na support@mooringbooking.com</p>
+              <p style="color: #64748b; font-size: 14px;">For questions, contact us at support@mooringbooking.com</p>
             </div>
           `,
         });
@@ -132,21 +132,21 @@ serve(async (req) => {
         emails.push({
           from: "Mooring Booking <onboarding@resend.dev>",
           to: providerEmail,
-          subject: `Rezervacija otkazana za ${mooringName}`,
+          subject: `Booking Cancelled for ${mooringName}`,
           html: `
             <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-              <h2 style="color: #f59e0b;">Rezervacija je otkazana</h2>
-              <p style="color: #334155;">Rezervacija za vaš vez <strong>${mooringName}</strong> je otkazana.</p>
+              <h2 style="color: #f59e0b;">Booking Cancelled</h2>
+              <p style="color: #334155;">A booking for your mooring <strong>${mooringName}</strong> has been cancelled.</p>
               <div style="background-color: #f8fafc; padding: 15px; border-radius: 6px; margin: 20px 0;">
-                <p style="margin: 5px 0;"><strong>Gost:</strong> ${guest_name || "Nepoznato"}</p>
+                <p style="margin: 5px 0;"><strong>Guest:</strong> ${guest_name || "Unknown"}</p>
                 <p style="margin: 5px 0;"><strong>Check-in:</strong> ${check_in}</p>
                 <p style="margin: 5px 0;"><strong>Check-out:</strong> ${check_out}</p>
               </div>
-              <p style="color: #334155;">Vez je ponovo dostupan za rezervacije.</p>
+              <p style="color: #334155;">The mooring is now available for new bookings.</p>
               <div style="text-align: center; margin: 30px 0;">
                 <a href="https://mooringbooking.com/dashboard"
                    style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-                  Kontrolna tabla
+                  Dashboard
                 </a>
               </div>
             </div>
@@ -161,20 +161,20 @@ serve(async (req) => {
         emails.push({
           from: "Mooring Booking <onboarding@resend.dev>",
           to: guest_email,
-          subject: `Hvala na posjeti: ${mooringName} — Ostavite recenziju ⭐`,
+          subject: `Thank you for staying at ${mooringName} — Leave a Review ⭐`,
           html: `
             <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-              <h2 style="color: #0f172a;">Vaš boravak je završen! ⭐</h2>
-              <p style="color: #334155;">Poštovani/a ${guest_name || "Gosti"},</p>
-              <p style="color: #334155;">Nadamo se da ste uživali na vezu <strong>${mooringName}</strong>!</p>
-              <p style="color: #334155;">Molimo podijelite Vaše iskustvo — recenzija pomaže ostalim nautičarima.</p>
+              <h2 style="color: #0f172a;">Your stay is complete! ⭐</h2>
+              <p style="color: #334155;">Dear ${guest_name || "Guest"},</p>
+              <p style="color: #334155;">We hope you enjoyed your stay at <strong>${mooringName}</strong>!</p>
+              <p style="color: #334155;">Please share your experience — your review helps other sailors find great moorings.</p>
               <div style="text-align: center; margin: 30px 0;">
                 <a href="https://mooringbooking.com/dashboard"
                    style="background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-                  Ostavite recenziju
+                  Leave a Review
                 </a>
               </div>
-              <p style="color: #64748b; font-size: 14px;">Hvala što koristite Mooring Booking!</p>
+              <p style="color: #64748b; font-size: 14px;">Thank you for using Mooring Booking!</p>
             </div>
           `,
         });

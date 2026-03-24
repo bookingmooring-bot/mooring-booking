@@ -38,25 +38,25 @@ serve(async (req) => {
         for (const booking of bookings) {
             if (!booking.guest_email) continue;
 
-            const mooringName = booking.moorings?.name || "Vez";
-            const mooringLocation = booking.moorings?.location || "Nepoznata Lokacija";
+            const mooringName = booking.moorings?.name || "Mooring";
+            const mooringLocation = booking.moorings?.location || "Unknown Location";
 
             emails.push({
                 from: "Mooring Booking <onboarding@resend.dev>",
                 to: booking.guest_email,
-                subject: `Podsetnik: Vaša rezervacija počinje sutra! \u2693`,
+                subject: `Reminder: Your booking starts tomorrow! ⚓`,
                 html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-            <h2 style="color: #0f172a;">Spremni za polazak? \u2693</h2>
-            <p style="color: #334155;">Poštovani/a ${booking.guest_name || "Gosti"},</p>
-            <p style="color: #334155;">Vaša rezervacija na vezu <strong>${mooringName}</strong> (${mooringLocation}) počinje već sutra!</p>
+            <h2 style="color: #0f172a;">Ready to set sail? ⚓</h2>
+            <p style="color: #334155;">Dear ${booking.guest_name || "Guest"},</p>
+            <p style="color: #334155;">Your booking at <strong>${mooringName}</strong> (${mooringLocation}) starts tomorrow!</p>
             
             <div style="background-color: #f8fafc; padding: 15px; border-radius: 6px; margin: 20px 0;">
               <p style="margin: 5px 0;"><strong>Check-in:</strong> ${booking.check_in}</p>
               <p style="margin: 5px 0;"><strong>Check-out:</strong> ${booking.check_out}</p>
             </div>
             
-            <p style="color: #64748b; font-size: 14px;">Želimo vam mirno more i ugodan boravak!</p>
+            <p style="color: #64748b; font-size: 14px;">Wishing you calm seas and a pleasant stay!</p>
           </div>
         `
             });

@@ -12,8 +12,8 @@ serve(async (req) => {
         }
 
         const providerEmail = provider.email || provider.raw_user_meta_data?.email;
-        const providerName = provider.full_name || provider.raw_user_meta_data?.full_name || "Provajder";
-        const mooringName = mooring.name || "Vez";
+        const providerName = provider.full_name || provider.raw_user_meta_data?.full_name || "Provider";
+        const mooringName = mooring.name || "Mooring";
         const status = mooring.status; // 'approved' or 'rejected'
 
         if (!providerEmail || (status !== 'approved' && status !== 'rejected')) {
@@ -24,28 +24,28 @@ serve(async (req) => {
         let html = "";
 
         if (status === 'approved') {
-            subject = `Odlične vesti! Vaš vez ${mooringName} je odobren \u2705`;
+            subject = `Great news! Your mooring ${mooringName} has been approved ✅`;
             html = `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-          <h2 style="color: #16a34a;">Vaš vez je odobren! \u2705</h2>
-          <p style="color: #334155;">Poštovani/a ${providerName},</p>
-          <p style="color: #334155;">Sa zadovoljstvom vas obaveštavamo da je vaš vez <strong>${mooringName}</strong> uspešno odobren od strane administratora.</p>
-          <p style="color: #334155;">Vaš vez je sada vidljiv svim gostima na platformi i mogu ga rezervisati!</p>
+          <h2 style="color: #16a34a;">Your mooring has been approved! ✅</h2>
+          <p style="color: #334155;">Dear ${providerName},</p>
+          <p style="color: #334155;">We are pleased to inform you that your mooring <strong>${mooringName}</strong> has been successfully approved by our admin team.</p>
+          <p style="color: #334155;">Your mooring is now visible to all guests on the platform and they can start booking it!</p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="https://mooringbooking.com/dashboard" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Prikaži kontrolnu tablu</a>
+            <a href="https://mooringbooking.com/dashboard" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">View Dashboard</a>
           </div>
         </div>
       `;
         } else {
-            subject = `Status vašeg veza ${mooringName}: Odbijen \u274c`;
+            subject = `Status update for ${mooringName}: Not Approved ❌`;
             html = `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-          <h2 style="color: #dc2626;">Obaveštenje o vašem vezu \u274c</h2>
-          <p style="color: #334155;">Poštovani/a ${providerName},</p>
-          <p style="color: #334155;">Nažalost, vaš vez <strong>${mooringName}</strong> nije odobren za objavljivanje na platformi.</p>
-          <p style="color: #334155;">Prijavite se na vašu kontrolnu tablu kako biste proverili da li nedostaju neke bitne informacije (poput slika, detaljnog opisa ili slično) i pokušajte ponovo.</p>
+          <h2 style="color: #dc2626;">Update on your mooring ❌</h2>
+          <p style="color: #334155;">Dear ${providerName},</p>
+          <p style="color: #334155;">Unfortunately, your mooring <strong>${mooringName}</strong> has not been approved for listing on the platform at this time.</p>
+          <p style="color: #334155;">Please log in to your dashboard to check if any important information is missing (such as photos, a detailed description, etc.) and try again.</p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="https://mooringbooking.com/dashboard" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Prikaži kontrolnu tablu</a>
+            <a href="https://mooringbooking.com/dashboard" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">View Dashboard</a>
           </div>
         </div>
       `;

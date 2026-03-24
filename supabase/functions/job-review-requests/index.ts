@@ -39,26 +39,25 @@ serve(async (req) => {
         for (const booking of bookings) {
             if (!booking.guest_email) continue;
 
-            const mooringName = booking.moorings?.name || "Vez";
-            const mooringLocation = booking.moorings?.location || "Nepoznata Lokacija";
+            const mooringName = booking.moorings?.name || "Mooring";
+            const mooringLocation = booking.moorings?.location || "Unknown Location";
 
             emails.push({
                 from: "Mooring Booking <onboarding@resend.dev>",
                 to: booking.guest_email,
-                subject: `Kako vam je bilo na vezu ${mooringName}? \u2b50`,
+                subject: `How was your stay at ${mooringName}? ⭐`,
                 html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-            <h2 style="color: #0f172a;">Nadamo se da ste imali sjajan boravak!</h2>
-            <p style="color: #334155;">Poštovani/a ${booking.guest_name || "Gosti"},</p>
-            <p style="color: #334155;">Vaša rezervacija na vezu <strong>${mooringName}</strong> (${mooringLocation}) se juče završila.</p>
-            <p style="color: #334155;">Bili bismo vam veoma zahvalni ukoliko biste odvojili minut vašeg vremena da ocenite vez i podelite svoje iskustvo sa drugim mornarima. Vaše mišljenje je dragoceno!</p>
+            <h2 style="color: #0f172a;">We hope you had a great stay!</h2>
+            <p style="color: #334155;">Dear ${booking.guest_name || "Guest"},</p>
+            <p style="color: #334155;">Your booking at <strong>${mooringName}</strong> (${mooringLocation}) ended yesterday.</p>
+            <p style="color: #334155;">We would really appreciate it if you could take a minute to rate the mooring and share your experience with other sailors. Your feedback is invaluable!</p>
             
             <div style="text-align: center; margin: 30px 0;">
-              <!-- Assuming the link to review goes to explore with modal open or specific URL -->
-              <a href="https://mooringbooking.com/explore" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Ostavi recenziju</a>
+              <a href="https://mooringbooking.com/explore" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Leave a Review</a>
             </div>
             
-            <p style="color: #64748b; font-size: 14px;">Hvala što koristite Mooring Booking platformu!</p>
+            <p style="color: #64748b; font-size: 14px;">Thank you for using the Mooring Booking platform!</p>
           </div>
         `
             });
