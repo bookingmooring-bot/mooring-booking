@@ -559,7 +559,7 @@ Address: Prague, Czech Republic
         }));
 
       // 3. Call RPC
-      // Direct insert with only known schema columns
+      // Direct insert — minimal safe columns only
       const { error: mooringError } = await supabase
         .from('moorings')
         .insert({
@@ -569,19 +569,17 @@ Address: Prague, Czech Republic
           lat: parseFloat(formData.latitude) || 0,
           lng: parseFloat(formData.longitude) || 0,
           description: formData.description,
-          amenities: formData.amenities,
           price_per_night: parseFloat(formData.pricePerNight) || 0,
-          phone: formData.phone,
           provider_id: user!.id,
           status: 'approved',
         });
 
       if (mooringError) throw mooringError;
 
-      // Update user role to provider
+      // Update user role to provider + save phone to profile
       await supabase
         .from('profiles')
-        .update({ role: 'provider' })
+        .update({ role: 'provider', phone: formData.phone })
         .eq('id', user!.id);
 
       setConsentAccepted(false);
