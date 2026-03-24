@@ -489,7 +489,7 @@ const BecomeProviderPage = () => {
           marketing_tools: data.marketingTools,
           is_premium_listing: data.premiumListing,
           insurance_mediation: data.insuranceMediation,
-          status: 'approved',
+          status: 'pending',
           ...(imageUrls.length > 0 ? { image_urls: imageUrls } : {})
         })
         .eq('id', editingMooringId)
