@@ -210,6 +210,7 @@ const BecomeProviderPage = () => {
   const [lastMooringId, setLastMooringId] = useState<string | null>(null);
   const [consentAccepted, setConsentAccepted] = useState(false);
   const [userMoorings, setUserMoorings] = useState<{ id: string; name: string; status: string }[]>([]);
+  const [editingMooringId, setEditingMooringId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     mooringName: "",
     country: "",
@@ -318,7 +319,7 @@ const BecomeProviderPage = () => {
   }, [user?.email]);
 
   // Load user's existing moorings
-  useEffect(() => {
+  const refreshMoorings = () => {
     if (!user?.id) return;
     supabase
       .from('moorings')
@@ -331,7 +332,46 @@ const BecomeProviderPage = () => {
           setMooringCount(data.length);
         }
       });
+  };
+
+  useEffect(() => {
+    if (!user?.id) return;
+    refreshMoorings();
   }, [user?.id]);
+
+  // Load a mooring into the form for inline editing
+  const loadMooringForEdit = async (mooringId: string) => {
+    const { data, error } = await supabase
+      .from('moorings')
+      .select('*')
+      .eq('id', mooringId)
+      .single();
+    if (error || !data) {
+      toast({ title: 'Error', description: 'Could not load mooring data.', variant: 'destructive' });
+      return;
+    }
+    setEditingMooringId(mooringId);
+    setFormData(prev => ({
+      ...prev,
+      mooringName: data.name || '',
+      country: data.country || '',
+      region: data.location || '',
+      latitude: String(data.lat || ''),
+      longitude: String(data.lng || ''),
+      description: data.description || '',
+      windProtection: data.wind_protection || 'good',
+      amenities: data.amenities || [],
+      maxBoatLength: String(data.max_boat_length || ''),
+      maxDraft: String(data.max_draft || ''),
+      pricePerNight: String(data.price_per_night || ''),
+      phone: data.owner_phone || '',
+      whatsapp: data.owner_whatsapp || '',
+      photos: [],
+    }));
+    setShowForm(true);
+    setJustSubmitted(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const downloadTerms = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -582,67 +622,88 @@ Address: Prague, Czech Republic
         .update({ role: 'provider', phone: formData.phone })
         .eq('id', user!.id);
 
-      // Use RPC (SECURITY DEFINER bypasses RLS)
-      // All optional hidden fields set to 0/false to avoid numeric overflow
-      const { data: rpcData, error: rpcError } = await supabase.rpc('publish_provider_profile', {
-        p_mooring_name: formData.mooringName,
-        p_country: formData.country,
-        p_region: formData.region,
-        p_latitude: parseFloat(formData.latitude) || 0,
-        p_longitude: parseFloat(formData.longitude) || 0,
-        p_description: formData.description,
-        p_wind_protection: formData.windProtection || 'good',
-        p_amenities: formData.amenities,
-        p_max_boat_length: 0,
-        p_max_draft: 0,
-        p_mooring_units: 1,
-        p_price_per_night: 0,
-        p_discount_percent: 0,
-        p_payment_methods: [],
-        p_now4today: false,
-        p_winter_storage: false,
-        p_winter_storage_type: 'wet',
-        p_winter_price_monthly: 0,
-        p_winter_services: [],
-        p_marketing_tools: false,
-        p_premium_listing: false,
-        p_insurance_mediation: false,
-        p_image_urls: imageUrls,
-        p_phone: formData.phone,
-        p_whatsapp: formData.whatsapp || '',
-        p_availability: [],
-      });
+      if (editingMooringId) {
+        // UPDATE existing mooring
+        const { error: updateError } = await supabase
+          .from('moorings')
+          .update({
+            name: formData.mooringName,
+            country: formData.country,
+            location: formData.region,
+            lat: parseFloat(formData.latitude) || 0,
+            lng: parseFloat(formData.longitude) || 0,
+            description: formData.description,
+            amenities: formData.amenities,
+            wind_protection: formData.windProtection,
+            max_boat_length: parseFloat(formData.maxBoatLength) || 0,
+            max_draft: parseFloat(formData.maxDraft) || 0,
+            price_per_night: parseFloat(formData.pricePerNight) || 0,
+            image_urls: imageUrls.length > 0 ? imageUrls : undefined,
+            owner_phone: formData.phone,
+            owner_whatsapp: formData.whatsapp || '',
+            status: 'approved',
+          })
+          .eq('id', editingMooringId)
+          .eq('owner_id', user!.id);
 
-      if (rpcError) throw rpcError;
+        if (updateError) throw updateError;
+        setLastMooringId(editingMooringId);
+        setEditingMooringId(null);
 
-      // Save mooring ID for the Complete Listing shortcut
-      if (rpcData) {
-        setLastMooringId(rpcData);
-        await supabase.from('moorings').update({ status: 'approved' }).eq('id', rpcData);
+        toast({
+          title: '✅ Mooring Updated!',
+          description: 'Your changes have been saved.',
+        });
+      } else {
+        // CREATE new mooring via RPC (SECURITY DEFINER bypasses RLS)
+        const { data: rpcData, error: rpcError } = await supabase.rpc('publish_provider_profile', {
+          p_mooring_name: formData.mooringName,
+          p_country: formData.country,
+          p_region: formData.region,
+          p_latitude: parseFloat(formData.latitude) || 0,
+          p_longitude: parseFloat(formData.longitude) || 0,
+          p_description: formData.description,
+          p_wind_protection: formData.windProtection || 'good',
+          p_amenities: formData.amenities,
+          p_max_boat_length: 0,
+          p_max_draft: 0,
+          p_mooring_units: 1,
+          p_price_per_night: 0,
+          p_discount_percent: 0,
+          p_payment_methods: [],
+          p_now4today: false,
+          p_winter_storage: false,
+          p_winter_storage_type: 'wet',
+          p_winter_price_monthly: 0,
+          p_winter_services: [],
+          p_marketing_tools: false,
+          p_premium_listing: false,
+          p_insurance_mediation: false,
+          p_image_urls: imageUrls,
+          p_phone: formData.phone,
+          p_whatsapp: formData.whatsapp || '',
+          p_availability: [],
+        });
+
+        if (rpcError) throw rpcError;
+
+        if (rpcData) {
+          setLastMooringId(rpcData);
+          await supabase.from('moorings').update({ status: 'approved' }).eq('id', rpcData);
+        }
+        setMooringCount(prev => prev + 1);
+        setJustSubmitted(true);
+
+        toast({
+          title: '✅ Mooring Published!',
+          description: 'Your mooring is now live and visible to all guests.',
+        });
       }
+
       setConsentAccepted(false);
       setShowConsent(false);
       setShowForm(false);
-      setJustSubmitted(true);
-      setMooringCount(prev => prev + 1);
-      // Reset form for adding another mooring
-      setFormData({
-        mooringName: "", country: "", region: "", latitude: "", longitude: "",
-        description: "", windProtection: "good",
-        amenities: [], maxBoatLength: "", maxDraft: "", pricePerNight: "",
-        discount: [10], paymentMethods: [], photos: [],
-        phone: "", whatsapp: "",
-        winterStorage: false, winterStorageType: "wet",
-        winterPriceMonthly: "", winterServices: [],
-        marketingTools: false, premiumListing: false,
-        insuranceMediation: false, now4today: false, mooringUnits: "1",
-      });
-      setDeclarations({ ownership: false, commission: false, terms: false, dataTransfer: false });
-      setCalendarDays(generateCalendarDays());
-      toast({
-        title: "✅ Mooring Published!",
-        description: "Your mooring is now live and visible to all guests.",
-      });
+      refreshMoorings();
     } catch (err: any) {
       console.error('Publish error:', err);
       toast({
@@ -1115,7 +1176,7 @@ Address: Prague, Czech Republic
                           size="sm"
                           variant="outline"
                           className="flex-shrink-0"
-                          onClick={() => navigate(`/edit-mooring/${m.id}`)}
+                          onClick={() => loadMooringForEdit(m.id)}
                         >
                           ✏️ Edit
                         </Button>
@@ -1184,10 +1245,12 @@ Address: Prague, Czech Republic
                     <FileText className="text-secondary" size={32} />
                   </div>
                   <h1 className="font-heading text-2xl font-bold text-foreground mb-2">
-                    Digital Consent Agreement
+                    {editingMooringId ? 'Review Changes' : 'Digital Consent Agreement'}
                   </h1>
                   <p className="text-muted-foreground">
-                    Please review the terms before publishing your mooring.
+                    {editingMooringId 
+                      ? 'Please review the terms before saving your changes.' 
+                      : 'Please review the terms before publishing your mooring.'}
                   </p>
                 </div>
 
@@ -1217,7 +1280,7 @@ Address: Prague, Czech Republic
                       onCheckedChange={(checked) => setConsentAccepted(checked as boolean)}
                     />
                     <Label htmlFor="finalConsent" className="text-sm leading-relaxed cursor-pointer font-medium">
-                      I have read and accept all the terms listed above and agree to the publication of my mooring on the Mooring Booking platform.
+                      I have read and accept all the terms listed above and agree to the {editingMooringId ? 'update' : 'publication'} of my mooring on the Mooring Booking platform.
                     </Label>
                   </div>
                 </div>
@@ -1238,7 +1301,7 @@ Address: Prague, Czech Republic
                     {isSubmitting ? (
                       <>
                         <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2" />
-                        {uploadingPhotos ? 'Uploading photos...' : 'Publishing...'}
+                        {uploadingPhotos ? 'Uploading photos...' : (editingMooringId ? 'Saving...' : 'Publishing...')}
                       </>
                     ) : (
                       <>
@@ -1270,10 +1333,12 @@ Address: Prague, Czech Republic
             {/* Form Header */}
             <div className="text-center mb-10">
               <h1 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Publish Your Mooring
+                {editingMooringId ? 'Edit Your Mooring' : 'Publish Your Mooring'}
               </h1>
               <p className="text-muted-foreground">
-                Fill in the details about your mooring to publish it on the platform
+                {editingMooringId
+                  ? 'Update the details for your mooring'
+                  : 'Fill in the details about your mooring to publish it on the platform'}
               </p>
             </div>
 
@@ -1979,7 +2044,10 @@ Address: Prague, Czech Republic
                   type="button"
                   variant="outline"
                   className="flex-1"
-                  onClick={() => setShowForm(false)}
+                  onClick={() => {
+                    setShowForm(false);
+                    setEditingMooringId(null);
+                  }}
                 >
                   Cancel
                 </Button>
@@ -1989,7 +2057,7 @@ Address: Prague, Czech Republic
                   disabled={!declarations.ownership || !declarations.terms || !declarations.dataTransfer}
                 >
                   <QrCode className="mr-2" size={20} />
-                  Publish Mooring
+                  {editingMooringId ? 'Continue to Save' : 'Publish Mooring'}
                 </Button>
               </div>
             </form>
