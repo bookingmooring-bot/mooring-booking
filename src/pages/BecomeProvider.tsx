@@ -22,6 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 import MonthlyCalendar, { CalendarDay } from "@/components/MonthlyCalendar";
 import AdBanner from "@/components/AdBanner";
 import CoordinatePickerMap from "@/components/provider/CoordinatePickerMap";
+import MooringForm, { MooringFormData, generateCalendarDays as generateFullCalendarDays } from "@/components/provider/MooringForm";
 
 const countries = [
   { code: "HR", name: "Croatia", flag: "🇭🇷" },
@@ -211,6 +212,12 @@ const BecomeProviderPage = () => {
   const [consentAccepted, setConsentAccepted] = useState(false);
   const [userMoorings, setUserMoorings] = useState<{ id: string; name: string; status: string }[]>([]);
   const [editingMooringId, setEditingMooringId] = useState<string | null>(null);
+  
+  // States for Complete Listing mode
+  const [isCompletingListing, setIsCompletingListing] = useState(false);
+  const [fullMooringData, setFullMooringData] = useState<Partial<MooringFormData> | null>(null);
+  const [fullCalendarDays, setFullCalendarDays] = useState<CalendarDay[] | null>(null);
+
   const [formData, setFormData] = useState({
     mooringName: "",
     country: "",
@@ -368,12 +375,162 @@ const BecomeProviderPage = () => {
       whatsapp: data.owner_whatsapp || '',
       photos: [],
     }));
+    setIsCompletingListing(false);
     setShowForm(true);
     setJustSubmitted(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const downloadTerms = (e: React.MouseEvent) => {
+  // Load a mooring for COMPLETE mapping (opens MooringForm)
+  const loadMooringForComplete = async (mooringId: string) => {
+    try {
+      const { data: dbMooring, error } = await supabase
+        .from('moorings')
+        .select('*, owner:profiles!owner_id(address, phone, whatsapp)')
+        .eq('id', mooringId)
+        .eq('owner_id', user!.id)
+        .single();
+        
+      if (error || !dbMooring) throw new Error("Mooring not found");
+
+      setFullMooringData({
+        mooringName: dbMooring.name,
+        country: dbMooring.country,
+        region: dbMooring.location,
+        latitude: String(dbMooring.lat),
+        longitude: String(dbMooring.lng),
+        description: dbMooring.description,
+        windProtection: dbMooring.wind_protection,
+        amenities: dbMooring.amenities,
+        maxBoatLength: String(dbMooring.max_boat_length || ''),
+        maxDraft: String(dbMooring.max_draft || ''),
+        mooringUnits: String(dbMooring.mooring_units || 1),
+        pricePerNight: String(dbMooring.price_per_night),
+        discount: [dbMooring.discount_percent || 0],
+        paymentMethods: dbMooring.payment_methods || [],
+        photos: [], // Requires re-uploading if changing, or handled differently
+        address: dbMooring.owner?.address || "",
+        phone: dbMooring.owner?.phone || "",
+        whatsapp: dbMooring.owner?.whatsapp || "",
+        now4today: dbMooring.is_now4today || false,
+        winterStorage: dbMooring.winter_storage || false,
+        winterStorageType: dbMooring.winter_storage_type || "wet",
+        winterPriceMonthly: String(dbMooring.winter_price_monthly || ""),
+        winterServices: dbMooring.winter_services || [],
+        marketingTools: dbMooring.marketing_tools || false,
+        premiumListing: dbMooring.is_premium_listing || false,
+        insuranceMediation: dbMooring.insurance_mediation || false,
+      });
+
+      const baseline = generateFullCalendarDays();
+      const { data: availData } = await supabase
+        .from('mooring_availability')
+        .select('*')
+        .eq('mooring_id', mooringId);
+
+      if (availData) {
+        availData.forEach((ad: any) => {
+          const dayIndex = baseline.findIndex(bd => bd.date.toISOString().split('T')[0] === ad.date);
+          if (dayIndex !== -1) {
+            baseline[dayIndex].available = ad.available;
+            baseline[dayIndex].customPrice = ad.custom_price || undefined;
+          }
+        });
+      }
+      setFullCalendarDays(baseline);
+      setEditingMooringId(mooringId);
+      setIsCompletingListing(true);
+      setShowForm(true);
+      setJustSubmitted(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err: any) {
+      toast({ title: 'Error', description: 'Could not load mooring data.', variant: 'destructive' });
+    }
+  };
+
+  const handlePublishComplete = async (data: MooringFormData, calendarDays: CalendarDay[]) => {
+    if (!user || !editingMooringId) return;
+    setIsSubmitting(true);
+    try {
+      const imageUrls: string[] = [];
+      for (const file of data.photos) {
+        const fileExt = file.name.split('.').pop();
+        const filePath = `${user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('mooring-images')
+          .upload(filePath, file, { cacheControl: '3600', upsert: false });
+        if (uploadError) throw uploadError;
+        const { data: urlData } = supabase.storage.from('mooring-images').getPublicUrl(filePath);
+        imageUrls.push(urlData.publicUrl);
+      }
+
+      const { error: updateError } = await supabase
+        .from('moorings')
+        .update({
+          name: data.mooringName,
+          country: data.country,
+          location: data.region,
+          lat: parseFloat(data.latitude) || 0,
+          lng: parseFloat(data.longitude) || 0,
+          description: data.description,
+          wind_protection: data.windProtection,
+          amenities: data.amenities,
+          max_boat_length: parseFloat(data.maxBoatLength) || null,
+          max_draft: parseFloat(data.maxDraft) || null,
+          mooring_units: parseInt(data.mooringUnits) || 1,
+          price_per_night: parseFloat(data.pricePerNight),
+          discount_percent: data.discount[0] || 0,
+          payment_methods: data.paymentMethods,
+          is_now4today: data.now4today,
+          winter_storage: data.winterStorage,
+          winter_storage_type: data.winterStorageType,
+          winter_price_monthly: parseFloat(data.winterPriceMonthly) || 0,
+          winter_services: data.winterServices,
+          marketing_tools: data.marketingTools,
+          is_premium_listing: data.premiumListing,
+          insurance_mediation: data.insuranceMediation,
+          status: 'approved',
+          ...(imageUrls.length > 0 ? { image_urls: imageUrls } : {})
+        })
+        .eq('id', editingMooringId)
+        .eq('owner_id', user.id);
+
+      if (updateError) throw updateError;
+
+      await supabase.from('profiles').update({
+        address: data.address,
+        phone: data.phone,
+        whatsapp: data.whatsapp,
+        role: 'provider'
+      }).eq('id', user.id);
+
+      const availabilityList = calendarDays.map(day => ({
+        mooring_id: editingMooringId,
+        date: day.date.toISOString().split('T')[0],
+        available: day.available,
+        custom_price: day.customPrice || 0
+      }));
+
+      const { error: availError } = await supabase
+        .from('mooring_availability')
+        .upsert(availabilityList, { onConflict: 'mooring_id,date' });
+
+      if (availError) throw availError;
+
+      toast({ title: "✅ Mooring Details Published!", description: "Your details have been saved." });
+      
+      setIsCompletingListing(false);
+      setEditingMooringId(null);
+      setShowForm(false);
+      refreshMoorings();
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const downloadTerms = (e: any) => {
     e.preventDefault();
     e.stopPropagation();
     const content = `MOORING BOOKING - GENERAL TERMS OF USE
@@ -1172,14 +1329,23 @@ Address: Prague, Czech Republic
                             </span>
                           </div>
                         </div>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="flex-shrink-0"
-                          onClick={() => loadMooringForEdit(m.id)}
-                        >
-                          ✏️ Edit
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="flex-shrink-0"
+                            onClick={() => loadMooringForEdit(m.id)}
+                          >
+                            ✏️ Edit
+                          </Button>
+                          <Button
+                            size="sm"
+                            className="flex-shrink-0 bg-gold hover:bg-gold/90 text-gold-foreground"
+                            onClick={() => loadMooringForComplete(m.id)}
+                          >
+                            ➕ Add Details
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -1218,7 +1384,7 @@ Address: Prague, Czech Republic
                 <Button
                   size="lg"
                   className="bg-gold text-gold-foreground hover:bg-gold/90 font-semibold text-lg px-10 h-14"
-                  onClick={() => { setShowForm(true); setJustSubmitted(false); }}
+                  onClick={() => { setShowForm(true); setJustSubmitted(false); setIsCompletingListing(false); }}
                 >
                   <span translate="no">{justSubmitted ? '➕ Add Another Mooring' : '⚓ Add Moorings'}</span>
                   <ArrowRight className="ml-2" size={20} />
@@ -1318,6 +1484,24 @@ Address: Prague, Czech Republic
               </div>
             </div>
           </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Complete Listing Form (Imported Component)
+  if (showForm && isCompletingListing && fullMooringData && fullCalendarDays) {
+    return (
+      <div className="min-h-screen bg-muted">
+        <ProviderMiniHeader mooringCount={mooringCount} />
+        <main className="py-12">
+          <MooringForm
+            initialData={fullMooringData as MooringFormData}
+            initialCalendarDays={fullCalendarDays}
+            onSubmit={handlePublishComplete}
+            isSubmitting={isSubmitting}
+            submitLabel="Save Details"
+          />
         </main>
       </div>
     );
