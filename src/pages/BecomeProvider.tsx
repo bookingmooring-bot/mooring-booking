@@ -570,7 +570,7 @@ Address: Prague, Czech Republic
           lng: parseFloat(formData.longitude) || 0,
           description: formData.description,
           price_per_night: parseFloat(formData.pricePerNight) || 0,
-          provider_id: user!.id,
+          user_id: user!.id,
           status: 'approved',
         });
 
