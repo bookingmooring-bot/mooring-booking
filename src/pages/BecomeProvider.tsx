@@ -559,8 +559,8 @@ Address: Prague, Czech Republic
         }));
 
       // 3. Call RPC
-      // Direct insert — bypasses the RPC which caused numeric field overflow
-      const { data: mooringData, error: mooringError } = await supabase
+      // Direct insert with only known schema columns
+      const { error: mooringError } = await supabase
         .from('moorings')
         .insert({
           name: formData.mooringName,
@@ -569,22 +569,12 @@ Address: Prague, Czech Republic
           lat: parseFloat(formData.latitude) || 0,
           lng: parseFloat(formData.longitude) || 0,
           description: formData.description,
-          wind_protection: formData.windProtection,
           amenities: formData.amenities,
-          max_boat_length: parseFloat(formData.maxBoatLength) || 0,
-          max_draft: parseFloat(formData.maxDraft) || 0,
-          mooring_units: parseInt(formData.mooringUnits) || 1,
           price_per_night: parseFloat(formData.pricePerNight) || 0,
-          payment_methods: formData.paymentMethods,
-          now4today: formData.now4today,
           phone: formData.phone,
-          whatsapp: formData.whatsapp,
-          image_urls: imageUrls,
           provider_id: user!.id,
           status: 'approved',
-        })
-        .select('id')
-        .single();
+        });
 
       if (mooringError) throw mooringError;
 
