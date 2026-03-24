@@ -507,10 +507,7 @@ Address: Prague, Czech Republic
       toast({ title: "Enter location", description: "Please enter the city/port.", variant: "destructive" });
       return;
     }
-    if (!formData.pricePerNight || parseFloat(formData.pricePerNight) <= 0) {
-      toast({ title: "Enter price", description: "Please enter the price per night.", variant: "destructive" });
-      return;
-    }
+
     if (!formData.phone.trim()) {
       toast({ title: "Enter phone", description: "Please enter a contact phone number.", variant: "destructive" });
       return;
@@ -593,6 +590,14 @@ Address: Prague, Czech Republic
 
       if (error) throw error;
 
+      // Auto-approve: set mooring status to 'approved' so it's live immediately
+      if (data) {
+        await supabase
+          .from('moorings')
+          .update({ status: 'approved' })
+          .eq('id', data);
+      }
+
       setConsentAccepted(false);
       setShowConsent(false);
       setShowForm(false);
@@ -614,7 +619,7 @@ Address: Prague, Czech Republic
       setCalendarDays(generateCalendarDays());
       toast({
         title: "✅ Mooring Published!",
-        description: "Your mooring is now under review. We will notify you once it is approved.",
+        description: "Your mooring is now live and visible to all guests.",
       });
     } catch (err: any) {
       console.error('Publish error:', err);
