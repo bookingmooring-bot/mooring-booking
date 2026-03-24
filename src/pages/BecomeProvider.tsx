@@ -207,6 +207,7 @@ const BecomeProviderPage = () => {
   const [showConsent, setShowConsent] = useState(false);
   const [mooringCount, setMooringCount] = useState(0);
   const [justSubmitted, setJustSubmitted] = useState(false);
+  const [lastMooringId, setLastMooringId] = useState<string | null>(null);
   const [consentAccepted, setConsentAccepted] = useState(false);
   const [formData, setFormData] = useState({
     mooringName: "",
@@ -597,8 +598,9 @@ Address: Prague, Czech Republic
 
       if (rpcError) throw rpcError;
 
-      // Auto-approve the newly created mooring
+      // Save mooring ID for the Complete Listing shortcut
       if (rpcData) {
+        setLastMooringId(rpcData);
         await supabase.from('moorings').update({ status: 'approved' }).eq('id', rpcData);
       }
       setConsentAccepted(false);
@@ -1052,11 +1054,21 @@ Address: Prague, Czech Republic
                     Mooring Published! 🎉
                   </h2>
                   <p className="text-muted-foreground mb-2">
-                    Your mooring is now under review. We'll notify you once it's approved.
+                    Your mooring is live and approved. Complete your listing to attract more bookings!
                   </p>
-                  <p className="text-sm text-green-700 font-medium">
+                  <p className="text-sm text-green-700 font-medium mb-6">
                     Total moorings: {mooringCount}
                   </p>
+                  {lastMooringId && (
+                    <Button
+                      size="lg"
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold text-lg h-14"
+                      onClick={() => navigate(`/edit-mooring/${lastMooringId}`)}
+                    >
+                      ✏️ Complete your listing — add photos, pricing & more
+                      <ArrowRight className="ml-2" size={20} />
+                    </Button>
+                  )}
                 </div>
               )}
 
