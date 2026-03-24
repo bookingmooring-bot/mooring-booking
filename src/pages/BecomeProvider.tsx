@@ -559,44 +559,40 @@ Address: Prague, Czech Republic
         }));
 
       // 3. Call RPC
-      const { data, error } = await supabase.rpc('publish_provider_profile', {
-        p_mooring_name: formData.mooringName,
-        p_country: formData.country,
-        p_region: formData.region,
-        p_latitude: parseFloat(formData.latitude) || 0,
-        p_longitude: parseFloat(formData.longitude) || 0,
-        p_description: formData.description,
-        p_wind_protection: formData.windProtection,
-        p_amenities: formData.amenities,
-        p_max_boat_length: parseFloat(formData.maxBoatLength) || 0,
-        p_max_draft: parseFloat(formData.maxDraft) || 0,
-        p_mooring_units: parseInt(formData.mooringUnits) || 1,
-        p_price_per_night: parseFloat(formData.pricePerNight) || 0,
-        p_discount_percent: formData.discount[0],
-        p_payment_methods: formData.paymentMethods,
-        p_now4today: formData.now4today,
-        p_winter_storage: formData.winterStorage,
-        p_winter_storage_type: formData.winterStorageType,
-        p_winter_price_monthly: parseFloat(formData.winterPriceMonthly) || 0,
-        p_winter_services: formData.winterServices,
-        p_marketing_tools: formData.marketingTools,
-        p_premium_listing: formData.premiumListing,
-        p_insurance_mediation: formData.insuranceMediation,
-        p_image_urls: imageUrls,
-        p_phone: formData.phone,
-        p_whatsapp: formData.whatsapp,
-        p_availability: availability,
-      });
+      // Direct insert — bypasses the RPC which caused numeric field overflow
+      const { data: mooringData, error: mooringError } = await supabase
+        .from('moorings')
+        .insert({
+          name: formData.mooringName,
+          country: formData.country,
+          location: formData.region,
+          lat: parseFloat(formData.latitude) || 0,
+          lng: parseFloat(formData.longitude) || 0,
+          description: formData.description,
+          wind_protection: formData.windProtection,
+          amenities: formData.amenities,
+          max_boat_length: parseFloat(formData.maxBoatLength) || 0,
+          max_draft: parseFloat(formData.maxDraft) || 0,
+          mooring_units: parseInt(formData.mooringUnits) || 1,
+          price_per_night: parseFloat(formData.pricePerNight) || 0,
+          payment_methods: formData.paymentMethods,
+          now4today: formData.now4today,
+          phone: formData.phone,
+          whatsapp: formData.whatsapp,
+          image_urls: imageUrls,
+          provider_id: user!.id,
+          status: 'approved',
+        })
+        .select('id')
+        .single();
 
-      if (error) throw error;
+      if (mooringError) throw mooringError;
 
-      // Auto-approve: set mooring status to 'approved' so it's live immediately
-      if (data) {
-        await supabase
-          .from('moorings')
-          .update({ status: 'approved' })
-          .eq('id', data);
-      }
+      // Update user role to provider
+      await supabase
+        .from('profiles')
+        .update({ role: 'provider' })
+        .eq('id', user!.id);
 
       setConsentAccepted(false);
       setShowConsent(false);
