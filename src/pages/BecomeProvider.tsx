@@ -1740,8 +1740,8 @@ Address: Prague, Czech Republic
                 </div>
               </div>}
 
-              {/* Photos */}
-              <div className="bg-card rounded-xl p-6 shadow-card">
+              {/* Photos — hidden for quick registration */}
+              {false && <div className="bg-card rounded-xl p-6 shadow-card">
                 <h2 className="font-heading text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <Camera className="text-secondary" size={24} />
                   Mooring Photos
@@ -1785,7 +1785,7 @@ Address: Prague, Czech Republic
                     ))}
                   </div>
                 )}
-              </div>
+              </div>}
 
               {/* Ad Banner — hidden */}
               {false && <AdBanner position="inline" size="medium" />}
