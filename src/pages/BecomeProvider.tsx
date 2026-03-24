@@ -515,7 +515,7 @@ Address: Prague, Czech Republic
       toast({ title: "Enter phone", description: "Please enter a contact phone number.", variant: "destructive" });
       return;
     }
-    if (!declarations.ownership || !declarations.commission || !declarations.terms || !declarations.dataTransfer) {
+    if (!declarations.ownership || !declarations.terms || !declarations.dataTransfer) {
       toast({ title: "Accept the terms", description: "Please check all declarations and consents at the bottom of the form.", variant: "destructive" });
       return;
     }
@@ -1410,21 +1410,7 @@ Address: Prague, Czech Republic
                         );
                       })}
                     </div>
-                    <div className="mt-3 p-4 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900 rounded-lg text-sm text-blue-800 dark:text-blue-300">
-                      <p className="font-semibold flex items-center gap-1.5 mb-2">
-                        💡 How to list multiple moorings?
-                      </p>
-                      <ul className="space-y-3 list-none">
-                        <li className="relative pl-4">
-                          <span className="absolute left-0 top-0 text-blue-500 font-bold">•</span>
-                          <strong>List TOGETHER when:</strong> You have multiple IDENTICAL moorings at the same location (e.g. 5 identical buoys at the same price) — select Buoy and set <strong>Qty: 5</strong>.
-                        </li>
-                        <li className="relative pl-4">
-                          <span className="absolute left-0 top-0 text-blue-500 font-bold">•</span>
-                          <strong>List SEPARATELY when:</strong> Your moorings have <strong>different prices or sizes</strong> (e.g. Large Dock and Small Buoy) — list them separately (first just the Dock, then the Buoy in a new submission).
-                        </li>
-                      </ul>
-                    </div>
+
                   </div>
                   <div className="md:col-span-2">
                     <Label>Amenities</Label>
@@ -1890,16 +1876,7 @@ Address: Prague, Czech Republic
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3 p-4 bg-muted rounded-lg">
-                    <Checkbox
-                      id="commission"
-                      checked={declarations.commission}
-                      onCheckedChange={(checked) => setDeclarations(prev => ({ ...prev, commission: checked as boolean }))}
-                    />
-                    <Label htmlFor="commission" className="text-sm leading-relaxed cursor-pointer">
-                      💰 I agree to the 15% commission on every confirmed booking via the Mooring Booking platform. The remaining 85% is mine.
-                    </Label>
-                  </div>
+
                   <div className="flex items-start gap-3 p-4 bg-muted rounded-lg">
                     <Checkbox
                       id="dataTransfer"
@@ -1936,7 +1913,7 @@ Address: Prague, Czech Republic
                 <Button
                   type="submit"
                   className="flex-1 bg-gradient-ocean font-semibold h-12"
-                  disabled={!declarations.ownership || !declarations.commission || !declarations.terms || !declarations.dataTransfer}
+                  disabled={!declarations.ownership || !declarations.terms || !declarations.dataTransfer}
                 >
                   <QrCode className="mr-2" size={20} />
                   Publish Mooring
