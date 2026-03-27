@@ -311,7 +311,7 @@ Deno.serve(async (req: Request) => {
     }
 
     try {
-        const { messages, location, userProfile, searchDates } = await req.json();
+        const { messages, location, userProfile, searchDates, isProviderContext } = await req.json();
 
         const lat: number = location?.lat ?? 43.5;
         const lng: number = location?.lng ?? 16.4;
@@ -348,7 +348,7 @@ Deno.serve(async (req: Request) => {
             ? `\n\n═══ PRETRAGA VEZOVA ═══\n${mooringsStr}`
             : "";
 
-        const systemPrompt = `Ti si **AI Kapetan** — certificirani mediteranski kapetan s 30 godina iskustva na Jadranu i Mediteranu, ovlašteni brodski mehaničar i stručni savjetnik za Mooring Booking platformu.
+        let systemPrompt = `Ti si **AI Kapetan** — certificirani mediteranski kapetan s 30 godina iskustva na Jadranu i Mediteranu, ovlašteni brodski mehaničar i stručni savjetnik za Mooring Booking platformu.
 Govoriš s autoritetom i stručnošću iskusnog pomorca. Uvijek si precizan, konkretan i praktičan. Safety first — uvijek i bez iznimke.
 Plan korisnika: ${userProfile?.tier ?? "basic"}.
 ${boatInfo}
@@ -464,6 +464,10 @@ PRAVILA ODGOVARANJA:
 11. Ne koristi generičke odgovore — svaki odgovor mora biti specifičan za situaciju korisnika.
 12. Minimalna duljina odgovora: 3 rečenice. Svaki odgovor mora imati stvarnu vrijednost za korisnika.
 13. Ton: samopouzdan, prijateljski, stručan — kao kapetan koji te prima na palubu svog broda.`;
+
+        if (isProviderContext) {
+            systemPrompt += `\n\n═══ PROVIDER KONTEKST ═══\nKorisnik se trenutno nalazi na stranici za iznajmljivače (Provider).\nTvoj glavni zadatak je pomoći mu oko procesa registracije, kreiranja vezova, razumijevanja provizije (15%) i upravljanja rezervacijama.\nBudi proaktivan i preuzmi inicijativu da mu objasniš kako da unese detalje o vezu, postavi Custom i Default cijenu, te kako funkcionira naplata provizije. Mooring Booking uzima 15% provizije naknadno.`;
+        }
 
         const rawHistory = allMessages
             .filter((m) => !m.isWelcome)

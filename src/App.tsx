@@ -65,7 +65,7 @@ import { useLocation } from "react-router-dom";
 // Hide chat widget on public provider/auth pages
 const ConditionalChatWidget = () => {
   const location = useLocation();
-  const hiddenRoutes = ["/become-provider", "/auth"];
+  const hiddenRoutes = ["/auth"];
   if (hiddenRoutes.some(r => location.pathname.startsWith(r))) return null;
   return <AIChatWidget />;
 };

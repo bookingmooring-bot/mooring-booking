@@ -8,7 +8,7 @@ import { isPremium, hasAIQuestionsRemaining, AI_BASIC_LIMIT, getUserTier } from 
 import { useProfile, useIncrementAIQuestions } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface AIChatWidgetProps {
   isOpen?: boolean;
@@ -33,6 +33,7 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
   const { data: profile } = useProfile();
   const incrementAI = useIncrementAIQuestions();
   const navigate = useNavigate();
+  const routerLocation = useLocation();
   const [showPaywall, setShowPaywall] = useState(false);
 
   const [internalIsOpen, setInternalIsOpen] = useState(false);
@@ -126,6 +127,8 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
         boatLength: profile?.boat_length ?? undefined,
       };
 
+      const isProviderContext = routerLocation.pathname.includes('provider');
+
       // ─── Call Edge Function (weather fetched server-side inside it) ─────────
       const { data, error } = await supabase.functions.invoke("ai-captain", {
         body: {
@@ -133,6 +136,7 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
           location,       // lat/lng sent so Edge Function can call Windy API
           userProfile,
           searchDates: null, // Edge Function uses today + 7 days as default range
+          isProviderContext,
         },
       });
 
