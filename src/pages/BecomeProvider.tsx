@@ -1280,6 +1280,29 @@ Address: Prague, Czech Republic
         <main className="py-12">
           <div className="container mx-auto px-4">
             <div className="max-w-2xl mx-auto">
+              <div className="mb-8 rounded-2xl overflow-hidden shadow-lg border border-border bg-black">
+                {/* Desktop Video */}
+                <video 
+                  src="/videos/Reel8WalkthroughLandscape.mp4" 
+                  className="w-full hidden md:block"
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline 
+                  controls 
+                />
+                {/* Mobile Video */}
+                <video 
+                  src="/videos/Reel7Walkthrough.mp4" 
+                  className="w-full block md:hidden object-cover max-h-[70vh]"
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline 
+                  controls 
+                />
+              </div>
+
               {justSubmitted && (
                 <div className="bg-green-50 border border-green-200 rounded-2xl p-8 mb-8 text-center">
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
