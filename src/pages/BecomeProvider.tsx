@@ -1280,27 +1280,32 @@ Address: Prague, Czech Republic
         <main className="py-12">
           <div className="container mx-auto px-4">
             <div className="max-w-2xl mx-auto">
-              <div className="mb-8 rounded-2xl overflow-hidden shadow-lg border border-border bg-black">
-                {/* Desktop Video */}
-                <video 
-                  src="/videos/Reel8WalkthroughLandscape.mp4" 
-                  className="w-full hidden md:block"
-                  autoPlay 
-                  loop 
-                  muted 
-                  playsInline 
-                  controls 
-                />
-                {/* Mobile Video */}
-                <video 
-                  src="/videos/Reel7Walkthrough.mp4" 
-                  className="w-full block md:hidden object-cover max-h-[70vh]"
-                  autoPlay 
-                  loop 
-                  muted 
-                  playsInline 
-                  controls 
-                />
+              <div className="mb-8">
+                <div className="rounded-2xl overflow-hidden shadow-lg border border-border bg-black">
+                  {/* Desktop Video */}
+                  <video 
+                    src="/videos/Reel8WalkthroughLandscape.mp4" 
+                    className="w-full hidden md:block"
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline 
+                    controls 
+                  />
+                  {/* Mobile Video */}
+                  <video 
+                    src="/videos/Reel7Walkthrough.mp4" 
+                    className="w-full block md:hidden object-cover max-h-[70vh]"
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline 
+                    controls 
+                  />
+                </div>
+                <p className="text-center text-sm text-muted-foreground mt-2 font-medium">
+                  💡 Double click to enlarge / Click to pause
+                </p>
               </div>
 
               {justSubmitted && (
