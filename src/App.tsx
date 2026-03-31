@@ -56,6 +56,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import AddMooring from "./pages/AddMooring";
 import EditMooring from "./pages/EditMooring";
+import Unsubscribe from "./pages/Unsubscribe";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import AppRouteGuard from "./components/AppRouteGuard";
@@ -109,6 +110,7 @@ const App = () => {
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/add-mooring" element={<ProtectedRoute><AddMooring /></ProtectedRoute>} />
                 <Route path="/edit-mooring/:id" element={<ProtectedRoute><EditMooring /></ProtectedRoute>} />
+                <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <ConditionalChatWidget />
