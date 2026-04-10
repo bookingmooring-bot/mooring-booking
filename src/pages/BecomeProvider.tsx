@@ -1000,40 +1000,31 @@ Address: Prague, Czech Republic
     return (
       <div className="min-h-screen">
         <main>
-          {/* App Preview Video — shown FIRST */}
-          <section className="py-10 bg-gradient-ocean">
-            <div className="container mx-auto px-4">
-              <div className="max-w-2xl mx-auto">
-                <p className="text-center text-sm font-semibold text-white/60 uppercase tracking-wider mb-3">
-                  See how it works
-                </p>
-                <div className="rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black">
-                  {/* Desktop Video */}
-                  <video
-                    src="/videos/Reel8WalkthroughLandscape.mp4"
-                    className="w-full hidden md:block"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    controls
-                  />
-                  {/* Mobile Video */}
-                  <video
-                    src="/videos/Reel7Walkthrough.mp4"
-                    className="w-full block md:hidden object-cover max-h-[70vh]"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    controls
-                  />
-                </div>
-                <p className="text-center text-xs text-white/50 mt-2">
-                  💡 Double click to enlarge / Click to pause
-                </p>
-              </div>
-            </div>
+          {/* App Preview Video — FULL WIDTH, shown FIRST */}
+          <section className="bg-slate-900 pt-6 pb-0">
+            <p className="text-center text-xs font-semibold text-white/40 uppercase tracking-widest mb-3">
+              See how the app works
+            </p>
+            {/* Desktop Video — full width */}
+            <video
+              src="/videos/Reel8WalkthroughLandscape.mp4"
+              className="w-full hidden md:block"
+              autoPlay
+              loop
+              muted
+              playsInline
+              controls
+            />
+            {/* Mobile Video */}
+            <video
+              src="/videos/Reel7Walkthrough.mp4"
+              className="w-full block md:hidden object-cover max-h-[70vh]"
+              autoPlay
+              loop
+              muted
+              playsInline
+              controls
+            />
           </section>
 
           {/* Hero with Lead Form */}
