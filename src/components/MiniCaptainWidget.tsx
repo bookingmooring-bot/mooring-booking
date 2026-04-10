@@ -221,11 +221,10 @@ const MiniCaptainWidget = () => {
                 className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed ${
-                    msg.role === "user"
+                  className={`max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed ${msg.role === "user"
                       ? "bg-secondary text-secondary-foreground"
                       : "bg-muted text-foreground"
-                  }`}
+                    }`}
                 >
                   <p className="whitespace-pre-line">{msg.content}</p>
                 </div>
