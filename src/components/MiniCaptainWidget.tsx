@@ -331,45 +331,37 @@ const MiniCaptainWidget = () => {
       )}
 
       {/* ── Launcher pill button ── */}
-      <div className="flex flex-col items-end gap-1">
-        <button
-          onClick={() => setIsOpen((v) => !v)}
-          className="relative flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white text-slate-800 border-2 border-gold shadow-[0_4px_24px_rgba(0,0,0,0.35)] hover:scale-105 active:scale-95 transition-transform"
-          aria-label={t('nav.aiAssistant')}
-        >
-          {/* Animated gold ring when closed */}
-          {!isOpen && (
-            <span className="absolute inset-0 rounded-full animate-ping bg-gold/40 pointer-events-none" />
-          )}
-          {isOpen ? (
-            <X size={18} className="text-slate-700" />
-          ) : (
-            <span className="relative w-8 h-8 shrink-0">
-              <span className="w-8 h-8 rounded-full overflow-hidden border-2 border-gold block">
-                <img src={captainAvatar} alt="AI Captain" className="w-full h-full object-cover object-top" />
-              </span>
-              {/* Red notification badge */}
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white flex items-center justify-center">
-                <span className="text-white text-[9px] font-bold leading-none">1</span>
-              </span>
-            </span>
-          )}
-          <span className="text-sm font-bold text-slate-800">{t('nav.aiAssistant', 'AI Captain')}</span>
-          {/* Gold pulse dot when closed */}
-          {!isOpen && (
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-gold" />
-            </span>
-          )}
-        </button>
-        {/* "New message" hint */}
+      <button
+        onClick={() => setIsOpen((v) => !v)}
+        className="relative flex items-center gap-2.5 px-5 py-3 rounded-full bg-gradient-ocean text-primary-foreground shadow-hover hover:scale-105 active:scale-95 transition-transform"
+        aria-label={t('nav.aiAssistant')}
+      >
+        {/* Animated ring when closed */}
         {!isOpen && (
-          <span className="text-[10px] text-white/70 font-medium px-2 drop-shadow">
-            💬 {t('aiChat.newMessage', 'Nova poruka!')}
+          <span className="absolute inset-0 rounded-full animate-ping bg-primary/30 pointer-events-none" />
+        )}
+        {isOpen ? (
+          <X size={18} />
+        ) : (
+          <span className="relative shrink-0">
+            <span className="w-8 h-8 rounded-full overflow-hidden border-2 border-gold block">
+              <img src={captainAvatar} alt="AI Captain" className="w-full h-full object-cover object-top" />
+            </span>
+            {/* Red notification badge */}
+            <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 rounded-full border-2 border-white flex items-center justify-center shadow-md">
+              <span className="text-white text-[10px] font-bold leading-none">1</span>
+            </span>
           </span>
         )}
-      </div>
+        <span className="text-sm font-semibold">{t('nav.aiAssistant')}</span>
+        {/* Pulse dot when closed */}
+        {!isOpen && (
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-gold" />
+          </span>
+        )}
+      </button>
 
     </div>
   );
