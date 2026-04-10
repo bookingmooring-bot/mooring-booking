@@ -166,11 +166,34 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
   return (
     <>
       {!onClose && (
-        <button onClick={handleOpen}
-          className={`fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full shadow-hover overflow-hidden border-2 border-gold transition-transform hover:scale-110 ${isOpen ? 'hidden' : ''}`}
-          aria-label="Open AI Captain">
-          <img src={captainAvatar} alt="AI Captain" className="w-full h-full object-cover object-top" />
-        </button>
+        <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 50, display: isOpen ? 'none' : 'inline-block' }}>
+          <button onClick={handleOpen}
+            className="w-16 h-16 rounded-full shadow-hover overflow-hidden border-2 border-gold transition-transform hover:scale-110"
+            aria-label="Open AI Captain">
+            <img src={captainAvatar} alt="AI Captain" className="w-full h-full object-cover object-top" />
+          </button>
+          {/* Red badge — OUTSIDE button so overflow-hidden doesn't clip it */}
+          <span style={{
+            position: 'absolute',
+            top: '-4px',
+            right: '-4px',
+            width: '22px',
+            height: '22px',
+            background: '#ef4444',
+            borderRadius: '50%',
+            border: '2.5px solid white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '12px',
+            fontWeight: '800',
+            color: 'white',
+            lineHeight: 1,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
+            zIndex: 9999,
+            pointerEvents: 'none',
+          }}>1</span>
+        </div>
       )}
       {isOpen && (
         <div className="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-card rounded-2xl shadow-hover border border-border overflow-hidden animate-fade-in">
