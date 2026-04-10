@@ -1,6 +1,6 @@
 # Product Marketing Context
 
-*Last updated: 2026-03-09*
+*Last updated: 2026-03-31*
 *Stage: PRE-LAUNCH — Zero users. Building supply (mooring providers) first.*
 
 ## Product Overview
@@ -17,35 +17,67 @@
 > [!IMPORTANT]
 > **LAUNCH STAGE: Brand new app, ZERO users.**
 > We are just opening. The entire marketing narrative is: "New app just launched — be among the first mooring owners to list your berth and start earning."
-> **Phase 1 priority: Acquire MOORING OWNERS (Providers / Supply Side)**
+> **Phase 1 priority: Acquire MOORING OWNERS & MARINA OPERATORS (Providers / Supply Side)**
 > Build inventory first. Demand-side (sailors/guests) marketing comes later once there is critical mass of listed moorings.
 
 > [!TIP]
 > **Ad budget strategy:** Start advertising in Mediterranean countries where ads are cheapest (lower CPM/CPC), then expand to pricier markets as revenue grows.
 
-**Target individuals:** Private mooring owners, dock owners, buoy owners, small marina operators along the Mediterranean coast.
-**Target countries (ordered by ad cost — cheapest first):**
-1. 🇭🇷 Croatia — primary market, cheapest ads, strong sailing culture
-2. 🇲🇪 Montenegro — very low ad costs, growing nautical tourism
-3. 🇦🇱 Albania — extremely cheap ads, emerging coastal market
-4. 🇹🇷 Turkey — low ad costs, massive Mediterranean coastline
-5. 🇬🇷 Greece — moderate costs, huge mooring demand
-6. 🇸🇮 Slovenia — small but cheap market
-7. 🇲🇹 Malta — small island, affordable
-8. 🇨🇾 Cyprus — moderate costs
-9. 🇪🇸 Spain — higher ad costs, expand later
-10. 🇮🇹 Italy — higher ad costs, expand later
-11. 🇫🇷 France — most expensive ads, expand last
-**Decision-makers:** Individual mooring/berth owners, small marina operators, waterfront property owners
-**Primary use case:** Monetize an underutilized mooring/berth/buoy by listing it for short-term bookings to visiting sailors
+### Provider Audience — 4 Priorities
+
+**Priority 1 — Large Marinas:**
+- Target: Decision-makers in marina management boards who want to increase revenue
+- Message angle: Revenue growth, digital booking tools, international reach
+- ⚠️ EXCLUDE: Individual berth owners who sublet to third parties — subletting berths to third parties is legally prohibited
+
+**Priority 2 — Small Marina Operators:**
+- Target: Owners of smaller marina complexes who want a digital platform for reservations
+- Message angle: Easy digital booking system, zero upfront cost, grow your occupancy
+
+**Priority 3 — Buoy/Mooring Field Operators:**
+- Target: Private owners, sea-property lessees, and concessionaires who commercially rent mooring/buoy fields (licensed operators only)
+- Message angle: Reach more sailors, manage bookings from one dashboard
+
+**Priority 4 — Coastal Boat Owners with Private Dock:**
+- Target: Owners who have access to a private dock, quay, or pier and can legally rent out that space
+- Message angle: Monetize idle dock space, passive income from your waterfront property
+
+**Target countries — 10 mediteranskih zemalja (kampanja 02.04–10.05.2026):**
+
+| Ad Set | Zemlja | Napomena |
+|--------|--------|----------|
+| SET 1 | 🇭🇷 Croatia | Primary market, cheapest ads, strong sailing culture |
+| SET 2a | 🇮🇹 Italy — Adriatic | Trieste, Venezia, Ancona, Bari, Brindisi — jadranska obala |
+| SET 2b | 🇮🇹 Italy — Mediterranean | Genova, Napulj, Palermo/Sicilija, Cagliari/Sardinija — Tirensko/Mediteran |
+| SET 3 | 🇬🇷 Greece | Islands + coastal 5km; Athens = SAMO Piraeus/coast 5km, ne cijeli grad; + Kavala |
+| SET 4 | 🇪🇸 Spain + 🇫🇷 France + 🇹🇷 Turkey + 🇵🇹 Portugal | Mediterranean elite + Turkey + Portugal; Balearics, Côte d'Azur, Algarve, Turkish coast |
+| SET 5 | 🇸🇮 Slovenia | SAMO: Koper, Izola, Portorož |
+| SET 5 | 🇦🇱 Albania | SAMO: Durrës/Drač + Tirana okrug, Vlorë, Sarandë, jug prema Grčkoj |
+| SET 5 | 🇲🇪 Montenegro | SAMO: Kotor, Tivat, Budva, Bar, Herceg Novi — jadranska obala 5km |
+| SET 5 | 🇨🇾 Cyprus | SAMO obalna mjesta: Limassol, Larnaca, Paphos, Ayia Napa |
+| SET 5 | 🇲🇹 Malta | Cijeli otok (mali = OK) |
+
+> **DODANO:** 🇲🇪 Crna Gora — u SET 5 uz Albaniju. SAMO priobalno: Kotor, Tivat, Budva, Bar, Herceg Novi.
+> **TARGETING:** Strogo 5km od obalne crte. Ne targetirati gradske centre koji nisu direktno uz more.
+
+**Ad targeting parameters:**
+- Age: 20–63
+- Gender: Primarily male (marina owners/operators are predominantly male; allow rare female exceptions)
+- Location radius: 5 km from coastline (strict coastal targeting)
+- Language: Exclusively English for all ads
+- FB/IG split: 70% Facebook / 30% Instagram
+
+**Decision-makers:** Marina management boards, small marina owners, licensed buoy/mooring field operators, private dock/quay owners
+**Primary use case:** Monetize an underutilized mooring/berth/buoy/dock by listing it for short-term bookings to visiting sailors
 **Jobs to be done:**
-- "I have a mooring that sits empty most of the season — I want to earn money from it"
-- "I want a simple way to manage bookings and availability for my berth"
-- "I want to reach international sailors who are looking for moorings in my area"
+- "My marina has underutilized berths — I want to increase occupancy and revenue"
+- "I have a small marina and need a digital booking system without big upfront costs"
+- "I rent out mooring/buoy fields commercially and need better reach"
+- "I have a private dock — I want to earn from it legally"
 **Use cases:**
-- Private buoy owner renting out their mooring when their boat is away
-- Dock/berth owner listing unused spots during summer season
-- Small marina operator expanding visibility beyond local walk-ins
+- Marina manager listing available berths to international sailors
+- Small marina operator replacing manual/phone-based bookings with a digital system
+- Licensed buoy field operator reaching beyond local word-of-mouth
 - Waterfront property owner monetizing their private pier/dock
 - Provider managing multiple moorings from a single dashboard
 
@@ -87,7 +119,9 @@
 | "I don't have time to manage bookings" | The calendar system lets you block dates in seconds. Bookings come with automated confirmations. Most providers spend <5 min/week. |
 | "Nobody will find my mooring" | We support 15 languages, rank on Google for mooring searches, and provide QR codes + affiliate links YOU can share locally. |
 
-**Anti-persona:** Large commercial marinas with their own IT systems and online booking portals. They already have infrastructure and don't need a marketplace.
+**Anti-persona:**
+- Large commercial marinas with their own advanced IT systems and booking portals (they already have full infrastructure)
+- Individual berth owners who sublet their berth to third parties (legally prohibited — do NOT target this segment)
 
 ## Switching Dynamics
 **Push (away from current):** "My mooring sits empty and earns nothing. Facebook posts get lost. I have no way to reach international sailors."
@@ -148,10 +182,11 @@
 
 ## Goals
 **Business goal:** Acquire first 500 real mooring providers across the Mediterranean within 6 months of launch
-**Marketing narrative:** "Brand new app just launched — list your mooring now, be among the first, earn passive income this season"
+**Marketing narrative:** "Brand new app just launched — list your marina free, be among the first providers, fill your berths this season"
 **Conversion action:** Complete the "Become a Provider" registration form at /become-provider
 **Current metrics:** Zero real users (pre-launch). 110 seed/demo moorings in database.
-**Ad budget approach:** Start with cheapest Mediterranean ad markets (Croatia, Montenegro, Albania, Turkey), prove the model, then expand to Greece, Italy, Spain, France
+**Active campaign:** 02.04. – 10.05.2026. | Budget: €1.200 base + €200 reserve = max €1.400
+**Ad budget approach:** 10 coastal Mediterranean markets simultaneously (5 km radius), scaled by performance after T1 (02–09.04.) experimental phase
 
 
 

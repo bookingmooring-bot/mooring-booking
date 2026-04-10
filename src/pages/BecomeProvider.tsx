@@ -1267,6 +1267,42 @@ Address: Prague, Czech Republic
             </div>
           </section>
 
+          {/* App Preview Video */}
+          <section className="py-12 bg-muted">
+            <div className="container mx-auto px-4">
+              <div className="max-w-2xl mx-auto">
+                <p className="text-center text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+                  See how it works
+                </p>
+                <div className="rounded-2xl overflow-hidden shadow-lg border border-border bg-black">
+                  {/* Desktop Video */}
+                  <video
+                    src="/videos/Reel8WalkthroughLandscape.mp4"
+                    className="w-full hidden md:block"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    controls
+                  />
+                  {/* Mobile Video */}
+                  <video
+                    src="/videos/Reel7Walkthrough.mp4"
+                    className="w-full block md:hidden object-cover max-h-[70vh]"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    controls
+                  />
+                </div>
+                <p className="text-center text-sm text-muted-foreground mt-2 font-medium">
+                  💡 Double click to enlarge / Click to pause
+                </p>
+              </div>
+            </div>
+          </section>
+
         </main>
       </div>
     );

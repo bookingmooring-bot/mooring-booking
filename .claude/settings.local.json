@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__meta-ads__get_campaign_performance",
+      "Bash(python send_ads_plan_email.py)",
+      "Bash(supabase --version)",
+      "Bash(npx supabase:*)",
+      "Bash(grep -r \"service_role\\\\|SERVICE_ROLE\\\\|eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\" 'd:/Desktop/Aplikacije1/Mooring Booking' --include=*.env --include=*.json --include=*.ts -l)",
+      "Read(//c/Users/User/.supabase/**)",
+      "Read(//c/Users/User/.config/supabase/**)",
+      "Bash(python -c \":*)",
+      "Bash(python create_new_campaigns.py)",
+      "mcp__meta-ads__get_insights",
+      "mcp__meta-ads__validate_token",
+      "mcp__meta-ads__refresh_to_long_lived_token"
+    ]
+  }
+}

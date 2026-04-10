@@ -45,6 +45,18 @@ const MiniCaptainWidget = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Teaser bubble state
+  const [showTeaser, setShowTeaser] = useState(false);
+  const [teaserIndex, setTeaserIndex] = useState(0);
+  const teaserMessages = [
+    t("aiChat.teaser1", "👋 Bok! Pitaj me bilo što o moru..."),
+    t("aiChat.teaser2", "⚓ Gdje ploviš danas? Mogu pomoći!"),
+    t("aiChat.teaser3", "🌊 Ima li oluja na putu? Pitaj kapetana!"),
+    t("aiChat.teaser4", "🧭 Trebаš vezište? Tu sam 24/7!"),
+  ];
+  const teaserTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const teaserCycleRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const lastAssistantRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -68,6 +80,26 @@ const MiniCaptainWidget = () => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isLoading, isOpen]);
+
+  // Show teaser bubble after 3s, cycle every 4s, hide when chat opens
+  useEffect(() => {
+    if (isOpen) {
+      setShowTeaser(false);
+      if (teaserTimerRef.current) clearTimeout(teaserTimerRef.current);
+      if (teaserCycleRef.current) clearInterval(teaserCycleRef.current);
+      return;
+    }
+    teaserTimerRef.current = setTimeout(() => {
+      setShowTeaser(true);
+      teaserCycleRef.current = setInterval(() => {
+        setTeaserIndex((i) => (i + 1) % teaserMessages.length);
+      }, 4000);
+    }, 3000);
+    return () => {
+      if (teaserTimerRef.current) clearTimeout(teaserTimerRef.current);
+      if (teaserCycleRef.current) clearInterval(teaserCycleRef.current);
+    };
+  }, [isOpen]);
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -259,6 +291,45 @@ const MiniCaptainWidget = () => {
           </div>
         )}
       </div>
+
+      {/* ── Teaser speech bubble ── */}
+      {showTeaser && !isOpen && (
+        <div
+          className="relative max-w-[220px] animate-[fadeSlideUp_0.4s_ease-out]"
+          style={{
+            animation: "fadeSlideUp 0.4s ease-out",
+          }}
+        >
+          <style>{`
+            @keyframes fadeSlideUp {
+              from { opacity: 0; transform: translateY(10px); }
+              to   { opacity: 1; transform: translateY(0); }
+            }
+          `}</style>
+          {/* Bubble */}
+          <div className="bg-card border border-border rounded-2xl rounded-br-sm px-4 py-2.5 shadow-lg relative">
+            <button
+              onClick={(e) => { e.stopPropagation(); setShowTeaser(false); }}
+              className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-muted border border-border flex items-center justify-center text-muted-foreground hover:text-foreground text-[10px] leading-none"
+              aria-label="Zatvori"
+            >
+              ×
+            </button>
+            <p className="text-xs text-foreground font-medium leading-relaxed">
+              {teaserMessages[teaserIndex]}
+            </p>
+          </div>
+          {/* Triangle tail pointing down-right */}
+          <div
+            className="absolute bottom-0 right-4 w-0 h-0"
+            style={{
+              borderLeft: "8px solid transparent",
+              borderTop: "8px solid hsl(var(--border))",
+              transform: "translateY(100%)",
+            }}
+          />
+        </div>
+      )}
 
       {/* ── Launcher pill button ── */}
       <button
