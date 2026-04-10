@@ -1008,7 +1008,7 @@ Address: Prague, Czech Republic
               <Anchor size={100} className="text-gold" />
             </div>
             <div className="container mx-auto px-4 relative z-10">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
                 {/* Left - Video */}
                 <div className="flex flex-col gap-4">
                   <div className="inline-flex items-center gap-2 bg-gold/20 text-gold px-4 py-2 rounded-full w-fit">
