@@ -172,27 +172,13 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
             aria-label="Open AI Captain">
             <img src={captainAvatar} alt="AI Captain" className="w-full h-full object-cover object-top" />
           </button>
-          {/* Red badge — OUTSIDE button so overflow-hidden doesn't clip it */}
-          <span style={{
-            position: 'absolute',
-            top: '-4px',
-            right: '-4px',
-            width: '22px',
-            height: '22px',
-            background: '#ef4444',
-            borderRadius: '50%',
-            border: '2.5px solid white',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '12px',
-            fontWeight: '800',
-            color: 'white',
-            lineHeight: 1,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
-            zIndex: 9999,
-            pointerEvents: 'none',
-          }}>1</span>
+          {/* Speech bubble */}
+          <div 
+            className="absolute right-full bottom-2 mr-3 w-max max-w-[220px] whitespace-normal bg-white text-slate-800 text-sm font-semibold px-4 py-2 rounded-2xl rounded-br-sm shadow-xl border border-slate-200 pointer-events-none animate-bounce"
+            style={{ zIndex: 9999 }}
+          >
+            I am AI Captain, ask me anything!
+          </div>
         </div>
       )}
       {isOpen && (
