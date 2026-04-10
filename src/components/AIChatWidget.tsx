@@ -174,10 +174,12 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
           </button>
           {/* Speech bubble */}
           <div 
-            className="absolute right-full bottom-2 mr-3 w-max max-w-[220px] whitespace-normal bg-white text-slate-800 text-sm font-semibold px-4 py-2 rounded-2xl rounded-br-sm shadow-xl border border-slate-200 pointer-events-none animate-bounce"
+            className="absolute right-[calc(100%+16px)] top-1/2 -translate-y-1/2 w-max max-w-[200px] bg-white text-slate-800 text-sm font-semibold px-4 py-3 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.15)] pointer-events-none animate-bounce"
             style={{ zIndex: 9999 }}
           >
-            I am AI Captain, ask me anything!
+            Hi, I am AI Captain! Ask me anything!
+            {/* Speech bubble tail pointing towards the avatar */}
+            <div className="absolute top-1/2 -right-2 -translate-y-1/2 w-4 h-4 bg-white rotate-45" style={{ zIndex: -1 }} />
           </div>
         </div>
       )}
