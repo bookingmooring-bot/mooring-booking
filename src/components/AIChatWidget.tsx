@@ -172,12 +172,36 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
             aria-label="Open AI Captain">
             <img src={captainAvatar} alt="AI Captain" className="w-full h-full object-cover object-top" />
           </button>
-          {/* Speech bubble */}
+          {/* Red Notification Badge */}
+          <span style={{
+            position: 'absolute',
+            top: '-4px',
+            right: '-4px',
+            width: '22px',
+            height: '22px',
+            background: '#ef4444',
+            borderRadius: '50%',
+            border: '2.5px solid white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '12px',
+            fontWeight: '800',
+            color: 'white',
+            lineHeight: 1,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
+            zIndex: 9999,
+            pointerEvents: 'none',
+          }}>1</span>
+
+          {/* Speech bubble / CTA PopUp */}
           <div 
-            className="absolute right-[calc(100%+16px)] top-1/2 -translate-y-1/2 w-max max-w-[200px] bg-white text-slate-800 text-sm font-semibold px-4 py-3 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.15)] pointer-events-none animate-bounce"
-            style={{ zIndex: 9999 }}
+            className="absolute right-[calc(100%+16px)] top-1/2 -translate-y-1/2 w-max max-w-[220px] bg-white text-slate-800 text-sm px-4 py-3 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.15)] animate-bounce cursor-pointer group"
+            style={{ zIndex: 9998 }}
+            onClick={handleOpen}
           >
-            Hi, I am AI Captain! Ask me anything!
+            <span className="font-semibold block mb-1">I am AI Captain!</span>
+            <span className="text-[#053d5a] font-bold group-hover:underline">Ask me anything...</span>
             {/* Speech bubble tail pointing towards the avatar */}
             <div className="absolute top-1/2 -right-2 -translate-y-1/2 w-4 h-4 bg-white rotate-45" style={{ zIndex: -1 }} />
           </div>
