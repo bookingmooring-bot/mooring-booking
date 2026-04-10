@@ -343,14 +343,30 @@ const MiniCaptainWidget = () => {
         {isOpen ? (
           <X size={18} />
         ) : (
-          <span className="relative shrink-0">
+          <span className="relative w-8 h-8 shrink-0" style={{ display: 'inline-block' }}>
             <span className="w-8 h-8 rounded-full overflow-hidden border-2 border-gold block">
               <img src={captainAvatar} alt="AI Captain" className="w-full h-full object-cover object-top" />
             </span>
-            {/* Red notification badge */}
-            <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 rounded-full border-2 border-white flex items-center justify-center shadow-md">
-              <span className="text-white text-[10px] font-bold leading-none">1</span>
-            </span>
+            {/* Red notification badge — inline style ensures it's always visible */}
+            <span style={{
+              position: 'absolute',
+              top: '-6px',
+              right: '-6px',
+              width: '18px',
+              height: '18px',
+              background: '#ef4444',
+              borderRadius: '50%',
+              border: '2px solid white',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '10px',
+              fontWeight: 'bold',
+              color: 'white',
+              lineHeight: 1,
+              boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+              zIndex: 10,
+            }}>1</span>
           </span>
         )}
         <span className="text-sm font-semibold">{t('nav.aiAssistant')}</span>
