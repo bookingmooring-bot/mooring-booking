@@ -331,55 +331,60 @@ const MiniCaptainWidget = () => {
       )}
 
       {/* ── Launcher pill button ── */}
-      <button
-        onClick={() => setIsOpen((v) => !v)}
-        className="relative flex items-center gap-2.5 px-5 py-3 rounded-full bg-gradient-ocean text-primary-foreground shadow-hover hover:scale-105 active:scale-95 transition-transform"
-        aria-label={t('nav.aiAssistant')}
-      >
-        {/* Animated ring when closed */}
-        {!isOpen && (
-          <span className="absolute inset-0 rounded-full animate-ping bg-primary/30 pointer-events-none" />
-        )}
-        {isOpen ? (
-          <X size={18} />
-        ) : (
-          <span className="relative w-8 h-8 shrink-0" style={{ display: 'inline-block' }}>
-            <span className="w-8 h-8 rounded-full overflow-hidden border-2 border-gold block">
+      <div style={{ position: 'relative', display: 'inline-block' }}>
+        <button
+          onClick={() => setIsOpen((v) => !v)}
+          className="relative flex items-center gap-2.5 px-5 py-3 rounded-full bg-gradient-ocean text-primary-foreground shadow-hover hover:scale-105 active:scale-95 transition-transform"
+          aria-label={t('nav.aiAssistant')}
+        >
+          {/* Animated ring when closed */}
+          {!isOpen && (
+            <span className="absolute inset-0 rounded-full animate-ping bg-primary/30 pointer-events-none" />
+          )}
+          {isOpen ? (
+            <X size={18} />
+          ) : (
+            <span className="w-8 h-8 rounded-full overflow-hidden border-2 border-gold shrink-0">
               <img src={captainAvatar} alt="AI Captain" className="w-full h-full object-cover object-top" />
             </span>
-            {/* Red notification badge — inline style ensures it's always visible */}
-            <span style={{
-              position: 'absolute',
-              top: '-6px',
-              right: '-6px',
-              width: '18px',
-              height: '18px',
-              background: '#ef4444',
-              borderRadius: '50%',
-              border: '2px solid white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '10px',
-              fontWeight: 'bold',
-              color: 'white',
-              lineHeight: 1,
-              boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
-              zIndex: 10,
-            }}>1</span>
-          </span>
-        )}
-        <span className="text-sm font-semibold">{t('nav.aiAssistant')}</span>
-        {/* Pulse dot when closed */}
+          )}
+          <span className="text-sm font-semibold">{t('nav.aiAssistant')}</span>
+          {/* Pulse dot when closed */}
+          {!isOpen && (
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-gold" />
+            </span>
+          )}
+        </button>
+
+        {/* Badge is OUTSIDE the button — never clipped */}
         {!isOpen && (
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-gold" />
-          </span>
+          <span style={{
+            position: 'absolute',
+            top: '-4px',
+            left: '-4px',
+            width: '20px',
+            height: '20px',
+            background: '#ef4444',
+            borderRadius: '50%',
+            border: '2.5px solid white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '11px',
+            fontWeight: '800',
+            color: 'white',
+            lineHeight: 1,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+            zIndex: 9999,
+            pointerEvents: 'none',
+          }}>1</span>
         )}
-      </button>
+      </div>
 
     </div>
+
   );
 };
 
