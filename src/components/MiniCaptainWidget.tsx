@@ -94,7 +94,7 @@ const MiniCaptainWidget = () => {
       teaserCycleRef.current = setInterval(() => {
         setTeaserIndex((i) => (i + 1) % teaserMessages.length);
       }, 4000);
-    }, 3000);
+    }, 1000);
     return () => {
       if (teaserTimerRef.current) clearTimeout(teaserTimerRef.current);
       if (teaserCycleRef.current) clearInterval(teaserCycleRef.current);
@@ -334,13 +334,17 @@ const MiniCaptainWidget = () => {
       {/* ── Launcher pill button ── */}
       <button
         onClick={() => setIsOpen((v) => !v)}
-        className="flex items-center gap-2.5 px-5 py-3 rounded-full bg-gradient-ocean text-primary-foreground shadow-hover hover:scale-105 active:scale-95 transition-transform"
+        className="relative flex items-center gap-2.5 px-5 py-3 rounded-full bg-gradient-ocean text-primary-foreground shadow-hover hover:scale-105 active:scale-95 transition-transform"
         aria-label={t('nav.aiAssistant')}
       >
+        {/* Animated ring when closed */}
+        {!isOpen && (
+          <span className="absolute inset-0 rounded-full animate-ping bg-primary/30 pointer-events-none" />
+        )}
         {isOpen ? (
           <X size={18} />
         ) : (
-          <span className="w-8 h-8 rounded-full overflow-hidden border border-gold/60 shrink-0">
+          <span className="w-8 h-8 rounded-full overflow-hidden border-2 border-gold shrink-0">
             <img src={captainAvatar} alt="AI Captain" className="w-full h-full object-cover object-top" />
           </span>
         )}
