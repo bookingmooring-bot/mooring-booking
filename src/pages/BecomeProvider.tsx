@@ -1000,32 +1000,7 @@ Address: Prague, Czech Republic
     return (
       <div className="min-h-screen">
         <main>
-          {/* App Preview Video — FULL WIDTH, shown FIRST */}
-          <section className="bg-slate-900 pt-6 pb-0">
-            <p className="text-center text-xs font-semibold text-white/40 uppercase tracking-widest mb-3">
-              See how the app works
-            </p>
-            {/* Desktop Video — full width */}
-            <video
-              src="/videos/Reel8WalkthroughLandscape.mp4"
-              className="w-full hidden md:block"
-              autoPlay
-              loop
-              muted
-              playsInline
-              controls
-            />
-            {/* Mobile Video */}
-            <video
-              src="/videos/Reel7Walkthrough.mp4"
-              className="w-full block md:hidden object-cover max-h-[70vh]"
-              autoPlay
-              loop
-              muted
-              playsInline
-              controls
-            />
-          </section>
+
 
           {/* Hero with Lead Form */}
           <section className="py-16 bg-gradient-ocean relative overflow-hidden">
@@ -1034,30 +1009,51 @@ Address: Prague, Czech Republic
             </div>
             <div className="container mx-auto px-4 relative z-10">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-                {/* Left - Text */}
-                <div>
-                  <div className="inline-flex items-center gap-2 bg-gold/20 text-gold px-4 py-2 rounded-full mb-6">
+                {/* Left - Video */}
+                <div className="flex flex-col gap-4">
+                  <div className="inline-flex items-center gap-2 bg-gold/20 text-gold px-4 py-2 rounded-full w-fit">
                     <Star size={16} />
                     <span className="text-sm font-medium">Join our mooring providers</span>
                   </div>
-                  <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
+                  <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground">
                     List your moorings
                     <span className="block text-gold">and turn them into income</span>
                   </h1>
-                  <p className="text-lg text-primary-foreground/80 mb-8">
+                  <p className="text-primary-foreground/80">
                     List your berths on docks, buoys or in a marina and watch the AI captain find them — bookings come to you.
                   </p>
-                  <div className="space-y-3 text-primary-foreground/90">
+                  {/* Video player in left column */}
+                  <div className="rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-black mt-2">
+                    <video
+                      src="/videos/Reel8WalkthroughLandscape.mp4"
+                      className="w-full hidden md:block"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      controls
+                    />
+                    <video
+                      src="/videos/Reel7Walkthrough.mp4"
+                      className="w-full block md:hidden"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      controls
+                    />
+                  </div>
+                  <div className="space-y-2 text-primary-foreground/90 text-sm">
                     <div className="flex items-center gap-3">
-                      <Check className="text-gold flex-shrink-0" size={20} />
+                      <Check className="text-gold flex-shrink-0" size={16} />
                       <span>Free listing — no subscription</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <Check className="text-gold flex-shrink-0" size={20} />
+                      <Check className="text-gold flex-shrink-0" size={16} />
                       <span>85% earnings are yours (only 15% commission)</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <Check className="text-gold flex-shrink-0" size={20} />
+                      <Check className="text-gold flex-shrink-0" size={16} />
                       <span>Available in 11 Mediterranean countries</span>
                     </div>
                   </div>
