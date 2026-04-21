@@ -216,7 +216,27 @@ const BecomeProviderPage = () => {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
     const fromLead = params.get('fromLead') === '1';
+    const fbLeadId = params.get('fbld_id');
     if (fromLead) setAutoOpenFromLead(true);
+
+    if (fbLeadId && /^\d{6,32}$/.test(fbLeadId)) {
+      const supabaseUrl = (import.meta as any).env?.VITE_SUPABASE_URL || 'https://bblxawscmyzelinidkmb.supabase.co';
+      fetch(`${supabaseUrl}/functions/v1/resolve-fb-lead?fb_lead_id=${encodeURIComponent(fbLeadId)}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data?.magic_link_url) {
+            window.location.href = data.magic_link_url;
+          } else {
+            setAutoOpenFromLead(true);
+            window.history.replaceState(null, '', window.location.pathname + '?fromLead=1');
+          }
+        })
+        .catch(() => {
+          setAutoOpenFromLead(true);
+          window.history.replaceState(null, '', window.location.pathname + '?fromLead=1');
+        });
+      return;
+    }
 
     if (code) {
       supabase.auth.exchangeCodeForSession(code).then(({ data, error }) => {
