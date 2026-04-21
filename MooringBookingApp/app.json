@@ -1,0 +1,99 @@
+{
+  "expo": {
+    "name": "Mooring Booking",
+    "slug": "mooring-booking",
+    "scheme": "mooringbooking",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0E17"
+    },
+    "ios": {
+      "bundleIdentifier": "com.mooringbooking.app",
+      "supportsTablet": false,
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Camera access for profile photos",
+        "NSPhotoLibraryUsageDescription": "Photo access for uploading mooring images",
+        "NSLocationWhenInUseUsageDescription": "Location access to find moorings near you",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Location access to find moorings near you"
+      },
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
+          }
+        ]
+      }
+    },
+    "android": {
+      "package": "com.mooringbooking.app",
+      "versionCode": 8,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A0E17"
+      },
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE"
+      ],
+      "googleServicesFile": "./google-services.json",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyPlaceholderKeyForBuildOnly00000000"
+        }
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/logo-icon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "@react-native-community/datetimepicker",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Mooring Booking to use your location to show nearby moorings.",
+          "locationWhenInUsePermission": "Allow Mooring Booking to use your location to show nearby moorings."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/logo-icon.png",
+          "color": "#C8A951",
+          "defaultChannel": "default"
+        }
+      ]
+    ],
+    "updates": {
+      "url": "https://u.expo.dev/899c1404-6230-4e91-a494-d98834beaaf1",
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD"
+    },
+    "runtimeVersion": "1.0.0",
+    "extra": {
+      "eas": {
+        "projectId": "899c1404-6230-4e91-a494-d98834beaaf1"
+      }
+    }
+  }
+}

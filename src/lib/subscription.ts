@@ -27,6 +27,7 @@ export const getUserTier = (profile: Profile | null | undefined): SubscriptionTi
  * Check if the user has an active premium subscription.
  */
 export const isPremium = (profile: Profile | null | undefined): boolean => {
+  if (profile?.role === 'admin') return true; // Admins are always premium
   const tier = getUserTier(profile);
   return tier === 'premium-monthly' || tier === 'premium-annual';
 };
@@ -66,6 +67,7 @@ export const AI_BASIC_LIMIT = 5;
  * Check if a user has remaining AI questions.
  */
 export const hasAIQuestionsRemaining = (profile: Profile | null | undefined): boolean => {
+  if (profile?.role === 'admin') return true; // Admins have unlimited questions
   if (isPremium(profile)) return true;
   if (!profile) return true; // allow unauthenticated users (localStorage fallback)
   return (profile.ai_questions_used ?? 0) < AI_BASIC_LIMIT;

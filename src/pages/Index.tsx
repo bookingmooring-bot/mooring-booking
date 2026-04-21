@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import PopularMoorings from "@/components/PopularMoorings";
 import HowItWorks from "@/components/HowItWorks";
-import Testimonials from "@/components/Testimonials";
+
 import HomePricing from "@/components/HomePricing";
 import ProviderCTA from "@/components/ProviderCTA";
 import AICaptainTeaser from "@/components/AICaptainTeaser";
@@ -81,7 +81,7 @@ const Index = () => {
         
         <HowItWorks />
         <AICaptainTeaser />
-        <Testimonials />
+
         
         {/* Ad Banner */}
         <section className="py-4 bg-background">

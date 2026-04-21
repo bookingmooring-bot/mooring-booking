@@ -166,21 +166,29 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
   const canProceedStep1 = dateRange?.from && dateRange?.to && isRangeValid() && bookingData.boatName;
   const canProceedStep2 = bookingData.guestName && bookingData.guestEmail && bookingData.guestPhone;
 
-  const buildBookingPayload = () => ({
-    mooring_id: mooring.id,
-    check_in: checkInStr,
-    check_out: checkOutStr,
-    boat_name: bookingData.boatName,
-    boat_length: bookingData.boatLength ? parseFloat(bookingData.boatLength) : undefined,
-    guest_name: bookingData.guestName,
-    guest_email: bookingData.guestEmail,
-    guest_phone: bookingData.guestPhone,
-    nights: Math.max(1, nights),
-    price_per_night: discountedPrice,
-    total_price: totalPrice,
-    commission_amount: parseFloat((totalPrice * 0.15).toFixed(2)),
-    is_now4today: mooring.isNow4Today || false,
-  });
+  const buildBookingPayload = () => {
+    const referralCode = sessionStorage.getItem('referral_code') ?? undefined;
+    const affiliateCommission = referralCode
+      ? parseFloat((totalPrice * 0.10).toFixed(2))
+      : undefined;
+    return {
+      mooring_id: mooring.id,
+      check_in: checkInStr,
+      check_out: checkOutStr,
+      boat_name: bookingData.boatName,
+      boat_length: bookingData.boatLength ? parseFloat(bookingData.boatLength) : undefined,
+      guest_name: bookingData.guestName,
+      guest_email: bookingData.guestEmail,
+      guest_phone: bookingData.guestPhone,
+      nights: Math.max(1, nights),
+      price_per_night: discountedPrice,
+      total_price: totalPrice,
+      commission_amount: parseFloat((totalPrice * 0.15).toFixed(2)),
+      is_now4today: mooring.isNow4Today || false,
+      referral_code: referralCode,
+      affiliate_commission: affiliateCommission,
+    };
+  };
 
   const handlePayWithCard = async () => {
     // Triggers Stripe Checkout → booking created by webhook after payment
@@ -215,6 +223,8 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
         payment_method: 'cash',
         payment_status: 'pending',
       });
+      // Clear referral code after attribution
+      sessionStorage.removeItem('referral_code');
       setStep(4);
       toast.success(t('booking.confirmed', 'Booking Confirmed!'));
     } catch (error: any) {
@@ -522,7 +532,7 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
                 {/* Owner Contact */}
                 <div className="bg-card rounded-lg p-2 sm:p-3 mb-3">
                   <p className="text-xs text-muted-foreground">{t('booking.mooringOwner', 'Mooring Owner')}</p>
-                  <p className="font-medium text-foreground">{mooring.ownerName || "Marko Horvat"}</p>
+                  <p className="font-medium text-foreground">{mooring.ownerName || "Alessandro Rossi"}</p>
                   <button
                     onClick={callOwner}
                     className="text-secondary flex items-center gap-1 mt-1 text-sm"

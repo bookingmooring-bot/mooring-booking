@@ -24,7 +24,7 @@ interface MooringLocation {
 // Mediterranean mooring locations - major port cities
 export const mooringLocations: MooringLocation[] = [
   // Croatia
-  { id: "1", name: "Split Marina Bay", location: "Split", country: "Croatia", countryFlag: "🇭🇷", lat: 43.5081, lng: 16.4402, price: 65, rating: 4.9, available: true, ownerPhone: "+385 91 234 5678", ownerName: "Marko Horvat" },
+  { id: "1", name: "Split Marina Bay", location: "Split", country: "Croatia", countryFlag: "🇭🇷", lat: 43.5081, lng: 16.4402, price: 65, rating: 4.9, available: true, ownerPhone: "+385 91 234 5678", ownerName: "Alessandro Rossi" },
   { id: "2", name: "Dubrovnik Old Port", location: "Dubrovnik", country: "Croatia", countryFlag: "🇭🇷", lat: 42.6507, lng: 18.0944, price: 85, rating: 4.8, available: true, ownerPhone: "+385 99 876 5432", ownerName: "Ivan Perić" },
   { id: "3", name: "Zadar Yacht Haven", location: "Zadar", country: "Croatia", countryFlag: "🇭🇷", lat: 44.1194, lng: 15.2314, price: 55, rating: 4.7, available: true, ownerPhone: "+385 95 111 2233", ownerName: "Ana Kovač" },
   { id: "4", name: "Rijeka Harbor Point", location: "Rijeka", country: "Croatia", countryFlag: "🇭🇷", lat: 45.3271, lng: 14.4422, price: 50, rating: 4.5, available: true, ownerPhone: "+385 91 333 4455", ownerName: "Petar Matić" },

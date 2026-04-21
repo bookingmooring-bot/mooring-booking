@@ -103,50 +103,6 @@ const benefits = [
   },
 ];
 
-const testimonials = [
-  {
-    quote: "I was skeptical at first, but Mooring Booking changed everything. My private buoy now brings in an extra €6,000 per season!",
-    author: "Marko K.",
-    location: "Dubrovnik, Croatia",
-    earnings: "€6,200/season",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop"
-  },
-  {
-    quote: "The platform is so easy to use. I set up my dock in 10 minutes and had my first booking within 2 days.",
-    author: "Giuseppe R.",
-    location: "Portofino, Italy",
-    earnings: "€4,800/season",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop"
-  },
-  {
-    quote: "Finally a fair alternative to giving berths to friends for free. Now I get paid properly.",
-    author: "Elena P.",
-    location: "Santorini, Greece",
-    earnings: "€3,500/season",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop"
-  },
-  {
-    quote: "My marina berth was sitting empty for 6 months a year. Now I earn €15,000+ annually from bookings I never expected!",
-    author: "Luka M.",
-    location: "Dubrovnik, Croatia",
-    earnings: "€15,400/year",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop"
-  },
-  {
-    quote: "50% of my income now comes from Mooring Booking. The QR code feature makes it so easy for visiting sailors!",
-    author: "Dimitris K.",
-    location: "Mykonos, Greece",
-    earnings: "€25,000/season",
-    avatar: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=150&h=150&fit=crop"
-  },
-  {
-    quote: "I have 3 private buoys and I earn more from them than from my regular job. Mooring Booking made that possible!",
-    author: "Marco T.",
-    location: "Amalfi, Italy",
-    earnings: "€18,500/season",
-    avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop"
-  },
-];
 
 const generateCalendarDays = (): CalendarDay[] => {
   const days: CalendarDay[] = [];
