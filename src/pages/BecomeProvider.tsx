@@ -1418,7 +1418,8 @@ Address: Prague, Czech Republic
   }
 
   // Registration Form
-  const showLeadStepper = autoOpenFromLead && !editingMooringId;
+  const showLeadStepper = !editingMooringId;
+  const showLeadWelcomeBadge = autoOpenFromLead && !editingMooringId;
   const leadFirstName = (user?.user_metadata?.full_name as string | undefined)?.split(' ')[0]
     || (user?.email ? user.email.split('@')[0] : '');
   return (
@@ -1466,7 +1467,7 @@ Address: Prague, Czech Republic
             )}
             {/* Form Header */}
             <div className="text-center mb-10">
-              {showLeadStepper && leadFirstName && (
+              {showLeadWelcomeBadge && leadFirstName && (
                 <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-full text-sm font-medium mb-4">
                   <Check size={16} strokeWidth={3} />
                   Welcome, {leadFirstName}! You're signed in.
@@ -1478,7 +1479,7 @@ Address: Prague, Czech Republic
               <p className="text-muted-foreground">
                 {editingMooringId
                   ? 'Update the details for your mooring'
-                  : showLeadStepper
+                  : showLeadWelcomeBadge
                     ? "We've pre-filled some details from your Facebook form. Just finish the rest and publish your listing."
                     : 'Fill in the details about your mooring to publish it on the platform'}
               </p>
