@@ -110,8 +110,15 @@ Deno.serve(async (req: Request) => {
       } else {
         userId = newUser.user.id;
         isNewUser = true;
-        await supabase.from('profiles').update({ full_name, phone: phone || null, role: 'provider' }).eq('id', userId);
       }
+    }
+
+    if (userId) {
+      await supabase.from('profiles').update({
+        full_name,
+        phone: phone || null,
+        role: 'provider',
+      }).eq('id', userId);
     }
 
     const { data: lead, error: leadError } = await supabase.from('fb_leads').upsert({
