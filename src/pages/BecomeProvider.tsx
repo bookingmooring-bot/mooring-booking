@@ -245,11 +245,20 @@ const BecomeProviderPage = () => {
         }
       });
     } else if (hash && (hash.includes('access_token') || hash.includes('refresh_token'))) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session) {
-          window.history.replaceState(null, '', window.location.pathname);
-        }
-      });
+      const hashParams = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
+      const accessToken = hashParams.get('access_token');
+      const refreshToken = hashParams.get('refresh_token');
+      if (accessToken && refreshToken) {
+        supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }).then(({ error }) => {
+          if (!error) {
+            window.history.replaceState(null, '', window.location.pathname + (fromLead ? '?fromLead=1' : ''));
+          }
+        });
+      } else {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (session) window.history.replaceState(null, '', window.location.pathname);
+        });
+      }
     } else if (fromLead) {
       window.history.replaceState(null, '', window.location.pathname);
     }
