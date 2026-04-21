@@ -1418,21 +1418,69 @@ Address: Prague, Czech Republic
   }
 
   // Registration Form
+  const showLeadStepper = autoOpenFromLead && !editingMooringId;
+  const leadFirstName = (user?.user_metadata?.full_name as string | undefined)?.split(' ')[0]
+    || (user?.email ? user.email.split('@')[0] : '');
   return (
     <div className="min-h-screen bg-muted">
       <ProviderMiniHeader mooringCount={mooringCount} />
       <main className="py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
+            {showLeadStepper && (
+              <div className="bg-card rounded-xl p-6 shadow-card mb-8">
+                <div className="flex items-center justify-between max-w-2xl mx-auto">
+                  {/* Step 1: Account created */}
+                  <div className="flex flex-col items-center flex-1 min-w-0">
+                    <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white shrink-0">
+                      <Check size={20} strokeWidth={3} />
+                    </div>
+                    <span className="text-xs md:text-sm mt-2 text-center text-foreground font-medium">
+                      Account created
+                    </span>
+                  </div>
+                  {/* Connector */}
+                  <div className="flex-1 h-1 bg-emerald-500 -mx-2 mb-6 rounded-full" />
+                  {/* Step 2: Publish mooring (current) */}
+                  <div className="flex flex-col items-center flex-1 min-w-0">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-bold shrink-0 ring-4 ring-blue-500/20 animate-pulse">
+                      2
+                    </div>
+                    <span className="text-xs md:text-sm mt-2 text-center text-foreground font-semibold">
+                      Publish your mooring
+                    </span>
+                  </div>
+                  {/* Connector */}
+                  <div className="flex-1 h-1 bg-muted -mx-2 mb-6 rounded-full" />
+                  {/* Step 3: First booking */}
+                  <div className="flex flex-col items-center flex-1 min-w-0">
+                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground font-bold shrink-0">
+                      3
+                    </div>
+                    <span className="text-xs md:text-sm mt-2 text-center text-muted-foreground">
+                      First booking
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
             {/* Form Header */}
             <div className="text-center mb-10">
+              {showLeadStepper && leadFirstName && (
+                <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-full text-sm font-medium mb-4">
+                  <Check size={16} strokeWidth={3} />
+                  Welcome, {leadFirstName}! You're signed in.
+                </div>
+              )}
               <h1 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
                 {editingMooringId ? 'Edit Your Mooring' : 'Publish Your Mooring'}
               </h1>
               <p className="text-muted-foreground">
                 {editingMooringId
                   ? 'Update the details for your mooring'
-                  : 'Fill in the details about your mooring to publish it on the platform'}
+                  : showLeadStepper
+                    ? "We've pre-filled some details from your Facebook form. Just finish the rest and publish your listing."
+                    : 'Fill in the details about your mooring to publish it on the platform'}
               </p>
             </div>
 
