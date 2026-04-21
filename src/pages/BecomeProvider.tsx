@@ -892,35 +892,33 @@ Address: Prague, Czech Republic
         if (!authFormData.full_name || !authFormData.email || !authFormData.phone || !authFormData.password) {
           throw new Error("Please fill in all fields.");
         }
-        
-        // 1. Save lead to backend first as requested (semi-finished user)
-        fetch(
-          `${import.meta.env.VITE_SUPABASE_URL || 'https://bblxawscmyzelinidkmb.supabase.co'}/functions/v1/process-fb-lead`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              full_name: authFormData.full_name,
-              email: authFormData.email,
-              phone: authFormData.phone,
-              has_mooring: true,
-              fb_campaign_name: 'Website Lead Form (Short Auth)',
-            }),
-          }
-        ).catch(e => console.error("Lead save failed", e)); // non-blocking
 
-        // 2. Sign up user
+        // 1. Sign up user (password-based)
         const { error } = await signUp(authFormData.email, authFormData.password, authFormData.full_name);
         if (error) throw error;
 
+        // 2. Populate profile + fb_leads lead entry (matches FB flow shape)
         const { data: { session: newSession } } = await supabase.auth.getSession();
-        if (newSession?.user?.id) {
+        const newUserId = newSession?.user?.id || null;
+
+        if (newUserId) {
           await supabase.from('profiles').upsert({
-            id: newSession.user.id,
+            id: newUserId,
+            full_name: authFormData.full_name,
             phone: authFormData.phone,
             role: 'provider',
           }, { onConflict: 'id' });
         }
+
+        await supabase.from('fb_leads').upsert({
+          full_name: authFormData.full_name,
+          email: authFormData.email,
+          phone: authFormData.phone,
+          has_mooring: true,
+          status: 'registered',
+          user_id: newUserId,
+          fb_campaign_name: 'Website Lead Form (Short Auth)',
+        }, { onConflict: 'email' });
 
         toast({ title: "Account created!", description: "You can now add your mooring." });
       } else {
