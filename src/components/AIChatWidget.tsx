@@ -195,13 +195,13 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
           }}>1</span>
 
           {/* Speech bubble / CTA PopUp */}
-          <div 
-            className="absolute right-[calc(100%+16px)] top-1/2 -translate-y-1/2 w-max max-w-[220px] bg-white text-slate-800 text-sm px-4 py-3 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.15)] animate-bounce cursor-pointer group"
+          <div
+            className="absolute right-[calc(100%+16px)] top-[30%] -translate-y-1/2 w-max max-w-[220px] bg-white text-slate-800 text-sm px-4 py-3 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.15)] animate-bounce cursor-pointer group"
             style={{ zIndex: 9998 }}
             onClick={handleOpen}
           >
             <span className="font-semibold block mb-1">I am AI Captain!</span>
-            <span className="text-[#053d5a] font-bold group-hover:underline">Ask me anything...</span>
+            <span className="text-[#053d5a] font-bold group-hover:underline">Ask me anything about nautics</span>
             {/* Speech bubble tail pointing towards the avatar */}
             <div className="absolute top-1/2 -right-2 -translate-y-1/2 w-4 h-4 bg-white rotate-45" style={{ zIndex: -1 }} />
           </div>

@@ -6,6 +6,15 @@
 .env.development
 .env.staging
 
+# Meta Ads automation — credentials and run outputs
+scripts/meta_ads/.env
+scripts/meta_ads/output/
+scripts/meta_ads/__pycache__/
+scripts/meta_ads/**/__pycache__/
+
+# MCP config with tokens - NEVER commit to git!
+.mcp.json
+
 # Logs
 logs
 *.log

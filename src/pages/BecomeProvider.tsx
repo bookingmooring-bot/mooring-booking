@@ -155,7 +155,7 @@ const ProviderMiniHeader = ({ mooringCount }: { mooringCount: number }) => {
 
 const BecomeProviderPage = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, signUp, signIn, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showForm, setShowForm] = useState(false);
@@ -208,29 +208,39 @@ const BecomeProviderPage = () => {
     dataTransfer: false,
   });
   const [calendarDays, setCalendarDays] = useState(generateCalendarDays());
+  const [autoOpenFromLead, setAutoOpenFromLead] = useState(false);
 
   // Handle OAuth callback — when Google redirects back after login
   useEffect(() => {
     const hash = window.location.hash;
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
-    
+    const fromLead = params.get('fromLead') === '1';
+    if (fromLead) setAutoOpenFromLead(true);
+
     if (code) {
-      // PKCE flow: exchange code for session
       supabase.auth.exchangeCodeForSession(code).then(({ data, error }) => {
         if (!error && data.session) {
           window.history.replaceState(null, '', window.location.pathname);
         }
       });
     } else if (hash && (hash.includes('access_token') || hash.includes('refresh_token'))) {
-      // Implicit flow: tokens in hash
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (session) {
           window.history.replaceState(null, '', window.location.pathname);
         }
       });
+    } else if (fromLead) {
+      window.history.replaceState(null, '', window.location.pathname);
     }
   }, []);
+
+  useEffect(() => {
+    if (autoOpenFromLead && user && !showForm) {
+      setShowForm(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [autoOpenFromLead, user, showForm]);
 
   // Pre-fill form from lead data when authenticated user loads page
   // Also: ensure Google OAuth users get provider role + lead entry
@@ -809,8 +819,14 @@ Address: Prague, Czech Republic
 
         toast({
           title: '✅ Mooring Published!',
-          description: 'Your mooring is now live and visible to all guests.',
+          description: 'Your mooring is live! Check your email to verify your account.',
         });
+
+        // Trigger email verification after mooring is published (step 2)
+        supabase.auth.signInWithOtp({
+          email: user!.email!,
+          options: { shouldCreateUser: false },
+        }).catch(() => {}); // non-blocking, best-effort
       }
 
       setConsentAccepted(false);
@@ -829,143 +845,99 @@ Address: Prague, Czech Republic
     }
   };
 
-  const [leadFormData, setLeadFormData] = useState({
+  const [authMode, setAuthMode] = useState<'register' | 'login'>('register');
+  const [authFormData, setAuthFormData] = useState({
     full_name: "",
     email: "",
     phone: "",
-    city: "",
-    country: "",
-    has_mooring: false,
-    mooring_types: [] as string[],
-    mooring_quantities: {} as Record<string, number>,
+    password: "",
   });
-  const [leadSubmitting, setLeadSubmitting] = useState(false);
-  const [leadSubmitted, setLeadSubmitted] = useState(false);
+  const [authSubmitting, setAuthSubmitting] = useState(false);
 
-
-  const handleLeadSubmit = async (e: React.FormEvent) => {
+  const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Manual validation for fields that HTML5 can't validate
-    if (!leadFormData.country) {
-      toast({ title: "Select country", description: "Please select a country from the list.", variant: "destructive" });
-      return;
-    }
-    if (leadFormData.mooring_types.length === 0) {
-      toast({ title: "Select mooring type", description: "Please check at least one mooring type.", variant: "destructive" });
-      return;
-    }
-
-    // Validate quantities - set any empty ones to 1
-    const cleanedQuantities: Record<string, number> = {};
-    for (const typeId of leadFormData.mooring_types) {
-      const val = leadFormData.mooring_quantities[typeId];
-      cleanedQuantities[typeId] = (val && val > 0) ? val : 1;
-    }
-
-    setLeadSubmitting(true);
+    setAuthSubmitting(true);
+    
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL || 'https://bblxawscmyzelinidkmb.supabase.co'}/functions/v1/process-fb-lead`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...leadFormData,
-            mooring_type: leadFormData.mooring_types.join(', '),
-            mooring_quantities: cleanedQuantities,
-            fb_campaign_name: 'Website Lead Form',
-          }),
+      if (authMode === 'register') {
+        if (!authFormData.full_name || !authFormData.email || !authFormData.phone || !authFormData.password) {
+          throw new Error("Please fill in all fields.");
         }
-      );
-      const result = await response.json();
-      if (result.success) {
-        setLeadSubmitted(true);
-        toast({
-          title: "✅ Registration successful!",
-          description: "Check your email for the access link.",
-        });
+        
+        // 1. Save lead to backend first as requested (semi-finished user)
+        fetch(
+          `${import.meta.env.VITE_SUPABASE_URL || 'https://bblxawscmyzelinidkmb.supabase.co'}/functions/v1/process-fb-lead`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              full_name: authFormData.full_name,
+              email: authFormData.email,
+              phone: authFormData.phone,
+              has_mooring: true,
+              fb_campaign_name: 'Website Lead Form (Short Auth)',
+            }),
+          }
+        ).catch(e => console.error("Lead save failed", e)); // non-blocking
+
+        // 2. Sign up user
+        const { error } = await signUp(authFormData.email, authFormData.password, authFormData.full_name);
+        if (error) throw error;
+
+        const { data: { session: newSession } } = await supabase.auth.getSession();
+        if (newSession?.user?.id) {
+          await supabase.from('profiles').upsert({
+            id: newSession.user.id,
+            phone: authFormData.phone,
+            role: 'provider',
+          }, { onConflict: 'id' });
+        }
+
+        toast({ title: "Account created!", description: "You can now add your mooring." });
       } else {
-        throw new Error(result.error || 'Submission failed');
+        const { error } = await signIn(authFormData.email, authFormData.password);
+        if (error) throw error;
+        toast({ title: "Welcome back!" });
       }
+      
+      // Pre-fill phone from auth form into mooring form
+      if (authFormData.phone) {
+        setFormData(prev => ({ ...prev, phone: authFormData.phone }));
+      }
+
+      // Auto-open mooring form
+      setShowForm(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
+      const msg = err.message || "";
+      const description = msg.toLowerCase().includes("rate limit")
+        ? "Too many attempts. Please wait a few minutes and try again."
+        : msg || "Something went wrong.";
       toast({
         title: "Error",
-        description: err.message || "Something went wrong. Please try again.",
+        description,
         variant: "destructive",
       });
     } finally {
-      setLeadSubmitting(false);
+      setAuthSubmitting(false);
     }
   };
 
   const monthlyAddOnCost = (formData.marketingTools ? 5 : 0) + (formData.premiumListing ? 9.99 : 0);
   const yearlyAddOnCost = formData.insuranceMediation ? 9.99 : 0;
 
-  // Lead submitted success screen
-  if (leadSubmitted && !user) {
-    return (
-      <div className="min-h-screen">
-        <main>
-          <section className="min-h-screen flex items-center justify-center bg-gradient-ocean relative overflow-hidden">
-            <div className="container mx-auto px-4 relative z-10">
-              <div className="max-w-lg mx-auto text-center">
-                <div className="mb-8">
-                  <Anchor size={40} className="text-gold mx-auto mb-2" />
-                  <span className="text-primary-foreground/60 text-sm font-medium">Mooring Booking</span>
-                </div>
-                <div className="w-20 h-20 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Check className="text-gold" size={40} />
-                </div>
-                <h1 className="font-heading text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-                  Registration successful! 🎉
-                </h1>
-                <p className="text-primary-foreground/80 text-lg mb-6">
-                  We sent an email to <strong className="text-gold">{leadFormData.email}</strong> with your access link.
-                </p>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-left mb-8">
-                  <p className="text-primary-foreground font-medium mb-3">Next steps:</p>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <span className="bg-gold text-gold-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold">1</span>
-                      <span className="text-primary-foreground/80">Open the email and click the link</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="bg-gold text-gold-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold">2</span>
-                      <span className="text-primary-foreground/80">Add photos and details about your mooring</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="bg-gold text-gold-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold">3</span>
-                      <span className="text-primary-foreground/80">Start receiving bookings!</span>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-primary-foreground/60 text-sm">
-                  Didn't receive the email? Check your spam folder or <a href="mailto:support@mooring-booking.com" className="text-gold hover:underline">contact us</a>.
-                </p>
-              </div>
-            </div>
-          </section>
-        </main>
-      </div>
-    );
-  }
-
   if (!showForm && !user) {
-    // Unauthenticated user — show lead capture form
+    // Unauthenticated user — show Auth form
     return (
       <div className="min-h-screen">
         <main>
-
-
-          {/* Hero with Lead Form */}
           <section className="py-16 bg-gradient-ocean relative overflow-hidden">
             <div className="absolute top-10 left-10 opacity-10 animate-float">
               <Anchor size={100} className="text-gold" />
             </div>
             <div className="container mx-auto px-4 relative z-10">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
-                {/* Left - Video */}
+                {/* Left - Video & Value Prop */}
                 <div className="flex flex-col gap-4">
                   <div className="inline-flex items-center gap-2 bg-gold/20 text-gold px-4 py-2 rounded-full w-fit">
                     <Star size={16} />
@@ -978,25 +950,17 @@ Address: Prague, Czech Republic
                   <p className="text-primary-foreground/80">
                     List your berths on docks, buoys or in a marina and watch the AI captain find them — bookings come to you.
                   </p>
-                  {/* Video player in left column */}
+                  
                   <div className="rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-black mt-2">
                     <video
                       src="/videos/Reel8WalkthroughLandscape.mp4"
                       className="w-full hidden md:block"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      controls
+                      autoPlay loop muted playsInline controls
                     />
                     <video
                       src="/videos/Reel7Walkthrough.mp4"
                       className="w-full block md:hidden"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      controls
+                      autoPlay loop muted playsInline controls
                     />
                   </div>
                   <div className="space-y-2 text-primary-foreground/90 text-sm">
@@ -1015,14 +979,14 @@ Address: Prague, Czech Republic
                   </div>
                 </div>
 
-                {/* Right - Lead Form */}
+                {/* Right - Auth Form */}
                 <div className="bg-card rounded-2xl p-8 shadow-hover">
                   <div className="text-center mb-6">
                     <h2 className="font-heading text-2xl font-bold text-foreground mb-2">
-                      Register for free
+                      {authMode === 'register' ? 'Register for free' : 'Welcome back'}
                     </h2>
                     <p className="text-muted-foreground text-sm">
-                      Fill in the form and you'll receive access via email
+                      {authMode === 'register' ? 'Create an account to add your mooring' : 'Log in to manage your moorings'}
                     </p>
                   </div>
 
@@ -1037,11 +1001,7 @@ Address: Prague, Czech Republic
                           options: { redirectTo: `${window.location.origin}/become-provider` },
                         });
                         if (error) {
-                          toast({
-                            title: "Error",
-                            description: "Google sign-in failed. Please try again.",
-                            variant: "destructive",
-                          });
+                          toast({ title: "Error", description: "Google sign-in failed. Please try again.", variant: "destructive" });
                         }
                       }}
                     >
@@ -1056,37 +1016,57 @@ Address: Prague, Czech Republic
                     
                     <div className="flex items-center gap-3 my-4">
                       <div className="h-px bg-border flex-1" />
-                      <span className="text-xs text-muted-foreground uppercase font-medium">or fill in the form</span>
+                      <span className="text-xs text-muted-foreground uppercase font-medium">or with email</span>
                       <div className="h-px bg-border flex-1" />
                     </div>
                   </div>
 
-                  <form onSubmit={handleLeadSubmit} className="space-y-4">
-                    <div>
-                      <Label htmlFor="lead_name">Full Name *</Label>
-                      <div className="relative mt-1">
-                        <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-                        <Input
-                          id="lead_name"
-                          placeholder="Ivan Horvat"
-                          value={leadFormData.full_name}
-                          onChange={(e) => setLeadFormData(prev => ({ ...prev, full_name: e.target.value }))}
-                          className="pl-10"
-                          required
-                        />
-                      </div>
-                    </div>
+                  <form onSubmit={handleAuthSubmit} className="space-y-4">
+                    {authMode === 'register' && (
+                      <>
+                        <div>
+                          <Label htmlFor="auth_name">Full Name *</Label>
+                          <div className="relative mt-1">
+                            <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                            <Input
+                              id="auth_name"
+                              placeholder="Ivan Horvat"
+                              value={authFormData.full_name}
+                              onChange={(e) => setAuthFormData(prev => ({ ...prev, full_name: e.target.value }))}
+                              className="pl-10"
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="auth_phone">Phone *</Label>
+                          <div className="relative mt-1">
+                            <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                            <Input
+                              id="auth_phone"
+                              type="tel"
+                              placeholder="+385 91 234 5678"
+                              value={authFormData.phone}
+                              onChange={(e) => setAuthFormData(prev => ({ ...prev, phone: e.target.value }))}
+                              className="pl-10"
+                              required
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )}
 
                     <div>
-                      <Label htmlFor="lead_email">Email Address *</Label>
+                      <Label htmlFor="auth_email">Email Address *</Label>
                       <div className="relative mt-1">
                         <Zap className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                         <Input
-                          id="lead_email"
+                          id="auth_email"
                           type="email"
                           placeholder="ivan@email.com"
-                          value={leadFormData.email}
-                          onChange={(e) => setLeadFormData(prev => ({ ...prev, email: e.target.value }))}
+                          value={authFormData.email}
+                          onChange={(e) => setAuthFormData(prev => ({ ...prev, email: e.target.value }))}
                           className="pl-10"
                           required
                         />
@@ -1094,194 +1074,52 @@ Address: Prague, Czech Republic
                     </div>
 
                     <div>
-                      <Label htmlFor="lead_phone">Phone *</Label>
+                      <Label htmlFor="auth_password">Password *</Label>
                       <div className="relative mt-1">
-                        <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                        <ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                         <Input
-                          id="lead_phone"
-                          type="tel"
-                          placeholder="+385 91 234 5678"
-                          value={leadFormData.phone}
-                          onChange={(e) => setLeadFormData(prev => ({ ...prev, phone: e.target.value }))}
+                          id="auth_password"
+                          type="password"
+                          placeholder="••••••••"
+                          value={authFormData.password}
+                          onChange={(e) => setAuthFormData(prev => ({ ...prev, password: e.target.value }))}
                           className="pl-10"
                           required
                         />
                       </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="lead_city">City *</Label>
-                        <Input
-                          id="lead_city"
-                          placeholder="Split"
-                          value={leadFormData.city}
-                          onChange={(e) => setLeadFormData(prev => ({ ...prev, city: e.target.value }))}
-                          className="mt-1"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label>Country *</Label>
-                        <select
-                          value={leadFormData.country}
-                          onChange={(e) => setLeadFormData(prev => ({ ...prev, country: e.target.value }))}
-                          className="mt-1 w-full h-10 px-3 rounded-md border border-input bg-background text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                          required
-                        >
-                          <option value="">Select</option>
-                          {countries.map((c) => (
-                            <option key={c.code} value={c.code}>
-                              {c.flag} {c.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label>Mooring Type (select one or more) *</Label>
-                      <div className="space-y-2 mt-2">
-                        {mooringTypes.map((mt) => {
-                          const isChecked = leadFormData.mooring_types.includes(mt.id);
-                          return (
-                            <div key={mt.id} className={`flex items-center gap-2 p-2 rounded-lg border transition-all ${isChecked ? 'bg-secondary/10 border-secondary' : 'bg-muted border-transparent'}`}>
-                              <Checkbox
-                                id={`lead_mooring_${mt.id}`}
-                                checked={isChecked}
-                                onCheckedChange={(checked) => {
-                                  setLeadFormData(prev => {
-                                    const newQuantities = { ...prev.mooring_quantities };
-                                    if (checked) {
-                                      newQuantities[mt.id] = 1;
-                                    } else {
-                                      delete newQuantities[mt.id];
-                                    }
-                                    return {
-                                      ...prev,
-                                      mooring_types: checked
-                                        ? [...prev.mooring_types, mt.id]
-                                        : prev.mooring_types.filter(t => t !== mt.id),
-                                      mooring_quantities: newQuantities,
-                                      has_mooring: true,
-                                    };
-                                  });
-                                }}
-                              />
-                              <Label htmlFor={`lead_mooring_${mt.id}`} className="text-sm cursor-pointer flex items-center gap-1 flex-1">
-                                <span>{mt.icon}</span> {mt.label}
-                              </Label>
-                              {isChecked && (
-                                <div className="flex items-center gap-1">
-                                  <span className="text-xs text-muted-foreground">Qty:</span>
-                                  <Input
-                                    type="number"
-                                    min={1}
-                                    value={leadFormData.mooring_quantities[mt.id] ?? ''}
-                                    onChange={(e) => {
-                                      const raw = e.target.value;
-                                      const val = raw === '' ? 0 : parseInt(raw);
-                                      if (raw !== '' && (isNaN(val) || val < 0)) return;
-                                      setLeadFormData(prev => ({
-                                        ...prev,
-                                        mooring_quantities: { ...prev.mooring_quantities, [mt.id]: val },
-                                      }));
-                                    }}
-                                    onBlur={(e) => {
-                                      const val = parseInt(e.target.value);
-                                      if (!val || val < 1) {
-                                        setLeadFormData(prev => ({
-                                          ...prev,
-                                          mooring_quantities: { ...prev.mooring_quantities, [mt.id]: 1 },
-                                        }));
-                                      }
-                                    }}
-                                    className="w-16 h-8 text-center text-sm"
-                                  />
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                      <Checkbox
-                        id="lead_has_mooring"
-                        checked={leadFormData.has_mooring}
-                        onCheckedChange={(checked) => setLeadFormData(prev => ({ ...prev, has_mooring: checked as boolean }))}
-                      />
-                      <Label htmlFor="lead_has_mooring" className="text-sm cursor-pointer">
-                        I currently have a mooring I want to rent out
-                      </Label>
                     </div>
 
                     <Button
                       type="submit"
                       className="w-full h-14 bg-gold text-gold-foreground hover:bg-gold/90 font-semibold text-lg"
-                      disabled={leadSubmitting}
+                      disabled={authSubmitting}
                     >
-                      {leadSubmitting ? (
+                      {authSubmitting ? (
                         <>
                           <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2" />
                           Submitting...
                         </>
                       ) : (
-                        <>
-                          🚀 Register for Free
-                          <ArrowRight className="ml-2" size={20} />
-                        </>
+                        authMode === 'register' ? (
+                          <>🚀 Next step: Add Mooring <ArrowRight className="ml-2" size={20} /></>
+                        ) : (
+                          "Log in"
+                        )
                       )}
                     </Button>
 
-
-
-                    <p className="text-xs text-muted-foreground text-center mt-3">
-                      Free · No credit card · 15% commission only on bookings
+                    <p className="text-center text-sm text-muted-foreground mt-4">
+                      {authMode === 'register' ? (
+                         <span>Already have an account? <button type="button" className="text-gold font-medium hover:underline" onClick={() => setAuthMode('login')}>Log in</button></span>
+                      ) : (
+                         <span>Don't have an account? <button type="button" className="text-gold font-medium hover:underline" onClick={() => setAuthMode('register')}>Register for free</button></span>
+                      )}
                     </p>
                   </form>
                 </div>
               </div>
             </div>
           </section>
-
-          {/* App Preview Video (bottom duplicate removed — moved to top) */}
-          <section className="py-12 bg-muted hidden">
-            <div className="container mx-auto px-4">
-              <div className="max-w-2xl mx-auto">
-                <p className="text-center text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
-                  See how it works
-                </p>
-                <div className="rounded-2xl overflow-hidden shadow-lg border border-border bg-black">
-                  {/* Desktop Video */}
-                  <video
-                    src="/videos/Reel8WalkthroughLandscape.mp4"
-                    className="w-full hidden md:block"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    controls
-                  />
-                  {/* Mobile Video */}
-                  <video
-                    src="/videos/Reel7Walkthrough.mp4"
-                    className="w-full block md:hidden object-cover max-h-[70vh]"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    controls
-                  />
-                </div>
-                <p className="text-center text-sm text-muted-foreground mt-2 font-medium">
-                  💡 Double click to enlarge / Click to pause
-                </p>
-              </div>
-            </div>
-          </section>
-
         </main>
       </div>
     );
