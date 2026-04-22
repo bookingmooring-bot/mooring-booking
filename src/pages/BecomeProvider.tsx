@@ -209,6 +209,8 @@ const BecomeProviderPage = () => {
   });
   const [calendarDays, setCalendarDays] = useState(generateCalendarDays());
   const [autoOpenFromLead, setAutoOpenFromLead] = useState(false);
+  const [justAuthedViaOAuth, setJustAuthedViaOAuth] = useState(false);
+  const [mooringsLoaded, setMooringsLoaded] = useState(false);
 
   // Handle OAuth callback — when Google redirects back after login
   useEffect(() => {
@@ -241,6 +243,7 @@ const BecomeProviderPage = () => {
     if (code) {
       supabase.auth.exchangeCodeForSession(code).then(({ data, error }) => {
         if (!error && data.session) {
+          setJustAuthedViaOAuth(true);
           window.history.replaceState(null, '', window.location.pathname);
         }
       });
@@ -270,6 +273,14 @@ const BecomeProviderPage = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [autoOpenFromLead, user, showForm]);
+
+  // Fresh OAuth users (Google/Apple) with 0 listings → skip dashboard, go straight to Publish form
+  useEffect(() => {
+    if (justAuthedViaOAuth && user && mooringsLoaded && mooringCount === 0 && !showForm) {
+      setShowForm(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [justAuthedViaOAuth, user, mooringsLoaded, mooringCount, showForm]);
 
   // Pre-fill form from lead data when authenticated user loads page
   // Also: ensure Google OAuth users get provider role + lead entry
@@ -333,6 +344,7 @@ const BecomeProviderPage = () => {
           setUserMoorings(data);
           setMooringCount(data.length);
         }
+        setMooringsLoaded(true);
       });
   };
 
@@ -1414,8 +1426,11 @@ Address: Prague, Czech Republic
 
   // Registration Form
   const showLeadStepper = !editingMooringId;
-  const showLeadWelcomeBadge = autoOpenFromLead && !editingMooringId;
+  const autoOpenedFromAuth = autoOpenFromLead || (justAuthedViaOAuth && mooringCount === 0);
+  const showLeadWelcomeBadge = autoOpenedFromAuth && !editingMooringId;
+  const showFacebookPrefillHint = autoOpenFromLead && !editingMooringId;
   const leadFirstName = (user?.user_metadata?.full_name as string | undefined)?.split(' ')[0]
+    || (user?.user_metadata?.name as string | undefined)?.split(' ')[0]
     || (user?.email ? user.email.split('@')[0] : '');
   return (
     <div className="min-h-screen bg-muted">
@@ -1474,9 +1489,11 @@ Address: Prague, Czech Republic
               <p className="text-muted-foreground">
                 {editingMooringId
                   ? 'Update the details for your mooring'
-                  : showLeadWelcomeBadge
+                  : showFacebookPrefillHint
                     ? "We've pre-filled some details from your Facebook form. Just finish the rest and publish your listing."
-                    : 'Fill in the details about your mooring to publish it on the platform'}
+                    : showLeadWelcomeBadge
+                      ? "Fill in the details below to publish your first mooring and start earning."
+                      : 'Fill in the details about your mooring to publish it on the platform'}
               </p>
             </div>
 
