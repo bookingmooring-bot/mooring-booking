@@ -26,7 +26,7 @@ function wantsMooringSearch(message: string): boolean {
     return keywords.some((kw) => lower.includes(kw));
 }
 
-// ── Fetch available moorings from Supabase ────────────────────────────────────
+// ── Fetch available moorings via PostGIS-backed RPC (geofenced, Verified-Partner first) ──
 interface MooringRow {
     id: string;
     name: string;
@@ -41,15 +41,23 @@ interface MooringRow {
     amenities: string[];
     wind_protection: string;
     is_last_minute: boolean;
+    is_now4today: boolean;
+    is_verified_partner: boolean;
+    is_premium_listing: boolean;
+    winter_storage: boolean;
     mooring_units: number;
     rating: number;
     review_count: number;
+    distance_km: number;
 }
 
 async function fetchAvailableMoorings(
     checkIn: string,
     checkOut: string,
+    userLat: number,
+    userLng: number,
     boatLength?: number,
+    radiusKm = 150,
 ): Promise<string> {
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
         return "Ahoj! AI kapetan na vezi... nemam dostupnih informacija (nedostaju konfiguracijski podaci).";
@@ -59,36 +67,31 @@ async function fetchAvailableMoorings(
         const controller = new AbortController();
         const tid = setTimeout(() => controller.abort(), 6000);
 
-        // Build the query URL — fetch active moorings
-        const url = new URL(`${SUPABASE_URL}/rest/v1/moorings`);
-        url.searchParams.set("select", "id,name,location,country,country_flag,lat,lng,price_per_night,max_boat_length,max_draft,amenities,wind_protection,is_last_minute,mooring_units,rating,review_count");
-        url.searchParams.set("status", "eq.active");
-        url.searchParams.set("order", "rating.desc");
-        url.searchParams.set("limit", "50");
-
-        // If boat length is specified, filter moorings that can accommodate it
-        if (boatLength && boatLength > 0) {
-            url.searchParams.set("max_boat_length", `gte.${boatLength}`);
-        }
-
-        const res = await fetch(url.toString(), {
+        const rpcRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/nearby_active_moorings`, {
+            method: "POST",
             headers: {
                 "apikey": SUPABASE_SERVICE_ROLE_KEY,
                 "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
                 "Content-Type": "application/json",
             },
             signal: controller.signal,
+            body: JSON.stringify({
+                user_lat: userLat,
+                user_lng: userLng,
+                radius_km: radiusKm,
+                min_boat_length: boatLength && boatLength > 0 ? boatLength : null,
+            }),
         });
         clearTimeout(tid);
 
-        if (!res.ok) {
-            console.error("Moorings fetch failed:", res.status, await res.text());
+        if (!rpcRes.ok) {
+            console.error("Moorings RPC failed:", rpcRes.status, await rpcRes.text());
             return "Ahoj! AI kapetan na vezi... nemam dostupnih informacija o vezovima.";
         }
 
-        const moorings: MooringRow[] = await res.json();
+        const moorings: MooringRow[] = await rpcRes.json();
 
-        // Now fetch conflicting bookings for the date range
+        // Filter out moorings already booked for the requested date range
         const conflictUrl = new URL(`${SUPABASE_URL}/rest/v1/bookings`);
         conflictUrl.searchParams.set("select", "mooring_id");
         conflictUrl.searchParams.set("booking_status", "neq.cancelled");
@@ -106,12 +109,11 @@ async function fetchAvailableMoorings(
         const conflictBookings: { mooring_id: string }[] = conflictRes.ok ? await conflictRes.json() : [];
         const bookedMooringIds = new Set(conflictBookings.map((b) => b.mooring_id));
 
-        // Filter out booked moorings
         const available = moorings.filter((m) => !bookedMooringIds.has(m.id));
 
         if (available.length === 0) {
             const hint = boatLength ? ` za brod duljine ${boatLength}m` : "";
-            return `Ahoj! AI kapetan na vezi... nemam dostupnih informacija o slobodnim vezovima${hint} za traženi period. Razumijem, treba ti vez za večeras, pratiti ćemo situaciju!\n🔗 Provjeri sve vezove na: https://mooringbooking.com/explore`;
+            return `Ahoj! AI kapetan na vezi... nemam slobodnih vezova${hint} u radijusu ${radiusKm} km od tvoje pozicije za traženi period.\n🔗 Proširi pretragu na: https://mooringbooking.com/explore`;
         }
 
         const lines = available.slice(0, 5).map((m, i) => {
@@ -119,11 +121,14 @@ async function fetchAvailableMoorings(
             const amenStr = m.amenities?.length > 0 ? m.amenities.join(", ") : "—";
             const maxBoat = m.max_boat_length ? `maks. brod ${m.max_boat_length}m` : "";
             const rating = m.rating > 0 ? ` | ⭐ ${m.rating.toFixed(1)}` : "";
-            const lastMin = m.is_last_minute ? " 🔥 Last-minute!" : "";
-            return `${i + 1}. **${m.name}** — ${flag}${m.location}, ${m.country}\n   💰 €${m.price_per_night}/noć${maxBoat ? ` | ${maxBoat}` : ""} | Zaštita od vjetra: ${m.wind_protection}${rating}${lastMin}\n   🛠️ Pogodnosti: ${amenStr}`;
+            const lastMin = (m.is_last_minute || m.is_now4today) ? " 🔥 Last-minute!" : "";
+            const verified = m.is_verified_partner ? " ✅ **Verified Partner**" : "";
+            const premium = m.is_premium_listing ? " 👑 Premium" : "";
+            const dist = Number.isFinite(m.distance_km) ? ` | 📏 ${m.distance_km.toFixed(1)} km od tebe` : "";
+            return `${i + 1}. **${m.name}**${verified}${premium} — ${flag}${m.location}, ${m.country}\n   💰 €${m.price_per_night}/noć${maxBoat ? ` | ${maxBoat}` : ""} | Zaštita od vjetra: ${m.wind_protection}${rating}${dist}${lastMin}\n   🛠️ Pogodnosti: ${amenStr}`;
         });
 
-        return `⚓ SLOBODNI VEZOVI (${checkIn} – ${checkOut}):\n${lines.join("\n\n")}\n\n🔗 Rezerviraj na: https://mooringbooking.com/explore`;
+        return `⚓ SLOBODNI VEZOVI (${checkIn} – ${checkOut}) u radijusu ${radiusKm} km:\n${lines.join("\n\n")}\n\n🔗 Rezerviraj na: https://mooringbooking.com/explore`;
     } catch (e) {
         console.error("fetchAvailableMoorings error:", e);
         return "Ahoj! AI kapetan na vezi... nemam dostupnih informacija u bazi.";
@@ -335,7 +340,7 @@ Deno.serve(async (req: Request) => {
         const [weatherStr, wavesStr, mooringsStr] = await Promise.all([
             fetchWindyWeather(lat, lng),
             fetchWindyWaves(lat, lng),
-            shouldSearchMoorings ? fetchAvailableMoorings(checkIn, checkOut, boatLength) : Promise.resolve(""),
+            shouldSearchMoorings ? fetchAvailableMoorings(checkIn, checkOut, lat, lng, boatLength) : Promise.resolve(""),
         ]);
 
         const boatInfo = userProfile?.boatName
@@ -450,6 +455,16 @@ Kada korisnik opisuje kvar, strukturiraj odgovor:
 🛠️ Sam popravak: [koraci ako je moguće bez servisa]
 🏪 Zovi mehaničara ako: [jasni kriteriji eskalacije]
 
+═══ DATA INTEGRITY RULE — HIGHEST PRIORITY ═══
+⚠️ STROGA ZABRANA izmišljanja faktografskih podataka o vezovima i marinama:
+- NIKAD ne izmišljaj imena marina/vezova, GPS koordinate, VHF kanale, dubine ulaza, kontakt podatke ni cijene.
+- Kad preporučuješ konkretan vez, koristi ISKLJUČIVO podatke iz sekcije "PRETRAGA VEZOVA" koja je priložena ovom promptu. Ime, lokacija, cijena, ocjena, pogodnosti i udaljenost MORAJU biti doslovno prepisani iz tih podataka.
+- Ako sekcija "PRETRAGA VEZOVA" nije prisutna ili je prazna, NE navodi imena konkretnih vezova niti izmišljaj marine iz nekog drugog izvora. Umjesto toga: kratko objasni korisniku da u bazi Mooring Booking trenutno nema podudarnih vezova za zadane kriterije i uputi ga na https://mooringbooking.com/explore da proširi pretragu.
+- Za VHF kanale, dubine ulaza, telefonske brojeve i druge tehničke podatke kojih NEMA u priloženim podacima: reci "točan podatak provjeri u pilot knjizi / Navionics / pozivom u marinu" (ili prevedeno na jezik korisnika). Ne nagađaj brojeve.
+- NIKAD ne spominji marinu izvan geografskog raspona priloženih rezultata. Ako je korisnik na Jadranu, NE spominji marine u Aziji, Americi, Pacifiku ni drugim regijama.
+- PRIORITET U PRIKAZU: vezovi označeni s ✅ Verified Partner se prikazuju prvi i moraju biti eksplicitno istaknuti kao preporuka broja 1. Zatim dolaze 👑 Premium listings, pa ostali po udaljenosti.
+- Opće nautičko znanje (vjetrovi, COLREGS, dijagnostika motora, sidrenje, gorivo) ostaje autoritativno — ovo pravilo se odnosi isključivo na fakte o konkretnim objektima (marine, vezovi, cijene, koordinate, kontakti).
+
 ═══ LANGUAGE RULE — HIGHEST PRIORITY ═══
 ⚠️ MANDATORY: You MUST detect the language of the user's LAST message and reply ENTIRELY in that SAME language. This overrides everything else.
 - If the user writes in English → reply 100% in English. Do NOT use Croatian words.
@@ -473,7 +488,9 @@ PRAVILA ODGOVARANJA:
 10. Budi konkretan: davaj stvarne brojeve, stvarna imena luka, stvarne rute, stvarne cijene.
 11. Ne koristi generičke odgovore — svaki odgovor mora biti specifičan za situaciju korisnika.
 12. Minimalna duljina odgovora: 3 rečenice. Svaki odgovor mora imati stvarnu vrijednost za korisnika.
-13. Ton: samopouzdan, prijateljski, stručan — kao kapetan koji te prima na palubu svog broda.`;
+13. Ton: samopouzdan, prijateljski, stručan — kao kapetan koji te prima na palubu svog broda.
+14. Prioritet preporuka vezova: ✅ Verified Partner uvijek prvi (istakni oznaku u odgovoru), zatim 👑 Premium listings, pa ostali po udaljenosti od korisnika. Rasporedi preporuke u istom redoslijedu kojim su ti prosljeđene u "PRETRAGA VEZOVA".
+15. NIKAD ne izmišljaj marinu, lokaciju, dubinu, VHF kanal ni cijenu. Ako nije u priloženim podacima — reci da trebaš provjeru u pilot knjizi ili direktnim pozivom.`;
 
         if (isProviderContext) {
             systemPrompt += `\n\n═══ PROVIDER KONTEKST ═══\nKorisnik se trenutno nalazi na stranici za iznajmljivače (Provider).\nTvoj glavni zadatak je pomoći mu oko procesa registracije, kreiranja vezova, razumijevanja provizije (15%) i upravljanja rezervacijama.\nBudi proaktivan i preuzmi inicijativu da mu objasniš kako da unese detalje o vezu, postavi Custom i Default cijenu, te kako funkcionira naplata provizije. Mooring Booking uzima 15% provizije naknadno.`;
