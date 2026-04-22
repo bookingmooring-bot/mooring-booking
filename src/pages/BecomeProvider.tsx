@@ -304,14 +304,16 @@ const BecomeProviderPage = () => {
           .maybeSingle();
 
         if (existingLead) {
-          // Pre-fill form from existing lead
+          // Pre-fill form from existing lead — skip Meta test dummy data like "<test lead: dummy data for city>"
+          const clean = (v: string | null | undefined): string =>
+            !v || /^<test lead/i.test(v.trim()) ? '' : v;
           const quantities = (existingLead.mooring_quantities as Record<string, number>) || {};
           const totalUnits = Object.values(quantities).reduce((sum: number, v: number) => sum + (v || 0), 0);
           setFormData(prev => ({
             ...prev,
-            country: existingLead.country || prev.country,
-            region: existingLead.city || prev.region,
-            phone: existingLead.phone || prev.phone,
+            country: clean(existingLead.country) || prev.country,
+            region: clean(existingLead.city) || prev.region,
+            phone: clean(existingLead.phone) || prev.phone,
             mooringUnits: totalUnits > 0 ? String(totalUnits) : prev.mooringUnits,
           }));
         } else {
@@ -1169,27 +1171,63 @@ Address: Prague, Czech Republic
         <main className="py-12">
           <div className="container mx-auto px-4">
             <div className="max-w-2xl mx-auto">
+              {mooringCount > 0 && (
+                <div className="bg-card rounded-xl p-6 shadow-card mb-8">
+                  <div className="flex items-center justify-between max-w-2xl mx-auto">
+                    {/* Step 1: Account created — done */}
+                    <div className="flex flex-col items-center flex-1 min-w-0">
+                      <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white shrink-0">
+                        <Check size={20} strokeWidth={3} />
+                      </div>
+                      <span className="text-xs md:text-sm mt-2 text-center text-foreground font-medium">
+                        Account created
+                      </span>
+                    </div>
+                    <div className="flex-1 h-1 bg-emerald-500 -mx-2 mb-6 rounded-full" />
+                    {/* Step 2: Publish mooring — done */}
+                    <div className="flex flex-col items-center flex-1 min-w-0">
+                      <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white shrink-0">
+                        <Check size={20} strokeWidth={3} />
+                      </div>
+                      <span className="text-xs md:text-sm mt-2 text-center text-foreground font-medium">
+                        Mooring published
+                      </span>
+                    </div>
+                    <div className="flex-1 h-1 bg-emerald-500 -mx-2 mb-6 rounded-full" />
+                    {/* Step 3: First booking — current */}
+                    <div className="flex flex-col items-center flex-1 min-w-0">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-bold shrink-0 ring-4 ring-blue-500/20 animate-pulse">
+                        3
+                      </div>
+                      <span className="text-xs md:text-sm mt-2 text-center text-foreground font-semibold">
+                        First booking
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="mb-8">
                 <div className="rounded-2xl overflow-hidden shadow-lg border border-border bg-black">
                   {/* Desktop Video */}
-                  <video 
-                    src="/videos/Reel8WalkthroughLandscape.mp4" 
+                  <video
+                    src="/videos/Reel8WalkthroughLandscape.mp4"
                     className="w-full hidden md:block"
-                    autoPlay 
-                    loop 
-                    muted 
-                    playsInline 
-                    controls 
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    controls
                   />
                   {/* Mobile Video */}
-                  <video 
-                    src="/videos/Reel7Walkthrough.mp4" 
+                  <video
+                    src="/videos/Reel7Walkthrough.mp4"
                     className="w-full block md:hidden object-cover max-h-[70vh]"
-                    autoPlay 
-                    loop 
-                    muted 
-                    playsInline 
-                    controls 
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    controls
                   />
                 </div>
                 <p className="text-center text-sm text-muted-foreground mt-2 font-medium">
@@ -1429,8 +1467,10 @@ Address: Prague, Czech Republic
   const autoOpenedFromAuth = autoOpenFromLead || (justAuthedViaOAuth && mooringCount === 0);
   const showLeadWelcomeBadge = autoOpenedFromAuth && !editingMooringId;
   const showFacebookPrefillHint = autoOpenFromLead && !editingMooringId;
-  const leadFirstName = (user?.user_metadata?.full_name as string | undefined)?.split(' ')[0]
-    || (user?.user_metadata?.name as string | undefined)?.split(' ')[0]
+  const pickName = (v: string | undefined) =>
+    v && !/^<test lead/i.test(v.trim()) ? v.split(' ')[0] : '';
+  const leadFirstName = pickName(user?.user_metadata?.full_name as string | undefined)
+    || pickName(user?.user_metadata?.name as string | undefined)
     || (user?.email ? user.email.split('@')[0] : '');
   return (
     <div className="min-h-screen bg-muted">
