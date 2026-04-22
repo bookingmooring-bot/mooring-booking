@@ -759,7 +759,14 @@ Address: Prague, Czech Republic
   }, [formData.photos, user]);
 
   const handleFinalConsent = async () => {
-    if (!user) return;
+    if (!user) {
+      toast({
+        title: "Not signed in",
+        description: "Your session ended. Please sign in again to publish.",
+        variant: "destructive",
+      });
+      return;
+    }
     setIsSubmitting(true);
     try {
       // 1. Upload photos
@@ -921,6 +928,15 @@ Address: Prague, Czech Republic
           );
         } catch (e) {
           console.error("Lead save failed", e); // non-fatal for registration
+        }
+
+        // 3. If Supabase has email confirmation enabled, signUp returns no session.
+        //    Force a sign-in with the password so the user gets an active session
+        //    (process-fb-lead marked the user as email_confirm=true, so this succeeds).
+        const { data: { session: sessionAfterSignup } } = await supabase.auth.getSession();
+        if (!sessionAfterSignup) {
+          const { error: signInErr } = await signIn(authFormData.email, authFormData.password);
+          if (signInErr) throw signInErr;
         }
 
         toast({ title: "Account created!", description: "You can now add your mooring." });

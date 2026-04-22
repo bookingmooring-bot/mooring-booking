@@ -119,6 +119,17 @@ Deno.serve(async (req: Request) => {
         phone: phone || null,
         role: 'provider',
       }).eq('id', userId);
+
+      // Ensure email is confirmed so client-side signInWithPassword succeeds
+      // (client signUp may leave the user unconfirmed if Supabase email confirmation is on)
+      try {
+        const { data: authUser } = await supabase.auth.admin.getUserById(userId);
+        if (authUser?.user && !authUser.user.email_confirmed_at) {
+          await supabase.auth.admin.updateUserById(userId, { email_confirm: true });
+        }
+      } catch (e) {
+        console.error('email_confirm update failed:', e);
+      }
     }
 
     const { data: lead, error: leadError } = await supabase.from('fb_leads').upsert({
