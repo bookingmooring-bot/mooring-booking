@@ -6,8 +6,14 @@ import { useTranslation } from "react-i18next";
 import { getUserLocation } from "@/services/weatherService";
 import { isPremium, hasAIQuestionsRemaining, AI_BASIC_LIMIT, getUserTier } from "@/lib/subscription";
 import { useProfile, useIncrementAIQuestions } from "@/hooks/useProfile";
+import { useDefaultVessel } from "@/hooks/useVesselProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { buildAiCaptainPayload, type MaydayPayload, type Intent, type SourceCitation, type WeatherData } from "@/lib/aiCaptainPayload";
+import MaydayAlert from "@/components/ai-captain/MaydayAlert";
+import MessageMeta from "@/components/ai-captain/MessageMeta";
+import WeatherCard from "@/components/ai-captain/WeatherCard";
+import FeedbackButtons from "@/components/ai-captain/FeedbackButtons";
 import { useNavigate, useLocation } from "react-router-dom";
 
 interface AIChatWidgetProps {
@@ -19,7 +25,18 @@ interface Message {
   role: string;
   content: string;
   isWelcome?: boolean;
+  mayday?: MaydayPayload | null;
+  intent?: Intent;
+  confidence?: number;
+  sources?: SourceCitation[];
+  weather?: WeatherData | null;
+  qualityId?: string | null;
 }
+
+// A message is treated as a MAYDAY turn only when the user's message looks like
+// a distress call. We avoid rendering the red phone card on every assistant
+// reply (the edge fn always returns mayday for geolocation-aware prompts).
+const MAYDAY_RE = /\b(mayday|sos|potapam|tonem|distress|tonemo|prepo+mo[cć]|u opasnosti|help us|sinking)\b/i;
 
 // localStorage fallback for unauthenticated users
 const AI_ANON_KEY = "ai_captain_anon_count";
@@ -31,6 +48,7 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
   const { t } = useTranslation();
   const { user } = useAuth();
   const { data: profile } = useProfile();
+  const defaultVessel = useDefaultVessel();
   const incrementAI = useIncrementAIQuestions();
   const navigate = useNavigate();
   const routerLocation = useLocation();
@@ -119,30 +137,42 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
         // Use fallback coordinates
       }
 
-      // ─── Build user profile context ────────────────────────────────────────
+      // ─── Build payload (shared util — keeps 3 clients in sync) ─────────────
       const tier = getUserTier(profile);
-      const userProfile = {
-        tier,
-        boatName: profile?.boat_name ?? undefined,
-        boatLength: profile?.boat_length ?? undefined,
-      };
-
       const isProviderContext = routerLocation.pathname.includes('provider');
+
+      const payload = buildAiCaptainPayload({
+        messages: currentMessages as import("@/lib/aiCaptainPayload").ChatMessage[],
+        location,
+        profile,
+        tier,
+        vessel: defaultVessel,
+        searchDates: null,
+        isProviderContext,
+      });
 
       // ─── Call Edge Function (weather fetched server-side inside it) ─────────
       const { data, error } = await supabase.functions.invoke("ai-captain", {
-        body: {
-          messages: currentMessages,
-          location,       // lat/lng sent so Edge Function can call Windy API
-          userProfile,
-          searchDates: null, // Edge Function uses today + 7 days as default range
-          isProviderContext,
-        },
+        body: payload,
       });
 
       if (error) throw error;
 
+      // FAZA 6: edge function is now the source of truth for quota enforcement.
+      // If it returns paywall=true, surface the paywall and don't render a normal message.
+      if (data?.paywall) {
+        setShowPaywall(true);
+        setMessages(prev => [...prev, {
+          role: "assistant",
+          content: data?.reply ?? `⭐ Iskoristio si svih ${AI_BASIC_LIMIT} besplatnih pitanja AI Kapetana. Nadogradi na Premium.`,
+        }]);
+        setIsLoading(false);
+        return;
+      }
+
       const reply: string = data?.reply ?? "Nije moguće generirati odgovor. Pokušaj ponovo.";
+      const mayday: MaydayPayload | null = data?.mayday ?? null;
+      const isMaydayTurn = MAYDAY_RE.test(userMessage.content);
 
       // Soft premium nudge for basic users (30% chance, not on first message)
       let finalReply = reply;
@@ -150,7 +180,19 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
         finalReply += "\n\n💡 *Premium donosi neograničen AI Kapetan, offline mape i ekskluzivne popuste!*";
       }
 
-      setMessages(prev => [...prev, { role: "assistant", content: finalReply }]);
+      const replyIntent = data?.intent as Intent | undefined;
+      const weather: WeatherData | null = data?.weather ?? null;
+
+      setMessages(prev => [...prev, {
+        role: "assistant",
+        content: finalReply,
+        mayday: isMaydayTurn ? mayday : null,
+        intent: replyIntent,
+        confidence: typeof data?.confidence === "number" ? data.confidence : undefined,
+        sources: Array.isArray(data?.sources) ? data.sources as SourceCitation[] : undefined,
+        weather: replyIntent === "CHECK_WEATHER" ? weather : null,
+        qualityId: typeof data?.qualityId === "string" ? data.qualityId : null,
+      }]);
 
     } catch (err) {
       console.error("AI Captain error:", err);
@@ -236,6 +278,14 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
                 >
                   <div className={`max-w-[80%] rounded-xl px-4 py-2 ${msg.role === 'user' ? 'bg-secondary text-secondary-foreground' : 'bg-muted text-foreground'}`}>
                     <p className="text-sm whitespace-pre-line">{msg.content}</p>
+                    {msg.weather && <WeatherCard weather={msg.weather} />}
+                    {msg.mayday && <MaydayAlert mayday={msg.mayday} />}
+                    {msg.role === 'assistant' && !msg.isWelcome && (
+                      <MessageMeta intent={msg.intent} confidence={msg.confidence} sources={msg.sources} />
+                    )}
+                    {msg.role === 'assistant' && !msg.isWelcome && msg.qualityId && (
+                      <FeedbackButtons qualityId={msg.qualityId} />
+                    )}
                   </div>
                 </div>
               );

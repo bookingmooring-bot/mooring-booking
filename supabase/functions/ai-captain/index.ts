@@ -5,25 +5,104 @@ const WINDY_API_KEY = Deno.env.get("WINDY_API_KEY") ?? "4w1wpCKBi8zaoPySF3fMcXfX
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
+const EMBED_MODEL = "gemini-embedding-001";
+const EMBED_DIM = 768;
+
 const CORS = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// ── Mooring intent detection ──────────────────────────────────────────────────
-function wantsMooringSearch(message: string): boolean {
-    const keywords = [
-        "vez", "veza", "vezovi", "vezova", "slobodan", "slobodni", "slobodnih",
-        "mooring", "marina", "luka", "lukama", "pier", "berth",
-        "rezerv", "booking", "knjiga", "bookiraj", "bookirati",
-        "privez", "priveza", "privežem", "privezati", "privezujem",
-        "ima li", "imate li", "postoji li", "gdje da pristanem",
-        "gdje mogu", "gdje bih mogao", "preporuk", "preporuč",
-        "available", "find a berth", "find mooring", "any free",
-        "slobodno mjesto", "kako rezervirati", "kako bookirati",
-    ];
+// ── Intent classifier (FAZA 4) ────────────────────────────────────────────────
+type Intent =
+    | "SEARCH_MOORING"
+    | "DIAGNOSE_ENGINE"
+    | "CHECK_WEATHER"
+    | "EMERGENCY"
+    | "BOOKING_HELP"
+    | "NAVIGATION_ROUTE"
+    | "GENERAL_CHAT";
+
+const INTENT_KEYWORDS: Array<{ intent: Intent; words: string[] }> = [
+    {
+        intent: "EMERGENCY",
+        words: [
+            "mayday", "sos", "tonem", "tonemo", "potapam", "sinking", "distress",
+            "u opasnosti", "help us", "pomoć", "pomoc", "gorimo", "fire on board",
+            "man overboard", "čovjek u moru", "covjek u moru", "collision", "sudar",
+        ],
+    },
+    {
+        intent: "DIAGNOSE_ENGINE",
+        words: [
+            "motor", "engine", "kvar", "breakdown", "crkao", "ne pali", "won't start",
+            "dim", "smoke", "propeler", "propeller", "akumulator", "battery", "starter",
+            "alternator", "hladnjak", "coolant", "overheat", "pregrijava", "vibracij",
+            "vibration", "zupčanik", "gearbox", "goriv", "fuel", "dizel", "gas leak",
+        ],
+    },
+    {
+        intent: "SEARCH_MOORING",
+        words: [
+            "vez", "veza", "vezovi", "vezova", "slobodan", "slobodni", "slobodnih",
+            "mooring", "marina", "luka", "lukama", "pier", "berth",
+            "rezerv", "booking", "knjiga", "bookiraj", "bookirati",
+            "privez", "priveza", "privežem", "privezati", "privezujem",
+            "ima li", "imate li", "postoji li", "gdje da pristanem",
+            "gdje mogu", "gdje bih mogao", "preporuk", "preporuč",
+            "available", "find a berth", "find mooring", "any free",
+            "slobodno mjesto", "kako rezervirati", "kako bookirati",
+        ],
+    },
+    {
+        intent: "CHECK_WEATHER",
+        words: [
+            "vrijeme", "vremen", "prognoza", "forecast", "weather",
+            "bura", "jugo", "maestral", "tramontana", "levant", "scirocco", "mistral",
+            "vjetar", "vjetra", "wind", "winds", "gust",
+            "valov", "waves", "swell", "valovi",
+            "oluj", "storm", "grm", "lightning", "thunder", "kiša", "rain",
+            "hoće li biti", "will there be", "can we sail", "safe to sail",
+        ],
+    },
+    {
+        intent: "NAVIGATION_ROUTE",
+        words: [
+            "rut", "route", "navigacij", "navigation", "kurs", "course", "heading",
+            "put do", "put za", "how to get to", "distance", "udaljenost",
+            "koliko treba", "how long", "hours sailing", "sati plovidbe",
+            "bearing", "azimut", "nm", "nautical mile", "nautičk",
+        ],
+    },
+    {
+        intent: "BOOKING_HELP",
+        words: [
+            "kako platiti", "how to pay", "otkazati", "cancel", "refund", "povrat",
+            "provizij", "commission", "rezervaciju", "my booking", "moja rezervacija",
+            "potvrda", "confirmation", "račun", "invoice", "faktura", "payment",
+            "membership", "pretplata", "premium", "upgrade",
+        ],
+    },
+];
+
+function classifyIntent(message: string): Intent {
     const lower = message.toLowerCase();
-    return keywords.some((kw) => lower.includes(kw));
+    // Emergency always wins, even if phrased as a "question about weather"
+    for (const { intent, words } of INTENT_KEYWORDS) {
+        if (intent === "EMERGENCY" && words.some((w) => lower.includes(w))) return "EMERGENCY";
+    }
+    // Score-based match across remaining intents: longest hit wins to handle overlaps
+    // (e.g., "marina vrijeme" → SEARCH_MOORING wins over CHECK_WEATHER because "marina" is longer).
+    let best: { intent: Intent; score: number } = { intent: "GENERAL_CHAT", score: 0 };
+    for (const { intent, words } of INTENT_KEYWORDS) {
+        if (intent === "EMERGENCY") continue;
+        for (const w of words) {
+            if (lower.includes(w) && w.length > best.score) {
+                best = { intent, score: w.length };
+            }
+        }
+    }
+    return best.intent;
 }
 
 // ── Fetch available moorings via PostGIS-backed RPC (geofenced, Verified-Partner first) ──
@@ -58,9 +137,9 @@ async function fetchAvailableMoorings(
     userLng: number,
     boatLength?: number,
     radiusKm = 150,
-): Promise<string> {
+): Promise<{ text: string; rows: MooringRow[] }> {
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-        return "Ahoj! AI kapetan na vezi... nemam dostupnih informacija (nedostaju konfiguracijski podaci).";
+        return { text: "Ahoj! AI kapetan na vezi... nemam dostupnih informacija (nedostaju konfiguracijski podaci).", rows: [] };
     }
 
     try {
@@ -86,7 +165,7 @@ async function fetchAvailableMoorings(
 
         if (!rpcRes.ok) {
             console.error("Moorings RPC failed:", rpcRes.status, await rpcRes.text());
-            return "Ahoj! AI kapetan na vezi... nemam dostupnih informacija o vezovima.";
+            return { text: "Ahoj! AI kapetan na vezi... nemam dostupnih informacija o vezovima.", rows: [] };
         }
 
         const moorings: MooringRow[] = await rpcRes.json();
@@ -113,10 +192,14 @@ async function fetchAvailableMoorings(
 
         if (available.length === 0) {
             const hint = boatLength ? ` za brod duljine ${boatLength}m` : "";
-            return `Ahoj! AI kapetan na vezi... nemam slobodnih vezova${hint} u radijusu ${radiusKm} km od tvoje pozicije za traženi period.\n🔗 Proširi pretragu na: https://mooringbooking.com/explore`;
+            return {
+                text: `Ahoj! AI kapetan na vezi... nemam slobodnih vezova${hint} u radijusu ${radiusKm} km od tvoje pozicije za traženi period.\n🔗 Proširi pretragu na: https://mooringbooking.com/explore`,
+                rows: [],
+            };
         }
 
-        const lines = available.slice(0, 5).map((m, i) => {
+        const top = available.slice(0, 5);
+        const lines = top.map((m, i) => {
             const flag = m.country_flag ? `${m.country_flag} ` : "";
             const amenStr = m.amenities?.length > 0 ? m.amenities.join(", ") : "—";
             const maxBoat = m.max_boat_length ? `maks. brod ${m.max_boat_length}m` : "";
@@ -128,10 +211,13 @@ async function fetchAvailableMoorings(
             return `${i + 1}. **${m.name}**${verified}${premium} — ${flag}${m.location}, ${m.country}\n   💰 €${m.price_per_night}/noć${maxBoat ? ` | ${maxBoat}` : ""} | Zaštita od vjetra: ${m.wind_protection}${rating}${dist}${lastMin}\n   🛠️ Pogodnosti: ${amenStr}`;
         });
 
-        return `⚓ SLOBODNI VEZOVI (${checkIn} – ${checkOut}) u radijusu ${radiusKm} km:\n${lines.join("\n\n")}\n\n🔗 Rezerviraj na: https://mooringbooking.com/explore`;
+        return {
+            text: `⚓ SLOBODNI VEZOVI (${checkIn} – ${checkOut}) u radijusu ${radiusKm} km:\n${lines.join("\n\n")}\n\n🔗 Rezerviraj na: https://mooringbooking.com/explore`,
+            rows: top,
+        };
     } catch (e) {
         console.error("fetchAvailableMoorings error:", e);
-        return "Ahoj! AI kapetan na vezi... nemam dostupnih informacija u bazi.";
+        return { text: "Ahoj! AI kapetan na vezi... nemam dostupnih informacija u bazi.", rows: [] };
     }
 }
 
@@ -156,7 +242,19 @@ function msToBeaufort(ms: number): number {
     return 12;
 }
 
-async function fetchWindyWeather(lat: number, lng: number): Promise<string> {
+interface WeatherData {
+    windKnots: number;
+    gustKnots: number;
+    beaufort: number;
+    tempC: number;
+    dewpointC: number;
+    pressurehPa: number;
+    waveM: number;
+    swellM: number;
+    ok: boolean;
+}
+
+async function fetchWindyWeather(lat: number, lng: number): Promise<{ text: string; data: WeatherData | null }> {
     try {
         const controller = new AbortController();
         const tid = setTimeout(() => controller.abort(), 8000);
@@ -175,24 +273,36 @@ async function fetchWindyWeather(lat: number, lng: number): Promise<string> {
         });
         clearTimeout(tid);
 
-        if (!res.ok) return "Windy API nedostupan.";
-        const data = await res.json();
+        if (!res.ok) return { text: "Windy API nedostupan.", data: null };
+        const raw = await res.json();
 
-        const windMs: number = data["wind_u-surface"]?.[0] ?? 0;
-        const gustMs: number = data["windGust-surface"]?.[0] ?? 0;
-        const tempK: number = data["temp-surface"]?.[0] ?? 288;
-        const pressurePa: number = data["pressure-surface"]?.[0] ?? 101325;
-        const dewK: number = data["dewpoint-surface"]?.[0] ?? 283;
+        const windMs: number = raw["wind_u-surface"]?.[0] ?? 0;
+        const gustMs: number = raw["windGust-surface"]?.[0] ?? 0;
+        const tempK: number = raw["temp-surface"]?.[0] ?? 288;
+        const pressurePa: number = raw["pressure-surface"]?.[0] ?? 101325;
+        const dewK: number = raw["dewpoint-surface"]?.[0] ?? 283;
         const bft = msToBeaufort(windMs);
 
-        return `🌬️ Vjetar: ${msToKnots(windMs)} čv (udari ${msToKnots(gustMs)} čv) — Beaufort ${bft}\n🌡️ Temperatura: ${(tempK - 273.15).toFixed(1)}°C | Rosište: ${(dewK - 273.15).toFixed(1)}°C\n📊 Tlak: ${(pressurePa / 100).toFixed(0)} hPa`;
+        const data: WeatherData = {
+            windKnots: +(windMs * 1.94384).toFixed(1),
+            gustKnots: +(gustMs * 1.94384).toFixed(1),
+            beaufort: bft,
+            tempC: +(tempK - 273.15).toFixed(1),
+            dewpointC: +(dewK - 273.15).toFixed(1),
+            pressurehPa: Math.round(pressurePa / 100),
+            waveM: 0,
+            swellM: 0,
+            ok: true,
+        };
+
+        const text = `🌬️ Vjetar: ${msToKnots(windMs)} čv (udari ${msToKnots(gustMs)} čv) — Beaufort ${bft}\n🌡️ Temperatura: ${(tempK - 273.15).toFixed(1)}°C | Rosište: ${(dewK - 273.15).toFixed(1)}°C\n📊 Tlak: ${(pressurePa / 100).toFixed(0)} hPa`;
+        return { text, data };
     } catch {
-        return "Meteorološki podaci trenutno nedostupni.";
+        return { text: "Meteorološki podaci trenutno nedostupni.", data: null };
     }
 }
 
-// ── Windy Wave model ──────────────────────────────────────────────────────────
-async function fetchWindyWaves(lat: number, lng: number): Promise<string> {
+async function fetchWindyWaves(lat: number, lng: number): Promise<{ text: string; waveM: number; swellM: number }> {
     try {
         const controller = new AbortController();
         const tid = setTimeout(() => controller.abort(), 8000);
@@ -211,15 +321,365 @@ async function fetchWindyWaves(lat: number, lng: number): Promise<string> {
         });
         clearTimeout(tid);
 
-        if (!res.ok) return "Podaci o valovima nedostupni.";
-        const data = await res.json();
+        if (!res.ok) return { text: "Podaci o valovima nedostupni.", waveM: 0, swellM: 0 };
+        const raw = await res.json();
 
-        const waveH = (data["waves_height-surface"]?.[0] ?? 0).toFixed(1);
-        const swellH = (data["swell1_height-surface"]?.[0] ?? 0).toFixed(1);
-        return `🌊 Visina valova: ${waveH} m | Swell: ${swellH} m`;
+        const waveM = +((raw["waves_height-surface"]?.[0] ?? 0)).toFixed(1);
+        const swellM = +((raw["swell1_height-surface"]?.[0] ?? 0)).toFixed(1);
+        return { text: `🌊 Visina valova: ${waveM.toFixed(1)} m | Swell: ${swellM.toFixed(1)} m`, waveM, swellM };
     } catch {
-        return "Podaci o valovima trenutno nedostupni.";
+        return { text: "Podaci o valovima trenutno nedostupni.", waveM: 0, swellM: 0 };
     }
+}
+
+// ── Embedding (gemini-embedding-001, 768 dims) ────────────────────────────────
+async function embedQuery(text: string): Promise<number[] | null> {
+    if (!GEMINI_API_KEY) return null;
+    for (const api of ["v1beta", "v1"]) {
+        try {
+            const controller = new AbortController();
+            const tid = setTimeout(() => controller.abort(), 6000);
+            const res = await fetch(
+                `https://generativelanguage.googleapis.com/${api}/models/${EMBED_MODEL}:embedContent?key=${GEMINI_API_KEY}`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    signal: controller.signal,
+                    body: JSON.stringify({
+                        model: `models/${EMBED_MODEL}`,
+                        content: { parts: [{ text }] },
+                        taskType: "RETRIEVAL_QUERY",
+                        outputDimensionality: EMBED_DIM,
+                    }),
+                },
+            );
+            clearTimeout(tid);
+            if (res.ok) {
+                const j = await res.json();
+                const values = j.embedding?.values as number[] | undefined;
+                if (values && values.length === EMBED_DIM) return values;
+            }
+        } catch (e) {
+            console.error(`embed ${api} error:`, (e as Error).message);
+        }
+    }
+    return null;
+}
+
+interface KbHit {
+    id: string;
+    topic: string;
+    content: string;
+    lang: string;
+    source_type: string;
+    source_url: string | null;
+    similarity: number;
+}
+
+async function kbSearch(userMessage: string, k = 3): Promise<KbHit[]> {
+    const vec = await embedQuery(userMessage);
+    if (!vec) return [];
+    try {
+        const controller = new AbortController();
+        const tid = setTimeout(() => controller.abort(), 4000);
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/kb_search`, {
+            method: "POST",
+            headers: {
+                "apikey": SUPABASE_SERVICE_ROLE_KEY,
+                "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+                "Content-Type": "application/json",
+            },
+            signal: controller.signal,
+            body: JSON.stringify({ query_embedding: `[${vec.join(",")}]`, k, lang_filter: null }),
+        });
+        clearTimeout(tid);
+        if (!res.ok) {
+            console.error("kb_search RPC failed:", res.status, await res.text());
+            return [];
+        }
+        return await res.json();
+    } catch (e) {
+        console.error("kbSearch error:", (e as Error).message);
+        return [];
+    }
+}
+
+// ── Rescue authority resolver (FAZA 3 — dynamic MAYDAY) ───────────────────────
+interface RescueAuthority {
+    country_code: string;
+    country_name: string;
+    mrcc_phone: string;
+    mrcc_alt_phone: string | null;
+    vhf_emergency_channel: number;
+    coast_guard_name: string | null;
+    coast_guard_url: string | null;
+}
+
+// Lightweight lat/lng → country_code bbox table. Covers Med + Atlantic basin
+// countries seeded in rescue_authorities. First match wins; order matters
+// (narrow bboxes before the wide Adriatic/Med catch-alls).
+const COUNTRY_BBOXES: Array<{ code: string; minLat: number; maxLat: number; minLng: number; maxLng: number }> = [
+    // Adriatic east coast
+    { code: "SI", minLat: 45.40, maxLat: 45.80, minLng: 13.35, maxLng: 13.95 },
+    { code: "HR", minLat: 42.30, maxLat: 45.85, minLng: 13.40, maxLng: 19.50 },
+    { code: "ME", minLat: 41.85, maxLat: 43.55, minLng: 18.40, maxLng: 20.40 },
+    { code: "AL", minLat: 39.60, maxLat: 42.70, minLng: 19.20, maxLng: 21.10 },
+    // Italy (peninsula incl. Sicily & Sardinia)
+    { code: "IT", minLat: 35.40, maxLat: 47.10, minLng: 6.60, maxLng: 18.55 },
+    // Greece + Aegean + Ionian
+    { code: "GR", minLat: 34.70, maxLat: 41.80, minLng: 19.30, maxLng: 29.70 },
+    // Turkey Aegean + Med coast
+    { code: "TR", minLat: 35.80, maxLat: 42.10, minLng: 25.60, maxLng: 44.80 },
+    // Cyprus
+    { code: "CY", minLat: 34.50, maxLat: 35.80, minLng: 32.20, maxLng: 34.70 },
+    // Malta
+    { code: "MT", minLat: 35.75, maxLat: 36.10, minLng: 14.15, maxLng: 14.60 },
+    // France — mainland & Corsica (only Med relevant bbox here)
+    { code: "FR", minLat: 41.30, maxLat: 51.10, minLng: -5.10, maxLng: 9.60 },
+    // Iberian peninsula
+    { code: "ES", minLat: 35.90, maxLat: 43.90, minLng: -9.50, maxLng: 4.40 },
+    { code: "PT", minLat: 36.95, maxLat: 42.20, minLng: -9.55, maxLng: -6.15 },
+    // North Africa
+    { code: "MA", minLat: 27.60, maxLat: 35.95, minLng: -13.20, maxLng: -0.95 },
+    { code: "TN", minLat: 30.20, maxLat: 37.55, minLng: 7.50, maxLng: 11.60 },
+    { code: "EG", minLat: 22.00, maxLat: 31.70, minLng: 24.70, maxLng: 36.90 },
+    // North Sea / Channel
+    { code: "BE", minLat: 49.50, maxLat: 51.55, minLng: 2.50, maxLng: 6.45 },
+    { code: "NL", minLat: 50.70, maxLat: 53.70, minLng: 3.30, maxLng: 7.25 },
+    { code: "DE", minLat: 47.20, maxLat: 55.10, minLng: 5.85, maxLng: 15.05 },
+    { code: "GB", minLat: 49.80, maxLat: 61.00, minLng: -8.70, maxLng: 2.00 },
+    // US (coastal — MRCC still routes nationally)
+    { code: "US", minLat: 24.40, maxLat: 49.40, minLng: -125.00, maxLng: -66.90 },
+];
+
+function resolveCountryFromLatLng(lat: number, lng: number): string {
+    for (const bb of COUNTRY_BBOXES) {
+        if (lat >= bb.minLat && lat <= bb.maxLat && lng >= bb.minLng && lng <= bb.maxLng) {
+            return bb.code;
+        }
+    }
+    // Adriatic offshore default (between HR / IT / ME / AL)
+    if (lat >= 41.5 && lat <= 45.9 && lng >= 12.0 && lng <= 20.0) return "HR";
+    // Wider Mediterranean offshore default → IT
+    if (lat >= 30.0 && lat <= 46.0 && lng >= -6.0 && lng <= 37.0) return "IT";
+    return "HR"; // global fallback — Croatia is the platform's base country
+}
+
+const rescueCache = new Map<string, { row: RescueAuthority | null; exp: number }>();
+
+async function getRescueAuthority(lat: number, lng: number): Promise<RescueAuthority | null> {
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return null;
+    const country = resolveCountryFromLatLng(lat, lng);
+    const cached = rescueCache.get(country);
+    if (cached && cached.exp > Date.now()) return cached.row;
+
+    try {
+        const controller = new AbortController();
+        const tid = setTimeout(() => controller.abort(), 3000);
+        const url = new URL(`${SUPABASE_URL}/rest/v1/rescue_authorities`);
+        url.searchParams.set("country_code", `eq.${country}`);
+        url.searchParams.set("select", "country_code,country_name,mrcc_phone,mrcc_alt_phone,vhf_emergency_channel,coast_guard_name,coast_guard_url");
+        url.searchParams.set("limit", "1");
+        const res = await fetch(url.toString(), {
+            headers: {
+                "apikey": SUPABASE_SERVICE_ROLE_KEY,
+                "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+            },
+            signal: controller.signal,
+        });
+        clearTimeout(tid);
+        if (!res.ok) {
+            console.error("rescue_authorities fetch failed:", res.status);
+            rescueCache.set(country, { row: null, exp: Date.now() + 60_000 });
+            return null;
+        }
+        const rows = await res.json() as RescueAuthority[];
+        const row = rows[0] ?? null;
+        rescueCache.set(country, { row, exp: Date.now() + 60 * 60 * 1000 }); // 1 hour TTL
+        return row;
+    } catch (e) {
+        console.error("getRescueAuthority error:", (e as Error).message);
+        return null;
+    }
+}
+
+// ── Rate limiting (FAZA 6 — intent-aware, EMERGENCY bypass) ───────────────────
+function decodeJwtSub(req: Request): string | null {
+    const auth = req.headers.get("Authorization") || "";
+    const token = auth.replace(/^Bearer\s+/i, "").trim();
+    if (!token || token.split(".").length !== 3) return null;
+    try {
+        const payload = token.split(".")[1];
+        // base64url → base64
+        const b64 = payload.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(payload.length / 4) * 4, "=");
+        const json = JSON.parse(atob(b64));
+        return typeof json.sub === "string" ? json.sub : null;
+    } catch {
+        return null;
+    }
+}
+
+interface RateLimitResult {
+    allowed: boolean;
+    remaining: number; // -1 = unlimited
+    reset_at: string;
+    reason: string;
+    used?: number;
+}
+
+// FAZA 7: fire-and-forget quality log. Caller should not await if latency matters.
+interface QualityLogArgs {
+    userId: string | null;
+    conversationId: string | null;
+    intent: Intent;
+    confidence: number | null;
+    flags: string[];
+    language: string | null;
+    latencyMs: number;
+    paywall: boolean;
+    emergency: boolean;
+}
+
+async function logResponseQuality(args: QualityLogArgs): Promise<string | null> {
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return null;
+    try {
+        const controller = new AbortController();
+        const tid = setTimeout(() => controller.abort(), 2500);
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/ai_response_quality`, {
+            method: "POST",
+            headers: {
+                "apikey": SUPABASE_SERVICE_ROLE_KEY,
+                "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+                "Content-Type": "application/json",
+                "Prefer": "return=representation",
+            },
+            signal: controller.signal,
+            body: JSON.stringify({
+                user_id: args.userId,
+                conversation_id: args.conversationId,
+                intent: args.intent,
+                confidence: args.confidence,
+                flags: args.flags,
+                language: args.language,
+                latency_ms: args.latencyMs,
+                paywall: args.paywall,
+                emergency: args.emergency,
+            }),
+        });
+        clearTimeout(tid);
+        if (!res.ok) {
+            console.error("ai_response_quality insert failed:", res.status);
+            return null;
+        }
+        const rows = await res.json();
+        return Array.isArray(rows) && rows[0]?.id ? rows[0].id : null;
+    } catch (e) {
+        console.error("logResponseQuality error:", (e as Error).message);
+        return null;
+    }
+}
+
+function detectLanguage(text: string): string {
+    // Crude server-side detection — frontends already pass lang via i18n,
+    // but we may not have it here. Map a few obvious markers.
+    const s = text.toLowerCase();
+    if (/[čćšđž]/.test(s) || /\bvez\b|\bdanas\b|\bsutra\b|\bbrod\b/.test(s)) return "hr";
+    if (/\bder\b|\bdie\b|\bdas\b|\bwetter\b|\bheute\b/.test(s)) return "de";
+    if (/\bnon\b|\bcon\b|\bdi\b|\bche\b|\boggi\b|\bbarca\b/.test(s)) return "it";
+    if (/\ble\b|\bla\b|\bou\b|\baujourd/.test(s)) return "fr";
+    return "en";
+}
+
+async function checkAndLogAiCall(userId: string, intent: Intent, isPremium: boolean): Promise<RateLimitResult | null> {
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return null;
+    try {
+        const controller = new AbortController();
+        const tid = setTimeout(() => controller.abort(), 3000);
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/check_and_log_ai_call`, {
+            method: "POST",
+            headers: {
+                "apikey": SUPABASE_SERVICE_ROLE_KEY,
+                "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+                "Content-Type": "application/json",
+            },
+            signal: controller.signal,
+            body: JSON.stringify({ p_user_id: userId, p_intent: intent, p_is_premium: isPremium }),
+        });
+        clearTimeout(tid);
+        if (!res.ok) {
+            console.error("check_and_log_ai_call failed:", res.status, await res.text());
+            return null;
+        }
+        return await res.json() as RateLimitResult;
+    } catch (e) {
+        console.error("checkAndLogAiCall error:", (e as Error).message);
+        return null;
+    }
+}
+
+// ── Post-generation validator (anti-hallucination) ─────────────────────────────
+interface Validation {
+    confidence: number;
+    flags: string[];
+}
+
+function validateReply(
+    reply: string,
+    rpcMoorings: MooringRow[],
+    rescue: RescueAuthority | null,
+): Validation {
+    const flags: string[] = [];
+    const knownMarinaNames = new Set(
+        rpcMoorings.map((m) => m.name.toLowerCase().trim()),
+    );
+
+    const markers = /(?:\*\*)?(?:marina|aci\s+marina|aci)\s+([A-ZŠĐČĆŽ][a-zšđčćžA-ZŠĐČĆŽ\-]{2,30})(?:\*\*)?/g;
+    const mentioned: string[] = [];
+    let m: RegExpExecArray | null;
+    while ((m = markers.exec(reply)) !== null) {
+        mentioned.push(m[0].replace(/\*\*/g, "").toLowerCase().trim());
+    }
+    for (const name of mentioned) {
+        const fragment = name.replace(/^(aci\s+marina|aci|marina)\s+/i, "").trim();
+        const isKnown = Array.from(knownMarinaNames).some((kn) => kn.includes(fragment) || fragment.includes(kn));
+        if (!isKnown) {
+            flags.push(`unverified_marina:${fragment}`);
+        }
+    }
+
+    const vhfMatches = reply.match(/\bVHF\s*(?:kanal|channel|kan\.)?\s*(\d{1,3})\b/gi);
+    if (vhfMatches) {
+        for (const vm of vhfMatches) {
+            const n = parseInt(vm.match(/\d+/)?.[0] ?? "0");
+            if (n < 1 || n > 88) flags.push(`invalid_vhf:${n}`);
+        }
+    }
+
+    // MRCC sanity: if the reply lists an international-format phone with a country
+    // code that clearly doesn't match the resolved rescue authority, flag it.
+    if (rescue) {
+        const phoneMatches = reply.match(/\+\d[\d\s().-]{6,}\d/g);
+        if (phoneMatches) {
+            const canonical = rescue.mrcc_phone.replace(/\D/g, "");
+            const altCanonical = (rescue.mrcc_alt_phone ?? "").replace(/\D/g, "");
+            const rescueDial = canonical.slice(0, 3); // e.g. "385", "39"
+            for (const raw of phoneMatches) {
+                const digits = raw.replace(/\D/g, "");
+                if (!digits) continue;
+                const matchesCanonical =
+                    (canonical && digits.endsWith(canonical.slice(-6))) ||
+                    (altCanonical && digits.endsWith(altCanonical.slice(-6)));
+                if (matchesCanonical) continue;
+                // Heuristic: only flag numbers that look like MRCC-style country codes (leading country dial)
+                if (rescueDial && !digits.startsWith(rescueDial.slice(0, 2))) {
+                    flags.push(`wrong_mrcc_country:${digits.slice(0, 4)}`);
+                }
+            }
+        }
+    }
+
+    const confidence = Math.max(0, 1 - 0.15 * flags.length);
+    return { confidence, flags };
 }
 
 // ── Auto-discover available Gemini flash models ────────────────────────────────
@@ -239,8 +699,7 @@ async function getAvailableFlashModels(): Promise<string[]> {
                         !n.includes("tts") &&
                         !n.includes("image")
                     )
-                    .sort((a: string, b: string) => b.localeCompare(a)); // newest first
-                console.log(`Models (${api}):`, JSON.stringify(models));
+                    .sort((a: string, b: string) => b.localeCompare(a));
                 return models;
             }
         } catch (e) {
@@ -256,7 +715,6 @@ async function callGemini(prompt: string, history: Array<{ role: string; parts: 
         return "⚓ AI Kapetan nije konfiguriran (nedostaje API ključ). Kontaktirajte podršku.";
     }
 
-    // Auto-discover which flash models are available for this API key
     const flashModels = await getAvailableFlashModels();
     const modelsToTry = flashModels.length > 0 ? flashModels : ["gemini-2.0-flash", "gemini-1.5-flash"];
 
@@ -287,7 +745,6 @@ async function callGemini(prompt: string, history: Array<{ role: string; parts: 
                 if (res.ok) {
                     clearTimeout(tid);
                     const json = await res.json();
-                    console.log(`Success: ${modelName} on ${apiVersion}`);
                     return json.candidates?.[0]?.content?.parts?.[0]?.text
                         ?? "Nije moguće generirati odgovor.";
                 }
@@ -315,43 +772,141 @@ Deno.serve(async (req: Request) => {
         return new Response("ok", { headers: CORS });
     }
 
+    const reqStart = Date.now();
     try {
-        const { messages, location, userProfile, searchDates, isProviderContext } = await req.json();
+        const { messages, location, userProfile, vesselProfile, searchDates, isProviderContext, conversationId } = await req.json();
 
         const lat: number = location?.lat ?? 43.5;
         const lng: number = location?.lng ?? 16.4;
 
-        // Date range for mooring search: provided dates or next 7 days
         const today = new Date();
         const todayStr = today.toISOString().split("T")[0];
         const nextWeekStr = new Date(today.getTime() + 7 * 86400000).toISOString().split("T")[0];
         const checkIn: string = searchDates?.checkIn ?? todayStr;
         const checkOut: string = searchDates?.checkOut ?? nextWeekStr;
 
-        // Extract the last user message text for intent detection
         const allMessages = messages as Array<{ role: string; content: string; isWelcome?: boolean }>;
         const lastUserMsg = [...allMessages].reverse().find((m) => m.role === "user")?.content ?? "";
+        const vesselLength = (vesselProfile as { lengthM?: number } | undefined)?.lengthM;
         const boatLength: number | undefined = userProfile?.boatLength
             ? Number(userProfile.boatLength)
-            : undefined;
+            : vesselLength && Number.isFinite(vesselLength)
+                ? Number(vesselLength)
+                : undefined;
 
-        // Fetch weather + waves + (conditionally) moorings in parallel
-        const shouldSearchMoorings = wantsMooringSearch(lastUserMsg);
-        const [weatherStr, wavesStr, mooringsStr] = await Promise.all([
+        const intent: Intent = lastUserMsg ? classifyIntent(lastUserMsg) : "GENERAL_CHAT";
+        const shouldSearchMoorings = intent === "SEARCH_MOORING";
+
+        // FAZA 6: intent-aware rate limit (EMERGENCY & premium bypass)
+        const tierStr = (userProfile?.tier ?? "basic") as string;
+        const isPremiumTier = tierStr === "premium-monthly" || tierStr === "premium-annual" || tierStr === "admin";
+        const userId = decodeJwtSub(req);
+        let rateLimit: RateLimitResult | null = null;
+        if (userId) {
+            rateLimit = await checkAndLogAiCall(userId, intent, isPremiumTier);
+            if (rateLimit && !rateLimit.allowed) {
+                const paywallQualityId = await logResponseQuality({
+                    userId,
+                    conversationId: conversationId ?? null,
+                    intent,
+                    confidence: null,
+                    flags: ["paywall"],
+                    language: detectLanguage(lastUserMsg),
+                    latencyMs: Date.now() - reqStart,
+                    paywall: true,
+                    emergency: false,
+                });
+                return new Response(
+                    JSON.stringify({
+                        reply: "⭐ Iskoristio si sva besplatna AI Kapetan pitanja za ovaj mjesec.\n\nNadogradi na **Premium** za neograničen pristup, 7-dnevne prognoze, upozorenja na oluje i još mnogo toga! 🚢",
+                        intent,
+                        remaining: 0,
+                        resetAt: rateLimit.reset_at,
+                        paywall: true,
+                        qualityId: paywallQualityId,
+                    }),
+                    { headers: { ...CORS, "Content-Type": "application/json" }, status: 200 }
+                );
+            }
+        }
+
+        // Parallel: weather + waves + moorings (conditional) + RAG KB + rescue authority
+        const [weatherResult, wavesResult, mooringsResult, kbHits, rescue] = await Promise.all([
             fetchWindyWeather(lat, lng),
             fetchWindyWaves(lat, lng),
-            shouldSearchMoorings ? fetchAvailableMoorings(checkIn, checkOut, lat, lng, boatLength) : Promise.resolve(""),
+            shouldSearchMoorings
+                ? fetchAvailableMoorings(checkIn, checkOut, lat, lng, boatLength)
+                : Promise.resolve({ text: "", rows: [] as MooringRow[] }),
+            lastUserMsg ? kbSearch(lastUserMsg, 3) : Promise.resolve([] as KbHit[]),
+            getRescueAuthority(lat, lng),
         ]);
 
-        const boatInfo = userProfile?.boatName
-            ? `Brod: ${userProfile.boatName}${boatLength ? `, duljina ${boatLength}m` : ""}.`
-            : boatLength
-                ? `Brod: ${boatLength}m duljine.`
-                : "Podaci o brodu nisu uneseni.";
+        const weatherStr = weatherResult.text;
+        const wavesStr = wavesResult.text;
+        const weather: WeatherData | null = weatherResult.data
+            ? { ...weatherResult.data, waveM: wavesResult.waveM, swellM: wavesResult.swellM }
+            : null;
 
-        const mooringsSection = mooringsStr
-            ? `\n\n═══ PRETRAGA VEZOVA ═══\n${mooringsStr}`
+        // FAZA 2: prefer structured vesselProfile over legacy userProfile.boat_*
+        const v = vesselProfile as undefined | {
+            name?: string;
+            boatType?: string;
+            lengthM?: number;
+            beamM?: number;
+            draftM?: number;
+            mmsi?: string;
+            callSign?: string;
+            insuranceExpiry?: string | null;
+            engineMake?: string;
+            engineModel?: string;
+            engineHours?: number;
+        };
+
+        let boatInfo: string;
+        if (v && (v.name || v.lengthM || v.draftM)) {
+            const parts: string[] = [];
+            if (v.name) parts.push(`Ime: ${v.name}`);
+            if (v.boatType) parts.push(`Tip: ${v.boatType}`);
+            if (v.lengthM) parts.push(`duljina ${v.lengthM}m`);
+            if (v.beamM) parts.push(`širina ${v.beamM}m`);
+            if (v.draftM) parts.push(`gaz ${v.draftM}m`);
+            if (v.engineMake || v.engineModel) {
+                parts.push(`motor ${[v.engineMake, v.engineModel].filter(Boolean).join(" ")}${v.engineHours ? ` (${v.engineHours} h)` : ""}`);
+            }
+            if (v.mmsi) parts.push(`MMSI ${v.mmsi}`);
+            if (v.callSign) parts.push(`call sign ${v.callSign}`);
+            if (v.insuranceExpiry) parts.push(`osiguranje do ${v.insuranceExpiry}`);
+            boatInfo = `Brod — ${parts.join(", ")}.`;
+        } else if (userProfile?.boatName) {
+            boatInfo = `Brod: ${userProfile.boatName}${boatLength ? `, duljina ${boatLength}m` : ""}.`;
+        } else if (boatLength) {
+            boatInfo = `Brod: ${boatLength}m duljine.`;
+        } else {
+            boatInfo = "Podaci o brodu nisu uneseni.";
+        }
+
+        const mooringsSection = mooringsResult.text
+            ? `\n\n═══ PRETRAGA VEZOVA ═══\n${mooringsResult.text}`
             : "";
+
+        const kbSection = kbHits.length > 0
+            ? `\n\n═══ RELEVANTNO ZNANJE (iz baze) ═══\n${
+                kbHits
+                    .map((h, i) => `${i + 1}. [${h.source_type}] ${h.topic}\n${h.content}`)
+                    .join("\n\n")
+            }`
+            : "";
+
+        // FAZA 3: dynamic MAYDAY section (country resolved from lat/lng)
+        const rescueLines = rescue
+            ? [
+                `Država: ${rescue.country_name} (${rescue.country_code})`,
+                `MAYDAY → VHF Ch.${rescue.vhf_emergency_channel}`,
+                `MRCC: ${rescue.mrcc_phone}${rescue.mrcc_alt_phone ? ` (alt: ${rescue.mrcc_alt_phone})` : ""}`,
+                rescue.coast_guard_name ? `Obalna straža: ${rescue.coast_guard_name}` : null,
+                "EPIRB na 406 MHz",
+            ].filter(Boolean).join(" | ")
+            : "MAYDAY → VHF Ch.16 | MRCC Rijeka: +385 1 195 | EPIRB na 406 MHz";
 
         let systemPrompt = `Ti si **AI Kapetan** — certificirani mediteranski kapetan s 30 godina iskustva na Jadranu i Mediteranu, ovlašteni brodski mehaničar i stručni savjetnik za Mooring Booking platformu.
 Govoriš s autoritetom i stručnošću iskusnog pomorca. Uvijek si precizan, konkretan i praktičan. Safety first — uvijek i bez iznimke.
@@ -362,138 +917,67 @@ ${boatInfo}
 📅 Datum: ${todayStr} (Ako korisnik traži vez "za danas" ili "večeras", naglasi Now4Today opciju za brzu rezervaciju!)
 📍 Lokacija: ${lat.toFixed(2)}°N, ${lng.toFixed(2)}°E
 ${weatherStr}
-${wavesStr}${mooringsSection}
+${wavesStr}${mooringsSection}${kbSection}
 
 ═══ ZNANJE O MOORING BOOKING APLIKACIJI ═══
 🌐 Platforma: mooringbooking.com — rezervacija privatnih vezova diljem Mediterana
-👤 Korisnički tipovi:
-  • Sailor (jedriličar/motor) — traži i rezervira vez
-  • Provider — vlasnik veza koji nudi vez za iznajmljivanje
+👤 Korisnički tipovi: Sailor (traži i rezervira vez) i Provider (vlasnik veza)
 
 💳 PLANOVI ZA JEDRILIČARE:
-  • Basic (BESPLATNO): pretraga vezova, 10 AI pitanja/mj, ograničene funkcije
-  • Premium Monthly (~€9.99/mj): neograničen AI Kapetan, offline karte, 7-dnevna prognoza, prioritetna podrška, ekskluzivni popusti, uzbune na oluje
-  • Premium Annual (~€9.99/god — BEST VALUE, -50%): sve iz Monthly + godišnji benefiti
+  • Basic (BESPLATNO): pretraga vezova, 10 AI pitanja/mj
+  • Premium Monthly (~€9.99/mj): neograničen AI Kapetan, offline karte, 7-dnevna prognoza, uzbune na oluje
+  • Premium Annual (~€9.99/god — BEST VALUE, -50%)
 
-💼 ZA PROVIDERE: Registracija BESPLATNO | Provizija 15% po rezervaciji | Provider zadržava ~82–85% neto
-  • Dodaci: Marketing Tools €5/mj | Premium Listing €9.99/mj | Mooring Insurance €9.99/god
+💼 ZA PROVIDERE: Registracija BESPLATNO | Provizija 15% po rezervaciji (Provider zadržava ~82–85% neto)
 
-🛥️ FUNKCIJE: Now4Today (last-minute rezervacije za ISTI DAN), Winter Storage, Affiliate program (5–15%), Instant booking, Ocjene 1–5⭐
+🛥️ FUNKCIJE: Now4Today (last-minute za ISTI DAN), Winter Storage, Affiliate program (5–15%), Instant booking
 
 📍 REZERVACIJA: mooringbooking.com/explore → pretraži → filtriraj → Book Now → email potvrda
 
-═══ NAUTIČKO ZNANJE ═══
-• Jadranski vjetrovi: Bura (NE, udari 40–60 čv), Jugo (SE, duge vrijeće), Maestral (NW, poslijepodne)
-• COLREGS: pravila 5 (stalna straža), 8 (sigurnosna akcija), 16 (skloni se), 18 (prioritet jedrilice)
-• Sidrenje: omjer 7:1 (sidro:lanac), pješčano/muljevito dno, izbjegavaj Posidonu
-• Vez: pristup pod 30–45°, pramčane linije prvo, zatim krmene i špringtauvi
-• Upozorenja: vjetar >25 čv = osiguraj brod, >40 čv = ostani u luci, val >2.5 m = ne idi
-• Gorivo: ~15–25 L/h pri 7–8 čv za plovilo 10–14 m. Uvijek 20% rezerve
-• Hitno: MAYDAY → VHF Ch.16 | MRCC: +385 1 195 | EPIRB aktivacija
-• Benzinske pumpe (Gas stations): Uvijek provjeriti radno vrijeme (često zatvorene noću). Petkom popodne i subotom ujutro su velike gužve zbog chartera. Kod jakog vjetra pristup može biti opasan jer je potrebno dugo zadržavanje dok se čeka red.
-
-═══ DIJAGNOSTIKA I POPRAVAK BRODOVA ═══
-
-Područje stručnosti: gliseri, RIBovi, motorni brodovi, jahte, jedrilice, katamarani.
-Motori: Yanmar, Volvo Penta, Mercury, Yamaha, Suzuki, Johnson/Evinrude (2T i 4T), Beta Marine.
-
-🔴 HITNO — odmah zaustavi motor i zovi pomoć ako:
-  • Bijeli dim iz ispuha (voda u komori izgaranja = zazubiti glava motora)
-  • Razina vode u pilji naglo raste i ne možeš pronaći uzrok
-  • Gubitak kormila (jedna ili obje) pri brzini
-  • Miris paljevine iz električne kutije uz dima
-
-🔧 MOTORNI KVAROVI — Diesel inboard:
-  • Motor ne pali → provjeri: punjenje baterije (12.6V+), osigurači, slavinu goriva, filtar goriva, odzračivanje sustava goriva
-  • Pregrijavanje → ODMAH UGASI → provjeri: pijavar (tell-tale) ima li vode, rešetku morske pumpe, impeller pumpe
-  • Impeller je najčešći kvar pri pregrijavanju — zamijeniti svake 200h ili 2 sezone
-  • Bijeli dim = voda u motoru (STOP!), plavi dim = gori ulje (servis), crni dim = bogata mješavina (filter zraka)
-  • Motor gubi snagu → filtar goriva začepljen, filtar zraka zaprašen, ili problem s ubrizgavanjem
-
-� MOTORNI KVAROVI — Vanjski motor (Gliser/RIB):
-  • Ne pali → provjeri kill-switch (crvenana lenta!), bočicu za punjenje goriva (5× pritisni do tvrdoće), slavinu goriva
-  • Radi grubo → isprljana brizgaljka, stara benzina, svjećice
-  • Pijavar (tell-tale) bez vode → impeller propao → UGASI odmah, zamijeni impeller
-  • Kavitacija (visoki obrtaji, slab potisak) → oštećena vijčana, pogrešan trim, propeller sklizne na gumi
-  • Yamaha, Mercury, Suzuki: provjeravaj flash kodove na tahometru pri upozorenjima
-
-⚡ ELEKTRIČNI KVAROVI:
-  • Nema struje → provjeri: prekidač baterije (ON?), napon baterije (12.6V = puna), osigurače, stezaljke baterije (korozija!)
-  • Sidreni vinč ne radi → provjeri: osigurač (60–150A kod baterije), termička zaštita (čeka 10 min), blokada lanca
-  • Ako vinč zuji a lanac ne ide → lanac je zaglavio ili je isklopljene kvačilo (clutch)
-  • Hitno ručno spuštanje sidra: iskopi kvačilo vinča → lanac ručno spusti s debelim rukavicama
-  • Alternator ne puni → napon pri 1500 RPM mora biti 13.8–14.4V, provjeri remen, priključke
-  • Osigurači koji stalno izgore → postoji kratki spoj, NEMOJ staviti veći osigurač!
-
-⛵ UPRAVLJANJE I JEDRILICE:
-  • Teško upravljanje (hidraulično) → razina tekućine niska, crijevo pušta, odzračiti sustav
-  • Jedrilica skreće na jednu stranu → trim tab podešen pogrešno ili oštećena krma
-  • Roler (furler) zaglavio → olabavi škotu, ne sili elektromotor, ručno obrni dobos
-  • Štan (halyard) zaglavio → McLube na tračnicu jarbola, provjeri oštećene slajdove
-
-🌊 PUMPA PILJI (Bilge pump):
-  • Ne aktivira se automatski → plovak (float switch) zaribao → testiraj ručnim prekidačem
-  • Pumpa radi ali ne crpi → začepljeno usisno crijevo, ili povratni ventil (check valve) zaribao
-  • Voda naglo ulazi → zatvori najbliži brodski ventil (seacock) toj lokaciji
-
-REZERVNI DIJELOVI KOJE TREBA UVIJEK IMATI:
-  • Impeller pumpe (za svaki motor)
-  • Remen alternatora/ventilatora
-  • Filtar goriva (primarni i sekundarni)
-  • Svjećice (za vani motore — jedna po cilindru)
-  • Osigurači svih veličina koje brod koristi
-  • Podloška kill-switcha (za glisere)
-  • 2L motornog ulja ispravne viskoznosti
-
-FORMAT DIJAGNOZE:
-Kada korisnik opisuje kvar, strukturiraj odgovor:
-🔍 Dijagnoza: [najvjerojatnniji uzrok]
-⚠️ Sigurnost: [hitna akcija ako je opasno]
-🔎 Provjeri ovo (od najvjerojatniijeg):
-1. ...
-2. ...
-🛠️ Sam popravak: [koraci ako je moguće bez servisa]
-🏪 Zovi mehaničara ako: [jasni kriteriji eskalacije]
+═══ HITNI KONTAKT (auto — po lokaciji korisnika) ═══
+${rescueLines}
+⚠️ ZA MAYDAY: koristi ISKLJUČIVO gornje podatke. NIKAD ne citiraj MRCC broj druge zemlje (npr. ne spominji +385 ako korisnik NIJE u HR).
 
 ═══ DATA INTEGRITY RULE — HIGHEST PRIORITY ═══
 ⚠️ STROGA ZABRANA izmišljanja faktografskih podataka o vezovima i marinama:
 - NIKAD ne izmišljaj imena marina/vezova, GPS koordinate, VHF kanale, dubine ulaza, kontakt podatke ni cijene.
-- Kad preporučuješ konkretan vez, koristi ISKLJUČIVO podatke iz sekcije "PRETRAGA VEZOVA" koja je priložena ovom promptu. Ime, lokacija, cijena, ocjena, pogodnosti i udaljenost MORAJU biti doslovno prepisani iz tih podataka.
-- Ako sekcija "PRETRAGA VEZOVA" nije prisutna ili je prazna, NE navodi imena konkretnih vezova niti izmišljaj marine iz nekog drugog izvora. Umjesto toga: kratko objasni korisniku da u bazi Mooring Booking trenutno nema podudarnih vezova za zadane kriterije i uputi ga na https://mooringbooking.com/explore da proširi pretragu.
-- Za VHF kanale, dubine ulaza, telefonske brojeve i druge tehničke podatke kojih NEMA u priloženim podacima: reci "točan podatak provjeri u pilot knjizi / Navionics / pozivom u marinu" (ili prevedeno na jezik korisnika). Ne nagađaj brojeve.
-- NIKAD ne spominji marinu izvan geografskog raspona priloženih rezultata. Ako je korisnik na Jadranu, NE spominji marine u Aziji, Americi, Pacifiku ni drugim regijama.
-- PRIORITET U PRIKAZU: vezovi označeni s ✅ Verified Partner se prikazuju prvi i moraju biti eksplicitno istaknuti kao preporuka broja 1. Zatim dolaze 👑 Premium listings, pa ostali po udaljenosti.
-- Opće nautičko znanje (vjetrovi, COLREGS, dijagnostika motora, sidrenje, gorivo) ostaje autoritativno — ovo pravilo se odnosi isključivo na fakte o konkretnim objektima (marine, vezovi, cijene, koordinate, kontakti).
+- Kad preporučuješ konkretan vez, koristi ISKLJUČIVO podatke iz sekcije "PRETRAGA VEZOVA" (ako je prisutna). Ime, lokacija, cijena, ocjena, pogodnosti i udaljenost MORAJU biti doslovno prepisani iz tih podataka.
+- Ako sekcija "PRETRAGA VEZOVA" nije prisutna ili je prazna, NE navodi imena konkretnih vezova niti izmišljaj marine. Uputi korisnika na https://mooringbooking.com/explore.
+- Za VHF kanale, dubine ulaza, telefonske brojeve i druge tehničke podatke kojih NEMA u "RELEVANTNO ZNANJE" niti u "PRETRAGA VEZOVA": reci "točan podatak provjeri u pilot knjizi / Navionics / pozivom u marinu".
+- NIKAD ne spominji marinu izvan geografskog raspona priloženih rezultata.
+- PRIORITET U PRIKAZU: ✅ Verified Partner prvi, zatim 👑 Premium listings, pa ostali po udaljenosti.
+- Za nautičko znanje (vjetrovi, COLREGS, dijagnostika, sidrenje, gorivo) KORISTI sekciju "RELEVANTNO ZNANJE" prije vlastitog znanja — to su kustomizirani, verificirani podaci iz baze.
 
 ═══ LANGUAGE RULE — HIGHEST PRIORITY ═══
-⚠️ MANDATORY: You MUST detect the language of the user's LAST message and reply ENTIRELY in that SAME language. This overrides everything else.
-- If the user writes in English → reply 100% in English. Do NOT use Croatian words.
-- If the user writes in German → reply 100% in German.
-- If the user writes in Italian → reply 100% in Italian.
-- If the user writes in French → reply 100% in French.
-- If the user writes in Croatian/Serbian/Bosnian → reply in Croatian.
-- For ANY other language → reply in that language.
-The internal knowledge base above is in Croatian for reference only — NEVER let it influence your output language. Translate all terms (e.g. "čv" → "kn", "vez" → "mooring", "vjetar" → "wind") when replying in a non-Croatian language.
+⚠️ MANDATORY: Detektiraj jezik korisnikove ZADNJE poruke i odgovori U CIJELOSTI na tom ISTOM jeziku. Ovo nadjačava sve ostalo.
+- English → reply 100% in English. Don't use Croatian words.
+- German → reply 100% in German.
+- Italian → reply 100% in Italian.
+- French → reply 100% in French.
+- Croatian/Serbian/Bosnian → hrvatski.
+Interni sistemski prompt je na hrvatskom SAMO za referencu — NIKAD ne dopusti da utječe na tvoj izlazni jezik. Prevedi sve termine (čv→kn, vjetar→wind, itd.) kad odgovaraš na nehrvatskom.
 
-PRAVILA ODGOVARANJA:
-1. ⚠️ ALWAYS reply in the SAME language as the user's last message. This is NON-NEGOTIABLE. Even though this system prompt is written in Croatian, if the user writes in English, you MUST respond fully in English. If they switch languages mid-conversation, switch with them immediately.
-2. NIKAD ne ponavljaj ili ne odjeckaš natrag pozdrav korisnika kao cijeli odgovor. Kad korisnik napiše samo pozdrav (npr. "Ahoj!", "Bok!", "Hello!", "Hallo!"), odgovori kao iskusni kapetan: kratko se predstavi, napiši jednu rečenicu raspoloženja (more, putovanje, navigacija) i JASNO PITAJ što ga zanima — vjetar, vez, ruta, kvar na brodu, prognoza, savjet?
-3. Za vremenska pitanja: navedi čv, °C, hPa, m, Beaufort — koristi gore navedene podatke.
-4. Za navigacijska pitanja: nautička udaljenost u NM, procijenjeno trajanje, ključne točke rute.
-5. Za kvarove: slijedi FORMAT DIJAGNOZE gore — konkretan, korak-po-korak.
-6. Za pitanja o vezu/rezervaciji: navedi slobodne vezove s imenom, lokacijom, cijenom i linkom.
-7. Hitni slučajevi (MAYDAY, SOS, tonuće): odmah daj VHF Ch.16 + MRCC +385 1 195 + EPIRB.
-8. Formatiraj odgovor s emoji naslovima i numeriranim listama gdje ima smisla.
-9. Završi sve rečenice — nikad ne prekidaj odgovor usred misli.
-10. Budi konkretan: davaj stvarne brojeve, stvarna imena luka, stvarne rute, stvarne cijene.
-11. Ne koristi generičke odgovore — svaki odgovor mora biti specifičan za situaciju korisnika.
-12. Minimalna duljina odgovora: 3 rečenice. Svaki odgovor mora imati stvarnu vrijednost za korisnika.
-13. Ton: samopouzdan, prijateljski, stručan — kao kapetan koji te prima na palubu svog broda.
-14. Prioritet preporuka vezova: ✅ Verified Partner uvijek prvi (istakni oznaku u odgovoru), zatim 👑 Premium listings, pa ostali po udaljenosti od korisnika. Rasporedi preporuke u istom redoslijedu kojim su ti prosljeđene u "PRETRAGA VEZOVA".
-15. NIKAD ne izmišljaj marinu, lokaciju, dubinu, VHF kanal ni cijenu. Ako nije u priloženim podacima — reci da trebaš provjeru u pilot knjizi ili direktnim pozivom.`;
+═══ PRAVILA ODGOVARANJA ═══
+1. ALWAYS reply in the SAME language as user's last message.
+2. NIKAD ne ponavljaj pozdrav korisnika kao cijeli odgovor. Kad korisnik napiše samo pozdrav, predstavi se kratko i PITAJ što ga zanima.
+3. Za vrijeme: koristi podatke iz "TRENUTNI STATUS" (čv, °C, hPa, m, Beaufort).
+4. Za navigaciju: NM, procijenjeno trajanje, ključne točke.
+5. Za kvarove: strukturiraj kao 🔍 Dijagnoza → ⚠️ Sigurnost → 🔎 Provjeri → 🛠️ Popravak → 🏪 Mehaničar ako. Koristi "RELEVANTNO ZNANJE" ako je dostupno.
+6. Za vez/rezervaciju: navedi slobodne vezove iz "PRETRAGA VEZOVA" s imenom, lokacijom, cijenom i linkom.
+7. Hitni slučajevi (MAYDAY, SOS, tonuće): odmah daj VHF Ch.16 + MRCC broj iz "HITNI KONTAKT".
+8. Formatiraj s emoji naslovima i numeriranim listama.
+9. Završi sve rečenice.
+10. Konkretno: stvarni brojevi, imena, rute.
+11. Ne generički odgovori.
+12. Minimum 3 rečenice, stvarna vrijednost za korisnika.
+13. Ton: samopouzdan, prijateljski, stručan.
+14. Prioritet vezova: ✅ Verified Partner prvi, 👑 Premium, pa udaljenost.
+15. NIKAD ne izmišljaj — ako nije u priloženim podacima, reci "provjeri u pilot knjizi/pozovi marinu".
+16. Ako je poznat GAZ broda (iz "Brod —" sekcije), uvijek provjeri max_draft marine prije preporuke i upozori korisnika ako je tijesno.
+17. Ako je poznat DATUM isteka osiguranja i blizu je, diskretno podsjeti korisnika.`;
 
         if (isProviderContext) {
-            systemPrompt += `\n\n═══ PROVIDER KONTEKST ═══\nKorisnik se trenutno nalazi na stranici za iznajmljivače (Provider).\nTvoj glavni zadatak je pomoći mu oko procesa registracije, kreiranja vezova, razumijevanja provizije (15%) i upravljanja rezervacijama.\nBudi proaktivan i preuzmi inicijativu da mu objasniš kako da unese detalje o vezu, postavi Custom i Default cijenu, te kako funkcionira naplata provizije. Mooring Booking uzima 15% provizije naknadno.`;
+            systemPrompt += `\n\n═══ PROVIDER KONTEKST ═══\nKorisnik se nalazi na stranici za iznajmljivače (Provider).\nPomoći mu oko registracije, kreiranja vezova, provizije (15%) i upravljanja rezervacijama.\nMooring Booking uzima 15% provizije naknadno.`;
         }
 
         const rawHistory = allMessages
@@ -503,13 +987,80 @@ PRAVILA ODGOVARANJA:
                 parts: [{ text: m.content }],
             }));
 
-        // Ensure history starts with a user message
         const firstUserIdx = rawHistory.findIndex((m) => m.role === "user");
         const history = firstUserIdx >= 0 ? rawHistory.slice(firstUserIdx) : rawHistory;
 
         const reply = await callGemini(systemPrompt, history);
 
-        return new Response(JSON.stringify({ reply }), {
+        const { confidence, flags } = validateReply(reply, mooringsResult.rows, rescue);
+
+        const sources: Array<{ type: string; title: string; url?: string; detail?: string }> = [];
+        if (mooringsResult.rows.length > 0) {
+            sources.push({
+                type: "rpc",
+                title: "Moorings — PostGIS geofenced search",
+                detail: `${mooringsResult.rows.length} rezultata u 150km`,
+            });
+        }
+        for (const hit of kbHits) {
+            sources.push({
+                type: "kb",
+                title: hit.topic,
+                url: hit.source_url ?? undefined,
+                detail: `${hit.source_type} · similarity ${hit.similarity.toFixed(2)}`,
+            });
+        }
+        if (weatherStr && !weatherStr.includes("nedostupan")) {
+            sources.push({ type: "windy", title: "Windy iconEu model", url: "https://windy.com" });
+        }
+        if (rescue) {
+            sources.push({
+                type: "system",
+                title: `${rescue.country_name} MRCC`,
+                url: rescue.coast_guard_url ?? undefined,
+                detail: `${rescue.coast_guard_name ?? "MRCC"} · VHF Ch.${rescue.vhf_emergency_channel}`,
+            });
+        }
+
+        const maydayPayload = rescue
+            ? {
+                country: rescue.country_name,
+                countryCode: rescue.country_code,
+                mrccPhone: rescue.mrcc_phone,
+                mrccAltPhone: rescue.mrcc_alt_phone,
+                vhfChannel: rescue.vhf_emergency_channel,
+                coastGuard: rescue.coast_guard_name,
+                coastGuardUrl: rescue.coast_guard_url,
+            }
+            : null;
+
+        const remaining = rateLimit?.remaining ?? (isPremiumTier ? -1 : null);
+        const resetAt = rateLimit?.reset_at ?? null;
+
+        const qualityId = await logResponseQuality({
+            userId,
+            conversationId: conversationId ?? null,
+            intent,
+            confidence,
+            flags,
+            language: detectLanguage(lastUserMsg),
+            latencyMs: Date.now() - reqStart,
+            paywall: false,
+            emergency: intent === "EMERGENCY",
+        });
+
+        return new Response(JSON.stringify({
+            reply,
+            confidence,
+            flags,
+            sources,
+            mayday: maydayPayload,
+            intent,
+            weather,
+            remaining,
+            resetAt,
+            qualityId,
+        }), {
             headers: { ...CORS, "Content-Type": "application/json" },
             status: 200,
         });

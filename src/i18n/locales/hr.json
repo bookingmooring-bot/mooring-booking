@@ -191,7 +191,18 @@
     "capabilities": "možete me pitati i o turističkim informacijama, lokacijama benzinskih pumpi i restoranima na vašoj ruti",
     "extendedDesc": "Kažite mi krajnje odredište i dobićete fantastičan itinerer gdje možete prenoćiti, povoljne vezove, povijest mjesta gdje ćete uploviti, benzinske crpke, savjete za manevriranje, pa čak i preporuku za najboljeg ocijenjenog restorana u blizini veza.",
     "thinking": "Plovim kroz morske dubine podataka... Molimo sačekajte, ubrzo sidrimo s odgovorima!",
-    "farewell": "Mirno more! Vaš vjerni AI Kapetan uvijek spreman za sljedeću avanturu."
+    "farewell": "Mirno more! Vaš vjerni AI Kapetan uvijek spreman za sljedeću avanturu.",
+    "sources": "Izvori",
+    "lowConfidence": "Provjerite u pilot knjizi ili nazovite marinu prije nego što se oslonite na ovaj podatak.",
+    "intent": {
+      "SEARCH_MOORING": "Pretraga vezova",
+      "DIAGNOSE_ENGINE": "Dijagnostika motora",
+      "CHECK_WEATHER": "Vrijeme",
+      "EMERGENCY": "Hitno",
+      "BOOKING_HELP": "Pomoć oko rezervacija",
+      "NAVIGATION_ROUTE": "Navigacija",
+      "GENERAL_CHAT": "Razgovor"
+    }
   },
   "provider": {
     "title": "Kreirajte Svoj Profil Davatelja",

@@ -8,12 +8,25 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, RADIUS, SHADOWS, FONTS } from '../../constants/theme';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/authContext';
+import { buildAiCaptainPayload, type MaydayPayload, type Intent, type SourceCitation, type WeatherData } from '../../lib/aiCaptainPayload';
+import MaydayAlert from '../../components/MaydayAlert';
+import MessageMeta from '../../components/MessageMeta';
+import WeatherCard from '../../components/WeatherCard';
+import FeedbackButtons from '../../components/FeedbackButtons';
 
 interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  mayday?: MaydayPayload | null;
+  intent?: Intent;
+  confidence?: number;
+  sources?: SourceCitation[];
+  weather?: WeatherData | null;
+  qualityId?: string | null;
 }
+
+const MAYDAY_RE = /\b(mayday|sos|potapam|tonem|distress|tonemo|prepo+mo[cć]|u opasnosti|help us|sinking)\b/i;
 
 export default function AICaptainScreen() {
   const { user } = useAuth();
@@ -81,28 +94,63 @@ export default function AICaptainScreen() {
         await supabase.from('profiles').update({ ai_questions_used: aiUsed + 1 }).eq('id', user.id);
       }
 
+      // Fetch default vessel (FAZA 2) — ok if table empty, edge fn handles missing
+      let vesselRow: any = null;
+      if (user) {
+        const { data: vessels } = await supabase
+          .from('user_vessel_profiles')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('is_default', { ascending: false })
+          .order('created_at', { ascending: false })
+          .limit(1);
+        vesselRow = vessels?.[0] ?? null;
+      }
+
+      const payload = buildAiCaptainPayload({
+        messages: currentMessages.map(m => ({ role: m.role, content: m.content })),
+        location: { lat: 43.5, lng: 16.4 },
+        profile: profileData,
+        tier: (isAdmin ? 'premium-annual' : tier) as 'basic' | 'premium-monthly' | 'premium-annual',
+        vessel: vesselRow,
+        searchDates: null,
+        isProviderContext: false,
+      });
+
       const { data, error } = await supabase.functions.invoke('ai-captain', {
-        body: {
-          messages: currentMessages.map(m => ({ role: m.role, content: m.content })),
-          location: { lat: 43.5, lng: 16.4 },
-          userProfile: {
-            tier: isAdmin ? 'premium-annual' : tier,
-            boatName: profileData?.boat_name ?? undefined,
-            boatLength: profileData?.boat_length ?? undefined,
-          },
-          searchDates: null,
-          isProviderContext: false,
-        },
+        body: payload,
       });
 
       if (error) throw error;
 
+      // FAZA 6: edge function gates quota server-side. If blocked, surface paywall message.
+      if (data?.paywall) {
+        setMessages(prev => [...prev, {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: data?.reply ?? `⭐ You've used all ${AI_BASIC_LIMIT} free AI Captain questions.\n\nUpgrade to **Premium** for unlimited access. 🚢`,
+        }]);
+        setIsLoading(false);
+        return;
+      }
+
       const reply = data?.reply || '⚓ AI Captain is temporarily unavailable. Please try again.';
+      const mayday: MaydayPayload | null = data?.mayday ?? null;
+      const isMaydayTurn = MAYDAY_RE.test(userMsg.content);
+
+      const replyIntent = data?.intent as Intent | undefined;
+      const weather: WeatherData | null = data?.weather ?? null;
 
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: reply,
+        mayday: isMaydayTurn ? mayday : null,
+        intent: replyIntent,
+        confidence: typeof data?.confidence === 'number' ? data.confidence : undefined,
+        sources: Array.isArray(data?.sources) ? (data.sources as SourceCitation[]) : undefined,
+        weather: replyIntent === 'CHECK_WEATHER' ? weather : null,
+        qualityId: typeof data?.qualityId === 'string' ? data.qualityId : null,
       }]);
     } catch (err) {
       setMessages(prev => [...prev, {
@@ -128,6 +176,12 @@ export default function AICaptainScreen() {
           <Text style={[styles.bubbleText, isUser ? styles.bubbleTextUser : styles.bubbleTextAssistant]}>
             {item.content}
           </Text>
+          {item.weather && <WeatherCard weather={item.weather} />}
+          {item.mayday && <MaydayAlert mayday={item.mayday} />}
+          {!isUser && (
+            <MessageMeta intent={item.intent} confidence={item.confidence} sources={item.sources} />
+          )}
+          {!isUser && item.qualityId && <FeedbackButtons qualityId={item.qualityId} />}
         </View>
       </View>
     );

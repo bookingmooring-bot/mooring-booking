@@ -11,14 +11,28 @@ import {
   getUserTier,
 } from "@/lib/subscription";
 import { useProfile, useIncrementAIQuestions } from "@/hooks/useProfile";
+import { useDefaultVessel } from "@/hooks/useVesselProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { buildAiCaptainPayload, type MaydayPayload, type Intent, type SourceCitation, type WeatherData } from "@/lib/aiCaptainPayload";
+import MaydayAlert from "@/components/ai-captain/MaydayAlert";
+import MessageMeta from "@/components/ai-captain/MessageMeta";
+import WeatherCard from "@/components/ai-captain/WeatherCard";
+import FeedbackButtons from "@/components/ai-captain/FeedbackButtons";
 import { useNavigate } from "react-router-dom";
 
 interface Message {
   role: string;
   content: string;
+  mayday?: MaydayPayload | null;
+  intent?: Intent;
+  confidence?: number;
+  sources?: SourceCitation[];
+  weather?: WeatherData | null;
+  qualityId?: string | null;
 }
+
+const MAYDAY_RE = /\b(mayday|sos|potapam|tonem|distress|tonemo|prepo+mo[cć]|u opasnosti|help us|sinking)\b/i;
 
 const AI_ANON_KEY = "ai_captain_anon_count";
 const getAnonCount = (): number =>
@@ -34,6 +48,7 @@ const MiniCaptainWidget = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { data: profile } = useProfile();
+  const defaultVessel = useDefaultVessel();
   const incrementAI = useIncrementAIQuestions();
   const navigate = useNavigate();
 
@@ -140,25 +155,54 @@ const MiniCaptainWidget = () => {
       try { location = await getUserLocation(); } catch { /* fallback */ }
 
       const tier = getUserTier(profile);
-      const userProfile = {
+
+      const payload = buildAiCaptainPayload({
+        messages: currentMessages as import("@/lib/aiCaptainPayload").ChatMessage[],
+        location,
+        profile,
         tier,
-        boatName: profile?.boat_name ?? undefined,
-        boatLength: profile?.boat_length ?? undefined,
-      };
+        vessel: defaultVessel,
+        searchDates: null,
+      });
 
       const { data, error } = await supabase.functions.invoke("ai-captain", {
-        body: { messages: currentMessages, location, userProfile, searchDates: null },
+        body: payload,
       });
 
       if (error) throw error;
 
+      // FAZA 6: server-side paywall
+      if (data?.paywall) {
+        setShowPaywall(true);
+        setMessages((prev) => [...prev, {
+          role: "assistant",
+          content: data?.reply ?? `⭐ Iskoristio si svih ${AI_BASIC_LIMIT} besplatnih pitanja AI Kapetana.`,
+        }]);
+        setIsLoading(false);
+        return;
+      }
+
       const reply: string = data?.reply ?? "Nije moguće generirati odgovor. Pokušaj ponovo.";
+      const mayday: MaydayPayload | null = data?.mayday ?? null;
+      const isMaydayTurn = MAYDAY_RE.test(userMessage.content);
       let finalReply = reply;
       if (!premium && currentMessages.filter((m) => m.role === "user").length > 1 && Math.random() < 0.25) {
         finalReply += "\n\n💡 *Premium donosi neograničen AI Kapetan, offline mape i ekskluzivne popuste!*";
       }
 
-      setMessages((prev) => [...prev, { role: "assistant", content: finalReply }]);
+      const replyIntent = data?.intent as Intent | undefined;
+      const weather: WeatherData | null = data?.weather ?? null;
+
+      setMessages((prev) => [...prev, {
+        role: "assistant",
+        content: finalReply,
+        mayday: isMaydayTurn ? mayday : null,
+        intent: replyIntent,
+        confidence: typeof data?.confidence === "number" ? data.confidence : undefined,
+        sources: Array.isArray(data?.sources) ? data.sources as SourceCitation[] : undefined,
+        weather: replyIntent === "CHECK_WEATHER" ? weather : null,
+        qualityId: typeof data?.qualityId === "string" ? data.qualityId : null,
+      }]);
     } catch (err) {
       console.error("AI Captain error:", err);
       setMessages((prev) => [
@@ -227,6 +271,14 @@ const MiniCaptainWidget = () => {
                     }`}
                 >
                   <p className="whitespace-pre-line">{msg.content}</p>
+                  {msg.weather && <WeatherCard weather={msg.weather} />}
+                  {msg.mayday && <MaydayAlert mayday={msg.mayday} />}
+                  {msg.role === "assistant" && (
+                    <MessageMeta intent={msg.intent} confidence={msg.confidence} sources={msg.sources} />
+                  )}
+                  {msg.role === "assistant" && msg.qualityId && (
+                    <FeedbackButtons qualityId={msg.qualityId} />
+                  )}
                 </div>
               </div>
             );

@@ -48,6 +48,7 @@ import Terms from "./pages/Terms";
 import Cookies from "./pages/Cookies";
 import GDPR from "./pages/GDPR";
 import Admin from "./pages/Admin";
+import AIQualityDashboard from "./pages/AIQualityDashboard";
 import UserPricing from "./pages/UserPricing";
 import SailingManual from "./pages/SailingManual";
 import MarinaPartnership from "./pages/MarinaPartnership";
@@ -104,6 +105,7 @@ const App = () => {
                 <Route path="/cookies" element={<Cookies />} />
                 <Route path="/gdpr" element={<GDPR />} />
                 <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+                <Route path="/admin/ai-quality" element={<AdminRoute><AIQualityDashboard /></AdminRoute>} />
                 <Route path="/user-pricing" element={<UserPricing />} />
                 <Route path="/sailing-manual" element={<SailingManual />} />
                 <Route path="/ai-captain" element={<AICaptainPage />} />

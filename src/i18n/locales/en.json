@@ -165,7 +165,18 @@
                    "send":  "Send",
                    "welcome":  "Welcome aboard! I am AI Captain Jack, your fearless navigator through the depths of the sea and the secrets of harbors. I assist with navigation, nautical advice, weather forecasts, crisis situations, maneuvers, mooring, searching for affordable berths and marinas, technical repairs, departure and arrival in ports. What course are we setting today?",
                    "thinking":  "Sailing through the sea depths of data... Please wait, we\u0027ll anchor with answers soon!",
-                   "farewell":  "Calm sea! Your faithful AI Captain always ready for the next adventure."
+                   "farewell":  "Calm sea! Your faithful AI Captain always ready for the next adventure.",
+                   "sources":  "Sources",
+                   "lowConfidence":  "Verify with the pilot book or marina before relying on this.",
+                   "intent":  {
+                       "SEARCH_MOORING":  "Mooring search",
+                       "DIAGNOSE_ENGINE":  "Engine diagnostic",
+                       "CHECK_WEATHER":  "Weather",
+                       "EMERGENCY":  "Emergency",
+                       "BOOKING_HELP":  "Booking help",
+                       "NAVIGATION_ROUTE":  "Navigation",
+                       "GENERAL_CHAT":  "Chat"
+                   }
                },
     "provider":  {
                      "title":  "Create Your Provider Profile",
