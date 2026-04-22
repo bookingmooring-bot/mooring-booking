@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git push *)",
+      "mcp__supabase__get_logs",
+      "Bash(curl -s 'https://bblxawscmyzelinidkmb.supabase.co/functions/v1/resolve-fb-lead?fb_lead_id=2194088644760932')",
+      "Bash(git commit -m ' *)"
+    ]
+  }
+}

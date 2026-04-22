@@ -15,6 +15,16 @@ scripts/meta_ads/**/__pycache__/
 # MCP config with tokens - NEVER commit to git!
 .mcp.json
 
+# Claude Code local settings (may contain tokens inside allow-list) - NEVER commit!
+.claude/settings.local.json
+
+# Ad-hoc Meta API dumps (contain lead PII) - NEVER commit!
+_adsets.json
+_leadforms.json
+_leads_*.json
+_meta_insights_all.json
+_pages.json
+
 # Logs
 logs
 *.log
