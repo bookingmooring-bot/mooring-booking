@@ -209,7 +209,6 @@ const BecomeProviderPage = () => {
   });
   const [calendarDays, setCalendarDays] = useState(generateCalendarDays());
   const [autoOpenFromLead, setAutoOpenFromLead] = useState(false);
-  const [justAuthedViaOAuth, setJustAuthedViaOAuth] = useState(false);
   const [mooringsLoaded, setMooringsLoaded] = useState(false);
 
   // Handle OAuth callback — when Google redirects back after login
@@ -243,7 +242,6 @@ const BecomeProviderPage = () => {
     if (code) {
       supabase.auth.exchangeCodeForSession(code).then(({ data, error }) => {
         if (!error && data.session) {
-          setJustAuthedViaOAuth(true);
           window.history.replaceState(null, '', window.location.pathname);
         }
       });
@@ -267,20 +265,14 @@ const BecomeProviderPage = () => {
     }
   }, []);
 
+  // Any authenticated user with 0 listings → skip dashboard, go straight to Publish form
+  // (applies to FB leads, Google OAuth, email signup, returning users — all)
   useEffect(() => {
-    if (autoOpenFromLead && user && !showForm) {
+    if (user && mooringsLoaded && mooringCount === 0 && !showForm && !justSubmitted) {
       setShowForm(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [autoOpenFromLead, user, showForm]);
-
-  // Fresh OAuth users (Google/Apple) with 0 listings → skip dashboard, go straight to Publish form
-  useEffect(() => {
-    if (justAuthedViaOAuth && user && mooringsLoaded && mooringCount === 0 && !showForm) {
-      setShowForm(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [justAuthedViaOAuth, user, mooringsLoaded, mooringCount, showForm]);
+  }, [user, mooringsLoaded, mooringCount, showForm, justSubmitted]);
 
   // Pre-fill form from lead data when authenticated user loads page
   // Also: ensure Google OAuth users get provider role + lead entry
@@ -1464,8 +1456,8 @@ Address: Prague, Czech Republic
 
   // Registration Form
   const showLeadStepper = !editingMooringId;
-  const autoOpenedFromAuth = autoOpenFromLead || (justAuthedViaOAuth && mooringCount === 0);
-  const showLeadWelcomeBadge = autoOpenedFromAuth && !editingMooringId;
+  const autoOpenedFromAuth = mooringCount === 0;
+  const showLeadWelcomeBadge = autoOpenedFromAuth && !editingMooringId && !!user;
   const showFacebookPrefillHint = autoOpenFromLead && !editingMooringId;
   const pickName = (v: string | undefined) =>
     v && !/^<test lead/i.test(v.trim()) ? v.split(' ')[0] : '';
