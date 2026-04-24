@@ -14,13 +14,15 @@ import { useProfile, useIncrementAIQuestions } from "@/hooks/useProfile";
 import { useDefaultVessel } from "@/hooks/useVesselProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { buildAiCaptainPayload, type MaydayPayload, type Intent, type SourceCitation, type WeatherData } from "@/lib/aiCaptainPayload";
+import { buildAiCaptainPayload, type MaydayPayload, type Intent, type SourceCitation, type WeatherData, type AiCaptainPreferences } from "@/lib/aiCaptainPayload";
 import { newConversationId, loadConversationMessages } from "@/lib/aiConversations";
+import { fetchMyPreferences } from "@/lib/aiPreferences";
 import MaydayAlert from "@/components/ai-captain/MaydayAlert";
 import MessageMeta from "@/components/ai-captain/MessageMeta";
 import WeatherCard from "@/components/ai-captain/WeatherCard";
 import FeedbackButtons from "@/components/ai-captain/FeedbackButtons";
 import ConversationHistoryPanel from "@/components/ai-captain/ConversationHistoryPanel";
+import OnboardingPreferences from "@/components/ai-captain/OnboardingPreferences";
 import { useNavigate } from "react-router-dom";
 
 interface Message {
@@ -63,6 +65,21 @@ const MiniCaptainWidget = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [preferences, setPreferences] = useState<AiCaptainPreferences | null>(null);
+  const [prefsLoading, setPrefsLoading] = useState(false);
+  const [prefsLoaded, setPrefsLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!user || !isOpen || prefsLoaded) return;
+    setPrefsLoading(true);
+    fetchMyPreferences().then((p) => {
+      setPreferences(p);
+      setPrefsLoaded(true);
+      setPrefsLoading(false);
+    });
+  }, [user, isOpen, prefsLoaded]);
+
+  const needsOnboarding = Boolean(user) && prefsLoaded && preferences === null;
 
   // Teaser bubble state
   const [showTeaser, setShowTeaser] = useState(false);
@@ -174,6 +191,7 @@ const MiniCaptainWidget = () => {
         vessel: defaultVessel,
         searchDates: null,
         conversationId: activeConvId ?? undefined,
+        preferences: preferences ?? undefined,
       });
 
       const { data, error } = await supabase.functions.invoke("ai-captain", {
@@ -328,6 +346,17 @@ const MiniCaptainWidget = () => {
           />
         )}
 
+        {/* Onboarding gate */}
+        {needsOnboarding ? (
+          <div className="h-64 overflow-y-auto bg-background/50">
+            <OnboardingPreferences onDone={(p) => setPreferences(p)} compact />
+          </div>
+        ) : prefsLoading && !prefsLoaded ? (
+          <div className="h-64 flex items-center justify-center bg-background/50">
+            <p className="text-xs text-muted-foreground">Učitavanje…</p>
+          </div>
+        ) : (
+        <>
         {/* Messages */}
         <div className="h-64 overflow-y-auto p-3 space-y-3 bg-background/50">
           {messages.map((msg, i) => {
@@ -416,6 +445,8 @@ const MiniCaptainWidget = () => {
               <Send size={14} />
             </Button>
           </div>
+        )}
+        </>
         )}
       </div>
 

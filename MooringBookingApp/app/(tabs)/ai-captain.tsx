@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, RADIUS, SHADOWS, FONTS } from '../../constants/theme';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/authContext';
-import { buildAiCaptainPayload, type MaydayPayload, type Intent, type SourceCitation, type WeatherData } from '../../lib/aiCaptainPayload';
+import { buildAiCaptainPayload, type MaydayPayload, type Intent, type SourceCitation, type WeatherData, type AiCaptainPreferences } from '../../lib/aiCaptainPayload';
 import {
   newConversationId,
   listConversations,
@@ -16,10 +16,12 @@ import {
   deleteConversation,
   type ConversationSummary,
 } from '../../lib/aiConversations';
+import { fetchMyPreferences } from '../../lib/aiPreferences';
 import MaydayAlert from '../../components/MaydayAlert';
 import MessageMeta from '../../components/MessageMeta';
 import WeatherCard from '../../components/WeatherCard';
 import FeedbackButtons from '../../components/FeedbackButtons';
+import OnboardingPreferences from '../../components/OnboardingPreferences';
 
 interface Message {
   id: string;
@@ -50,7 +52,19 @@ export default function AICaptainScreen() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
+  const [preferences, setPreferences] = useState<AiCaptainPreferences | null>(null);
+  const [prefsLoaded, setPrefsLoaded] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+
+  useEffect(() => {
+    if (!user || prefsLoaded) return;
+    fetchMyPreferences().then((p) => {
+      setPreferences(p);
+      setPrefsLoaded(true);
+    });
+  }, [user, prefsLoaded]);
+
+  const needsOnboarding = Boolean(user) && prefsLoaded && preferences === null;
 
   useEffect(() => {
     if (!historyOpen || !user) return;
@@ -148,6 +162,7 @@ export default function AICaptainScreen() {
         searchDates: null,
         isProviderContext: false,
         conversationId: activeConvId ?? undefined,
+        preferences: preferences ?? undefined,
       });
 
       const { data, error } = await supabase.functions.invoke('ai-captain', {
@@ -262,7 +277,7 @@ export default function AICaptainScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {user && (
+      {user && !needsOnboarding && (
         <View style={styles.headerBar}>
           <Text style={styles.headerTitle}>AI Captain</Text>
           <View style={styles.headerActions}>
@@ -347,6 +362,9 @@ export default function AICaptainScreen() {
         </SafeAreaView>
       </Modal>
 
+      {needsOnboarding ? (
+        <OnboardingPreferences onDone={(p) => setPreferences(p)} />
+      ) : (
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -398,6 +416,7 @@ export default function AICaptainScreen() {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+      )}
     </SafeAreaView>
   );
 }

@@ -9,13 +9,15 @@ import { useProfile, useIncrementAIQuestions } from "@/hooks/useProfile";
 import { useDefaultVessel } from "@/hooks/useVesselProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { buildAiCaptainPayload, type MaydayPayload, type Intent, type SourceCitation, type WeatherData } from "@/lib/aiCaptainPayload";
+import { buildAiCaptainPayload, type MaydayPayload, type Intent, type SourceCitation, type WeatherData, type AiCaptainPreferences } from "@/lib/aiCaptainPayload";
 import { newConversationId, loadConversationMessages } from "@/lib/aiConversations";
+import { fetchMyPreferences } from "@/lib/aiPreferences";
 import MaydayAlert from "@/components/ai-captain/MaydayAlert";
 import MessageMeta from "@/components/ai-captain/MessageMeta";
 import WeatherCard from "@/components/ai-captain/WeatherCard";
 import FeedbackButtons from "@/components/ai-captain/FeedbackButtons";
 import ConversationHistoryPanel from "@/components/ai-captain/ConversationHistoryPanel";
+import OnboardingPreferences from "@/components/ai-captain/OnboardingPreferences";
 import { useNavigate, useLocation } from "react-router-dom";
 
 interface AIChatWidgetProps {
@@ -75,6 +77,23 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [preferences, setPreferences] = useState<AiCaptainPreferences | null>(null);
+  const [prefsLoading, setPrefsLoading] = useState(false);
+  const [prefsLoaded, setPrefsLoaded] = useState(false);
+
+  // Fetch preferences once per login. If user has none yet, we'll show the
+  // onboarding buttons inside the chat card before allowing any message.
+  useEffect(() => {
+    if (!user || !isOpen || prefsLoaded) return;
+    setPrefsLoading(true);
+    fetchMyPreferences().then((p) => {
+      setPreferences(p);
+      setPrefsLoaded(true);
+      setPrefsLoading(false);
+    });
+  }, [user, isOpen, prefsLoaded]);
+
+  const needsOnboarding = Boolean(user) && prefsLoaded && preferences === null;
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const lastAssistantRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -162,6 +181,7 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
         searchDates: null,
         isProviderContext,
         conversationId: activeConvId ?? undefined,
+        preferences: preferences ?? undefined,
       });
 
       // ─── Call Edge Function (weather fetched server-side inside it) ─────────
@@ -344,6 +364,15 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
               activeConversationId={conversationId}
             />
           )}
+          {needsOnboarding ? (
+            <div className="h-80 overflow-y-auto">
+              <OnboardingPreferences onDone={(p) => setPreferences(p)} />
+            </div>
+          ) : prefsLoading && !prefsLoaded ? (
+            <div className="h-80 flex items-center justify-center">
+              <p className="text-sm text-muted-foreground">Učitavanje…</p>
+            </div>
+          ) : (
           <div className="h-80 overflow-y-auto p-4 space-y-4">
             {messages.map((msg, i) => {
               const isLastAssistant =
@@ -378,8 +407,9 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
             )}
             <div ref={messagesEndRef} />
           </div>
-          {/* Input area / Paywall */}
-          {showPaywall ? (
+          )}
+          {/* Input area / Paywall — hidden during onboarding */}
+          {!needsOnboarding && !(prefsLoading && !prefsLoaded) && (showPaywall ? (
             <div className="p-4 border-t border-border">
               <div className="bg-gradient-to-r from-gold/10 to-secondary/10 border border-gold/30 rounded-xl p-4 text-center">
                 <Crown className="text-gold mx-auto mb-2" size={28} />
@@ -417,7 +447,7 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
                 <Send size={18} />
               </Button>
             </div>
-          )}
+          ))}
         </div>
       )}
     </>

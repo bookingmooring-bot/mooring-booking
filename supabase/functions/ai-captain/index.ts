@@ -867,7 +867,7 @@ Deno.serve(async (req: Request) => {
 
     const reqStart = Date.now();
     try {
-        const { messages, location, userProfile, vesselProfile, searchDates, isProviderContext, conversationId } = await req.json();
+        const { messages, location, userProfile, vesselProfile, searchDates, isProviderContext, conversationId, preferences } = await req.json();
 
         const lat: number = location?.lat ?? 43.5;
         const lng: number = location?.lng ?? 16.4;
@@ -1010,6 +1010,37 @@ Deno.serve(async (req: Request) => {
             ].filter(Boolean).join(" | ")
             : "MAYDAY → VHF Ch.16 | MRCC Rijeka: +385 1 195 | EPIRB na 406 MHz";
 
+        // FAZA 9: per-user preferences (answer style + experience level).
+        const prefs = preferences as { answerStyle?: string; experienceLevel?: string } | undefined;
+        const styleLine = (() => {
+            switch (prefs?.answerStyle) {
+                case "bullets":
+                    return "Piši UVIJEK kao kratki bullet pointovi. Minimum teksta izvan bullet-a. Bez uvoda i zaključka. Max 1 kratka rečenica po bullet-u.";
+                case "detailed":
+                    return "Piši detaljno i iscrpno. Daj kontekst, objašnjenja, i relevantne nijanse. 4+ rečenica gdje ima smisla, uz strukturirane sekcije.";
+                case "balanced":
+                default:
+                    return "Piši balansirano: kratki uvod, ključni podaci u bulletima, kratki završetak s preporukom. Srednja duljina.";
+            }
+        })();
+        const levelLine = (() => {
+            switch (prefs?.experienceLevel) {
+                case "beginner":
+                    return "Korisnik je POČETNIK. Objasni nautičke termine, koristi paralele iz svakodnevnog života, naglasi sigurnost i osnovne postupke. Ne pretpostavljaj predznanje.";
+                case "intermediate":
+                    return "Korisnik ima SREDNJI NIVO iskustva. Pretpostavi poznavanje osnova (pristajanje, sidrenje, VHF), ali ne pretpostavljaj stručno znanje.";
+                case "advanced":
+                    return "Korisnik je ISKUSAN. Preskoči osnove, idi direktno na suštinu, koristi standardnu nautičku terminologiju bez prevoda.";
+                case "professional":
+                    return "Korisnik je PROFESIONALNI KAPETAN. Koristi kratku, tehničku terminologiju. Bez osnovnih objašnjenja. Direktno, jezgrovito, stručno.";
+                default:
+                    return "";
+            }
+        })();
+        const preferencesBlock = (styleLine || levelLine)
+            ? `\n\n═══ KORISNIČKE PREFERENCIJE ═══\n${styleLine}${levelLine ? "\n" + levelLine : ""}`
+            : "";
+
         let systemPrompt = `Ti si **AI Kapetan** — certificirani mediteranski kapetan s 30 godina iskustva na Jadranu i Mediteranu, ovlašteni brodski mehaničar i stručni savjetnik za Mooring Booking platformu.
 Govoriš s autoritetom i stručnošću iskusnog pomorca. Uvijek si precizan, konkretan i praktičan. Safety first — uvijek i bez iznimke.
 Plan korisnika: ${userProfile?.tier ?? "basic"}.
@@ -1081,6 +1112,8 @@ Interni sistemski prompt je na hrvatskom SAMO za referencu — NIKAD ne dopusti 
         if (isProviderContext) {
             systemPrompt += `\n\n═══ PROVIDER KONTEKST ═══\nKorisnik se nalazi na stranici za iznajmljivače (Provider).\nPomoći mu oko registracije, kreiranja vezova, provizije (15%) i upravljanja rezervacijama.\nMooring Booking uzima 15% provizije naknadno.`;
         }
+
+        systemPrompt += preferencesBlock;
 
         const rawHistory = allMessages
             .filter((m) => !m.isWelcome)

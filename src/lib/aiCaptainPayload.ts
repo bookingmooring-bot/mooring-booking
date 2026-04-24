@@ -35,6 +35,14 @@ export interface SearchDates {
     checkOut: string;
 }
 
+export type AnswerStyle = "bullets" | "balanced" | "detailed";
+export type ExperienceLevel = "beginner" | "intermediate" | "advanced" | "professional";
+
+export interface AiCaptainPreferences {
+    answerStyle: AnswerStyle;
+    experienceLevel: ExperienceLevel;
+}
+
 export interface AiCaptainRequest {
     messages: ChatMessage[];
     location: { lat: number; lng: number };
@@ -43,6 +51,7 @@ export interface AiCaptainRequest {
     searchDates?: SearchDates | null;
     isProviderContext?: boolean;
     conversationId?: string;
+    preferences?: AiCaptainPreferences;
 }
 
 export interface AiCaptainResponse {
@@ -119,6 +128,7 @@ export function buildAiCaptainPayload(args: {
     searchDates?: SearchDates | null;
     isProviderContext?: boolean;
     conversationId?: string;
+    preferences?: AiCaptainPreferences;
 }): AiCaptainRequest {
     const userProfile: UserProfileContext = {
         tier: args.tier,
@@ -151,5 +161,6 @@ export function buildAiCaptainPayload(args: {
         searchDates: args.searchDates ?? null,
         isProviderContext: args.isProviderContext ?? false,
         conversationId: args.conversationId,
+        preferences: args.preferences,
     };
 }
