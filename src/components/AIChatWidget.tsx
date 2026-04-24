@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import captainAvatar from "@/assets/captain-avatar.png";
-import { X, Send, Crown } from "lucide-react";
+import { X, Send, Crown, History, MessageSquarePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { getUserLocation } from "@/services/weatherService";
@@ -10,10 +10,12 @@ import { useDefaultVessel } from "@/hooks/useVesselProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { buildAiCaptainPayload, type MaydayPayload, type Intent, type SourceCitation, type WeatherData } from "@/lib/aiCaptainPayload";
+import { newConversationId, loadConversationMessages } from "@/lib/aiConversations";
 import MaydayAlert from "@/components/ai-captain/MaydayAlert";
 import MessageMeta from "@/components/ai-captain/MessageMeta";
 import WeatherCard from "@/components/ai-captain/WeatherCard";
 import FeedbackButtons from "@/components/ai-captain/FeedbackButtons";
+import ConversationHistoryPanel from "@/components/ai-captain/ConversationHistoryPanel";
 import { useNavigate, useLocation } from "react-router-dom";
 
 interface AIChatWidgetProps {
@@ -71,6 +73,8 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const lastAssistantRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -141,6 +145,14 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
       const tier = getUserTier(profile);
       const isProviderContext = routerLocation.pathname.includes('provider');
 
+      // Mint conversation id on the first message of a session (logged-in only).
+      // Anonymous users get no id — server keeps their chat ephemeral.
+      let activeConvId = conversationId;
+      if (user && !activeConvId) {
+        activeConvId = newConversationId();
+        setConversationId(activeConvId);
+      }
+
       const payload = buildAiCaptainPayload({
         messages: currentMessages as import("@/lib/aiCaptainPayload").ChatMessage[],
         location,
@@ -149,6 +161,7 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
         vessel: defaultVessel,
         searchDates: null,
         isProviderContext,
+        conversationId: activeConvId ?? undefined,
       });
 
       // ─── Call Edge Function (weather fetched server-side inside it) ─────────
@@ -183,6 +196,12 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
       const replyIntent = data?.intent as Intent | undefined;
       const weather: WeatherData | null = data?.weather ?? null;
 
+      // Server is the source of truth for conversationId (it may refuse the
+      // client-supplied one and mint a fresh one).
+      if (typeof data?.conversationId === "string" && data.conversationId !== conversationId) {
+        setConversationId(data.conversationId);
+      }
+
       setMessages(prev => [...prev, {
         role: "assistant",
         content: finalReply,
@@ -203,6 +222,35 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
     }
 
     setIsLoading(false);
+  };
+
+  const handleNewChat = () => {
+    setConversationId(null);
+    setMessages([{ role: "assistant", content: t("aiChat.welcome"), isWelcome: true }]);
+    setShowHistory(false);
+    setShowPaywall(false);
+  };
+
+  const handleSelectConversation = async (id: string) => {
+    const rows = await loadConversationMessages(id);
+    if (rows.length === 0) {
+      handleNewChat();
+      return;
+    }
+    const loaded: Message[] = rows.map((r) => ({
+      role: r.role,
+      content: r.content,
+      intent: r.intent ?? undefined,
+      confidence: typeof r.confidence === "number" ? r.confidence : undefined,
+      sources: r.metadata?.sources,
+      weather: r.metadata?.weather ?? null,
+      mayday: r.metadata?.mayday ?? null,
+      qualityId: r.metadata?.qualityId ?? null,
+    }));
+    setMessages(loaded);
+    setConversationId(id);
+    setShowHistory(false);
+    setShowPaywall(false);
   };
 
   return (
@@ -261,10 +309,41 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
                 <p className="text-xs text-primary-foreground/70">{t("aiChat.subtitle")}</p>
               </div>
             </div>
-            <button onClick={handleClose} className="text-primary-foreground/70 hover:text-primary-foreground">
-              <X size={20} />
-            </button>
+            <div className="flex items-center gap-1">
+              {user && (
+                <>
+                  <button
+                    onClick={handleNewChat}
+                    className="text-primary-foreground/70 hover:text-primary-foreground p-1"
+                    title="Novi razgovor"
+                    aria-label="Novi razgovor"
+                  >
+                    <MessageSquarePlus size={18} />
+                  </button>
+                  <button
+                    onClick={() => setShowHistory(true)}
+                    className="text-primary-foreground/70 hover:text-primary-foreground p-1"
+                    title="Istorija razgovora"
+                    aria-label="Istorija razgovora"
+                  >
+                    <History size={18} />
+                  </button>
+                </>
+              )}
+              <button onClick={handleClose} className="text-primary-foreground/70 hover:text-primary-foreground p-1">
+                <X size={20} />
+              </button>
+            </div>
           </div>
+          {user && (
+            <ConversationHistoryPanel
+              isOpen={showHistory}
+              onClose={() => setShowHistory(false)}
+              onSelect={handleSelectConversation}
+              onNew={handleNewChat}
+              activeConversationId={conversationId}
+            />
+          )}
           <div className="h-80 overflow-y-auto p-4 space-y-4">
             {messages.map((msg, i) => {
               const isLastAssistant =

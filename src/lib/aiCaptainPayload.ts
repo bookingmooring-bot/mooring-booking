@@ -57,6 +57,7 @@ export interface AiCaptainResponse {
     resetAt?: string | null;
     paywall?: boolean;
     qualityId?: string | null;
+    conversationId?: string | null;
 }
 
 export interface WeatherData {

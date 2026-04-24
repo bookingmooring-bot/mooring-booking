@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, X, Crown } from "lucide-react";
+import { Send, X, Crown, History, MessageSquarePlus } from "lucide-react";
 import captainAvatar from "@/assets/captain-avatar.png";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
@@ -15,10 +15,12 @@ import { useDefaultVessel } from "@/hooks/useVesselProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { buildAiCaptainPayload, type MaydayPayload, type Intent, type SourceCitation, type WeatherData } from "@/lib/aiCaptainPayload";
+import { newConversationId, loadConversationMessages } from "@/lib/aiConversations";
 import MaydayAlert from "@/components/ai-captain/MaydayAlert";
 import MessageMeta from "@/components/ai-captain/MessageMeta";
 import WeatherCard from "@/components/ai-captain/WeatherCard";
 import FeedbackButtons from "@/components/ai-captain/FeedbackButtons";
+import ConversationHistoryPanel from "@/components/ai-captain/ConversationHistoryPanel";
 import { useNavigate } from "react-router-dom";
 
 interface Message {
@@ -59,6 +61,8 @@ const MiniCaptainWidget = () => {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
 
   // Teaser bubble state
   const [showTeaser, setShowTeaser] = useState(false);
@@ -156,6 +160,12 @@ const MiniCaptainWidget = () => {
 
       const tier = getUserTier(profile);
 
+      let activeConvId = conversationId;
+      if (user && !activeConvId) {
+        activeConvId = newConversationId();
+        setConversationId(activeConvId);
+      }
+
       const payload = buildAiCaptainPayload({
         messages: currentMessages as import("@/lib/aiCaptainPayload").ChatMessage[],
         location,
@@ -163,6 +173,7 @@ const MiniCaptainWidget = () => {
         tier,
         vessel: defaultVessel,
         searchDates: null,
+        conversationId: activeConvId ?? undefined,
       });
 
       const { data, error } = await supabase.functions.invoke("ai-captain", {
@@ -193,6 +204,10 @@ const MiniCaptainWidget = () => {
       const replyIntent = data?.intent as Intent | undefined;
       const weather: WeatherData | null = data?.weather ?? null;
 
+      if (typeof data?.conversationId === "string" && data.conversationId !== conversationId) {
+        setConversationId(data.conversationId);
+      }
+
       setMessages((prev) => [...prev, {
         role: "assistant",
         content: finalReply,
@@ -214,13 +229,42 @@ const MiniCaptainWidget = () => {
     setIsLoading(false);
   };
 
+  const handleNewChat = () => {
+    setConversationId(null);
+    setMessages([{ role: "assistant", content: t("aiChat.welcome") }]);
+    setShowHistory(false);
+    setShowPaywall(false);
+  };
+
+  const handleSelectConversation = async (id: string) => {
+    const rows = await loadConversationMessages(id);
+    if (rows.length === 0) {
+      handleNewChat();
+      return;
+    }
+    const loaded: Message[] = rows.map((r) => ({
+      role: r.role,
+      content: r.content,
+      intent: r.intent ?? undefined,
+      confidence: typeof r.confidence === "number" ? r.confidence : undefined,
+      sources: r.metadata?.sources,
+      weather: r.metadata?.weather ?? null,
+      mayday: r.metadata?.mayday ?? null,
+      qualityId: r.metadata?.qualityId ?? null,
+    }));
+    setMessages(loaded);
+    setConversationId(id);
+    setShowHistory(false);
+    setShowPaywall(false);
+  };
+
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
 
       {/* ── Chat panel (slides up when open) ── */}
       <div
         className={`
-          w-80 bg-card rounded-2xl shadow-2xl border border-border overflow-hidden
+          relative w-80 bg-card rounded-2xl shadow-2xl border border-border overflow-hidden
           transition-all duration-300 origin-bottom-right
           ${isOpen
             ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
@@ -243,14 +287,46 @@ const MiniCaptainWidget = () => {
               </p>
             </div>
           </div>
-          <button
-            onClick={() => setIsOpen(false)}
-            className="text-primary-foreground/70 hover:text-primary-foreground transition-colors"
-            aria-label="Zatvori"
-          >
-            <X size={18} />
-          </button>
+          <div className="flex items-center gap-1">
+            {user && (
+              <>
+                <button
+                  onClick={handleNewChat}
+                  className="text-primary-foreground/70 hover:text-primary-foreground transition-colors p-1"
+                  aria-label="Novi razgovor"
+                  title="Novi razgovor"
+                >
+                  <MessageSquarePlus size={16} />
+                </button>
+                <button
+                  onClick={() => setShowHistory(true)}
+                  className="text-primary-foreground/70 hover:text-primary-foreground transition-colors p-1"
+                  aria-label="Istorija"
+                  title="Istorija"
+                >
+                  <History size={16} />
+                </button>
+              </>
+            )}
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-primary-foreground/70 hover:text-primary-foreground transition-colors p-1"
+              aria-label="Zatvori"
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
+
+        {user && (
+          <ConversationHistoryPanel
+            isOpen={showHistory}
+            onClose={() => setShowHistory(false)}
+            onSelect={handleSelectConversation}
+            onNew={handleNewChat}
+            activeConversationId={conversationId}
+          />
+        )}
 
         {/* Messages */}
         <div className="h-64 overflow-y-auto p-3 space-y-3 bg-background/50">

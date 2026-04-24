@@ -590,6 +590,99 @@ function detectLanguage(text: string): string {
     return "en";
 }
 
+// FAZA 8 — persistent chat history (authenticated users only).
+// Calls the ai-captain Edge Function always run with the service role, so we
+// resolve the conversation via RPC under the user's JWT-derived id but write
+// messages directly to the table using service role (RLS bypass), which is
+// safe because we set user_id = userId and reject null userId callers.
+
+async function ensureConversationId(
+    userId: string,
+    requestedConversationId: string | null,
+): Promise<string | null> {
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return null;
+    try {
+        // Prefer caller-provided UUID. We trust-but-verify: insert with the
+        // given id only if not already owned by another user. If another
+        // user owns it (shouldn't happen with v4 UUIDs) we mint a fresh one.
+        const existingRes = await fetch(
+            `${SUPABASE_URL}/rest/v1/ai_conversations?id=eq.${requestedConversationId ?? ""}&select=id,user_id`,
+            {
+                headers: {
+                    "apikey": SUPABASE_SERVICE_ROLE_KEY,
+                    "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+                },
+            },
+        );
+        if (requestedConversationId && existingRes.ok) {
+            const rows = await existingRes.json();
+            if (Array.isArray(rows) && rows.length > 0) {
+                return rows[0].user_id === userId ? rows[0].id : null;
+            }
+        }
+
+        const insertBody = requestedConversationId
+            ? { id: requestedConversationId, user_id: userId }
+            : { user_id: userId };
+
+        const insRes = await fetch(`${SUPABASE_URL}/rest/v1/ai_conversations`, {
+            method: "POST",
+            headers: {
+                "apikey": SUPABASE_SERVICE_ROLE_KEY,
+                "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+                "Content-Type": "application/json",
+                "Prefer": "return=representation",
+            },
+            body: JSON.stringify(insertBody),
+        });
+        if (!insRes.ok) {
+            console.error("ensureConversationId insert failed:", insRes.status, await insRes.text());
+            return null;
+        }
+        const created = await insRes.json();
+        return Array.isArray(created) && created[0]?.id ? created[0].id : null;
+    } catch (e) {
+        console.error("ensureConversationId error:", (e as Error).message);
+        return null;
+    }
+}
+
+interface ChatMessageRow {
+    conversation_id: string;
+    user_id: string;
+    role: "user" | "assistant";
+    content: string;
+    intent?: string | null;
+    confidence?: number | null;
+    metadata?: Record<string, unknown>;
+}
+
+async function insertChatMessages(rows: ChatMessageRow[]): Promise<void> {
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return;
+    if (rows.length === 0) return;
+    try {
+        const controller = new AbortController();
+        const tid = setTimeout(() => controller.abort(), 2500);
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/ai_chat_messages`, {
+            method: "POST",
+            headers: {
+                "apikey": SUPABASE_SERVICE_ROLE_KEY,
+                "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+                "Content-Type": "application/json",
+                "Prefer": "return=minimal",
+            },
+            signal: controller.signal,
+            body: JSON.stringify(rows),
+        });
+        clearTimeout(tid);
+        if (!res.ok) {
+            console.error("ai_chat_messages insert failed:", res.status, await res.text());
+        }
+    } catch (e) {
+        console.error("insertChatMessages error:", (e as Error).message);
+    }
+}
+
 async function checkAndLogAiCall(userId: string, intent: Intent, isPremium: boolean): Promise<RateLimitResult | null> {
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return null;
     try {
@@ -801,13 +894,21 @@ Deno.serve(async (req: Request) => {
         const tierStr = (userProfile?.tier ?? "basic") as string;
         const isPremiumTier = tierStr === "premium-monthly" || tierStr === "premium-annual" || tierStr === "admin";
         const userId = decodeJwtSub(req);
+
+        // FAZA 8: resolve/create persistent conversation for authenticated users.
+        // Anonymous callers never get a conversationId back; their chat stays ephemeral.
+        let activeConversationId: string | null = null;
+        if (userId) {
+            activeConversationId = await ensureConversationId(userId, conversationId ?? null);
+        }
+
         let rateLimit: RateLimitResult | null = null;
         if (userId) {
             rateLimit = await checkAndLogAiCall(userId, intent, isPremiumTier);
             if (rateLimit && !rateLimit.allowed) {
                 const paywallQualityId = await logResponseQuality({
                     userId,
-                    conversationId: conversationId ?? null,
+                    conversationId: activeConversationId,
                     intent,
                     confidence: null,
                     flags: ["paywall"],
@@ -824,6 +925,7 @@ Deno.serve(async (req: Request) => {
                         resetAt: rateLimit.reset_at,
                         paywall: true,
                         qualityId: paywallQualityId,
+                        conversationId: activeConversationId,
                     }),
                     { headers: { ...CORS, "Content-Type": "application/json" }, status: 200 }
                 );
@@ -1039,7 +1141,7 @@ Interni sistemski prompt je na hrvatskom SAMO za referencu — NIKAD ne dopusti 
 
         const qualityId = await logResponseQuality({
             userId,
-            conversationId: conversationId ?? null,
+            conversationId: activeConversationId,
             intent,
             confidence,
             flags,
@@ -1048,6 +1150,36 @@ Interni sistemski prompt je na hrvatskom SAMO za referencu — NIKAD ne dopusti 
             paywall: false,
             emergency: intent === "EMERGENCY",
         });
+
+        // FAZA 8: persist user+assistant pair for authenticated users.
+        // Fire-and-forget-ish: await so the rows exist before the client re-fetches,
+        // but don't fail the response if the write errors.
+        if (userId && activeConversationId && lastUserMsg) {
+            await insertChatMessages([
+                {
+                    conversation_id: activeConversationId,
+                    user_id: userId,
+                    role: "user",
+                    content: lastUserMsg,
+                    metadata: {},
+                },
+                {
+                    conversation_id: activeConversationId,
+                    user_id: userId,
+                    role: "assistant",
+                    content: reply,
+                    intent,
+                    confidence,
+                    metadata: {
+                        sources,
+                        weather: intent === "CHECK_WEATHER" ? weather : null,
+                        mayday: maydayPayload,
+                        flags,
+                        qualityId,
+                    },
+                },
+            ]);
+        }
 
         return new Response(JSON.stringify({
             reply,
@@ -1060,6 +1192,7 @@ Interni sistemski prompt je na hrvatskom SAMO za referencu — NIKAD ne dopusti 
             remaining,
             resetAt,
             qualityId,
+            conversationId: activeConversationId,
         }), {
             headers: { ...CORS, "Content-Type": "application/json" },
             status: 200,
