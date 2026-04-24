@@ -176,6 +176,26 @@
                        "BOOKING_HELP":  "Booking help",
                        "NAVIGATION_ROUTE":  "Navigation",
                        "GENERAL_CHAT":  "Chat"
+                   },
+                   "loading": "Loading…",
+                   "onboarding": {
+                       "title": "Before your first message",
+                       "subtitle": "Set up AI Captain. Saved once, used forever.",
+                       "styleLabel": "Answer style",
+                       "levelLabel": "Experience level",
+                       "submit": "Start chat →",
+                       "saving": "Saving…",
+                       "styles": {
+                           "bullets": { "label": "Bullet points", "hint": "Short & quick" },
+                           "balanced": { "label": "Balanced", "hint": "Medium length" },
+                           "detailed": { "label": "Detailed", "hint": "Long answers" }
+                       },
+                       "levels": {
+                           "beginner": { "label": "Beginner", "hint": "New to sailing" },
+                           "intermediate": { "label": "Intermediate", "hint": "Sail occasionally" },
+                           "advanced": { "label": "Advanced", "hint": "Sail regularly" },
+                           "professional": { "label": "Professional captain", "hint": "Certified captain" }
+                       }
                    }
                },
     "provider":  {

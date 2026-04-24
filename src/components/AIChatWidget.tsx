@@ -370,7 +370,7 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
             </div>
           ) : prefsLoading && !prefsLoaded ? (
             <div className="h-80 flex items-center justify-center">
-              <p className="text-sm text-muted-foreground">Učitavanje…</p>
+              <p className="text-sm text-muted-foreground">{t("aiChat.loading")}</p>
             </div>
           ) : (
           <div className="h-80 overflow-y-auto p-4 space-y-4">

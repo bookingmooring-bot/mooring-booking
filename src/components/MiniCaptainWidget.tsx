@@ -353,7 +353,7 @@ const MiniCaptainWidget = () => {
           </div>
         ) : prefsLoading && !prefsLoaded ? (
           <div className="h-64 flex items-center justify-center bg-background/50">
-            <p className="text-xs text-muted-foreground">Učitavanje…</p>
+            <p className="text-xs text-muted-foreground">{t("aiChat.loading")}</p>
           </div>
         ) : (
         <>

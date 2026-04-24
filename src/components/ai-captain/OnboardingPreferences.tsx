@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { saveMyPreferences } from "@/lib/aiPreferences";
 import type { AnswerStyle, ExperienceLevel, AiCaptainPreferences } from "@/lib/aiCaptainPayload";
@@ -8,20 +9,16 @@ interface Props {
   compact?: boolean;
 }
 
-const STYLE_OPTIONS: { id: AnswerStyle; label: string; hint: string; icon: string }[] = [
-  { id: "bullets", label: "Bullet points", hint: "Kratko i jasno", icon: "•" },
-  { id: "balanced", label: "Balansirano", hint: "Srednja dužina", icon: "≈" },
-  { id: "detailed", label: "Detaljno", hint: "Opširni odgovori", icon: "¶" },
+const STYLE_IDS: { id: AnswerStyle; icon: string }[] = [
+  { id: "bullets", icon: "•" },
+  { id: "balanced", icon: "≈" },
+  { id: "detailed", icon: "¶" },
 ];
 
-const LEVEL_OPTIONS: { id: ExperienceLevel; label: string; hint: string }[] = [
-  { id: "beginner", label: "Početnik", hint: "Tek krećem s plovidbom" },
-  { id: "intermediate", label: "Srednji nivo", hint: "Plovim povremeno" },
-  { id: "advanced", label: "Iskusan", hint: "Redovito plovim" },
-  { id: "professional", label: "Profesionalni kapetan", hint: "Certificirani kapetan" },
-];
+const LEVEL_IDS: ExperienceLevel[] = ["beginner", "intermediate", "advanced", "professional"];
 
 const OnboardingPreferences = ({ onDone, compact = false }: Props) => {
+  const { t } = useTranslation();
   const [style, setStyle] = useState<AnswerStyle | null>(null);
   const [level, setLevel] = useState<ExperienceLevel | null>(null);
   const [saving, setSaving] = useState(false);
@@ -45,18 +42,20 @@ const OnboardingPreferences = ({ onDone, compact = false }: Props) => {
   return (
     <div className={`${padding} space-y-4 overflow-y-auto`}>
       <div>
-        <p className={`${titleSize} font-semibold text-foreground`}>Prije prve poruke</p>
+        <p className={`${titleSize} font-semibold text-foreground`}>
+          {t("aiChat.onboarding.title")}
+        </p>
         <p className={`${labelSize} text-muted-foreground mt-0.5`}>
-          Podesi AI Kapetana. Pamti se samo jednom.
+          {t("aiChat.onboarding.subtitle")}
         </p>
       </div>
 
       <div>
         <p className={`${labelSize} font-medium text-muted-foreground mb-1.5 uppercase tracking-wide`}>
-          Stil odgovora
+          {t("aiChat.onboarding.styleLabel")}
         </p>
         <div className="grid grid-cols-3 gap-1.5">
-          {STYLE_OPTIONS.map((opt) => (
+          {STYLE_IDS.map((opt) => (
             <button
               key={opt.id}
               onClick={() => setStyle(opt.id)}
@@ -67,8 +66,10 @@ const OnboardingPreferences = ({ onDone, compact = false }: Props) => {
               }`}
             >
               <div className="text-base leading-none mb-1">{opt.icon}</div>
-              <div>{opt.label}</div>
-              <div className={`text-[10px] mt-0.5 opacity-70`}>{opt.hint}</div>
+              <div>{t(`aiChat.onboarding.styles.${opt.id}.label`)}</div>
+              <div className="text-[10px] mt-0.5 opacity-70">
+                {t(`aiChat.onboarding.styles.${opt.id}.hint`)}
+              </div>
             </button>
           ))}
         </div>
@@ -76,21 +77,23 @@ const OnboardingPreferences = ({ onDone, compact = false }: Props) => {
 
       <div>
         <p className={`${labelSize} font-medium text-muted-foreground mb-1.5 uppercase tracking-wide`}>
-          Nivo iskustva
+          {t("aiChat.onboarding.levelLabel")}
         </p>
         <div className="grid grid-cols-2 gap-1.5">
-          {LEVEL_OPTIONS.map((opt) => (
+          {LEVEL_IDS.map((id) => (
             <button
-              key={opt.id}
-              onClick={() => setLevel(opt.id)}
+              key={id}
+              onClick={() => setLevel(id)}
               className={`rounded-lg border text-left transition ${btnSize} ${
-                level === opt.id
+                level === id
                   ? "bg-primary/10 border-primary text-primary font-semibold"
                   : "bg-background border-border text-foreground hover:bg-muted"
               }`}
             >
-              <div>{opt.label}</div>
-              <div className="text-[10px] mt-0.5 opacity-70">{opt.hint}</div>
+              <div>{t(`aiChat.onboarding.levels.${id}.label`)}</div>
+              <div className="text-[10px] mt-0.5 opacity-70">
+                {t(`aiChat.onboarding.levels.${id}.hint`)}
+              </div>
             </button>
           ))}
         </div>
@@ -102,7 +105,7 @@ const OnboardingPreferences = ({ onDone, compact = false }: Props) => {
         className="w-full bg-gradient-ocean font-semibold"
         size={compact ? "sm" : "default"}
       >
-        {saving ? "Spremam…" : "Počni razgovor →"}
+        {saving ? t("aiChat.onboarding.saving") : t("aiChat.onboarding.submit")}
       </Button>
     </div>
   );

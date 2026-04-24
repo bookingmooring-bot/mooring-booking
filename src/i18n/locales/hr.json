@@ -202,6 +202,26 @@
       "BOOKING_HELP": "Pomoć oko rezervacija",
       "NAVIGATION_ROUTE": "Navigacija",
       "GENERAL_CHAT": "Razgovor"
+    },
+    "loading": "Učitavanje…",
+    "onboarding": {
+      "title": "Prije prve poruke",
+      "subtitle": "Podesi AI Kapetana. Pamti se samo jednom.",
+      "styleLabel": "Stil odgovora",
+      "levelLabel": "Nivo iskustva",
+      "submit": "Počni razgovor →",
+      "saving": "Spremam…",
+      "styles": {
+        "bullets": { "label": "Bullet points", "hint": "Kratko i jasno" },
+        "balanced": { "label": "Balansirano", "hint": "Srednja dužina" },
+        "detailed": { "label": "Detaljno", "hint": "Opširni odgovori" }
+      },
+      "levels": {
+        "beginner": { "label": "Početnik", "hint": "Tek krećem s plovidbom" },
+        "intermediate": { "label": "Srednji nivo", "hint": "Plovim povremeno" },
+        "advanced": { "label": "Iskusan", "hint": "Redovito plovim" },
+        "professional": { "label": "Profesionalni kapetan", "hint": "Certificirani kapetan" }
+      }
     }
   },
   "provider": {
