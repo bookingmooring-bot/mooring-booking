@@ -7,6 +7,9 @@ import type { AnswerStyle, ExperienceLevel, AiCaptainPreferences } from "@/lib/a
 interface Props {
   onDone: (prefs: AiCaptainPreferences) => void;
   compact?: boolean;
+  initial?: AiCaptainPreferences | null;
+  mode?: "onboarding" | "settings";
+  onCancel?: () => void;
 }
 
 const STYLE_IDS: { id: AnswerStyle; icon: string }[] = [
@@ -17,13 +20,14 @@ const STYLE_IDS: { id: AnswerStyle; icon: string }[] = [
 
 const LEVEL_IDS: ExperienceLevel[] = ["beginner", "intermediate", "advanced", "professional"];
 
-const OnboardingPreferences = ({ onDone, compact = false }: Props) => {
+const OnboardingPreferences = ({ onDone, compact = false, initial, mode = "onboarding", onCancel }: Props) => {
   const { t } = useTranslation();
-  const [style, setStyle] = useState<AnswerStyle | null>(null);
-  const [level, setLevel] = useState<ExperienceLevel | null>(null);
+  const [style, setStyle] = useState<AnswerStyle | null>(initial?.answerStyle ?? null);
+  const [level, setLevel] = useState<ExperienceLevel | null>(initial?.experienceLevel ?? null);
   const [saving, setSaving] = useState(false);
 
   const canSubmit = style !== null && level !== null && !saving;
+  const isSettings = mode === "settings";
 
   const handleSubmit = async () => {
     if (!style || !level) return;
@@ -43,10 +47,10 @@ const OnboardingPreferences = ({ onDone, compact = false }: Props) => {
     <div className={`${padding} space-y-4 overflow-y-auto`}>
       <div>
         <p className={`${titleSize} font-semibold text-foreground`}>
-          {t("aiChat.onboarding.title")}
+          {isSettings ? t("aiChat.onboarding.settingsTitle", "Postavke AI Kapetana") : t("aiChat.onboarding.title")}
         </p>
         <p className={`${labelSize} text-muted-foreground mt-0.5`}>
-          {t("aiChat.onboarding.subtitle")}
+          {isSettings ? t("aiChat.onboarding.settingsSubtitle", "Promijeni stil i razinu kad god želiš.") : t("aiChat.onboarding.subtitle")}
         </p>
       </div>
 
@@ -99,14 +103,30 @@ const OnboardingPreferences = ({ onDone, compact = false }: Props) => {
         </div>
       </div>
 
-      <Button
-        onClick={handleSubmit}
-        disabled={!canSubmit}
-        className="w-full bg-gradient-ocean font-semibold"
-        size={compact ? "sm" : "default"}
-      >
-        {saving ? t("aiChat.onboarding.saving") : t("aiChat.onboarding.submit")}
-      </Button>
+      <div className="flex gap-2">
+        {isSettings && onCancel && (
+          <Button
+            onClick={onCancel}
+            variant="outline"
+            size={compact ? "sm" : "default"}
+            className="flex-1"
+          >
+            {t("aiChat.onboarding.cancel", "Odustani")}
+          </Button>
+        )}
+        <Button
+          onClick={handleSubmit}
+          disabled={!canSubmit}
+          className={`${isSettings && onCancel ? "flex-1" : "w-full"} bg-gradient-ocean font-semibold`}
+          size={compact ? "sm" : "default"}
+        >
+          {saving
+            ? t("aiChat.onboarding.saving")
+            : isSettings
+              ? t("aiChat.onboarding.save", "Spremi")
+              : t("aiChat.onboarding.submit")}
+        </Button>
+      </div>
     </div>
   );
 };

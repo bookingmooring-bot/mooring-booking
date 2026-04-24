@@ -207,9 +207,13 @@
     "onboarding": {
       "title": "Prije prve poruke",
       "subtitle": "Podesi AI Kapetana. Pamti se samo jednom.",
+      "settingsTitle": "Postavke AI Kapetana",
+      "settingsSubtitle": "Promijeni stil odgovora i razinu iskustva kad god želiš.",
       "styleLabel": "Stil odgovora",
       "levelLabel": "Nivo iskustva",
       "submit": "Počni razgovor →",
+      "save": "Spremi",
+      "cancel": "Odustani",
       "saving": "Spremam…",
       "styles": {
         "bullets": { "label": "Bullet points", "hint": "Kratko i jasno" },

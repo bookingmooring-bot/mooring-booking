@@ -803,7 +803,11 @@ async function getAvailableFlashModels(): Promise<string[]> {
 }
 
 // ── Call Gemini ────────────────────────────────────────────────────────────────
-async function callGemini(prompt: string, history: Array<{ role: string; parts: Array<{ text: string }> }>): Promise<string> {
+async function callGemini(
+    prompt: string,
+    history: Array<{ role: string; parts: Array<{ text: string }> }>,
+    maxOutputTokens = 1800,
+): Promise<string> {
     if (!GEMINI_API_KEY) {
         return "⚓ AI Kapetan nije konfiguriran (nedostaje API ključ). Kontaktirajte podršku.";
     }
@@ -827,7 +831,7 @@ async function callGemini(prompt: string, history: Array<{ role: string; parts: 
                             system_instruction: { parts: [{ text: prompt }] },
                             contents: history,
                             generationConfig: {
-                                maxOutputTokens: 1800,
+                                maxOutputTokens,
                                 temperature: 0.60,
                                 topP: 0.9,
                             },
@@ -1011,34 +1015,73 @@ Deno.serve(async (req: Request) => {
             : "MAYDAY → VHF Ch.16 | MRCC Rijeka: +385 1 195 | EPIRB na 406 MHz";
 
         // FAZA 9: per-user preferences (answer style + experience level).
+        // These MUST override the static length/format rules further down in
+        // the prompt — otherwise "bullets" users still get 3+ sentence replies.
         const prefs = preferences as { answerStyle?: string; experienceLevel?: string } | undefined;
         const styleLine = (() => {
             switch (prefs?.answerStyle) {
                 case "bullets":
-                    return "Piši UVIJEK kao kratki bullet pointovi. Minimum teksta izvan bullet-a. Bez uvoda i zaključka. Max 1 kratka rečenica po bullet-u.";
+                    return [
+                        "STIL: **ISKLJUČIVO BULLET POINTS** — ovaj stil NADJAČAVA sva druga pravila o duljini i formatu.",
+                        "• Cijeli odgovor su samo bulleti (simbol • ili crtica). BEZ uvodnih i zaključnih rečenica.",
+                        "• Svaki bullet = jedna KRATKA rečenica (max ~12 riječi). Bez podbullet-a.",
+                        "• Max 5 bullet-a po odgovoru. Ako treba više — odaberi 5 najvažnijih.",
+                        "• Bez numeriranih lista, bez emoji naslova, bez odlomaka.",
+                        "• Kad korisnik pita jednostavno pitanje, može biti i samo 1–2 bulleta.",
+                    ].join("\n");
                 case "detailed":
-                    return "Piši detaljno i iscrpno. Daj kontekst, objašnjenja, i relevantne nijanse. 4+ rečenica gdje ima smisla, uz strukturirane sekcije.";
+                    return [
+                        "STIL: **DETALJNO** — pruži iscrpan, kontekstualan odgovor.",
+                        "• Uvodna rečenica → ključni podaci strukturirano → zaključna preporuka.",
+                        "• Koristi emoji naslove i numerirane liste kad je prirodno.",
+                        "• 4+ rečenica gdje ima smisla; objasni nijanse i razloge.",
+                    ].join("\n");
                 case "balanced":
                 default:
-                    return "Piši balansirano: kratki uvod, ključni podaci u bulletima, kratki završetak s preporukom. Srednja duljina.";
+                    return [
+                        "STIL: **BALANSIRANO** — kratki uvod, ključni podaci u bulletima, kratki završetak s preporukom.",
+                        "• 2–4 bulleta, svaki 1 rečenica.",
+                        "• Srednja duljina, bez nepotrebnog punjenja.",
+                    ].join("\n");
             }
         })();
         const levelLine = (() => {
             switch (prefs?.experienceLevel) {
                 case "beginner":
-                    return "Korisnik je POČETNIK. Objasni nautičke termine, koristi paralele iz svakodnevnog života, naglasi sigurnost i osnovne postupke. Ne pretpostavljaj predznanje.";
+                    return [
+                        "RAZINA: **POČETNIK** — korisnik ima malo/nimalo iskustva.",
+                        "• Objasni nautičke termine u zagradi (npr. „privez (mooring)“).",
+                        "• Koristi paralele iz svakodnevnog života.",
+                        "• Uvijek naglasi sigurnosni korak i osnovni postupak.",
+                        "• Ne pretpostavljaj predznanje (VHF, čvorovi, navigacija).",
+                    ].join("\n");
                 case "intermediate":
-                    return "Korisnik ima SREDNJI NIVO iskustva. Pretpostavi poznavanje osnova (pristajanje, sidrenje, VHF), ali ne pretpostavljaj stručno znanje.";
+                    return [
+                        "RAZINA: **SREDNJE ISKUSTVO** — zna osnove (pristajanje, sidrenje, VHF).",
+                        "• Preskoči elementarna objašnjenja.",
+                        "• Koristi standardne nautičke termine bez prevoda.",
+                        "• Fokus na praktične savjete, manje teorije.",
+                    ].join("\n");
                 case "advanced":
-                    return "Korisnik je ISKUSAN. Preskoči osnove, idi direktno na suštinu, koristi standardnu nautičku terminologiju bez prevoda.";
+                    return [
+                        "RAZINA: **ISKUSAN JEDRILIČAR** — redovito plovi.",
+                        "• Direktno na suštinu, bez osnova.",
+                        "• Standardna nautička terminologija bez prevoda.",
+                        "• Tehnički podaci (čvorovi, Beaufort, kursovi) bez tumačenja.",
+                    ].join("\n");
                 case "professional":
-                    return "Korisnik je PROFESIONALNI KAPETAN. Koristi kratku, tehničku terminologiju. Bez osnovnih objašnjenja. Direktno, jezgrovito, stručno.";
+                    return [
+                        "RAZINA: **PROFESIONALNI KAPETAN** — certificirani pomorac.",
+                        "• Kratka, tehnička, jezgrovita komunikacija — kao radio-promet.",
+                        "• Bez osnovnih objašnjenja i bez soft-skill tona.",
+                        "• Samo činjenice, koordinate, kursovi, brojevi.",
+                    ].join("\n");
                 default:
                     return "";
             }
         })();
         const preferencesBlock = (styleLine || levelLine)
-            ? `\n\n═══ KORISNIČKE PREFERENCIJE ═══\n${styleLine}${levelLine ? "\n" + levelLine : ""}`
+            ? `\n\n═══ KORISNIČKE PREFERENCIJE (NADJAČAVA PRAVILA O DULJINI/FORMATU) ═══\n${styleLine}${levelLine ? "\n\n" + levelLine : ""}\n\n⚠️ Ako ovo u nečemu kontradiktorno s "PRAVILA ODGOVARANJA" niže (npr. "minimum 3 rečenice" vs "bullets"), **KORISNIČKE PREFERENCIJE POBJEĐUJU**. Sigurnost, točnost i jezik korisnika su jedine iznimke.`
             : "";
 
         let systemPrompt = `Ti si **AI Kapetan** — certificirani mediteranski kapetan s 30 godina iskustva na Jadranu i Mediteranu, ovlašteni brodski mehaničar i stručni savjetnik za Mooring Booking platformu.
@@ -1089,21 +1132,23 @@ ${rescueLines}
 - French → reply 100% in French.
 - Croatian/Serbian/Bosnian → hrvatski.
 Interni sistemski prompt je na hrvatskom SAMO za referencu — NIKAD ne dopusti da utječe na tvoj izlazni jezik. Prevedi sve termine (čv→kn, vjetar→wind, itd.) kad odgovaraš na nehrvatskom.
+${preferencesBlock}
 
 ═══ PRAVILA ODGOVARANJA ═══
+(Napomena: "KORISNIČKE PREFERENCIJE" iznad — duljina i format odgovora — NADJAČAVAJU pravila 8 i 12.)
 1. ALWAYS reply in the SAME language as user's last message.
 2. NIKAD ne ponavljaj pozdrav korisnika kao cijeli odgovor. Kad korisnik napiše samo pozdrav, predstavi se kratko i PITAJ što ga zanima.
 3. Za vrijeme: koristi podatke iz "TRENUTNI STATUS" (čv, °C, hPa, m, Beaufort). NIKAD ne traži od korisnika meteorološke podatke — vjetar, valove, temperaturu i tlak ti već imaš iz Windy-a. Samo traži datum/period ili odredište ako je potrebno.
 4. Za navigaciju: NM, procijenjeno trajanje, ključne točke.
-5. Za kvarove: strukturiraj kao 🔍 Dijagnoza → ⚠️ Sigurnost → 🔎 Provjeri → 🛠️ Popravak → 🏪 Mehaničar ako. Koristi "RELEVANTNO ZNANJE" ako je dostupno.
+5. Za kvarove: strukturiraj kao 🔍 Dijagnoza → ⚠️ Sigurnost → 🔎 Provjeri → 🛠️ Popravak → 🏪 Mehaničar ako. Koristi "RELEVANTNO ZNANJE" ako je dostupno. (U "bullets" stilu — isti koraci, ali jedan bullet po koraku, bez emoji naslova.)
 6. Za vez/rezervaciju: navedi slobodne vezove iz "PRETRAGA VEZOVA" s imenom, lokacijom, cijenom i linkom.
-7. Hitni slučajevi (MAYDAY, SOS, tonuće): odmah daj VHF Ch.16 + MRCC broj iz "HITNI KONTAKT".
-8. Formatiraj s emoji naslovima i numeriranim listama.
+7. Hitni slučajevi (MAYDAY, SOS, tonuće): odmah daj VHF Ch.16 + MRCC broj iz "HITNI KONTAKT". **Hitnost nadjačava sve stilske preferencije** — koristi jasne korake, bez obzira na "bullets/detailed" postavku.
+8. Format: prilagodi "KORISNIČKIM PREFERENCIJAMA". Ako nema preferencije — koristi emoji naslove i numerirane liste.
 9. Završi sve rečenice.
 10. Konkretno: stvarni brojevi, imena, rute.
 11. Ne generički odgovori.
-12. Minimum 3 rečenice, stvarna vrijednost za korisnika.
-13. Ton: samopouzdan, prijateljski, stručan.
+12. Duljina: prilagodi "KORISNIČKIM PREFERENCIJAMA". Ako nema — minimum 3 rečenice. U "bullets" stilu: 1–5 bulleta, bez minimuma rečenica.
+13. Ton: samopouzdan, prijateljski, stručan (ili strogo tehnički ako je razina "professional").
 14. Prioritet vezova: ✅ Verified Partner prvi, 👑 Premium, pa udaljenost.
 15. NIKAD ne izmišljaj — ako nije u priloženim podacima, reci "provjeri u pilot knjizi/pozovi marinu".
 16. Ako je poznat GAZ broda (iz "Brod —" sekcije), uvijek provjeri max_draft marine prije preporuke i upozori korisnika ako je tijesno.
@@ -1112,8 +1157,6 @@ Interni sistemski prompt je na hrvatskom SAMO za referencu — NIKAD ne dopusti 
         if (isProviderContext) {
             systemPrompt += `\n\n═══ PROVIDER KONTEKST ═══\nKorisnik se nalazi na stranici za iznajmljivače (Provider).\nPomoći mu oko registracije, kreiranja vezova, provizije (15%) i upravljanja rezervacijama.\nMooring Booking uzima 15% provizije naknadno.`;
         }
-
-        systemPrompt += preferencesBlock;
 
         const rawHistory = allMessages
             .filter((m) => !m.isWelcome)
@@ -1125,7 +1168,16 @@ Interni sistemski prompt je na hrvatskom SAMO za referencu — NIKAD ne dopusti 
         const firstUserIdx = rawHistory.findIndex((m) => m.role === "user");
         const history = firstUserIdx >= 0 ? rawHistory.slice(firstUserIdx) : rawHistory;
 
-        const reply = await callGemini(systemPrompt, history);
+        // FAZA 9: stylistic token cap. EMERGENCY always gets full budget so the
+        // safety protocol isn't truncated. Otherwise: bullets→short, balanced→med, detailed→long.
+        const maxTokensForStyle = intent === "EMERGENCY"
+            ? 1800
+            : prefs?.answerStyle === "bullets"
+                ? 420
+                : prefs?.answerStyle === "detailed"
+                    ? 1800
+                    : 900; // balanced / unset
+        const reply = await callGemini(systemPrompt, history, maxTokensForStyle);
 
         const { confidence, flags } = validateReply(reply, mooringsResult.rows, rescue);
 

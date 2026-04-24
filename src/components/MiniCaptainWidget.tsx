@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, X, Crown, History, MessageSquarePlus } from "lucide-react";
+import { Send, X, Crown, History, MessageSquarePlus, Settings } from "lucide-react";
 import captainAvatar from "@/assets/captain-avatar.png";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
@@ -68,6 +68,7 @@ const MiniCaptainWidget = () => {
   const [preferences, setPreferences] = useState<AiCaptainPreferences | null>(null);
   const [prefsLoading, setPrefsLoading] = useState(false);
   const [prefsLoaded, setPrefsLoaded] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     if (!user || !isOpen || prefsLoaded) return;
@@ -324,6 +325,16 @@ const MiniCaptainWidget = () => {
                 >
                   <History size={16} />
                 </button>
+                {preferences && (
+                  <button
+                    onClick={() => setShowSettings((v) => !v)}
+                    className={`transition-colors p-1 ${showSettings ? "text-gold" : "text-primary-foreground/70 hover:text-primary-foreground"}`}
+                    aria-label={t("aiChat.onboarding.settingsTitle", "Postavke AI Kapetana")}
+                    title={t("aiChat.onboarding.settingsTitle", "Postavke AI Kapetana")}
+                  >
+                    <Settings size={16} />
+                  </button>
+                )}
               </>
             )}
             <button
@@ -354,6 +365,16 @@ const MiniCaptainWidget = () => {
         ) : prefsLoading && !prefsLoaded ? (
           <div className="h-64 flex items-center justify-center bg-background/50">
             <p className="text-xs text-muted-foreground">{t("aiChat.loading")}</p>
+          </div>
+        ) : showSettings ? (
+          <div className="h-64 overflow-y-auto bg-background/50">
+            <OnboardingPreferences
+              mode="settings"
+              initial={preferences}
+              compact
+              onDone={(p) => { setPreferences(p); setShowSettings(false); }}
+              onCancel={() => setShowSettings(false)}
+            />
           </div>
         ) : (
         <>

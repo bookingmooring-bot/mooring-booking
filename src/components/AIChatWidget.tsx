@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import captainAvatar from "@/assets/captain-avatar.png";
-import { X, Send, Crown, History, MessageSquarePlus } from "lucide-react";
+import { X, Send, Crown, History, MessageSquarePlus, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { getUserLocation } from "@/services/weatherService";
@@ -80,6 +80,7 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
   const [preferences, setPreferences] = useState<AiCaptainPreferences | null>(null);
   const [prefsLoading, setPrefsLoading] = useState(false);
   const [prefsLoaded, setPrefsLoaded] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   // Fetch preferences once per login. If user has none yet, we'll show the
   // onboarding buttons inside the chat card before allowing any message.
@@ -348,6 +349,16 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
                   >
                     <History size={18} />
                   </button>
+                  {preferences && (
+                    <button
+                      onClick={() => setShowSettings((v) => !v)}
+                      className={`p-1 transition-colors ${showSettings ? "text-gold" : "text-primary-foreground/70 hover:text-primary-foreground"}`}
+                      title={t("aiChat.onboarding.settingsTitle", "Postavke AI Kapetana")}
+                      aria-label={t("aiChat.onboarding.settingsTitle", "Postavke AI Kapetana")}
+                    >
+                      <Settings size={18} />
+                    </button>
+                  )}
                 </>
               )}
               <button onClick={handleClose} className="text-primary-foreground/70 hover:text-primary-foreground p-1">
@@ -371,6 +382,15 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
           ) : prefsLoading && !prefsLoaded ? (
             <div className="h-80 flex items-center justify-center">
               <p className="text-sm text-muted-foreground">{t("aiChat.loading")}</p>
+            </div>
+          ) : showSettings ? (
+            <div className="h-80 overflow-y-auto">
+              <OnboardingPreferences
+                mode="settings"
+                initial={preferences}
+                onDone={(p) => { setPreferences(p); setShowSettings(false); }}
+                onCancel={() => setShowSettings(false)}
+              />
             </div>
           ) : (
           <div className="h-80 overflow-y-auto p-4 space-y-4">
@@ -408,8 +428,8 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
             <div ref={messagesEndRef} />
           </div>
           )}
-          {/* Input area / Paywall — hidden during onboarding */}
-          {!needsOnboarding && !(prefsLoading && !prefsLoaded) && (showPaywall ? (
+          {/* Input area / Paywall — hidden during onboarding/settings */}
+          {!needsOnboarding && !showSettings && !(prefsLoading && !prefsLoaded) && (showPaywall ? (
             <div className="p-4 border-t border-border">
               <div className="bg-gradient-to-r from-gold/10 to-secondary/10 border border-gold/30 rounded-xl p-4 text-center">
                 <Crown className="text-gold mx-auto mb-2" size={28} />

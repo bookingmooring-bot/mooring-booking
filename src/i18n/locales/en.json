@@ -181,9 +181,13 @@
                    "onboarding": {
                        "title": "Before your first message",
                        "subtitle": "Set up AI Captain. Saved once, used forever.",
+                       "settingsTitle": "AI Captain settings",
+                       "settingsSubtitle": "Change your answer style and experience level anytime.",
                        "styleLabel": "Answer style",
                        "levelLabel": "Experience level",
                        "submit": "Start chat →",
+                       "save": "Save",
+                       "cancel": "Cancel",
                        "saving": "Saving…",
                        "styles": {
                            "bullets": { "label": "Bullet points", "hint": "Short & quick" },
