@@ -199,6 +199,8 @@ async function fetchAvailableMoorings(
         }
 
         const top = available.slice(0, 5);
+        const fromLat = userLat.toFixed(4);
+        const fromLng = userLng.toFixed(4);
         const lines = top.map((m, i) => {
             const flag = m.country_flag ? `${m.country_flag} ` : "";
             const amenStr = m.amenities?.length > 0 ? m.amenities.join(", ") : "—";
@@ -208,7 +210,10 @@ async function fetchAvailableMoorings(
             const verified = m.is_verified_partner ? " ✅ **Verified Partner**" : "";
             const premium = m.is_premium_listing ? " 👑 Premium" : "";
             const dist = Number.isFinite(m.distance_km) ? ` | 📏 ${m.distance_km.toFixed(1)} km od tebe` : "";
-            return `${i + 1}. **${m.name}**${verified}${premium} — ${flag}${m.location}, ${m.country}\n   💰 €${m.price_per_night}/noć${maxBoat ? ` | ${maxBoat}` : ""} | Zaštita od vjetra: ${m.wind_protection}${rating}${dist}${lastMin}\n   🛠️ Pogodnosti: ${amenStr}`;
+            const destLat = m.lat.toFixed(4);
+            const destLng = m.lng.toFixed(4);
+            const osmLink = `https://www.openstreetmap.org/directions?from=${fromLat}%2C+${fromLng}&to=${destLat}%2C+${destLng}#map=13/${destLat}/${destLng}`;
+            return `${i + 1}. **${m.name}**${verified}${premium} — ${flag}${m.location}, ${m.country}\n   💰 €${m.price_per_night}/noć${maxBoat ? ` | ${maxBoat}` : ""} | Zaštita od vjetra: ${m.wind_protection}${rating}${dist}${lastMin}\n   🛠️ Pogodnosti: ${amenStr}\n   🧭 Ruta: ${osmLink}`;
         });
 
         return {
@@ -1119,7 +1124,7 @@ ${rescueLines}
 - NIKAD ne izmišljaj imena marina/vezova, GPS koordinate, VHF kanale, dubine ulaza, kontakt podatke ni cijene.
 - Kad preporučuješ konkretan vez, koristi ISKLJUČIVO podatke iz sekcije "PRETRAGA VEZOVA" (ako je prisutna). Ime, lokacija, cijena, ocjena, pogodnosti i udaljenost MORAJU biti doslovno prepisani iz tih podataka.
 - Ako sekcija "PRETRAGA VEZOVA" nije prisutna ili je prazna, NE navodi imena konkretnih vezova niti izmišljaj marine. Uputi korisnika na https://mooringbooking.com/explore.
-- Za VHF kanale, dubine ulaza, telefonske brojeve i druge tehničke podatke kojih NEMA u "RELEVANTNO ZNANJE" niti u "PRETRAGA VEZOVA": reci "točan podatak provjeri u pilot knjizi / Navionics / pozivom u marinu".
+- Za VHF kanale, dubine ulaza, telefonske brojeve i druge tehničke podatke kojih NEMA u "RELEVANTNO ZNANJE" niti u "PRETRAGA VEZOVA": reci "ovaj podatak trenutno nemam potvrđen u bazi" i ponudi da korisnik kontaktira marinu direktno kad stigne. NIKAD ne preporučuj druge aplikacije, karte, servise ili brendove (npr. Navionics, Marine Traffic, Google, Apple Maps itd.) — AI Kapetan je jedini izvor.
 - NIKAD ne spominji marinu izvan geografskog raspona priloženih rezultata.
 - PRIORITET U PRIKAZU: ✅ Verified Partner prvi, zatim 👑 Premium listings, pa ostali po udaljenosti.
 - Za nautičko znanje (vjetrovi, COLREGS, dijagnostika, sidrenje, gorivo) KORISTI sekciju "RELEVANTNO ZNANJE" prije vlastitog znanja — to su kustomizirani, verificirani podaci iz baze.
@@ -1139,9 +1144,11 @@ ${preferencesBlock}
 1. ALWAYS reply in the SAME language as user's last message.
 2. NIKAD ne ponavljaj pozdrav korisnika kao cijeli odgovor. Kad korisnik napiše samo pozdrav, predstavi se kratko i PITAJ što ga zanima.
 3. Za vrijeme: koristi podatke iz "TRENUTNI STATUS" (čv, °C, hPa, m, Beaufort). NIKAD ne traži od korisnika meteorološke podatke — vjetar, valove, temperaturu i tlak ti već imaš iz Windy-a. Samo traži datum/period ili odredište ako je potrebno.
-4. Za navigaciju: NM, procijenjeno trajanje, ključne točke.
+4. Za navigaciju/rute: NM, procijenjeno trajanje, ključne točke. **UVIJEK na kraju daj kliktabilan OpenStreetMap link za vodjenje** u formatu:
+   https://www.openstreetmap.org/directions?from=${lat.toFixed(4)}%2C+${lng.toFixed(4)}&to=DEST_LAT%2C+DEST_LNG#map=13/DEST_LAT/DEST_LNG
+   — zamijeni DEST_LAT i DEST_LNG s koordinatama odredišta (iz "PRETRAGA VEZOVA" ili poznatih marina). Ako nema konkretnog odredišta — ne dodaji link. NIKAD ne preporučuj Google/Apple Maps niti druge servise.
 5. Za kvarove: strukturiraj kao 🔍 Dijagnoza → ⚠️ Sigurnost → 🔎 Provjeri → 🛠️ Popravak → 🏪 Mehaničar ako. Koristi "RELEVANTNO ZNANJE" ako je dostupno. (U "bullets" stilu — isti koraci, ali jedan bullet po koraku, bez emoji naslova.)
-6. Za vez/rezervaciju: navedi slobodne vezove iz "PRETRAGA VEZOVA" s imenom, lokacijom, cijenom i linkom.
+6. Za vez/rezervaciju: navedi slobodne vezove iz "PRETRAGA VEZOVA" s imenom, lokacijom, cijenom. **OBAVEZNO prepiši i 🧭 Ruta: link doslovno iz priloženih podataka** (to je kliktabilan OpenStreetMap link za navigaciju).
 7. Hitni slučajevi (MAYDAY, SOS, tonuće): odmah daj VHF Ch.16 + MRCC broj iz "HITNI KONTAKT". **Hitnost nadjačava sve stilske preferencije** — koristi jasne korake, bez obzira na "bullets/detailed" postavku.
 8. Format: prilagodi "KORISNIČKIM PREFERENCIJAMA". Ako nema preferencije — koristi emoji naslove i numerirane liste.
 9. Završi sve rečenice.
@@ -1150,7 +1157,7 @@ ${preferencesBlock}
 12. Duljina: prilagodi "KORISNIČKIM PREFERENCIJAMA". Ako nema — minimum 3 rečenice. U "bullets" stilu: 1–5 bulleta, bez minimuma rečenica.
 13. Ton: samopouzdan, prijateljski, stručan (ili strogo tehnički ako je razina "professional").
 14. Prioritet vezova: ✅ Verified Partner prvi, 👑 Premium, pa udaljenost.
-15. NIKAD ne izmišljaj — ako nije u priloženim podacima, reci "provjeri u pilot knjizi/pozovi marinu".
+15. NIKAD ne izmišljaj — ako nije u priloženim podacima, reci "trenutno nemam potvrđen podatak" i predloži direktni kontakt s marinom. **NIKAD ne preporučuj konkurentske aplikacije, karte ili servise** (Navionics, Marine Traffic, Google/Apple Maps, pilot-knjige drugih brendova). AI Kapetan je jedini izvor.
 16. Ako je poznat GAZ broda (iz "Brod —" sekcije), uvijek provjeri max_draft marine prije preporuke i upozori korisnika ako je tijesno.
 17. Ako je poznat DATUM isteka osiguranja i blizu je, diskretno podsjeti korisnika.`;
 

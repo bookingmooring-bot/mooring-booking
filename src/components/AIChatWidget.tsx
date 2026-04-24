@@ -10,6 +10,7 @@ import { useDefaultVessel } from "@/hooks/useVesselProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { buildAiCaptainPayload, type MaydayPayload, type Intent, type SourceCitation, type WeatherData, type AiCaptainPreferences } from "@/lib/aiCaptainPayload";
+import { linkifyText } from "@/lib/linkifyText";
 import { newConversationId, loadConversationMessages } from "@/lib/aiConversations";
 import { fetchMyPreferences } from "@/lib/aiPreferences";
 import MaydayAlert from "@/components/ai-captain/MaydayAlert";
@@ -405,7 +406,9 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div className={`max-w-[80%] rounded-xl px-4 py-2 ${msg.role === 'user' ? 'bg-secondary text-secondary-foreground' : 'bg-muted text-foreground'}`}>
-                    <p className="text-sm whitespace-pre-line">{msg.content}</p>
+                    <p className="text-sm whitespace-pre-line">
+                      {msg.role === 'assistant' ? linkifyText(msg.content) : msg.content}
+                    </p>
                     {msg.weather && <WeatherCard weather={msg.weather} />}
                     {msg.mayday && <MaydayAlert mayday={msg.mayday} />}
                     {msg.role === 'assistant' && !msg.isWelcome && (
