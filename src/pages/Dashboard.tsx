@@ -6,7 +6,8 @@ import { useUserBookings, useProviderBookings, Booking } from "@/hooks/useBookin
 import { useQueryClient } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Loader2, Ship, Calendar, Settings, ShieldCheck, Save, Anchor, Star } from "lucide-react";
+import { Loader2, Ship, Calendar, Settings, ShieldCheck, Save, Star } from "lucide-react";
+import VesselProfileManager from "@/components/VesselProfileManager";
 import AffiliateDashboard from "@/components/affiliate/AffiliateDashboard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -168,31 +169,8 @@ const Dashboard = () => {
                         </div>
                     </div>
 
-                    <div className="space-y-4 pt-4">
-                        <h3 className="text-lg font-semibold border-b border-border pb-2 flex items-center gap-2">
-                            <Anchor size={18} /> Boat Information
-                            <span className="text-sm font-normal text-muted-foreground ml-2">(Auto-fills booking form)</span>
-                        </h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="boat_name">Boat Name</Label>
-                                <Input
-                                    id="boat_name"
-                                    value={settingsForm.boat_name}
-                                    onChange={(e) => setSettingsForm({ ...settingsForm, boat_name: e.target.value })}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="boat_length">Boat Length (meters)</Label>
-                                <Input
-                                    id="boat_length"
-                                    type="number"
-                                    step="0.1"
-                                    value={settingsForm.boat_length}
-                                    onChange={(e) => setSettingsForm({ ...settingsForm, boat_length: e.target.value })}
-                                />
-                            </div>
-                        </div>
+                    <div className="space-y-4 pt-4 border-t border-border">
+                        <VesselProfileManager />
                     </div>
 
                     <Button

@@ -58,6 +58,29 @@ export const canUseFeature = (feature: string, profile: Profile | null | undefin
 };
 
 /**
+ * Service fee based on subscription tier and vessel length (Terms v3.0 Section 5.1).
+ * Captain (premium-annual): always €0
+ * Sailor (premium-monthly): €0 for vessels ≤12m, otherwise Basic rates
+ * Basic: €12 (≤8m), €19 (≤12m), €35 (≤18m), €59 (≤24m), €99 (>24m)
+ */
+export const calculateServiceFee = (vesselLengthM: number | null | undefined, profile: Profile | null | undefined): number => {
+  const tier = getUserTier(profile);
+
+  if (tier === 'premium-annual') return 0;
+
+  if (tier === 'premium-monthly') {
+    if (!vesselLengthM || vesselLengthM <= 12) return 0;
+  }
+
+  const length = vesselLengthM ?? 0;
+  if (length <= 8) return 12;
+  if (length <= 12) return 19;
+  if (length <= 18) return 35;
+  if (length <= 24) return 59;
+  return 99;
+};
+
+/**
  * AI question limit for basic users.
  */
 export const AI_BASIC_LIMIT = 10;

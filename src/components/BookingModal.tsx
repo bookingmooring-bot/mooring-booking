@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useBookingPayment } from "@/hooks/useBookingPayment";
 import { useProviderTier } from "@/hooks/useProviderTier";
 import { calculateBookingFees, getCommissionRate } from "@/lib/providerTier";
+import { calculateServiceFee } from "@/lib/subscription";
 
 interface MooringData {
   id: string;
@@ -119,6 +120,10 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
 
   const totalPrice = discountedPrice * Math.max(1, nights);
 
+  const boatLengthNum = bookingData.boatLength ? parseFloat(bookingData.boatLength) : null;
+  const serviceFee = calculateServiceFee(boatLengthNum, profile);
+  const grandTotal = totalPrice + serviceFee;
+
   // Check if chosen range contains unavailable dates
   const isRangeValid = () => {
     if (!dateRange?.from || !dateRange?.to) return true; // Let them select first
@@ -187,7 +192,8 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
       guest_phone: bookingData.guestPhone,
       nights: Math.max(1, nights),
       price_per_night: discountedPrice,
-      total_price: totalPrice,
+      total_price: grandTotal,
+      service_fee: serviceFee,
       commission_amount: commissionAmount,
       transaction_fee: transactionFee,
       is_now4today: mooring.isNow4Today || false,
@@ -440,11 +446,15 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
                 </div>
                 <div className="flex justify-between text-xs sm:text-sm">
                   <span className="text-muted-foreground">{t('booking.serviceFee', 'Service fee')}</span>
-                  <span className="text-success">{t('booking.free', 'Free')}</span>
+                  {serviceFee === 0 ? (
+                    <span className="text-success">{t('booking.free', 'Free')}</span>
+                  ) : (
+                    <span className="text-foreground">€{serviceFee}</span>
+                  )}
                 </div>
                 <div className="flex justify-between font-heading font-semibold pt-2 border-t border-border">
                   <span className="text-foreground">{t('booking.total', 'Total')}</span>
-                  <span className="text-primary">€{totalPrice}</span>
+                  <span className="text-primary">€{grandTotal}</span>
                 </div>
               </div>
 
@@ -509,7 +519,7 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
                   <span className="text-muted-foreground">{t('booking.checkOut', 'Check-out')}:</span>
                   <span className="text-foreground">{checkOutStr}</span>
                   <span className="text-muted-foreground">{t('booking.total', 'Total')}:</span>
-                  <span className="text-foreground font-semibold">€{totalPrice}</span>
+                  <span className="text-foreground font-semibold">€{grandTotal}</span>
                 </div>
               </div>
 
@@ -560,7 +570,7 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
 
               {/* WhatsApp */}
               {(mooring.ownerPhone) && (
-                <a href={`https://wa.me/${(mooring.ownerPhone || "+385912345678").replace(/[\s\-\(\)]/g, "")}?text=${encodeURIComponent(`Booking confirmed at ${mooring.name}! Confirmation #MB-${Date.now().toString(36).toUpperCase()}. Check-in: ${checkInStr}, Check-out: ${checkOutStr}. Total: €${totalPrice}.`)}`} target="_blank" rel="noopener noreferrer" className="block mt-2">
+                <a href={`https://wa.me/${(mooring.ownerPhone || "+385912345678").replace(/[\s\-\(\)]/g, "")}?text=${encodeURIComponent(`Booking confirmed at ${mooring.name}! Confirmation #MB-${Date.now().toString(36).toUpperCase()}. Check-in: ${checkInStr}, Check-out: ${checkOutStr}. Total: €${grandTotal}.`)}`} target="_blank" rel="noopener noreferrer" className="block mt-2">
                   <Button variant="outline" className="w-full border-[hsl(142,70%,45%)] text-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,45%)]/10">
                     📱 Send to WhatsApp
                   </Button>
