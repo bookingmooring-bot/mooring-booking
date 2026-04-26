@@ -8,6 +8,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Loader2, Ship, Calendar, Settings, ShieldCheck, Save, Star } from "lucide-react";
 import VesselProfileManager from "@/components/VesselProfileManager";
+import NotificationPreferences from "@/components/NotificationPreferences";
 import AffiliateDashboard from "@/components/affiliate/AffiliateDashboard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -171,6 +172,10 @@ const Dashboard = () => {
 
                     <div className="space-y-4 pt-4 border-t border-border">
                         <VesselProfileManager />
+                    </div>
+
+                    <div className="space-y-4 pt-4 border-t border-border">
+                        <NotificationPreferences />
                     </div>
 
                     <Button

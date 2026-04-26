@@ -22,6 +22,12 @@ export interface Profile {
     white_label_berth_tier?: 'up-to-50' | 'over-50' | null;
     white_label_subscription_id?: string | null;
     white_label_activated_at?: string | null;
+    expo_push_token?: string | null;
+    last_known_lat?: number | null;
+    last_known_lng?: number | null;
+    storm_alerts_enabled?: boolean;
+    storm_wind_threshold_kn?: number;
+    storm_wave_threshold_m?: number;
     created_at: string;
 }
 
