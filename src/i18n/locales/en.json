@@ -156,7 +156,28 @@
                         "stat3Label":  "Simple commission"
                     },
     "footer":  {
-                   "aiCaptain":  "AI Captain"
+                   "description": "Mediterranean's #1 mooring marketplace. Find and book moorings, docks and marina berths across 10+ countries.",
+                   "allRightsReserved": "All Rights Reserved",
+                   "about": "About",
+                   "aboutUs": "About Us",
+                   "howItWorksLink": "How It Works",
+                   "blog": "Blog",
+                   "aiCaptain": "AI Captain",
+                   "contact": "Contact",
+                   "faq": "FAQ",
+                   "forYou": "For You",
+                   "registerMooring": "Register Mooring",
+                   "pricing": "Pricing",
+                   "affiliateProgram": "Affiliate Program",
+                   "marinaPartnership": "Marina Partnership (B2B)",
+                   "support": "Support",
+                   "sailingManual": "Sailing Manual",
+                   "contactUs": "Contact Us",
+                   "stripeSecure": "Payments are secure and processed via Stripe",
+                   "privacyPolicy": "Privacy Policy",
+                   "termsOfService": "Terms of Service",
+                   "cookiePolicy": "Cookie Policy",
+                   "gdpr": "GDPR"
                },
     "aiChat":  {
                    "title":  "AI Captain Jack",
