@@ -14,80 +14,183 @@ const SupportPage = () => {
 
   const faqs = [
     {
-      category: t('support.bookingReservations'),
+      category: "Booking & Reservations",
       questions: [
-        { q: t('support.faq.bookQ1', 'How do I book a mooring?'), a: t('support.faq.bookA1', 'Search for your desired location and dates, select a mooring, and click \'Book Now\'. You\'ll receive instant confirmation after payment.') },
-        { q: t('support.faq.bookQ2', 'Can I cancel my booking?'), a: t('support.faq.bookA2', 'Yes, most moorings offer free cancellation up to 48 hours before check-in. Check the specific cancellation policy on each mooring page.') },
-        { q: t('support.faq.bookQ3', 'When do I get navigation coordinates?'), a: t('support.faq.bookA3', 'GPS coordinates and exact location details are unlocked immediately after your booking is confirmed and payment is processed.') },
-        { q: t('support.faq.bookQ4', 'How do I navigate to my booked mooring?'), a: t('support.faq.bookA4', 'After completing your booking, tap \'Navigate to Mooring\' to open directions in your preferred maps app (Apple Maps, Android Maps, or OpenStreetMap).') },
-        { q: t('support.faq.bookQ5', 'What if the mooring doesn\'t match the description?'), a: t('support.faq.bookA5', 'Contact AI Captain immediately for assistance. Our platform will mediate between you and the owner. We take listing accuracy seriously, however Intelligent Matrix acts as a marketplace and does not guarantee refunds.') },
-        { q: t('support.faq.bookQ6', 'Can I extend my stay at the mooring?'), a: t('support.faq.bookA6', 'Yes! Extensions are automatically approved if the mooring is not booked by others for the requested dates. No waiting required — the system checks availability instantly.') },
-      ]
+        {
+          q: "How do I book a mooring?",
+          a: "The answer depends on which type of listing you are booking. The Platform operates three distinct booking layers.\n\nFor ⭐ Premium Partner Marinas (Layer 1): search by location, vessel size and dates, select a Premium listing marked with the ⭐ badge, complete the booking form with your vessel details and pay via Stripe. Payment is captured immediately and confirmation is instant. You receive full marina contact details, GPS coordinates and VHF channel upon confirmation.\n\nFor 🔵 Concierge Booking (Layer 2): select a listing marked with the 🔵 badge, complete the booking form and authorise payment via Stripe. Your card is held but not charged. The Platform sends your booking request to the facility on your behalf. When the facility confirms, Stripe captures the service fee and you receive contact details. If the facility does not respond within the specified window, your hold is automatically released with no charge.\n\nFor 🗺️ Explore & Navigate (Layer 3): these locations are navigation reference only. No booking is possible. Use AI Captain for route planning and navigation guidance to these locations.",
+        },
+        {
+          q: "What is the difference between the three booking layers?",
+          a: "⭐ Layer 1 — Premium Marinas: facilities that have signed a Partnership Agreement, verified their legal right to offer commercial moorings, and integrated their availability calendar. Instant confirmed booking. Stripe charges immediately. Berth is guaranteed upon confirmation. Commission of 10–15% is paid by the marina. Service fee paid by the sailor based on vessel length.\n\n🔵 Layer 2 — Concierge Booking: facilities identified from publicly available sources including OpenStreetMap, Google Maps and official maritime authority registries. Mooring Booking has no contractual relationship with these facilities. The Platform sends your booking request on your behalf. No charge until the facility confirms. Full disclaimer in Master Terms of Service v3.0, Section 4.2.\n\n🗺️ Layer 3 — Explore & Navigate: anchorages, coves, natural harbours and small docks sourced from public nautical databases. Navigation reference only. No booking, no confirmation, no guaranteed access. Always verify with official nautical charts.",
+        },
+        {
+          q: "What is the service fee and how much is it?",
+          a: "The service fee is charged to the sailor by Mooring Booking in consideration for AI Captain assistance, booking facilitation, payment infrastructure and customer support. It is separate from the cost of the mooring itself.\n\nStandard service fee tiers by vessel length:\n• Vessels up to 8 metres: €12 per booking\n• Vessels 8–12 metres: €19 per booking\n• Vessels 12–18 metres: €35 per booking\n• Vessels 18–24 metres: €59 per booking\n• Vessels over 24 metres and superyachts: €99 per booking\n• Now4Today same-day bookings: standard tier plus 20% surcharge\n\nSailor and Captain plan subscribers receive reduced or waived service fees as described in the subscription plan details. The service fee is always displayed before payment is confirmed.",
+        },
+        {
+          q: "Can I cancel my booking?",
+          a: "Layer 1 — Premium Marinas: cancellation policy is set by each Premium Partner and displayed on their listing before booking. Service fee is non-refundable on Customer cancellation unless the Partner’s policy specifies fully refundable terms. If the marina cancels a confirmed booking, you receive a full refund including the service fee.\n\nLayer 2 — Concierge Booking: if the facility does not confirm within the specified window, the Stripe authorisation is automatically released and no charge is made. Once confirmed, the service fee is captured and non-refundable except where the facility fails to honour the confirmed booking.\n\nLayer 3 — Explore & Navigate: no booking exists, no cancellation applies.",
+        },
+        {
+          q: "When do I receive GPS coordinates and contact details?",
+          a: "Layer 1 — Premium Marinas: full marina contact details, GPS coordinates, VHF channel and marinero contact name are unlocked immediately upon booking confirmation and payment capture.\n\nLayer 2 — Concierge Booking: facility contact details are released only after Stripe Capture confirms successful payment following facility confirmation. Prior to confirmation, only publicly available GPS coordinates and VHF working channel are visible.\n\nLayer 3 — Explore & Navigate: GPS coordinates from public nautical databases are visible without booking. No contact data is available.",
+        },
+        {
+          q: "How do I navigate to my booked mooring?",
+          a: "After confirmed booking, tap Navigate in the app to open GPS coordinates in your preferred navigation app. AI Captain provides turn-by-turn nautical navigation including approach guidance, depth warnings where data is available, wind conditions, recommended approach angle for your vessel type and VHF channel to call ahead. For Layer 2 confirmed bookings, the contact name is provided so you can call the marinero on approach.",
+        },
+        {
+          q: "What if the mooring does not match the description?",
+          a: "Layer 1 — Premium Marinas: contact the marina directly and contact support@mooring-booking.com simultaneously. Mooring Booking will mediate. Premium Partners are contractually obligated to maintain accurate listings. Repeated inaccuracies result in suspension of Partner status.\n\nLayer 2 — Concierge Booking: listing data is sourced from publicly available sources and may be incomplete or outdated. Mooring Booking has no contractual relationship with Layer 2 facilities and cannot guarantee data accuracy. Disputes are between the sailor and the facility operator.\n\nLayer 3 — Explore & Navigate: navigational data is for reference only. Mooring Booking expressly disclaims all liability for conditions at Layer 3 locations.",
+        },
+        {
+          q: "Can I extend my stay?",
+          a: "For Layer 1, extension requests are sent through the Platform to the marina. Approval depends on availability. For Layer 2, extension requests follow the same Concierge Booking process — no guarantee of availability or response. For Layer 3 locations, no booking exists. Access decisions are at the sole discretion of the relevant harbour master or facility operator.",
+        },
+        {
+          q: "What happens if the marina confirms but no berth is available when I arrive?",
+          a: "Layer 1 — Premium Marinas: Mooring Booking will refund your service fee in full and assist you in finding an alternative facility. The marina bears responsibility under their Partnership Agreement.\n\nLayer 2 — Concierge Booking: Mooring Booking refunds the service fee and AI Captain assists with locating alternative facilities. No further financial remedy can be guaranteed beyond the service fee refund.",
+        },
+      ],
     },
     {
-      category: t('support.paymentsAndPricing'),
+      category: "Payments & Pricing",
       questions: [
-        { q: t('support.faq.payQ1', 'What payment methods are accepted?'), a: t('support.faq.payA1', 'We accept Visa, Mastercard, PayPal, and Google Pay. Some moorings also accept cash payment on arrival (commission still applies).') },
-        { q: t('support.faq.payQ2', 'Is my payment secure?'), a: t('support.faq.payA2', 'Yes, all payments are processed through Stripe with bank-level encryption. We never store your full card details.') },
-        { q: t('support.faq.payQ3', 'When is the mooring owner paid?'), a: t('support.faq.payA3', 'Owners receive payment 3-5 business days after guest check-out for card payments, minus the 12% platform commission.') },
-        { q: t('support.faq.payQ4', 'Why do prices vary so much?'), a: t('support.faq.payA4', 'Prices depend on location, season, amenities, and owner preferences. Owners can set custom daily prices via their calendar. Now4Today same-day bookings (01:00 AM–11:00 PM) have a 20% premium to reflect urgent availability.') },
-        { q: t('support.faq.payQ5', 'Are there any hidden fees?'), a: t('support.faq.payA5', 'No hidden fees! The price you see includes all platform fees. The only additional costs may be optional services offered by the mooring owner.') },
-      ]
+        {
+          q: "What payment methods are accepted?",
+          a: "All payments are processed by Stripe. Accepted methods include Visa, Mastercard, American Express, Google Pay and Apple Pay. Payment is made in Euros. Currency conversion costs charged by your bank are outside Mooring Booking’s control.\n\nCash payment to the facility is a matter between the sailor and the facility operator. For Layer 2 Concierge Bookings, the Mooring Booking service fee is always charged via Stripe regardless of how the sailor subsequently pays the facility.",
+        },
+        {
+          q: "Is my payment secure?",
+          a: "All payments are processed by Stripe Inc. Mooring Booking does not store card numbers, CVV codes or full card details at any point. Payment data is tokenised by Stripe. All payment communication is encrypted via TLS. For Layer 2 bookings, Stripe Authorize holds your payment method without charging it until the facility confirms — protecting you from being charged for unconfirmed bookings.",
+        },
+        {
+          q: "When is the mooring owner paid?",
+          a: "Layer 1 — Premium Marinas: Stripe Connect splits the payment automatically at the time of booking. 85–90% is transferred to the Partner’s Stripe account and 10–15% is retained by Mooring Booking as Commission. Stripe processing fees of approximately 2.9% plus €0.30 are deducted before the split. Partners receive payment within 2–7 business days.\n\nLayer 2 — Concierge Booking: the Mooring Booking service fee is charged to the sailor. The facility charges the sailor directly upon arrival for the mooring cost. The Platform does not process the mooring payment for Layer 2 bookings.",
+        },
+        {
+          q: "Why do prices vary?",
+          a: "Layer 1 Premium Partner prices are set by each marina and may vary by season, vessel size, berth location and available amenities. Partners may offer discounts of 0–50% and may set custom daily pricing via their dashboard calendar. Now4Today same-day bookings carry a mandatory 20% surcharge.\n\nLayer 2 Concierge Booking prices are sourced from publicly available data and may not reflect current actual prices. Always confirm the final price directly with the facility.",
+        },
+        {
+          q: "Are there any hidden fees?",
+          a: "No. The service fee applicable to your booking is displayed clearly before payment is confirmed. There are no additional Platform fees beyond the service fee. Layer 1 Premium Partner prices include all marina charges agreed at booking. Optional services such as Vez Osiguran mooring damage mediation, premium subscription features or charter onboard tools are always opt-in and their costs are displayed before purchase.",
+        },
+      ],
     },
     {
-      category: t('support.forMooringOwners'),
+      category: "For Mooring Owners & Concession Holders",
       questions: [
-        { q: t('support.faq.ownerQ1', 'How do I list my mooring?'), a: t('support.faq.ownerA1', 'Click \'Become a Provider\', create an account, and follow the 10-step registration process. It takes about 10 minutes.') },
-        { q: t('support.faq.ownerQ2', 'What is the commission rate?'), a: t('support.faq.ownerA2', 'We charge a flat 12% commission on all bookings. There are no monthly fees or hidden costs. You may offer 0-50% discount to users. Optional add-ons: Marketing Tools (€5/mo), Premium Listing (€9.99/mo), Mooring Insurance (€9.99/yr).') },
-        { q: t('support.faq.ownerQ3', 'How do I manage my calendar?'), a: t('support.faq.ownerA3', 'Access your provider dashboard to update availability, block dates, or set special pricing for peak seasons.') },
-        { q: t('support.faq.ownerQ4', 'What if a guest doesn\'t show up?'), a: t('support.faq.ownerA4', 'You keep the full booking amount. Guests who don\'t cancel in time forfeit their payment according to your cancellation policy. No refunds for early departure.') },
-        { q: t('support.faq.ownerQ5', 'How do I receive payments?'), a: t('support.faq.ownerA5', 'Payments are automatically transferred to your bank account 3-5 business days after each checkout. You\'ll receive a monthly statement.') },
-        { q: t('support.faq.ownerQ6', 'Can I set different prices for different seasons?'), a: t('support.faq.ownerA6', 'Yes! Use the calendar in your dashboard to set custom prices per day — peak season rates, off-season discounts, and special event pricing. Double-click any day to set a custom price.') },
-        { q: t('support.faq.ownerQ7', 'What is Now4Today?'), a: t('support.faq.ownerA7', 'Now4Today enables same-day bookings from 01:00 AM to 11:00 PM. A 20% surcharge is automatically applied to the base price, and the platform commission is calculated on the full increased amount. You can enable/disable it from your dashboard.') },
-        { q: t('support.faq.ownerQ8', 'What is Mooring Insurance?'), a: t('support.faq.ownerA8', 'Mooring Insurance at €9.99/year provides mediation for third-party liability protection and mooring security. It\'s an optional add-on available in your provider dashboard.') },
-      ]
+        {
+          q: "Who can list on Mooring Booking as a Premium Partner?",
+          a: "Any individual or legal entity holding a valid legal right to offer moorings commercially may apply. This includes ACI marinas and large marina operators, private marina operators, maritime concession holders operating buoy fields, dock owners with valid commercial authorisation, restaurant and hospitality operators with commercial berths, and small private marina operators with relevant municipal permits.\n\nYou must provide documentation confirming your legal right of disposal or maritime concession. Listings from individuals without valid commercial authorisation will not be approved.",
+        },
+        {
+          q: "How do I list my mooring as a Premium Partner?",
+          a: "Click Become a Provider on the Platform, create a provider account and complete registration. You will provide: facility name and location, GPS coordinates, vessel size limits and depth, available services and amenities, photographic material, pricing and seasonal structure, and documentation of legal right of disposal or maritime concession.\n\nYou then sign the Mooring Booking Partnership Agreement digitally and set up your Stripe Express account. Your listing goes live upon approval and your white-label subdomain is activated within 48 hours.",
+        },
+        {
+          q: "What is the commission rate?",
+          a: "Standard Premium Partners pay 15% commission on all bookings. Partners operating facilities with 50 or more berths pay 12% commission. Stripe processing fees of approximately 2.9% plus €0.30 are deducted before the commission split. There are no monthly listing fees beyond the optional €199/month partnership subscription which includes the white-label dashboard, analytics and enhanced marketing tools.",
+        },
+        {
+          q: "What does the white-label dashboard include?",
+          a: "Premium Partners receive: a dedicated subdomain (mooring-booking.com/yourname), a booking management dashboard with vessel details and ETA, a live availability calendar with custom daily pricing, an analytics dashboard showing booking volumes, revenue and guest origin data, a customer messaging system, a QR code generator for physical marketing materials, and an affiliate link for referral tracking. Dashboard access is included in the €199/month partnership subscription.",
+        },
+        {
+          q: "What if a guest does not arrive?",
+          a: "For Layer 1 confirmed bookings: if the guest does not cancel within the policy window and does not arrive, the cancellation policy displayed on your listing governs the financial outcome. You retain the portion specified in your cancellation policy. Mooring Booking retains its commission on amounts not refunded to the guest.",
+        },
+        {
+          q: "Can I set different prices for different seasons?",
+          a: "Yes. Your dashboard calendar allows custom daily pricing for any date. You can set peak season rates, shoulder season pricing, event-based pricing and last-minute discounts. Double-tap any date in the calendar to set a custom price. Custom prices override your default nightly rate.",
+        },
+        {
+          q: "What is Now4Today?",
+          a: "Now4Today enables same-day bookings from 01:00 to 23:00 on the day of arrival. A mandatory 20% surcharge is automatically added to your base price. Commission is calculated on the full surcharge-inclusive amount. You can enable or disable Now4Today from your dashboard at any time. When enabled, AI Captain surfaces your facility prominently in last-minute searches.",
+        },
+        {
+          q: "What is Berth insurance?",
+          a: "Berth insurance is Mooring Booking’s optional mooring damage mediation service. It is not an insurance product and Mooring Booking is not a regulated insurance provider. The service provides: documented recording of vessel and mooring condition at booking, access to the Platform’s dispute resolution process, and coordination assistance in communicating claims between parties. It does not guarantee payment in respect of any claim. Available at €9.99 per year.",
+        },
+        {
+          q: "Can I list multiple berths or a full marina?",
+          a: "Yes. Premium Partners can list unlimited individual berths, pontoons, buoy fields and mooring areas under one account. Contact partners@mooring-booking.com for bulk upload tools and dedicated onboarding support for larger marinas.",
+        },
+        {
+          q: "Do you offer API integration?",
+          a: "Yes. API access is available for marinas with existing Property Management Systems or booking software. Contact info@intelligent-matrix.com for technical documentation. API access is included in the Captain subscription tier for individual sailors and is available to marina partners via the Partnership Agreement.",
+        },
+      ],
     },
     {
-      category: t('support.forMarinas'),
+      category: "For Marinas Appearing in Concierge Booking (Layer 2)",
       questions: [
-        { q: t('support.faq.marinaQ1', 'Can I list multiple moorings?'), a: t('support.faq.marinaA1', 'Absolutely! Marinas and commercial providers can list unlimited moorings. Contact us for bulk upload tools.') },
-        { q: t('support.faq.marinaQ2', 'Do you offer API integration?'), a: t('support.faq.marinaA2', 'Yes, we offer API access for marinas with existing booking systems. Contact our technical team for documentation.') },
-        { q: t('support.faq.marinaQ3', 'What about liability and insurance?'), a: t('support.faq.marinaA3', 'All providers must have valid liability insurance. We verify marina certifications during the registration process.') },
-      ]
+        {
+          q: "My marina appears on your platform but I have not signed any agreement. Is this legal?",
+          a: "Yes. Layer 2 listings are compiled from publicly available sources including OpenStreetMap, Google Maps Places API and official maritime authority registries. The legal basis for displaying publicly available business data is the Company’s legitimate interest under Article 6(1)(f) GDPR, consistent with CJEU C-621/22 (KNLTB, 4 October 2024). This is the same legal basis used by Google Maps, TripAdvisor and similar platforms.\n\nIf you are a natural person whose personal contact data appears in our database and you wish to have it removed, contact privacy@mooring-booking.com with the subject line “Removal Request — Marina Operator”. We will process your request within 5 business days. Full details in our GDPR Notice at mooring-booking.com/gdpr-notice.",
+        },
+        {
+          q: "I want to become a Premium Partner. How do I upgrade from Layer 2?",
+          a: "Contact partners@mooring-booking.com. Becoming a Premium Partner gives you: a signed contract, your own white-label subdomain, instant booking capability, priority placement in AI Captain recommendations, dashboard and analytics access, and direct Stripe Connect payment integration. No charge until your first confirmed booking under the standard commission model.",
+        },
+      ],
     },
     {
-      category: t('support.affiliateProgram'),
+      category: "Affiliate Program",
       questions: [
-        { q: t('support.faq.affQ1', 'How does the affiliate program work?'), a: t('support.faq.affA1', 'Sign up for free, get your unique tracking link, and earn 15% of our platform\'s 15% service fee for every booking.') },
-        { q: t('support.faq.affQ2', 'How long does the tracking cookie last?'), a: t('support.faq.affA2', 'Our tracking cookie lasts 30 days. If someone clicks your link and books within 30 days, you\'ll receive commission.') },
-        { q: t('support.faq.affQ3', 'What are the minimum payout requirements?'), a: t('support.faq.affA3', 'Minimum payout is €50. Payments are processed monthly via Stripe or bank transfer. Elite affiliates get weekly payouts.') },
-        { q: t('support.faq.affQ4', 'Can I promote on social media?'), a: t('support.faq.affA4', 'Yes! We encourage promotion on Instagram, YouTube, TikTok, blogs, and email lists.') },
-      ]
+        {
+          q: "How does the affiliate program work?",
+          a: "Register through your account dashboard. You receive a unique tracking link and QR code. You earn 20% of the Mooring Booking service fee on every booking made through your link within the 30-day cookie window. Commissions are paid monthly via Stripe or bank transfer once the minimum payout threshold of €50 is reached. All promotional materials must clearly disclose your affiliate relationship with Mooring Booking in compliance with applicable advertising standards.",
+        },
+      ],
     },
     {
-      category: t('support.safetyWeather'),
+      category: "Safety & Weather",
       questions: [
-        { q: t('support.faq.safetyQ1', 'What if bad weather forces me to leave early?'), a: t('support.faq.safetyA1', 'Contact the owner and our support immediately. Please note: no refunds are provided for early departure from moorings, regardless of the reason.') },
-        { q: t('support.faq.safetyQ2', 'Does the app provide weather forecasts?'), a: t('support.faq.safetyA2', 'Yes! Our AI Captain provides real-time weather data, wind speed alerts, and wave conditions for your mooring location.') },
-        { q: t('support.faq.safetyQ3', 'Are moorings inspected for safety?'), a: t('support.faq.safetyA3', 'We require all providers to declare their moorings meet safety standards. Verified moorings undergo periodic inspections.') },
-      ]
+        {
+          q: "What if bad weather forces me to leave early?",
+          a: "No refunds are provided for early departure from confirmed bookings regardless of reason, including weather. Sailors are responsible for their own navigational decisions. AI Captain provides weather forecasts and storm alerts to help plan departure timing. We strongly recommend purchasing appropriate maritime travel insurance from a regulated insurer.",
+        },
+        {
+          q: "Does AI Captain provide weather forecasts?",
+          a: "Yes. AI Captain integrates with maritime weather data sources to provide wind speed, wind direction, wave height, tidal information and storm alerts. Weather data is sourced from third-party providers and is provided for informational purposes only. AI Captain weather information does not constitute professional meteorological advice. Always cross-reference with official national meteorological services and NAVTEX. Premium subscribers receive 7-day forecasts. Basic users receive 48-hour forecasts.",
+        },
+        {
+          q: "What is the MAYDAY protocol feature?",
+          a: "If you use words indicating a maritime emergency in your AI Captain conversation, the system activates emergency mode. AI Captain provides the standard international MAYDAY VHF protocol, identifies the nearest Maritime Rescue Coordination Centre based on your GPS position, provides relevant emergency telephone numbers, and gives step-by-step guidance in your language.\n\nIN ANY GENUINE MARITIME EMERGENCY, YOUR FIRST ACTION IS VHF CHANNEL 16. DO NOT RELY EXCLUSIVELY ON AI CAPTAIN IN AN EMERGENCY. Emergency contact data may not reflect the most current information. Always have official nautical publications and chart plotters as your primary safety tools.",
+        },
+        {
+          q: "Are moorings inspected for safety?",
+          a: "Layer 1 — Premium Marinas: all Premium Partners must declare compliance with applicable maritime safety standards as part of the Partnership Agreement. Mooring Booking does not physically inspect facilities but reserves the right to remove listings where safety concerns are reported.\n\nLayer 2 — Concierge Booking: Mooring Booking has no contractual relationship with Layer 2 facilities and does not verify, inspect or certify their safety. Sailors use Layer 2 facilities entirely at their own risk.\n\nLayer 3 — Explore & Navigate: no inspection, verification or certification of any kind. Navigation reference only.",
+        },
+        {
+          q: "Do I need to register to use the platform?",
+          a: "Free registration is required to use booking features. You may browse all listings and navigation references without registration. To submit a booking request, pay via Stripe, access AI Captain beyond the public preview or save vessel profiles, registration is required. Registration is free and takes under 2 minutes.",
+        },
+      ],
     },
     {
-      category: t('support.subscriptionPlans'),
+      category: "Technical & Account",
       questions: [
-        { q: t('support.faq.subQ1', 'What subscription plans are available?'), a: t('support.faq.subA1', 'We offer three tiers: Basic (Free), Premium Monthly (€20/mo), and Premium Annual (€8.25/mo, billed €99/year).') },
-        { q: t('support.faq.subQ2', 'Do I need to register to use the app?'), a: t('support.faq.subA2', 'Yes, free registration is required for all users. You can start with the free Basic plan and upgrade anytime.') },
-        { q: t('support.faq.subQ3', 'Can I switch between plans?'), a: t('support.faq.subA3', 'Yes! You can upgrade from Basic to Premium at any time. Downgrading takes effect at the end of your current billing period.') },
-        { q: t('support.faq.subQ4', 'What does Premium include that Basic doesn\'t?'), a: t('support.faq.subA4', 'Premium unlocks unlimited AI Captain, 7-day weather forecasts, offline maps, storm alerts, maneuvering guides, priority booking, and more.') },
-      ]
-    },
-    {
-      category: t('support.technicalAccount'),
-      questions: [
-        { q: t('support.faq.techQ1', 'How do I reset my password?'), a: t('support.faq.techA1', 'Click \'Forgot Password\' on the login page. You\'ll receive an email with a reset link.') },
-        { q: t('support.faq.techQ2', 'Can I use the app offline?'), a: t('support.faq.techA2', 'Premium members get offline access to maps, weather forecasts (24h cached), navigation guides, and saved bookings.') },
-        { q: t('support.faq.techQ3', 'How do I delete my account?'), a: t('support.faq.techA3', 'Go to Settings > Account > Delete Account. Active bookings must be completed or cancelled first. Data deleted within 30 days per GDPR.') },
-      ]
+        {
+          q: "How do I reset my password?",
+          a: "Click Forgot Password on the login page. You will receive a password reset link at your registered email address. The link expires after 24 hours. If you do not receive the email within 5 minutes, check your spam folder or contact support@mooring-booking.com.",
+        },
+        {
+          q: "Can I use the app offline?",
+          a: "Sailor, Captain and Charter Fleet subscribers have offline access to downloaded charts, 24-hour cached weather data, saved booking confirmations including GPS coordinates and contact details, and AI Captain seamanship guides. An internet connection is required for live AI Captain queries, real-time weather updates, new booking requests and Stripe payment processing.",
+        },
+        {
+          q: "How do I delete my account?",
+          a: "Go to Settings > Account > Delete Account. All active bookings must be completed or cancelled before deletion. Personal data is removed from active systems within 30 days in accordance with Privacy Policy v2.0 and GDPR. Transaction records required for legal and tax compliance are retained for 7 years. To request data export before deletion, contact privacy@mooring-booking.com.",
+        },
+        {
+          q: "How does GDPR apply to my data?",
+          a: "Intelligent Matrix s.r.o. is the data controller for all personal data processed through the Platform. Your data is processed on the legal bases described in Privacy Policy v2.0 at mooring-booking.com/privacy. You have the right to access, rectify, erase, restrict, port and object to processing of your personal data. To exercise any right, contact privacy@mooring-booking.com. If you are a marina operator whose data appears in a Layer 2 or Layer 3 listing, refer to our GDPR Notice at mooring-booking.com/gdpr-notice.",
+        },
+      ],
     },
   ];
 
