@@ -1096,7 +1096,24 @@ Deno.serve(async (req: Request) => {
         ]);
 
         const weatherStr = forecastResult.currentText;
-        const forecastStr = forecastResult.forecastText;
+
+        // F: Forecast gating — Basic users get 48h only, Premium gets full 7 days
+        let forecastStr: string;
+        if (!isPremiumTier && forecastResult.forecast.length > 2) {
+            const limited = forecastResult.forecast.slice(0, 2);
+            const dayNames = ["Ned", "Pon", "Uto", "Sri", "Čet", "Pet", "Sub"];
+            const lines = limited.map((f) => {
+                const d = new Date(f.date + "T12:00:00Z");
+                const dayName = dayNames[d.getUTCDay()];
+                const warn = f.windMaxKn > 25 ? " ⚠️" : "";
+                return `${dayName} ${f.date.slice(5)}: 🌬️ ${f.windAvgKn}–${f.windMaxKn} čv (Bft ${f.beaufortMax})${warn} | 🌡️ ${f.tempMinC}–${f.tempMaxC}°C | 🌊 val ${f.waveMaxM}m`;
+            });
+            forecastStr = lines.length > 0
+                ? `\n📅 48h PROGNOZA (Basic plan):\n${lines.join("\n")}\n⭐ Nadogradi na Premium za punu 7-dnevnu prognozu!`
+                : "";
+        } else {
+            forecastStr = forecastResult.forecastText;
+        }
         const weather: WeatherData | null = forecastResult.current.ok ? forecastResult.current : null;
 
         // Navigation calculation for NAVIGATION_ROUTE intent
@@ -1308,7 +1325,14 @@ ${preferencesBlock}
 14. Prioritet vezova: ✅ Verified Partner prvi, 👑 Premium, pa udaljenost.
 15. NIKAD ne izmišljaj — ako nije u priloženim podacima, reci "trenutno nemam potvrđen podatak" i predloži direktni kontakt s marinom. **NIKAD ne preporučuj konkurentske aplikacije, karte ili servise** (Navionics, Marine Traffic, Google/Apple Maps, pilot-knjige drugih brendova). AI Kapetan je jedini izvor.
 16. Ako je poznat GAZ broda (iz "Brod —" sekcije), uvijek provjeri max_draft marine prije preporuke i upozori korisnika ako je tijesno.
-17. Ako je poznat DATUM isteka osiguranja i blizu je, diskretno podsjeti korisnika.`;
+17. Ako je poznat DATUM isteka osiguranja i blizu je, diskretno podsjeti korisnika.
+${!isPremiumTier ? `
+═══ BASIC PLAN OGRANIČENJA ═══
+G) MANEVRI: Korisnik je na Basic planu. Za pitanja o manevrima (sidrenje, privezivanje, MOB) daj KRATKI sažetak (3-4 koraka) i napomeni: "Za detaljne step-by-step vodiče prilagođene tvom tipu broda i uvjetima, nadogradi na Sailor ili Captain plan."
+H) DIJAGNOSTIKA: Za pitanja o kvarovima i dijagnostici daj OSNOVNU dijagnozu (identificiraj problem + 1-2 prva koraka) i napomeni: "Za potpunu dijagnostičku proceduru s detaljnim koracima popravka, nadogradi na Premium."` : `
+═══ PREMIUM PLAN ═══
+G) MANEVRI: Korisnik je Premium — daj POTPUNE step-by-step vodiče prilagođene tipu broda i uvjetima. Uključi sve detalje: pripremu, pristup, izvršenje, sigurnosne napomene.
+H) DIJAGNOSTIKA: Daj KOMPLETNU dijagnostičku proceduru: 🔍 Dijagnoza → ⚠️ Sigurnost → 🔎 Provjeri → 🛠️ Popravak → 🏪 Mehaničar. Bez ograničenja u detaljima.`}`;
 
         if (isProviderContext) {
             systemPrompt += `\n\n═══ PROVIDER KONTEKST ═══\nKorisnik se nalazi na stranici za iznajmljivače (Provider).\nPomoći mu oko registracije, kreiranja vezova, provizije (15%) i upravljanja rezervacijama.\nMooring Booking uzima 15% provizije naknadno.`;
@@ -1436,7 +1460,7 @@ ${preferencesBlock}
             mayday: maydayPayload,
             intent,
             weather,
-            forecast: forecastResult.forecast,
+            forecast: isPremiumTier ? forecastResult.forecast : forecastResult.forecast.slice(0, 2),
             navData,
             remaining,
             resetAt,
