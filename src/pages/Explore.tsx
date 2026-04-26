@@ -111,6 +111,7 @@ const ExplorePage = () => {
   const urlSearch = searchParams.get("search") || "";
   const urlCheckIn = searchParams.get("checkIn") || "";
   const urlCheckOut = searchParams.get("checkOut") || "";
+  const urlMooringId = searchParams.get("mooring") || "";
 
   // ── Local input state (what the user is typing / selecting) ───────────
   const [locationInput, setLocationInput] = useState(urlSearch);
@@ -510,6 +511,7 @@ const ExplorePage = () => {
                             winterStorage={mooring.winterStorage}
                             initialCheckIn={committedCheckIn || undefined}
                             initialCheckOut={committedCheckOut || undefined}
+                            autoOpenBooking={!!urlMooringId && mooring.id === urlMooringId}
                           />
                         ))}
                       </div>

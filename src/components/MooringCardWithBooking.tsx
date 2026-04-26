@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Star, Heart, MapPin, Waves, Zap, Wifi, Droplets } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ interface MooringCardWithBookingProps {
   /** Pre-selected dates from the Explorer search bar (YYYY-MM-DD) */
   initialCheckIn?: string;
   initialCheckOut?: string;
+  autoOpenBooking?: boolean;
 }
 
 const amenityIcons: Record<string, React.ReactNode> = {
@@ -71,8 +72,13 @@ const MooringCardWithBooking = ({
   winterPriceMonthly,
   initialCheckIn,
   initialCheckOut,
+  autoOpenBooking,
 }: MooringCardWithBookingProps) => {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+
+  useEffect(() => {
+    if (autoOpenBooking) setIsDetailOpen(true);
+  }, [autoOpenBooking]);
   const [isFavorite, setIsFavorite] = useState(false);
 
   const discountedPrice = discountPercent

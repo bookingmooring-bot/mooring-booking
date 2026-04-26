@@ -105,6 +105,62 @@ function classifyIntent(message: string): Intent {
     return best.intent;
 }
 
+// ── Navigation helpers (Sprint 1.3) ──────────────────────────────────────────
+function haversineNm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+    const R = 6371;
+    const toRad = (d: number) => d * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+    const km = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return +(km / 1.852).toFixed(1);
+}
+
+function initialBearing(lat1: number, lng1: number, lat2: number, lng2: number): number {
+    const toRad = (d: number) => d * Math.PI / 180;
+    const toDeg = (r: number) => r * 180 / Math.PI;
+    const dLng = toRad(lng2 - lng1);
+    const y = Math.sin(dLng) * Math.cos(toRad(lat2));
+    const x = Math.cos(toRad(lat1)) * Math.sin(toRad(lat2)) - Math.sin(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.cos(dLng);
+    return +((toDeg(Math.atan2(y, x)) + 360) % 360).toFixed(0);
+}
+
+function estimateEta(distanceNm: number, speedKnots: number): string {
+    if (speedKnots <= 0) return "N/A";
+    const hours = distanceNm / speedKnots;
+    if (hours < 1) return `${Math.round(hours * 60)} min`;
+    const h = Math.floor(hours);
+    const m = Math.round((hours - h) * 60);
+    return m > 0 ? `${h}h ${m}min` : `${h}h`;
+}
+
+interface NavData {
+    destinationName: string;
+    destinationLat: number;
+    destinationLng: number;
+    bearingDeg: number;
+    distanceNm: number;
+    etaAt5kn: string;
+    etaAt7kn: string;
+}
+
+function calculateNavData(
+    userLat: number, userLng: number,
+    destName: string, destLat: number, destLng: number,
+): NavData {
+    const dist = haversineNm(userLat, userLng, destLat, destLng);
+    const bearing = initialBearing(userLat, userLng, destLat, destLng);
+    return {
+        destinationName: destName,
+        destinationLat: destLat,
+        destinationLng: destLng,
+        bearingDeg: bearing,
+        distanceNm: dist,
+        etaAt5kn: estimateEta(dist, 5),
+        etaAt7kn: estimateEta(dist, 7),
+    };
+}
+
 // ── Fetch available moorings via PostGIS-backed RPC (geofenced, Verified-Partner first) ──
 interface MooringRow {
     id: string;
@@ -137,9 +193,9 @@ async function fetchAvailableMoorings(
     userLng: number,
     boatLength?: number,
     radiusKm = 150,
-): Promise<{ text: string; rows: MooringRow[] }> {
+): Promise<{ text: string; rows: MooringRow[]; checkIn: string; checkOut: string }> {
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-        return { text: "Ahoj! AI kapetan na vezi... nemam dostupnih informacija (nedostaju konfiguracijski podaci).", rows: [] };
+        return { text: "Ahoj! AI kapetan na vezi... nemam dostupnih informacija (nedostaju konfiguracijski podaci).", rows: [], checkIn, checkOut };
     }
 
     try {
@@ -165,7 +221,7 @@ async function fetchAvailableMoorings(
 
         if (!rpcRes.ok) {
             console.error("Moorings RPC failed:", rpcRes.status, await rpcRes.text());
-            return { text: "Ahoj! AI kapetan na vezi... nemam dostupnih informacija o vezovima.", rows: [] };
+            return { text: "Ahoj! AI kapetan na vezi... nemam dostupnih informacija o vezovima.", rows: [], checkIn, checkOut };
         }
 
         const moorings: MooringRow[] = await rpcRes.json();
@@ -193,8 +249,10 @@ async function fetchAvailableMoorings(
         if (available.length === 0) {
             const hint = boatLength ? ` za brod duljine ${boatLength}m` : "";
             return {
-                text: `Ahoj! AI kapetan na vezi... nemam slobodnih vezova${hint} u radijusu ${radiusKm} km od tvoje pozicije za traženi period.\n🔗 Proširi pretragu na: https://mooringbooking.com/explore`,
+                text: `Ahoj! AI kapetan na vezi... nemam slobodnih vezova${hint} u radijusu ${radiusKm} km od tvoje pozicije za traženi period.\n🔗 Proširi pretragu na: https://mooringbooking.com/explore?checkIn=${checkIn}&checkOut=${checkOut}`,
                 rows: [],
+                checkIn,
+                checkOut,
             };
         }
 
@@ -213,16 +271,19 @@ async function fetchAvailableMoorings(
             const destLat = m.lat.toFixed(4);
             const destLng = m.lng.toFixed(4);
             const osmLink = `https://www.openstreetmap.org/directions?from=${fromLat}%2C+${fromLng}&to=${destLat}%2C+${destLng}#map=13/${destLat}/${destLng}`;
-            return `${i + 1}. **${m.name}**${verified}${premium} — ${flag}${m.location}, ${m.country}\n   💰 €${m.price_per_night}/noć${maxBoat ? ` | ${maxBoat}` : ""} | Zaštita od vjetra: ${m.wind_protection}${rating}${dist}${lastMin}\n   🛠️ Pogodnosti: ${amenStr}\n   🧭 Ruta: ${osmLink}`;
+            const bookLink = `https://mooringbooking.com/explore?mooring=${m.id}&checkIn=${checkIn}&checkOut=${checkOut}`;
+            return `${i + 1}. **${m.name}**${verified}${premium} — ${flag}${m.location}, ${m.country}\n   💰 €${m.price_per_night}/noć${maxBoat ? ` | ${maxBoat}` : ""} | Zaštita od vjetra: ${m.wind_protection}${rating}${dist}${lastMin}\n   🛠️ Pogodnosti: ${amenStr}\n   🧭 Ruta: ${osmLink}\n   📌 Rezerviraj: ${bookLink}`;
         });
 
         return {
-            text: `⚓ SLOBODNI VEZOVI (${checkIn} – ${checkOut}) u radijusu ${radiusKm} km:\n${lines.join("\n\n")}\n\n🔗 Rezerviraj na: https://mooringbooking.com/explore`,
+            text: `⚓ SLOBODNI VEZOVI (${checkIn} – ${checkOut}) u radijusu ${radiusKm} km:\n${lines.join("\n\n")}\n\n🔗 Svi vezovi: https://mooringbooking.com/explore?checkIn=${checkIn}&checkOut=${checkOut}`,
             rows: top,
+            checkIn,
+            checkOut,
         };
     } catch (e) {
         console.error("fetchAvailableMoorings error:", e);
-        return { text: "Ahoj! AI kapetan na vezi... nemam dostupnih informacija u bazi.", rows: [] };
+        return { text: "Ahoj! AI kapetan na vezi... nemam dostupnih informacija u bazi.", rows: [], checkIn, checkOut };
     }
 }
 
@@ -259,81 +320,163 @@ interface WeatherData {
     ok: boolean;
 }
 
-async function fetchWindyWeather(lat: number, lng: number): Promise<{ text: string; data: WeatherData | null }> {
+interface ForecastDay {
+    date: string;
+    windAvgKn: number;
+    windMaxKn: number;
+    gustMaxKn: number;
+    beaufortMax: number;
+    tempMinC: number;
+    tempMaxC: number;
+    pressureAvgHPa: number;
+    waveMaxM: number;
+    swellMaxM: number;
+}
+
+interface FullForecastResult {
+    current: WeatherData;
+    forecast: ForecastDay[];
+    currentText: string;
+    forecastText: string;
+}
+
+async function fetchFullForecast(lat: number, lng: number): Promise<FullForecastResult> {
+    const empty: FullForecastResult = {
+        current: { windKnots: 0, gustKnots: 0, beaufort: 0, tempC: 20, dewpointC: 15, pressurehPa: 1013, waveM: 0, swellM: 0, ok: false },
+        forecast: [],
+        currentText: "Meteorološki podaci trenutno nedostupni.",
+        forecastText: "",
+    };
+
+    if (!WINDY_API_KEY) return empty;
+
     try {
         const controller = new AbortController();
-        const tid = setTimeout(() => controller.abort(), 8000);
+        const tid = setTimeout(() => controller.abort(), 10000);
+        const opts = { method: "POST", headers: { "Content-Type": "application/json" }, signal: controller.signal };
 
-        const res = await fetch("https://api.windy.com/api/point-forecast/v2", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            signal: controller.signal,
-            body: JSON.stringify({
-                lat, lon: lng,
-                model: "iconEu",
-                parameters: ["wind", "windGust", "pressure", "temp", "dewpoint"],
-                levels: ["surface"],
-                key: WINDY_API_KEY,
+        const [atmoRes, waveRes] = await Promise.all([
+            fetch("https://api.windy.com/api/point-forecast/v2", {
+                ...opts,
+                body: JSON.stringify({ lat, lon: lng, model: "iconEu", parameters: ["wind", "windGust", "pressure", "temp", "dewpoint"], levels: ["surface"], key: WINDY_API_KEY }),
             }),
-        });
+            fetch("https://api.windy.com/api/point-forecast/v2", {
+                ...opts,
+                body: JSON.stringify({ lat, lon: lng, model: "gfsWave", parameters: ["waves", "swell1"], levels: ["surface"], key: WINDY_API_KEY }),
+            }),
+        ]);
         clearTimeout(tid);
 
-        if (!res.ok) return { text: "Windy API nedostupan.", data: null };
-        const raw = await res.json();
+        if (!atmoRes.ok) return empty;
+        const atmo = await atmoRes.json();
+        const wave = waveRes.ok ? await waveRes.json() : null;
 
-        const windMs: number = raw["wind_u-surface"]?.[0] ?? 0;
-        const gustMs: number = raw["windGust-surface"]?.[0] ?? 0;
-        const tempK: number = raw["temp-surface"]?.[0] ?? 288;
-        const pressurePa: number = raw["pressure-surface"]?.[0] ?? 101325;
-        const dewK: number = raw["dewpoint-surface"]?.[0] ?? 283;
-        const bft = msToBeaufort(windMs);
+        const ts: number[] = atmo.ts ?? [];
+        if (ts.length === 0) return empty;
 
-        const data: WeatherData = {
-            windKnots: +(windMs * 1.94384).toFixed(1),
-            gustKnots: +(gustMs * 1.94384).toFixed(1),
-            beaufort: bft,
-            tempC: +(tempK - 273.15).toFixed(1),
-            dewpointC: +(dewK - 273.15).toFixed(1),
-            pressurehPa: Math.round(pressurePa / 100),
-            waveM: 0,
-            swellM: 0,
+        const arr = (obj: Record<string, unknown>, key: string): number[] =>
+            Array.isArray(obj[key]) ? (obj[key] as number[]) : ts.map(() => 0);
+
+        const uArr = arr(atmo, "wind_u-surface");
+        const vArr = arr(atmo, "wind_v-surface");
+        const gustArr = arr(atmo, "windGust-surface");
+        const tempArr = arr(atmo, "temp-surface");
+        const dewArr = arr(atmo, "dewpoint-surface");
+        const presArr = arr(atmo, "pressure-surface");
+
+        const waveTs: number[] = wave?.ts ?? [];
+        const wvH = wave ? arr(wave, "waves_height-surface") : [];
+        const swH = wave ? arr(wave, "swell1_height-surface") : [];
+        const waveMap = new Map<number, { h: number; sh: number }>();
+        waveTs.forEach((t, i) => waveMap.set(t, { h: wvH[i] ?? 0, sh: swH[i] ?? 0 }));
+
+        const findWave = (t: number) => {
+            if (waveTs.length === 0) return { h: 0, sh: 0 };
+            let best = waveTs[0], bestDiff = Math.abs(t - waveTs[0]);
+            for (let i = 1; i < waveTs.length; i++) {
+                const d = Math.abs(t - waveTs[i]);
+                if (d < bestDiff) { bestDiff = d; best = waveTs[i]; }
+            }
+            return waveMap.get(best) ?? { h: 0, sh: 0 };
+        };
+
+        // Parse current (index 0)
+        const u0 = uArr[0] ?? 0, v0 = vArr[0] ?? 0;
+        const windMs0 = Math.sqrt(u0 * u0 + v0 * v0);
+        const gustMs0 = gustArr[0] ?? windMs0;
+        const tempK0 = tempArr[0] ?? 288;
+        const dewK0 = dewArr[0] ?? 283;
+        const pressPa0 = presArr[0] ?? 101325;
+        const bft0 = msToBeaufort(windMs0);
+        const wv0 = findWave(ts[0]);
+
+        const current: WeatherData = {
+            windKnots: +(windMs0 * 1.94384).toFixed(1),
+            gustKnots: +(gustMs0 * 1.94384).toFixed(1),
+            beaufort: bft0,
+            tempC: +(tempK0 - 273.15).toFixed(1),
+            dewpointC: +(dewK0 - 273.15).toFixed(1),
+            pressurehPa: Math.round(pressPa0 / 100),
+            waveM: +(wv0.h).toFixed(1),
+            swellM: +(wv0.sh).toFixed(1),
             ok: true,
         };
 
-        const text = `🌬️ Vjetar: ${msToKnots(windMs)} čv (udari ${msToKnots(gustMs)} čv) — Beaufort ${bft}\n🌡️ Temperatura: ${(tempK - 273.15).toFixed(1)}°C | Rosište: ${(dewK - 273.15).toFixed(1)}°C\n📊 Tlak: ${(pressurePa / 100).toFixed(0)} hPa`;
-        return { text, data };
-    } catch {
-        return { text: "Meteorološki podaci trenutno nedostupni.", data: null };
-    }
-}
+        const currentText = `🌬️ Vjetar: ${msToKnots(windMs0)} čv (udari ${msToKnots(gustMs0)} čv) — Beaufort ${bft0}\n🌡️ Temperatura: ${(tempK0 - 273.15).toFixed(1)}°C | Rosište: ${(dewK0 - 273.15).toFixed(1)}°C\n📊 Tlak: ${(pressPa0 / 100).toFixed(0)} hPa\n🌊 Valovi: ${wv0.h.toFixed(1)} m | Swell: ${wv0.sh.toFixed(1)} m`;
 
-async function fetchWindyWaves(lat: number, lng: number): Promise<{ text: string; waveM: number; swellM: number }> {
-    try {
-        const controller = new AbortController();
-        const tid = setTimeout(() => controller.abort(), 8000);
+        // Group all timestamps by date for daily forecast
+        const dailyMap = new Map<string, { winds: number[]; gusts: number[]; temps: number[]; pres: number[]; waves: number[]; swells: number[] }>();
+        for (let i = 0; i < ts.length; i++) {
+            const date = new Date(ts[i]).toISOString().split("T")[0];
+            if (!dailyMap.has(date)) dailyMap.set(date, { winds: [], gusts: [], temps: [], pres: [], waves: [], swells: [] });
+            const day = dailyMap.get(date)!;
+            const u = uArr[i] ?? 0, vv = vArr[i] ?? 0;
+            day.winds.push(Math.sqrt(u * u + vv * vv) * 1.94384);
+            day.gusts.push((gustArr[i] ?? 0) * 1.94384);
+            day.temps.push((tempArr[i] ?? 288) - 273.15);
+            day.pres.push((presArr[i] ?? 101325) / 100);
+            const wvi = findWave(ts[i]);
+            day.waves.push(wvi.h);
+            day.swells.push(wvi.sh);
+        }
 
-        const res = await fetch("https://api.windy.com/api/point-forecast/v2", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            signal: controller.signal,
-            body: JSON.stringify({
-                lat, lon: lng,
-                model: "gfsWave",
-                parameters: ["waves", "swell1"],
-                levels: ["surface"],
-                key: WINDY_API_KEY,
-            }),
+        const todayStr = new Date().toISOString().split("T")[0];
+        const forecast: ForecastDay[] = [];
+        const sortedDates = [...dailyMap.keys()].sort();
+        for (const date of sortedDates) {
+            if (date === todayStr) continue;
+            if (forecast.length >= 7) break;
+            const d = dailyMap.get(date)!;
+            const avg = (a: number[]) => a.reduce((s, x) => s + x, 0) / a.length;
+            forecast.push({
+                date,
+                windAvgKn: +avg(d.winds).toFixed(1),
+                windMaxKn: +Math.max(...d.winds).toFixed(1),
+                gustMaxKn: +Math.max(...d.gusts).toFixed(1),
+                beaufortMax: msToBeaufort(Math.max(...d.winds) / 1.94384),
+                tempMinC: +Math.min(...d.temps).toFixed(1),
+                tempMaxC: +Math.max(...d.temps).toFixed(1),
+                pressureAvgHPa: Math.round(avg(d.pres)),
+                waveMaxM: +Math.max(...d.waves).toFixed(1),
+                swellMaxM: +Math.max(...d.swells).toFixed(1),
+            });
+        }
+
+        const dayNames = ["Ned", "Pon", "Uto", "Sri", "Čet", "Pet", "Sub"];
+        const forecastLines = forecast.map((f) => {
+            const d = new Date(f.date + "T12:00:00Z");
+            const dayName = dayNames[d.getUTCDay()];
+            const warn = f.windMaxKn > 25 ? " ⚠️" : "";
+            return `${dayName} ${f.date.slice(5)}: 🌬️ ${f.windAvgKn}–${f.windMaxKn} čv (Bft ${f.beaufortMax})${warn} | 🌡️ ${f.tempMinC}–${f.tempMaxC}°C | 🌊 val ${f.waveMaxM}m`;
         });
-        clearTimeout(tid);
+        const forecastText = forecastLines.length > 0
+            ? `\n📅 7-DNEVNA PROGNOZA:\n${forecastLines.join("\n")}`
+            : "";
 
-        if (!res.ok) return { text: "Podaci o valovima nedostupni.", waveM: 0, swellM: 0 };
-        const raw = await res.json();
-
-        const waveM = +((raw["waves_height-surface"]?.[0] ?? 0)).toFixed(1);
-        const swellM = +((raw["swell1_height-surface"]?.[0] ?? 0)).toFixed(1);
-        return { text: `🌊 Visina valova: ${waveM.toFixed(1)} m | Swell: ${swellM.toFixed(1)} m`, waveM, swellM };
-    } catch {
-        return { text: "Podaci o valovima trenutno nedostupni.", waveM: 0, swellM: 0 };
+        return { current, forecast, currentText, forecastText };
+    } catch (e) {
+        console.error("fetchFullForecast error:", (e as Error).message);
+        return empty;
     }
 }
 
@@ -898,6 +1041,7 @@ Deno.serve(async (req: Request) => {
 
         const intent: Intent = lastUserMsg ? classifyIntent(lastUserMsg) : "GENERAL_CHAT";
         const shouldSearchMoorings = intent === "SEARCH_MOORING";
+        const shouldNavigate = intent === "NAVIGATION_ROUTE";
 
         // FAZA 6: intent-aware rate limit (EMERGENCY & premium bypass)
         const tierStr = (userProfile?.tier ?? "basic") as string;
@@ -941,22 +1085,28 @@ Deno.serve(async (req: Request) => {
             }
         }
 
-        // Parallel: weather + waves + moorings (conditional) + RAG KB + rescue authority
-        const [weatherResult, wavesResult, mooringsResult, kbHits, rescue] = await Promise.all([
-            fetchWindyWeather(lat, lng),
-            fetchWindyWaves(lat, lng),
-            shouldSearchMoorings
+        // Parallel: full forecast + moorings (conditional) + RAG KB + rescue authority
+        const [forecastResult, mooringsResult, kbHits, rescue] = await Promise.all([
+            fetchFullForecast(lat, lng),
+            (shouldSearchMoorings || shouldNavigate)
                 ? fetchAvailableMoorings(checkIn, checkOut, lat, lng, boatLength)
-                : Promise.resolve({ text: "", rows: [] as MooringRow[] }),
+                : Promise.resolve({ text: "", rows: [] as MooringRow[], checkIn, checkOut }),
             lastUserMsg ? kbSearch(lastUserMsg, 3) : Promise.resolve([] as KbHit[]),
             getRescueAuthority(lat, lng),
         ]);
 
-        const weatherStr = weatherResult.text;
-        const wavesStr = wavesResult.text;
-        const weather: WeatherData | null = weatherResult.data
-            ? { ...weatherResult.data, waveM: wavesResult.waveM, swellM: wavesResult.swellM }
-            : null;
+        const weatherStr = forecastResult.currentText;
+        const forecastStr = forecastResult.forecastText;
+        const weather: WeatherData | null = forecastResult.current.ok ? forecastResult.current : null;
+
+        // Navigation calculation for NAVIGATION_ROUTE intent
+        let navData: NavData | null = null;
+        let navSection = "";
+        if (shouldNavigate && mooringsResult.rows.length > 0) {
+            const dest = mooringsResult.rows[0];
+            navData = calculateNavData(lat, lng, dest.name, dest.lat, dest.lng);
+            navSection = `\n\n═══ NAVIGACIJSKI IZRAČUN ═══\n📍 Odredište: ${navData.destinationName}\n🧭 Kurs: ${navData.bearingDeg}° | 📏 Udaljenost: ${navData.distanceNm} NM\n⏱️ ETA (5 čv): ${navData.etaAt5kn} | ETA (7 čv): ${navData.etaAt7kn}`;
+        }
 
         // FAZA 2: prefer structured vesselProfile over legacy userProfile.boat_*
         const v = vesselProfile as undefined | {
@@ -1097,8 +1247,7 @@ ${boatInfo}
 ═══ TRENUTNI STATUS ═══
 📅 Datum: ${todayStr} (Ako korisnik traži vez "za danas" ili "večeras", naglasi Now4Today opciju za brzu rezervaciju!)
 📍 Lokacija: ${lat.toFixed(2)}°N, ${lng.toFixed(2)}°E
-${weatherStr}
-${wavesStr}${mooringsSection}${kbSection}
+${weatherStr}${forecastStr}${mooringsSection}${navSection}${kbSection}
 
 ═══ ZNANJE O MOORING BOOKING APLIKACIJI ═══
 🌐 Platforma: mooringbooking.com — rezervacija privatnih vezova diljem Mediterana
@@ -1204,8 +1353,12 @@ ${preferencesBlock}
                 detail: `${hit.source_type} · similarity ${hit.similarity.toFixed(2)}`,
             });
         }
-        if (weatherStr && !weatherStr.includes("nedostupan")) {
-            sources.push({ type: "windy", title: "Windy iconEu model", url: "https://windy.com" });
+        if (weatherStr && !weatherStr.includes("nedostupn")) {
+            sources.push({
+                type: "windy",
+                title: `Windy iconEu + gfsWave (${forecastResult.forecast.length}-day forecast)`,
+                url: "https://windy.com",
+            });
         }
         if (rescue) {
             sources.push({
@@ -1265,6 +1418,8 @@ ${preferencesBlock}
                     metadata: {
                         sources,
                         weather: intent === "CHECK_WEATHER" ? weather : null,
+                        forecast: intent === "CHECK_WEATHER" ? forecastResult.forecast : null,
+                        navData,
                         mayday: maydayPayload,
                         flags,
                         qualityId,
@@ -1281,6 +1436,8 @@ ${preferencesBlock}
             mayday: maydayPayload,
             intent,
             weather,
+            forecast: forecastResult.forecast,
+            navData,
             remaining,
             resetAt,
             qualityId,
