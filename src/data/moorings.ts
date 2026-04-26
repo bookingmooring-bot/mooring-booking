@@ -1,3 +1,5 @@
+import type { MooringLayer } from '@/lib/mooringLayer';
+
 export interface Mooring {
   id: string;
   name: string;
@@ -29,6 +31,11 @@ export interface Mooring {
   activeServices?: string[];
   status?: string;
   ownerId?: string;
+  mooringLayer?: MooringLayer;
+  sourceUrl?: string;
+  dataSource?: 'manual' | 'osm' | 'google_maps' | 'registry';
+  contactEmail?: string;
+  contactPhone?: string;
 }
 
 // Comprehensive Mediterranean mooring database - 110+ listings (10+ per country)

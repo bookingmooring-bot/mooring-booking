@@ -16,7 +16,7 @@ const supabase = createClient(
 
 async function updateProfileTier(
   customerId: string,
-  tier: 'basic' | 'premium-monthly' | 'premium-annual',
+  tier: string,
   expiresAt: string | null
 ) {
   const { data: profile, error } = await supabase
@@ -56,10 +56,22 @@ function isWhiteLabelPrice(priceId: string): false | 'up-to-50' | 'over-50' {
   return false;
 }
 
-function tierFromPriceId(priceId: string): 'premium-monthly' | 'premium-annual' {
-  const annualPriceId = Deno.env.get('STRIPE_PRICE_PREMIUM_ANNUAL');
-  if (priceId === annualPriceId) return 'premium-annual';
-  return 'premium-monthly';
+function tierFromPriceId(priceId: string): string {
+  const priceMap: Record<string, string> = {
+    [Deno.env.get('STRIPE_PRICE_SAILOR_MONTHLY') || '']: 'sailor',
+    [Deno.env.get('STRIPE_PRICE_SAILOR_ANNUAL') || '']: 'sailor',
+    [Deno.env.get('STRIPE_PRICE_CAPTAIN_MONTHLY') || '']: 'captain',
+    [Deno.env.get('STRIPE_PRICE_CAPTAIN_ANNUAL') || '']: 'captain',
+    [Deno.env.get('STRIPE_PRICE_CHARTER_FLEET_MONTHLY') || '']: 'charter-fleet',
+    [Deno.env.get('STRIPE_PRICE_CHARTER_FLEET_ANNUAL') || '']: 'charter-fleet',
+    [Deno.env.get('STRIPE_PRICE_AI_ONLY_MONTHLY') || '']: 'ai-only',
+    [Deno.env.get('STRIPE_PRICE_AI_ONLY_ANNUAL') || '']: 'ai-only',
+    // Legacy price IDs — backward compatibility
+    [Deno.env.get('STRIPE_PRICE_PREMIUM_MONTHLY') || '']: 'sailor',
+    [Deno.env.get('STRIPE_PRICE_PREMIUM_ANNUAL') || '']: 'captain',
+  };
+  delete priceMap[''];
+  return priceMap[priceId] || 'sailor';
 }
 
 async function activateWhiteLabel(

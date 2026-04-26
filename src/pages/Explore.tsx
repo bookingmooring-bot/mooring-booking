@@ -17,6 +17,9 @@ import { useDebounce } from "@/hooks/useDebounce";
 import ExploreMap from "@/components/ExploreMap";
 import AdBanner from "@/components/AdBanner";
 import { useTranslation } from "react-i18next";
+import type { MooringLayer } from "@/lib/mooringLayer";
+import { getLayerSortPriority } from "@/lib/mooringLayer";
+import { cn } from "@/lib/utils";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -129,6 +132,7 @@ const ExplorePage = () => {
   const [showLastMinuteOnly, setShowLastMinuteOnly] = useState(false);
   const [showWinterStorageOnly, setShowWinterStorageOnly] = useState(false);
   const [sortBy, setSortBy] = useState("rating");
+  const [layerFilter, setLayerFilter] = useState<MooringLayer | 'all'>('all');
 
   // ── View mode ──────────────────────────────────────────────────────────
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
@@ -177,6 +181,7 @@ const ExplorePage = () => {
   // We respect the user's sort choice but keep geo-distance sort as tiebreaker.
   const filteredMoorings = allMoorings
     .filter((m) => {
+      if (layerFilter !== 'all' && m.mooringLayer !== layerFilter) return false;
       if (showLastMinuteOnly && !m.isLastMinute) return false;
       if (showWinterStorageOnly && !m.winterStorage) return false;
       if (selectedAmenities.length > 0 &&
@@ -184,10 +189,10 @@ const ExplorePage = () => {
       return true;
     })
     .sort((a, b) => {
-      if (a.isPremiumListing && !b.isPremiumListing) return -1;
-      if (!a.isPremiumListing && b.isPremiumListing) return 1;
-      // When geo search is active, default sort is distance (already ordered)
-      if (useGeo && sortBy === "rating") return 0; // preserve distance order
+      const pA = getLayerSortPriority(a.mooringLayer || 'premium');
+      const pB = getLayerSortPriority(b.mooringLayer || 'premium');
+      if (pA !== pB) return pA - pB;
+      if (useGeo && sortBy === "rating") return 0;
       if (sortBy === "rating") return b.rating - a.rating;
       if (sortBy === "price-low") return a.price - b.price;
       if (sortBy === "price-high") return b.price - a.price;
@@ -335,20 +340,44 @@ const ExplorePage = () => {
 
         {/* ─── Filters bar ─────────────────────────────────────────────── */}
         <div className="bg-card border-b border-border py-3">
-          <div className="container mx-auto px-4 flex items-center justify-between">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowFilters(!showFilters)}
-              className="gap-2 text-sm"
-            >
-              <SlidersHorizontal size={16} />
-              {t("explore.filters", "Filters")}
-              <ChevronDown
-                size={14}
-                className={`transition-transform ${showFilters ? "rotate-180" : ""}`}
-              />
-            </Button>
+          <div className="container mx-auto px-4 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 overflow-x-auto">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowFilters(!showFilters)}
+                className="gap-2 text-sm shrink-0"
+              >
+                <SlidersHorizontal size={16} />
+                {t("explore.filters", "Filters")}
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform ${showFilters ? "rotate-180" : ""}`}
+                />
+              </Button>
+
+              <div className="flex items-center gap-1.5">
+                {([
+                  { value: 'all' as const, label: 'All', color: 'bg-muted', textColor: 'text-foreground' },
+                  { value: 'premium' as const, label: 'Premium', color: 'bg-gold/10', textColor: 'text-gold' },
+                  { value: 'concierge' as const, label: 'Concierge', color: 'bg-blue-500/10', textColor: 'text-blue-500' },
+                  { value: 'explore' as const, label: 'Navigate', color: 'bg-emerald-500/10', textColor: 'text-emerald-500' },
+                ]).map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setLayerFilter(opt.value)}
+                    className={cn(
+                      'px-3 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap',
+                      layerFilter === opt.value
+                        ? `${opt.color} ${opt.textColor} ring-1 ring-current`
+                        : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+                    )}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
 
             {/* Sort */}
             <Select value={sortBy} onValueChange={setSortBy}>
@@ -509,6 +538,7 @@ const ExplorePage = () => {
                             ownerPhone={mooring.ownerPhone}
                             description={mooring.description}
                             winterStorage={mooring.winterStorage}
+                            mooringLayer={mooring.mooringLayer}
                             initialCheckIn={committedCheckIn || undefined}
                             initialCheckOut={committedCheckOut || undefined}
                             autoOpenBooking={!!urlMooringId && mooring.id === urlMooringId}

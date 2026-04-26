@@ -21,6 +21,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import BookingModal from "./BookingModal";
+import type { MooringLayer } from "@/lib/mooringLayer";
+import { getLayerBadge, getBookingMode, getLayerDisclaimer } from "@/lib/mooringLayer";
+import { openNavigation } from "@/lib/navigation";
+import { useProfile } from "@/hooks/useProfile";
 
 interface MooringDetailModalProps {
     mooring: {
@@ -45,10 +49,11 @@ interface MooringDetailModalProps {
         ownerPhone?: string;
         winterStorage?: boolean;
         winterPriceMonthly?: number;
+        mooringLayer?: MooringLayer;
+        ownerId?: string;
     };
     isOpen: boolean;
     onClose: () => void;
-    /** Dates pre-selected in the Explorer search (YYYY-MM-DD) */
     initialCheckIn?: string;
     initialCheckOut?: string;
 }
@@ -102,6 +107,11 @@ const MooringDetailModal = ({
 }: MooringDetailModalProps) => {
     const [isBookingOpen, setIsBookingOpen] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
+    const { data: profile } = useProfile();
+    const layer = mooring.mooringLayer || 'premium';
+    const bookingMode = getBookingMode(layer, profile);
+    const layerBadge = getLayerBadge(layer);
+    const disclaimer = getLayerDisclaimer(layer);
 
     if (!isOpen) return null;
 
@@ -172,6 +182,9 @@ const MooringDetailModal = ({
 
                     {/* Top actions */}
                     <div className="absolute top-3 left-3 flex flex-col gap-2">
+                        <Badge className={cn("font-semibold shadow", layerBadge.bgColor, layerBadge.color)}>
+                            {layer === 'premium' && '⭐ '}{layerBadge.label}
+                        </Badge>
                         {mooring.discountPercent && (
                             <Badge className="bg-success text-success-foreground font-semibold shadow">
                                 {mooring.discountPercent}% OFF
@@ -404,18 +417,50 @@ const MooringDetailModal = ({
                     )}
                 </div>
 
+                {/* Disclaimer for concierge/explore */}
+                {disclaimer && (
+                    <div className={cn(
+                        "mx-4 sm:mx-6 mb-2 rounded-lg p-3 text-xs text-muted-foreground border",
+                        layer === 'explore'
+                            ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800'
+                            : 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800'
+                    )}>
+                        {disclaimer}
+                    </div>
+                )}
+
                 {/* Sticky footer CTA */}
                 <div className="sticky bottom-0 bg-card border-t border-border p-4 flex gap-3">
                     <Button variant="outline" onClick={onClose} className="flex-1">
                         Close
                     </Button>
-                    <Button
-                        onClick={handleBookNow}
-                        className="flex-1 bg-gradient-ocean font-semibold text-base"
-                    >
-                        <Anchor size={18} className="mr-2" />
-                        Book Now
-                    </Button>
+                    {bookingMode === 'instant' && (
+                        <Button
+                            onClick={handleBookNow}
+                            className="flex-1 bg-gradient-ocean font-semibold text-base"
+                        >
+                            <Anchor size={18} className="mr-2" />
+                            Book Now
+                        </Button>
+                    )}
+                    {bookingMode === 'concierge' && (
+                        <Button
+                            onClick={handleBookNow}
+                            className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold text-base"
+                        >
+                            <Phone size={18} className="mr-2" />
+                            Request Booking
+                        </Button>
+                    )}
+                    {bookingMode === 'none' && mooring.lat && mooring.lng && (
+                        <Button
+                            onClick={() => openNavigation({ lat: mooring.lat!, lng: mooring.lng!, label: mooring.name })}
+                            className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-base"
+                        >
+                            <Navigation size={18} className="mr-2" />
+                            Navigate
+                        </Button>
+                    )}
                 </div>
             </div>
         </div>

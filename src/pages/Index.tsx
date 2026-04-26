@@ -1,7 +1,7 @@
 import { Suspense, lazy } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
-import PopularMoorings from "@/components/PopularMoorings";
+import ThreeLayerMoorings from "@/components/ThreeLayerMoorings";
 import HowItWorks from "@/components/HowItWorks";
 
 import HomePricing from "@/components/HomePricing";
@@ -70,7 +70,7 @@ const Index = () => {
           </div>
         </section>
         
-        <PopularMoorings />
+        <ThreeLayerMoorings />
         
         {/* Ad Banner */}
         <section className="py-4 bg-background">

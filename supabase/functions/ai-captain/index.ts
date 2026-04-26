@@ -184,6 +184,7 @@ interface MooringRow {
     rating: number;
     review_count: number;
     distance_km: number;
+    mooring_layer: 'premium' | 'concierge' | 'explore';
 }
 
 async function fetchAvailableMoorings(
@@ -267,12 +268,22 @@ async function fetchAvailableMoorings(
             const lastMin = (m.is_last_minute || m.is_now4today) ? " 🔥 Last-minute!" : "";
             const verified = m.is_verified_partner ? " ✅ **Verified Partner**" : "";
             const premium = m.is_premium_listing ? " 👑 Premium" : "";
+            const layer = m.mooring_layer || 'premium';
+            const layerBadge = layer === 'concierge' ? " 📞 Concierge" : layer === 'explore' ? " 🧭 Navigate Only" : "";
             const dist = Number.isFinite(m.distance_km) ? ` | 📏 ${m.distance_km.toFixed(1)} km od tebe` : "";
             const destLat = m.lat.toFixed(4);
             const destLng = m.lng.toFixed(4);
             const osmLink = `https://www.openstreetmap.org/directions?from=${fromLat}%2C+${fromLng}&to=${destLat}%2C+${destLng}#map=13/${destLat}/${destLng}`;
-            const bookLink = `https://mooringbooking.com/explore?mooring=${m.id}&checkIn=${checkIn}&checkOut=${checkOut}`;
-            return `${i + 1}. **${m.name}**${verified}${premium} — ${flag}${m.location}, ${m.country}\n   💰 €${m.price_per_night}/noć${maxBoat ? ` | ${maxBoat}` : ""} | Zaštita od vjetra: ${m.wind_protection}${rating}${dist}${lastMin}\n   🛠️ Pogodnosti: ${amenStr}\n   🧭 Ruta: ${osmLink}\n   📌 Rezerviraj: ${bookLink}`;
+
+            if (layer === 'explore') {
+                return `${i + 1}. **${m.name}**${layerBadge} — ${flag}${m.location}, ${m.country}\n   Zaštita od vjetra: ${m.wind_protection}${rating}${dist}\n   🧭 Ruta: ${osmLink}\n   ⚠️ Samo navigacijski podatak — nema rezervacije.`;
+            }
+
+            const bookLink = layer === 'concierge'
+                ? `https://mooringbooking.com/explore?mooring=${m.id}&checkIn=${checkIn}&checkOut=${checkOut}`
+                : `https://mooringbooking.com/explore?mooring=${m.id}&checkIn=${checkIn}&checkOut=${checkOut}`;
+            const bookLabel = layer === 'concierge' ? "📞 Zatraži rezervaciju" : "📌 Rezerviraj";
+            return `${i + 1}. **${m.name}**${verified}${premium}${layerBadge} — ${flag}${m.location}, ${m.country}\n   💰 €${m.price_per_night}/noć${maxBoat ? ` | ${maxBoat}` : ""} | Zaštita od vjetra: ${m.wind_protection}${rating}${dist}${lastMin}\n   🛠️ Pogodnosti: ${amenStr}\n   🧭 Ruta: ${osmLink}\n   ${bookLabel}: ${bookLink}`;
         });
 
         return {
@@ -1045,7 +1056,8 @@ Deno.serve(async (req: Request) => {
 
         // FAZA 6: intent-aware rate limit (EMERGENCY & premium bypass)
         const tierStr = (userProfile?.tier ?? "basic") as string;
-        const isPremiumTier = tierStr === "premium-monthly" || tierStr === "premium-annual" || tierStr === "admin";
+        const isPremiumTier = ["sailor", "captain", "charter-fleet", "premium-monthly", "premium-annual", "admin"].includes(tierStr);
+        const hasUnlimitedAiTier = ["sailor", "captain", "charter-fleet", "ai-only", "premium-monthly", "premium-annual", "admin"].includes(tierStr);
         const userId = decodeJwtSub(req);
 
         // FAZA 8: resolve/create persistent conversation for authenticated users.
@@ -1057,7 +1069,7 @@ Deno.serve(async (req: Request) => {
 
         let rateLimit: RateLimitResult | null = null;
         if (userId) {
-            rateLimit = await checkAndLogAiCall(userId, intent, isPremiumTier);
+            rateLimit = await checkAndLogAiCall(userId, intent, hasUnlimitedAiTier);
             if (rateLimit && !rateLimit.allowed) {
                 const paywallQualityId = await logResponseQuality({
                     userId,
@@ -1072,7 +1084,7 @@ Deno.serve(async (req: Request) => {
                 });
                 return new Response(
                     JSON.stringify({
-                        reply: "⭐ Iskoristio si sva besplatna AI Kapetan pitanja za ovaj mjesec.\n\nNadogradi na **Premium** za neograničen pristup, 7-dnevne prognoze, upozorenja na oluje i još mnogo toga! 🚢",
+                        reply: "⭐ Iskoristio si sva besplatna AI Kapetan pitanja za ovaj mjesec.\n\nNadogradi na **Sailor** (€19.99/mj) ili **AI-Only** (€7.99/mj) za neograničen pristup, 7-dnevne prognoze i upozorenja na oluje! 🚢",
                         intent,
                         remaining: 0,
                         resetAt: rateLimit.reset_at,
@@ -1109,7 +1121,7 @@ Deno.serve(async (req: Request) => {
                 return `${dayName} ${f.date.slice(5)}: 🌬️ ${f.windAvgKn}–${f.windMaxKn} čv (Bft ${f.beaufortMax})${warn} | 🌡️ ${f.tempMinC}–${f.tempMaxC}°C | 🌊 val ${f.waveMaxM}m`;
             });
             forecastStr = lines.length > 0
-                ? `\n📅 48h PROGNOZA (Basic plan):\n${lines.join("\n")}\n⭐ Nadogradi na Premium za punu 7-dnevnu prognozu!`
+                ? `\n📅 48h PROGNOZA (Basic plan):\n${lines.join("\n")}\n⭐ Nadogradi na Sailor ili AI-Only za punu 7-dnevnu prognozu!`
                 : "";
         } else {
             forecastStr = forecastResult.forecastText;
@@ -1270,16 +1282,26 @@ ${weatherStr}${forecastStr}${mooringsSection}${navSection}${kbSection}
 🌐 Platforma: mooringbooking.com — rezervacija privatnih vezova diljem Mediterana
 👤 Korisnički tipovi: Sailor (traži i rezervira vez) i Provider (vlasnik veza)
 
-💳 PLANOVI ZA JEDRILIČARE:
-  • Basic (BESPLATNO): pretraga vezova, 10 AI pitanja/mj
-  • Premium Monthly (~€9.99/mj): neograničen AI Kapetan, offline karte, 7-dnevna prognoza, uzbune na oluje
-  • Premium Annual (~€9.99/god — BEST VALUE, -50%)
+🏗️ TRI SLOJA VEZOVA:
+  1. ⭐ PREMIUM PARTNERS: Direktni partneri. Instant booking. Zagarantirana dostupnost.
+     → Akcija: "Mogu ti ovo odmah rezervirati!"
+  2. 📞 CONCIERGE BOOKING: Kontaktiramo marinu u ime korisnika. 48h čekanja na potvrdu. Service fee applies.
+     → Akcija: "Mogu poslati zahtjev marini u tvoje ime. Čeka se potvrda do 48h."
+  3. 🧭 EXPLORE & NAVIGATE: Samo navigacijski podaci. NEMA rezervacije.
+     → Akcija: "Ovo je navigacijski podatak — nema rezervacije, ali evo koordinata i rute."
+
+💳 PLANOVI:
+  • Basic (BESPLATNO): pretraga vezova, 10 AI pitanja/mj, book (service fee applies)
+  • AI-Only (€7.99/mj): neograničen AI Kapetan, 7-dnevna prognoza, upozorenja — BEZ bookinga
+  • Sailor (€19.99/mj): sve iz Basic + AI-Only, offline karte, priority booking, bez fee ≤12m
+  • Captain (€34.99/mj): sve iz Sailor, analytics, charter tools, bez fee ikad
+  • Charter Fleet (€199/mj): sve iz Captain, multi-vessel, fleet analytics, white-label
 
 💼 ZA PROVIDERE: Registracija BESPLATNO | Provizija 15% po rezervaciji (Provider zadržava ~82–85% neto)
 
-🛥️ FUNKCIJE: Now4Today (last-minute za ISTI DAN), Winter Storage, Affiliate program (5–15%), Instant booking
+🛥️ FUNKCIJE: Now4Today (last-minute za ISTI DAN), Winter Storage, Affiliate program (5–15%), Instant/Concierge booking
 
-📍 REZERVACIJA: mooringbooking.com/explore → pretraži → filtriraj → Book Now → email potvrda
+📍 REZERVACIJA: mooringbooking.com/explore → pretraži → filtriraj → Book Now (Premium) ili Request Booking (Concierge) → email potvrda
 
 ═══ HITNI KONTAKT (auto — po lokaciji korisnika) ═══
 ${rescueLines}
@@ -1292,7 +1314,7 @@ ${rescueLines}
 - Ako sekcija "PRETRAGA VEZOVA" nije prisutna ili je prazna, NE navodi imena konkretnih vezova niti izmišljaj marine. Uputi korisnika na https://mooringbooking.com/explore.
 - Za VHF kanale, dubine ulaza, telefonske brojeve i druge tehničke podatke kojih NEMA u "RELEVANTNO ZNANJE" niti u "PRETRAGA VEZOVA": reci "ovaj podatak trenutno nemam potvrđen u bazi" i ponudi da korisnik kontaktira marinu direktno kad stigne. NIKAD ne preporučuj druge aplikacije, karte, servise ili brendove (npr. Navionics, Marine Traffic, Google, Apple Maps itd.) — AI Kapetan je jedini izvor.
 - NIKAD ne spominji marinu izvan geografskog raspona priloženih rezultata.
-- PRIORITET U PRIKAZU: ✅ Verified Partner prvi, zatim 👑 Premium listings, pa ostali po udaljenosti.
+- PRIORITET U PRIKAZU: ⭐ Premium Partners prvi (instant booking), zatim 📞 Concierge (request booking), pa 🧭 Explore (samo navigacija). Unutar sloja: ✅ Verified Partner, 👑 Premium listings, pa po udaljenosti.
 - Za nautičko znanje (vjetrovi, COLREGS, dijagnostika, sidrenje, gorivo) KORISTI sekciju "RELEVANTNO ZNANJE" prije vlastitog znanja — to su kustomizirani, verificirani podaci iz baze.
 
 ═══ LANGUAGE RULE — HIGHEST PRIORITY ═══
@@ -1326,12 +1348,16 @@ ${preferencesBlock}
 15. NIKAD ne izmišljaj — ako nije u priloženim podacima, reci "trenutno nemam potvrđen podatak" i predloži direktni kontakt s marinom. **NIKAD ne preporučuj konkurentske aplikacije, karte ili servise** (Navionics, Marine Traffic, Google/Apple Maps, pilot-knjige drugih brendova). AI Kapetan je jedini izvor.
 16. Ako je poznat GAZ broda (iz "Brod —" sekcije), uvijek provjeri max_draft marine prije preporuke i upozori korisnika ako je tijesno.
 17. Ako je poznat DATUM isteka osiguranja i blizu je, diskretno podsjeti korisnika.
-${!isPremiumTier ? `
+${!isPremiumTier && tierStr !== 'ai-only' ? `
 ═══ BASIC PLAN OGRANIČENJA ═══
 G) MANEVRI: Korisnik je na Basic planu. Za pitanja o manevrima (sidrenje, privezivanje, MOB) daj KRATKI sažetak (3-4 koraka) i napomeni: "Za detaljne step-by-step vodiče prilagođene tvom tipu broda i uvjetima, nadogradi na Sailor ili Captain plan."
-H) DIJAGNOSTIKA: Za pitanja o kvarovima i dijagnostici daj OSNOVNU dijagnozu (identificiraj problem + 1-2 prva koraka) i napomeni: "Za potpunu dijagnostičku proceduru s detaljnim koracima popravka, nadogradi na Premium."` : `
-═══ PREMIUM PLAN ═══
-G) MANEVRI: Korisnik je Premium — daj POTPUNE step-by-step vodiče prilagođene tipu broda i uvjetima. Uključi sve detalje: pripremu, pristup, izvršenje, sigurnosne napomene.
+H) DIJAGNOSTIKA: Za pitanja o kvarovima i dijagnostici daj OSNOVNU dijagnozu (identificiraj problem + 1-2 prva koraka) i napomeni: "Za potpunu dijagnostičku proceduru s detaljnim koracima popravka, nadogradi na Sailor ili Captain."` : tierStr === 'ai-only' ? `
+═══ AI-ONLY PLAN ═══
+G) MANEVRI: Korisnik ima AI-Only plan — daj POTPUNE step-by-step vodiče prilagođene tipu broda i uvjetima.
+H) DIJAGNOSTIKA: Daj KOMPLETNU dijagnostičku proceduru bez ograničenja.
+I) BOOKING: Korisnik NEMA mogućnost bookinga. Kad preporučuješ vezove, NE daj booking linkove — samo navigacijske podatke i rute. Napomeni: "Za rezervaciju vezova, nadogradi na Sailor plan (€19.99/mj)."` : `
+═══ PREMIUM PLAN (${tierStr}) ═══
+G) MANEVRI: Korisnik je na ${tierStr} planu — daj POTPUNE step-by-step vodiče prilagođene tipu broda i uvjetima. Uključi sve detalje: pripremu, pristup, izvršenje, sigurnosne napomene.
 H) DIJAGNOSTIKA: Daj KOMPLETNU dijagnostičku proceduru: 🔍 Dijagnoza → ⚠️ Sigurnost → 🔎 Provjeri → 🛠️ Popravak → 🏪 Mehaničar. Bez ograničenja u detaljima.`}`;
 
         if (isProviderContext) {

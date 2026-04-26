@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { allMoorings as hardcodedMoorings, Mooring } from '@/data/moorings';
+import type { MooringLayer } from '@/lib/mooringLayer';
 import { geocodeQuery, haversineKm, formatDistance } from '@/lib/geocoding';
 
 export interface DbMooring {
@@ -34,6 +35,11 @@ export interface DbMooring {
     status: string;
     owner_id: string | null;
     created_at: string;
+    mooring_layer: string | null;
+    source_url: string | null;
+    data_source: string | null;
+    contact_email: string | null;
+    contact_phone: string | null;
 }
 
 // Convert DB mooring to the frontend Mooring interface
@@ -67,6 +73,11 @@ function dbToFrontend(m: DbMooring): Mooring {
         winterPriceMonthly: m.winter_price_monthly ? Number(m.winter_price_monthly) : undefined,
         status: m.status,
         ownerId: m.owner_id ?? undefined,
+        mooringLayer: (m.mooring_layer as MooringLayer) || 'premium',
+        sourceUrl: m.source_url ?? undefined,
+        dataSource: m.data_source as Mooring['dataSource'],
+        contactEmail: m.contact_email ?? undefined,
+        contactPhone: m.contact_phone ?? undefined,
     };
 }
 

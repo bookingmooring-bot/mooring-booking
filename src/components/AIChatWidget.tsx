@@ -139,7 +139,7 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
       setShowPaywall(true);
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: `⭐ Iskoristio si svih ${AI_BASIC_LIMIT} besplatnih pitanja AI Kapetana.\n\nNadogradi na **Premium** za neograničen pristup, 7-dnevne prognoze, upozorenja na oluje i još mnogo toga! 🚢`
+        content: `⭐ Iskoristio si svih ${AI_BASIC_LIMIT} besplatnih pitanja AI Kapetana.\n\nNadogradi na **Sailor** (€19.99/mj) ili **AI-Only** (€7.99/mj) za neograničen pristup, 7-dnevne prognoze i upozorenja na oluje! 🚢`
       }]);
       setIsLoading(false);
       return;
@@ -212,7 +212,7 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
       // Soft premium nudge for basic users (30% chance, not on first message)
       let finalReply = reply;
       if (!premium && currentMessages.filter(m => m.role === "user").length > 1 && Math.random() < 0.25) {
-        finalReply += "\n\n💡 *Premium donosi neograničen AI Kapetan, offline mape i ekskluzivne popuste!*";
+        finalReply += "\n\n💡 *Sailor ili AI-Only plan donose neograničen AI Kapetan, 7-dnevne prognoze i upozorenja na oluje!*";
       }
 
       const replyIntent = data?.intent as Intent | undefined;

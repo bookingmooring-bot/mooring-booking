@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
-import { Star, Heart, MapPin, Waves, Zap, Wifi, Droplets } from "lucide-react";
+import { Star, Heart, MapPin, Waves, Zap, Wifi, Droplets, Navigation, Compass } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import MooringDetailModal from "./MooringDetailModal";
+import type { MooringLayer } from "@/lib/mooringLayer";
+import { getLayerBadge } from "@/lib/mooringLayer";
+import { openNavigation } from "@/lib/navigation";
 
 interface MooringCardWithBookingProps {
   id: string;
@@ -28,10 +31,10 @@ interface MooringCardWithBookingProps {
   description?: string;
   winterStorage?: boolean;
   winterPriceMonthly?: number;
-  /** Pre-selected dates from the Explorer search bar (YYYY-MM-DD) */
   initialCheckIn?: string;
   initialCheckOut?: string;
   autoOpenBooking?: boolean;
+  mooringLayer?: MooringLayer;
 }
 
 const amenityIcons: Record<string, React.ReactNode> = {
@@ -73,6 +76,7 @@ const MooringCardWithBooking = ({
   initialCheckIn,
   initialCheckOut,
   autoOpenBooking,
+  mooringLayer,
 }: MooringCardWithBookingProps) => {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
@@ -108,6 +112,14 @@ const MooringCardWithBooking = ({
 
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
+            {mooringLayer && (() => {
+              const badge = getLayerBadge(mooringLayer);
+              return (
+                <Badge className={cn("font-semibold", badge.bgColor, badge.color)}>
+                  {mooringLayer === 'premium' && '⭐ '}{badge.label}
+                </Badge>
+              );
+            })()}
             {discountPercent && (
               <Badge className="bg-success text-success-foreground font-semibold">
                 {discountPercent}% OFF
@@ -184,22 +196,55 @@ const MooringCardWithBooking = ({
           {/* Footer */}
           <div className="flex items-center justify-between pt-3 border-t border-border">
             <div className="flex items-baseline gap-2">
-              {discountPercent && (
-                <span className="text-muted-foreground text-sm line-through">€{price}</span>
+              {mooringLayer === 'explore' ? (
+                <span className="text-emerald-500 text-sm font-medium">Navigate only</span>
+              ) : (
+                <>
+                  {discountPercent && (
+                    <span className="text-muted-foreground text-sm line-through">€{price}</span>
+                  )}
+                  <span className="font-heading font-bold text-xl text-primary">€{discountedPrice}</span>
+                  <span className="text-muted-foreground text-sm">/night</span>
+                </>
               )}
-              <span className="font-heading font-bold text-xl text-primary">€{discountedPrice}</span>
-              <span className="text-muted-foreground text-sm">/night</span>
             </div>
-            <Button
-              size="sm"
-              className="bg-gradient-ocean font-semibold"
-              onClick={(e) => {
-                e.stopPropagation();
-                openDetail();
-              }}
-            >
-              View Details
-            </Button>
+            {mooringLayer === 'explore' ? (
+              <Button
+                size="sm"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (lat && lng) openNavigation({ lat, lng, label: name });
+                  else openDetail();
+                }}
+              >
+                <Navigation size={14} className="mr-1" />
+                Navigate
+              </Button>
+            ) : mooringLayer === 'concierge' ? (
+              <Button
+                size="sm"
+                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openDetail();
+                }}
+              >
+                <Compass size={14} className="mr-1" />
+                Request Booking
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                className="bg-gradient-ocean font-semibold"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openDetail();
+                }}
+              >
+                View Details
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -228,6 +273,7 @@ const MooringCardWithBooking = ({
           ownerPhone,
           winterStorage,
           winterPriceMonthly,
+          mooringLayer,
         }}
         isOpen={isDetailOpen}
         onClose={() => setIsDetailOpen(false)}

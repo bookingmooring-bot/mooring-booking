@@ -6,7 +6,7 @@ import { useUserBookings, useProviderBookings, Booking } from "@/hooks/useBookin
 import { useQueryClient } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Loader2, Ship, Calendar, Settings, ShieldCheck, Save, Star } from "lucide-react";
+import { Loader2, Ship, Calendar, Settings, ShieldCheck, Save, Star, Clock, Phone } from "lucide-react";
 import VesselProfileManager from "@/components/VesselProfileManager";
 import NotificationPreferences from "@/components/NotificationPreferences";
 import AffiliateDashboard from "@/components/affiliate/AffiliateDashboard";
@@ -212,10 +212,24 @@ const Dashboard = () => {
                     <p className="text-muted-foreground">You haven't booked any trips yet.</p>
                 ) : (
                     <div className="space-y-4">
-                        {userBookings.map((booking) => (
-                            <div key={booking.id} className="border border-border p-4 rounded-xl hover:shadow-hover transition-shadow bg-background flex flex-col sm:flex-row justify-between gap-4">
+                        {userBookings.map((booking) => {
+                            const isConcierge = booking.booking_type === 'concierge';
+                            const expiresAt = booking.concierge_expires_at ? new Date(booking.concierge_expires_at) : null;
+                            const hoursLeft = expiresAt ? Math.max(0, Math.round((expiresAt.getTime() - Date.now()) / 3600000)) : 0;
+
+                            return (
+                            <div key={booking.id} className={`border p-4 rounded-xl hover:shadow-hover transition-shadow bg-background flex flex-col sm:flex-row justify-between gap-4 ${
+                                isConcierge ? 'border-blue-200 dark:border-blue-800' : 'border-border'
+                            }`}>
                                 <div>
-                                    <h3 className="font-bold text-lg">{booking.moorings?.name || 'Unknown Mooring'}</h3>
+                                    <div className="flex items-center gap-2">
+                                        <h3 className="font-bold text-lg">{booking.moorings?.name || 'Unknown Mooring'}</h3>
+                                        {isConcierge && (
+                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                                                <Phone size={10} /> Concierge
+                                            </span>
+                                        )}
+                                    </div>
                                     <p className="text-muted-foreground text-sm">{booking.moorings?.location}, {booking.moorings?.country}</p>
                                     <p className="font-medium mt-2">
                                         {new Date(booking.check_in).toLocaleDateString()} - {new Date(booking.check_out).toLocaleDateString()}
@@ -224,9 +238,33 @@ const Dashboard = () => {
                                     {booking.boat_name && (
                                         <p className="text-sm">Boat: {booking.boat_name} ({booking.boat_length}m)</p>
                                     )}
+                                    {booking.special_requests && (
+                                        <p className="text-sm text-muted-foreground mt-1 italic">"{booking.special_requests}"</p>
+                                    )}
                                 </div>
                                 <div className="flex flex-col items-start sm:items-end justify-between gap-3">
-                                    {booking.booking_status === 'pending' ? (
+                                    {isConcierge && booking.concierge_status === 'pending_marina' ? (
+                                        <div className="flex flex-col items-start sm:items-end gap-1">
+                                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+                                                <Clock size={12} /> Awaiting Marina Response
+                                            </span>
+                                            {hoursLeft > 0 && (
+                                                <span className="text-xs text-muted-foreground">Expires in {hoursLeft}h</span>
+                                            )}
+                                        </div>
+                                    ) : isConcierge && booking.concierge_status === 'confirmed' ? (
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                            Confirmed
+                                        </span>
+                                    ) : isConcierge && booking.concierge_status === 'declined' ? (
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+                                            Declined — No Charge
+                                        </span>
+                                    ) : isConcierge && booking.concierge_status === 'expired' ? (
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                                            Expired — No Charge
+                                        </span>
+                                    ) : booking.booking_status === 'pending' ? (
                                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
                                             Pending
                                         </span>
@@ -262,7 +300,8 @@ const Dashboard = () => {
                                     )}
                                 </div>
                             </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
 

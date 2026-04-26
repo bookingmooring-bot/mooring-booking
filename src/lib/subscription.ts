@@ -1,11 +1,15 @@
 import type { Profile } from '@/hooks/useProfile';
 
-export type SubscriptionTier = 'basic' | 'premium-monthly' | 'premium-annual';
+export type SubscriptionTier =
+  | 'basic'
+  | 'sailor'
+  | 'captain'
+  | 'charter-fleet'
+  | 'ai-only'
+  // Legacy values — mapped to new tiers in getUserTier()
+  | 'premium-monthly'
+  | 'premium-annual';
 
-/**
- * Check if the subscription is still active (not expired).
- * Returns true if no expiry is set (basic) or expiry is in the future.
- */
 export const isSubscriptionActive = (profile: Profile | null | undefined): boolean => {
   if (!profile) return false;
   if (profile.subscription_tier === 'basic') return true;
@@ -13,62 +17,78 @@ export const isSubscriptionActive = (profile: Profile | null | undefined): boole
   return new Date(profile.subscription_expires_at) > new Date();
 };
 
-/**
- * Get the effective tier — if premium but expired, returns 'basic'.
- */
 export const getUserTier = (profile: Profile | null | undefined): SubscriptionTier => {
   if (!profile) return 'basic';
-  const tier = profile.subscription_tier || 'basic';
-  if (tier !== 'basic' && !isSubscriptionActive(profile)) return 'basic';
-  return tier;
+  const raw = profile.subscription_tier || 'basic';
+  if (raw !== 'basic' && !isSubscriptionActive(profile)) return 'basic';
+  // Map legacy tiers to new equivalents
+  if (raw === 'premium-monthly') return 'sailor';
+  if (raw === 'premium-annual') return 'captain';
+  return raw;
 };
 
-/**
- * Check if the user has an active premium subscription.
- */
 export const isPremium = (profile: Profile | null | undefined): boolean => {
-  if (profile?.role === 'admin') return true; // Admins are always premium
+  if (profile?.role === 'admin') return true;
   const tier = getUserTier(profile);
-  return tier === 'premium-monthly' || tier === 'premium-annual';
+  return tier === 'sailor' || tier === 'captain' || tier === 'charter-fleet';
 };
 
-/**
- * Check if a user can use a specific feature based on their tier.
- */
+export const hasUnlimitedAI = (profile: Profile | null | undefined): boolean => {
+  if (profile?.role === 'admin') return true;
+  const tier = getUserTier(profile);
+  return tier === 'sailor' || tier === 'captain' || tier === 'charter-fleet' || tier === 'ai-only';
+};
+
+export const canBook = (profile: Profile | null | undefined): boolean => {
+  const tier = getUserTier(profile);
+  return tier !== 'ai-only';
+};
+
 export const canUseFeature = (feature: string, profile: Profile | null | undefined): boolean => {
+  if (profile?.role === 'admin') return true;
   const tier = getUserTier(profile);
 
   const basicFeatures = ['browse', 'book', 'basic-weather', 'basic-search', 'email-support'];
-  const premiumFeatures = [
+
+  const aiOnlyFeatures = [
     ...basicFeatures,
-    'unlimited-ai', '7day-forecast', 'offline-maps', 'storm-alerts',
-    'priority-booking', 'ad-free', 'maneuvering-guides', 'port-congestion',
-    'now4today-alerts', 'turn-by-turn-nav', 'winter-storage-search',
-    'exclusive-discounts', 'priority-support', 'whatsapp-notifications',
+    'unlimited-ai', '7day-forecast', 'storm-alerts', 'maneuvering-guides',
+    'turn-by-turn-nav', 'route-planning', 'mayday-protocols',
   ];
-  const annualFeatures = [
-    ...premiumFeatures,
+
+  const sailorFeatures = [
+    ...aiOnlyFeatures,
+    'offline-maps', 'priority-booking', 'ad-free', 'port-congestion',
+    'now4today-alerts', 'winter-storage-search', 'exclusive-discounts',
+    'priority-support', 'whatsapp-notifications',
+  ];
+
+  const captainFeatures = [
+    ...sailorFeatures,
+    'charter-tools', 'analytics-dashboard', 'advanced-route-planning',
     'early-access', 'dedicated-manager', 'marina-discounts',
     'loyalty-2x', 'exclusive-events', 'api-access', 'b2b-referral',
   ];
 
-  if (tier === 'premium-annual') return annualFeatures.includes(feature);
-  if (tier === 'premium-monthly') return premiumFeatures.includes(feature);
+  const charterFleetFeatures = [
+    ...captainFeatures,
+    'multi-vessel', 'bulk-reservations', 'fleet-analytics',
+    'white-label-charter', 'guest-onboarding',
+  ];
+
+  if (tier === 'charter-fleet') return charterFleetFeatures.includes(feature);
+  if (tier === 'captain') return captainFeatures.includes(feature);
+  if (tier === 'sailor') return sailorFeatures.includes(feature);
+  if (tier === 'ai-only') return aiOnlyFeatures.includes(feature);
   return basicFeatures.includes(feature);
 };
 
-/**
- * Service fee based on subscription tier and vessel length (Terms v3.0 Section 5.1).
- * Captain (premium-annual): always €0
- * Sailor (premium-monthly): €0 for vessels ≤12m, otherwise Basic rates
- * Basic: €12 (≤8m), €19 (≤12m), €35 (≤18m), €59 (≤24m), €99 (>24m)
- */
 export const calculateServiceFee = (vesselLengthM: number | null | undefined, profile: Profile | null | undefined): number => {
   const tier = getUserTier(profile);
 
-  if (tier === 'premium-annual') return 0;
+  if (tier === 'captain' || tier === 'charter-fleet') return 0;
 
-  if (tier === 'premium-monthly') {
+  if (tier === 'sailor') {
     if (!vesselLengthM || vesselLengthM <= 12) return 0;
   }
 
@@ -80,18 +100,11 @@ export const calculateServiceFee = (vesselLengthM: number | null | undefined, pr
   return 99;
 };
 
-/**
- * AI question limit for basic users.
- */
 export const AI_BASIC_LIMIT = 10;
 
-
-/**
- * Check if a user has remaining AI questions.
- */
 export const hasAIQuestionsRemaining = (profile: Profile | null | undefined): boolean => {
-  if (profile?.role === 'admin') return true; // Admins have unlimited questions
-  if (isPremium(profile)) return true;
-  if (!profile) return true; // allow unauthenticated users (localStorage fallback)
+  if (profile?.role === 'admin') return true;
+  if (hasUnlimitedAI(profile)) return true;
+  if (!profile) return true;
   return (profile.ai_questions_used ?? 0) < AI_BASIC_LIMIT;
 };

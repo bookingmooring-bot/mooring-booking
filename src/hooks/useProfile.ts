@@ -9,7 +9,7 @@ export interface Profile {
     phone: string | null;
     avatar_url: string | null;
     role: 'user' | 'provider' | 'admin';
-    subscription_tier: 'basic' | 'premium-monthly' | 'premium-annual';
+    subscription_tier: 'basic' | 'sailor' | 'captain' | 'charter-fleet' | 'ai-only' | 'premium-monthly' | 'premium-annual';
     subscription_expires_at: string | null;
     ai_questions_used: number;
     preferred_language: string;

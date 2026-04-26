@@ -43,6 +43,11 @@ export interface Booking {
     is_now4today: boolean;
     stripe_payment_intent_id?: string | null;
     stripe_checkout_session_id?: string | null;
+    booking_type?: 'instant' | 'concierge';
+    concierge_status?: 'pending_marina' | 'confirmed' | 'declined' | 'expired' | null;
+    stripe_authorization_id?: string | null;
+    concierge_expires_at?: string | null;
+    special_requests?: string | null;
     created_at: string;
     moorings?: {
         name: string;

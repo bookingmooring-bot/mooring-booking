@@ -1,157 +1,202 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Check, Anchor, Crown, Ship, Zap, Shield, Wifi, Star, Loader2 } from "lucide-react";
+import { Check, Anchor, Crown, Ship, Zap, Wifi, Star, Loader2, Bot, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { getUserTier } from "@/lib/subscription";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { cn } from "@/lib/utils";
+
+const PRICE_IDS: Record<string, string | undefined> = {
+  'ai-only-monthly': import.meta.env.VITE_STRIPE_PRICE_AI_ONLY_MONTHLY,
+  'ai-only-annual': import.meta.env.VITE_STRIPE_PRICE_AI_ONLY_ANNUAL,
+  'sailor-monthly': import.meta.env.VITE_STRIPE_PRICE_SAILOR_MONTHLY,
+  'sailor-annual': import.meta.env.VITE_STRIPE_PRICE_SAILOR_ANNUAL,
+  'captain-monthly': import.meta.env.VITE_STRIPE_PRICE_CAPTAIN_MONTHLY,
+  'captain-annual': import.meta.env.VITE_STRIPE_PRICE_CAPTAIN_ANNUAL,
+  'charter-fleet-monthly': import.meta.env.VITE_STRIPE_PRICE_CHARTER_FLEET_MONTHLY,
+  'charter-fleet-annual': import.meta.env.VITE_STRIPE_PRICE_CHARTER_FLEET_ANNUAL,
+};
+
+interface PlanDef {
+  id: string;
+  name: string;
+  monthlyPrice: number;
+  annualPrice: number;
+  icon: typeof Anchor;
+  badgeColor: string;
+  badge: string;
+  popular: boolean;
+  features: string[];
+  cta: string;
+  noBooking?: boolean;
+}
+
+const plans: PlanDef[] = [
+  {
+    id: 'basic',
+    name: 'Basic',
+    monthlyPrice: 0,
+    annualPrice: 0,
+    icon: Anchor,
+    badgeColor: 'bg-secondary',
+    badge: 'Free Forever',
+    popular: false,
+    features: [
+      'Browse all moorings',
+      'Basic weather data',
+      '10 AI Captain questions/day',
+      'Email support',
+      'Book moorings (service fee applies)',
+    ],
+    cta: 'Get Started Free',
+  },
+  {
+    id: 'ai-only',
+    name: 'AI-Only',
+    monthlyPrice: 7.99,
+    annualPrice: 59,
+    icon: Bot,
+    badgeColor: 'bg-purple-500',
+    badge: 'AI Power',
+    popular: false,
+    noBooking: true,
+    features: [
+      'Unlimited AI Captain',
+      '7-day marine forecast',
+      'Storm alerts & push notifications',
+      'Maneuvering guides',
+      'Turn-by-turn navigation',
+      'Route planning',
+      'Mayday protocols',
+    ],
+    cta: 'Subscribe',
+  },
+  {
+    id: 'sailor',
+    name: 'Sailor',
+    monthlyPrice: 19.99,
+    annualPrice: 149,
+    icon: Ship,
+    badgeColor: 'bg-blue-500',
+    badge: 'Most Popular',
+    popular: true,
+    features: [
+      'Everything in Basic + AI-Only',
+      'Offline maps & charts',
+      'Priority booking',
+      'Ad-free experience',
+      'Now4Today alerts',
+      'Winter storage search',
+      'No service fee (boats ≤12m)',
+    ],
+    cta: 'Subscribe',
+  },
+  {
+    id: 'captain',
+    name: 'Captain',
+    monthlyPrice: 34.99,
+    annualPrice: 259,
+    icon: Crown,
+    badgeColor: 'bg-gold',
+    badge: 'Best Value',
+    popular: false,
+    features: [
+      'Everything in Sailor',
+      'Analytics dashboard',
+      'Charter tools',
+      'Dedicated account manager',
+      'No service fee (any boat size)',
+      'Early access to features',
+      'Marina discounts',
+      'Loyalty 2x points',
+    ],
+    cta: 'Subscribe',
+  },
+  {
+    id: 'charter-fleet',
+    name: 'Charter Fleet',
+    monthlyPrice: 199,
+    annualPrice: 1790,
+    icon: Users,
+    badgeColor: 'bg-secondary',
+    badge: 'Enterprise',
+    popular: false,
+    features: [
+      'Everything in Captain',
+      'Multi-vessel management',
+      'Bulk reservations',
+      'Fleet analytics',
+      'White-label charter pages',
+      'Guest onboarding portal',
+    ],
+    cta: 'Subscribe',
+  },
+];
+
+const comparisonRows = [
+  { feature: 'AI Captain questions', basic: '10/day', aiOnly: 'Unlimited', sailor: 'Unlimited', captain: 'Unlimited', fleet: 'Unlimited' },
+  { feature: 'Booking', basic: true, aiOnly: false, sailor: true, captain: true, fleet: true },
+  { feature: 'Service fee (≤12m)', basic: '€12–19', aiOnly: '—', sailor: 'Free', captain: 'Free', fleet: 'Free' },
+  { feature: 'Service fee (>12m)', basic: '€35–99', aiOnly: '—', sailor: '€35–99', captain: 'Free', fleet: 'Free' },
+  { feature: '7-day marine forecast', basic: false, aiOnly: true, sailor: true, captain: true, fleet: true },
+  { feature: 'Storm alerts', basic: false, aiOnly: true, sailor: true, captain: true, fleet: true },
+  { feature: 'Maneuvering guides', basic: false, aiOnly: true, sailor: true, captain: true, fleet: true },
+  { feature: 'Route planning', basic: false, aiOnly: true, sailor: true, captain: true, fleet: true },
+  { feature: 'Offline maps', basic: false, aiOnly: false, sailor: true, captain: true, fleet: true },
+  { feature: 'Priority booking', basic: false, aiOnly: false, sailor: true, captain: true, fleet: true },
+  { feature: 'Ad-free', basic: false, aiOnly: false, sailor: true, captain: true, fleet: true },
+  { feature: 'Analytics dashboard', basic: false, aiOnly: false, sailor: false, captain: true, fleet: true },
+  { feature: 'Charter tools', basic: false, aiOnly: false, sailor: false, captain: true, fleet: true },
+  { feature: 'Dedicated manager', basic: false, aiOnly: false, sailor: false, captain: true, fleet: true },
+  { feature: 'Multi-vessel management', basic: false, aiOnly: false, sailor: false, captain: false, fleet: true },
+  { feature: 'Fleet analytics', basic: false, aiOnly: false, sailor: false, captain: false, fleet: true },
+  { feature: 'White-label pages', basic: false, aiOnly: false, sailor: false, captain: false, fleet: true },
+];
+
+function CellValue({ value }: { value: boolean | string }) {
+  if (value === true) return <Check className="text-success mx-auto" size={18} />;
+  if (value === false) return <span className="text-muted-foreground">—</span>;
+  return <span className="text-sm font-medium">{value}</span>;
+}
 
 const UserPricingPage = () => {
-  const { t } = useTranslation();
   const { user } = useAuth();
   const { data: profile } = useProfile();
   const currentTier = getUserTier(profile);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('annual');
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const checkout = useStripeCheckout();
 
-  // Price IDs from env
-  const PRICE_IDS: Record<string, string | undefined> = {
-    'premium-monthly': import.meta.env.VITE_STRIPE_PRICE_PREMIUM_MONTHLY,
-    'premium-annual': import.meta.env.VITE_STRIPE_PRICE_PREMIUM_ANNUAL,
-  };
-
   const handleSelectPlan = (planId: string) => {
-    if (planId === currentTier && !!user) return; // already on this plan
-    if (planId === 'basic') {
-      setSelectedPlan(planId);
-      return;
-    }
-    // Require login
+    if (planId === currentTier && !!user) return;
+    if (planId === 'basic') return;
+
     if (!user) {
-      toast({ title: t('userPricing.loginRequired', 'Please sign in first'), description: t('userPricing.loginRequiredDesc', 'You need an account to subscribe to a premium plan.') });
+      toast({ title: 'Please sign in first', description: 'You need an account to subscribe.' });
       navigate('/auth');
       return;
     }
-    // Check price ID configured
-    const priceId = PRICE_IDS[planId];
+
+    const key = `${planId}-${billingPeriod}`;
+    const priceId = PRICE_IDS[key];
     if (!priceId || priceId.startsWith('price_YOUR')) {
       toast({ title: 'Stripe not configured', description: 'Payment is not set up yet. Contact support.' });
       return;
     }
-    // Launch Stripe Checkout
+
     setSelectedPlan(planId);
     checkout.mutate(
       { priceId, successPath: '/dashboard', cancelPath: '/user-pricing' },
-      {
-        onError: (err) => {
-          toast({ title: 'Payment error', description: err.message, variant: 'destructive' });
-        },
-      }
+      { onError: (err) => toast({ title: 'Payment error', description: err.message, variant: 'destructive' }) }
     );
   };
-
-
-  const plans = [
-    {
-      id: "basic",
-      name: t('homePricing.basicName'),
-      duration: t('userPricing.freeForever'),
-      price: 0,
-      originalPrice: null as number | null,
-      badge: t('homePricing.basicBadge'),
-      badgeColor: "bg-secondary",
-      description: t('userPricing.basicDesc'),
-      features: [
-        t('homePricing.basicFeature1'),
-        t('homePricing.basicFeature2'),
-        t('homePricing.basicFeature3'),
-        t('homePricing.basicFeature4'),
-        t('homePricing.basicFeature5'),
-      ],
-      popular: false,
-      icon: Anchor,
-      cta: t('userPricing.getStartedFree'),
-    },
-    {
-      id: "premium-monthly",
-      name: t('homePricing.premiumMonthlyName'),
-      duration: t('userPricing.monthly'),
-      price: 20,
-      originalPrice: null as number | null,
-      badge: t('homePricing.premiumMonthlyBadge'),
-      badgeColor: "bg-gold",
-      description: t('userPricing.premiumMonthlyDesc'),
-      features: [
-        t('homePricing.premiumMonthlyFeature1'),
-        t('homePricing.premiumMonthlyFeature2'),
-        t('homePricing.premiumMonthlyFeature3'),
-        t('homePricing.premiumMonthlyFeature4'),
-        t('homePricing.premiumMonthlyFeature5'),
-        t('homePricing.premiumMonthlyFeature6'),
-        t('homePricing.premiumMonthlyFeature7'),
-        t('homePricing.premiumMonthlyFeature8'),
-        t('homePricing.premiumMonthlyFeature9'),
-        t('homePricing.premiumMonthlyFeature10'),
-        t('homePricing.premiumMonthlyFeature11'),
-        t('homePricing.premiumMonthlyFeature12'),
-        t('homePricing.premiumMonthlyFeature13'),
-        t('homePricing.premiumMonthlyFeature14'),
-      ],
-      popular: false,
-      icon: Ship,
-      cta: t('userPricing.subscribeNow'),
-    },
-    {
-      id: "premium-annual",
-      name: t('homePricing.premiumAnnualName'),
-      duration: t('userPricing.billedAnnually'),
-      price: 8.25,
-      originalPrice: 20,
-      badge: t('homePricing.premiumAnnualBadge'),
-      badgeColor: "bg-success",
-      description: t('userPricing.premiumAnnualDesc'),
-      features: [
-        t('homePricing.premiumAnnualFeature1'),
-        t('homePricing.premiumAnnualFeature2'),
-        t('homePricing.premiumAnnualFeature3'),
-        t('homePricing.premiumAnnualFeature4'),
-        t('homePricing.premiumAnnualFeature5'),
-        t('homePricing.premiumAnnualFeature6'),
-        t('homePricing.premiumAnnualFeature7'),
-        t('homePricing.premiumAnnualFeature8'),
-      ],
-      popular: true,
-      icon: Crown,
-      cta: t('userPricing.bestValueSubscribe'),
-    },
-  ];
-
-  const comparisonFeatures = [
-    { feature: t('homePricing.basicFeature1'), basic: true, premium: true },
-    { feature: t('homePricing.basicFeature3'), basic: true, premium: true },
-    { feature: t('homePricing.basicFeature2'), basic: "10/" + t('cookies.days', 'day'), premium: t('homePricing.premiumMonthlyFeature1') },
-    { feature: t('homePricing.premiumMonthlyFeature2'), basic: false, premium: true },
-    { feature: t('homePricing.premiumMonthlyFeature3'), basic: false, premium: true },
-    { feature: t('homePricing.premiumMonthlyFeature4'), basic: false, premium: true },
-    { feature: t('homePricing.premiumMonthlyFeature7'), basic: false, premium: true },
-    { feature: t('homePricing.premiumMonthlyFeature5'), basic: false, premium: true },
-    { feature: t('homePricing.premiumMonthlyFeature6'), basic: false, premium: true },
-    { feature: t('homePricing.premiumMonthlyFeature9'), basic: false, premium: true },
-    { feature: t('homePricing.premiumMonthlyFeature10'), basic: false, premium: true },
-    { feature: t('homePricing.premiumMonthlyFeature11'), basic: false, premium: true },
-    { feature: t('homePricing.premiumMonthlyFeature12'), basic: false, premium: true },
-    { feature: t('homePricing.premiumMonthlyFeature14'), basic: false, premium: true },
-    { feature: t('homePricing.premiumMonthlyFeature13'), basic: false, premium: true },
-    { feature: t('homePricing.premiumAnnualFeature3'), basic: false, premium: t('userPricing.annual') },
-    { feature: t('homePricing.premiumAnnualFeature7'), basic: false, premium: t('userPricing.annual') },
-  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -166,39 +211,79 @@ const UserPricingPage = () => {
             <div className="max-w-3xl mx-auto text-center">
               <div className="inline-flex items-center gap-2 bg-gold/20 text-gold px-4 py-2 rounded-full mb-6">
                 <Crown size={16} />
-                <span className="text-sm font-medium">{t('userPricing.chooseYourPlan')}</span>
+                <span className="text-sm font-medium">Choose Your Plan</span>
               </div>
               <h1 className="font-heading text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
-                {t('userPricing.heroTitle')}
-                <span className="block text-gold">{t('userPricing.heroHighlight')}</span>
+                Sail Smarter,
+                <span className="block text-gold">Pay Less</span>
               </h1>
               <p className="text-lg text-primary-foreground/80 max-w-2xl mx-auto">
-                {t('userPricing.heroSubtitle')}
+                From free browsing to full fleet management — pick the plan that fits your voyage.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Pricing Cards */}
+        {/* Billing Toggle + Plan Cards */}
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Billing toggle */}
+            <div className="flex items-center justify-center gap-3 mb-10">
+              <span className={cn('text-sm font-medium', billingPeriod === 'monthly' ? 'text-foreground' : 'text-muted-foreground')}>
+                Monthly
+              </span>
+              <button
+                onClick={() => setBillingPeriod(p => p === 'monthly' ? 'annual' : 'monthly')}
+                className="relative w-14 h-7 bg-muted rounded-full transition-colors"
+              >
+                <span className={cn(
+                  'absolute top-0.5 w-6 h-6 bg-primary rounded-full transition-transform',
+                  billingPeriod === 'annual' ? 'translate-x-7' : 'translate-x-0.5'
+                )} />
+              </button>
+              <span className={cn('text-sm font-medium', billingPeriod === 'annual' ? 'text-foreground' : 'text-muted-foreground')}>
+                Annual
+                <span className="ml-1.5 inline-flex items-center bg-success/10 text-success px-2 py-0.5 rounded-full text-xs font-semibold">
+                  Save up to 38%
+                </span>
+              </span>
+            </div>
+
+            {/* Plan cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
               {plans.map((plan) => {
                 const IconComponent = plan.icon;
+                const isCurrentPlan = plan.id === currentTier && !!user;
+                const displayPrice = billingPeriod === 'annual' && plan.annualPrice > 0
+                  ? (plan.annualPrice / 12).toFixed(2)
+                  : plan.monthlyPrice;
+                const billedNote = plan.monthlyPrice === 0
+                  ? ''
+                  : billingPeriod === 'annual'
+                    ? `Billed €${plan.annualPrice}/year`
+                    : 'Billed monthly';
+
                 return (
                   <div
                     key={plan.id}
-                    className={`relative bg-card rounded-2xl p-6 shadow-card transition-all hover:shadow-hover ${plan.popular ? 'ring-2 ring-success scale-105 z-10' : ''
-                      } ${plan.id === currentTier ? 'ring-2 ring-secondary' : ''}`}
+                    className={cn(
+                      'relative bg-card rounded-2xl p-6 shadow-card transition-all hover:shadow-hover',
+                      plan.popular && 'ring-2 ring-blue-500 scale-105 z-10',
+                      isCurrentPlan && 'ring-2 ring-secondary'
+                    )}
                   >
-                    {plan.id === currentTier && user && (
+                    {isCurrentPlan && (
                       <div className="absolute -top-3 right-4 bg-secondary text-primary-foreground px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                        <Check size={12} />
-                        {t('userPricing.currentPlan', 'Current Plan')}
+                        <Check size={12} /> Current Plan
                       </div>
                     )}
+                    {plan.popular && !isCurrentPlan && (
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                        <Star size={12} /> Most Popular
+                      </div>
+                    )}
+
                     <div className={`inline-flex items-center gap-1 ${plan.badgeColor} text-primary-foreground px-3 py-1 rounded-full text-xs font-medium mb-4`}>
-                      {plan.popular && <Star size={12} />}
                       {plan.badge}
                     </div>
 
@@ -206,30 +291,23 @@ const UserPricingPage = () => {
                       <div className="w-12 h-12 bg-gradient-ocean rounded-xl flex items-center justify-center">
                         <IconComponent size={24} className="text-primary-foreground" />
                       </div>
-                      <div>
-                        <h3 className="font-heading font-bold text-foreground">{plan.name}</h3>
-                        <p className="text-sm text-muted-foreground">{plan.duration}</p>
-                      </div>
+                      <h3 className="font-heading font-bold text-foreground">{plan.name}</h3>
                     </div>
 
-                    <div className="mb-4">
-                      <div className="flex items-baseline gap-2">
-                        {plan.originalPrice && (
-                          <span className="text-muted-foreground line-through text-lg">€{plan.originalPrice}</span>
-                        )}
-                        <span className="font-heading text-4xl font-bold text-primary">
-                          {plan.price === 0 ? t('homePricing.basicPrice') : `€${plan.price}`}
-                        </span>
-                        {plan.price > 0 && <span className="text-muted-foreground">{t('homePricing.premiumMonthlyPeriod')}</span>}
-                      </div>
-                      {plan.originalPrice && (
-                        <span className="text-success text-sm font-medium">
-                          {t('pricing.save50')}
-                        </span>
-                      )}
+                    <div className="mb-1">
+                      <span className="font-heading text-3xl font-bold text-primary">
+                        {plan.monthlyPrice === 0 ? 'Free' : `€${displayPrice}`}
+                      </span>
+                      {plan.monthlyPrice > 0 && <span className="text-muted-foreground text-sm">/mo</span>}
                     </div>
+                    {billedNote && (
+                      <p className="text-xs text-muted-foreground mb-4">{billedNote}</p>
+                    )}
+                    {!billedNote && <div className="mb-4" />}
 
-                    <p className="text-sm text-muted-foreground mb-6">{plan.description}</p>
+                    {plan.noBooking && (
+                      <p className="text-xs text-purple-500 font-medium mb-3">AI features only — no booking included</p>
+                    )}
 
                     <ul className="space-y-2 mb-6">
                       {plan.features.map((feature) => (
@@ -242,23 +320,20 @@ const UserPricingPage = () => {
 
                     <Button
                       onClick={() => handleSelectPlan(plan.id)}
-                      disabled={(plan.id === currentTier && !!user) || checkout.isPending}
-                      className={`w-full font-semibold ${plan.id === currentTier && user ? 'bg-muted text-muted-foreground cursor-default'
-                        : plan.popular ? 'bg-success hover:bg-success/90'
-                          : plan.id === 'basic' ? 'bg-secondary hover:bg-secondary/90'
-                            : 'bg-gradient-ocean'
-                        }`}
+                      disabled={isCurrentPlan || checkout.isPending}
+                      className={cn(
+                        'w-full font-semibold',
+                        isCurrentPlan ? 'bg-muted text-muted-foreground cursor-default'
+                          : plan.popular ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                            : plan.id === 'basic' ? 'bg-secondary hover:bg-secondary/90'
+                              : 'bg-gradient-ocean'
+                      )}
                     >
                       {checkout.isPending && selectedPlan === plan.id ? (
                         <span className="flex items-center gap-2 justify-center">
-                          <Loader2 size={16} className="animate-spin" />
-                          Redirecting...
+                          <Loader2 size={16} className="animate-spin" /> Redirecting...
                         </span>
-                      ) : plan.id === currentTier && user ? (
-                        t('userPricing.currentPlan', 'Current Plan')
-                      ) : (
-                        plan.cta
-                      )}
+                      ) : isCurrentPlan ? 'Current Plan' : plan.cta}
                     </Button>
                   </div>
                 );
@@ -270,10 +345,10 @@ const UserPricingPage = () => {
               <div className="bg-gold/10 border border-gold/30 rounded-xl p-6">
                 <div className="flex items-center justify-center gap-2 text-gold mb-2">
                   <Zap size={20} />
-                  <span className="font-heading font-bold">{t('userPricing.referralBonus')}</span>
+                  <span className="font-heading font-bold">Referral Bonus</span>
                 </div>
                 <p className="text-foreground">
-                  {t('userPricing.referralText')} <span className="font-bold text-gold">{t('userPricing.referralDiscount')}</span> {t('userPricing.referralSuffix')}
+                  Invite a friend and both get <span className="font-bold text-gold">€5 off</span> your next month.
                 </p>
               </div>
             </div>
@@ -284,40 +359,30 @@ const UserPricingPage = () => {
         <section className="py-20 bg-muted">
           <div className="container mx-auto px-4">
             <h2 className="font-heading text-3xl font-bold text-foreground text-center mb-12">
-              {t('userPricing.comparisonTitle')}
+              Compare All Plans
             </h2>
-            <div className="max-w-3xl mx-auto">
-              <div className="bg-card rounded-xl overflow-hidden shadow-card">
+            <div className="max-w-6xl mx-auto overflow-x-auto">
+              <div className="bg-card rounded-xl overflow-hidden shadow-card min-w-[700px]">
                 <table className="w-full">
                   <thead className="bg-gradient-ocean text-primary-foreground">
                     <tr>
-                      <th className="text-left p-4 font-heading font-semibold">{t('userPricing.feature')}</th>
-                      <th className="text-center p-4 font-heading font-semibold">{t('userPricing.basicFree')}</th>
-                      <th className="text-right p-4 font-heading font-semibold pr-8">{t('userPricing.premium')}</th>
+                      <th className="text-left p-4 font-heading font-semibold">Feature</th>
+                      <th className="text-center p-3 font-heading font-semibold text-sm">Basic</th>
+                      <th className="text-center p-3 font-heading font-semibold text-sm">AI-Only</th>
+                      <th className="text-center p-3 font-heading font-semibold text-sm">Sailor</th>
+                      <th className="text-center p-3 font-heading font-semibold text-sm">Captain</th>
+                      <th className="text-center p-3 font-heading font-semibold text-sm">Fleet</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {comparisonFeatures.map((row, index) => (
-                      <tr key={row.feature} className={index % 2 === 0 ? 'bg-card' : 'bg-muted/50'}>
-                        <td className="p-4 text-foreground text-sm">{row.feature}</td>
-                        <td className="p-4 text-center">
-                          {row.basic === true ? (
-                            <Check className="text-success mx-auto" size={18} />
-                          ) : row.basic === false ? (
-                            <span className="text-muted-foreground">—</span>
-                          ) : (
-                            <span className="text-warning text-sm">{row.basic}</span>
-                          )}
-                        </td>
-                        <td className="p-4 text-right pr-8">
-                          {row.premium === true ? (
-                            <Check className="text-success ml-auto" size={18} />
-                          ) : typeof row.premium === 'string' ? (
-                            <span className="text-gold text-sm font-medium">{row.premium}</span>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </td>
+                    {comparisonRows.map((row, i) => (
+                      <tr key={row.feature} className={i % 2 === 0 ? 'bg-card' : 'bg-muted/50'}>
+                        <td className="p-4 text-foreground text-sm font-medium">{row.feature}</td>
+                        <td className="p-3 text-center"><CellValue value={row.basic} /></td>
+                        <td className="p-3 text-center"><CellValue value={row.aiOnly} /></td>
+                        <td className="p-3 text-center"><CellValue value={row.sailor} /></td>
+                        <td className="p-3 text-center"><CellValue value={row.captain} /></td>
+                        <td className="p-3 text-center"><CellValue value={row.fleet} /></td>
                       </tr>
                     ))}
                   </tbody>
@@ -332,13 +397,13 @@ const UserPricingPage = () => {
           <div className="container mx-auto px-4 text-center">
             <div className="inline-flex items-center gap-2 bg-secondary/10 text-secondary px-4 py-2 rounded-full mb-6">
               <Wifi size={16} />
-              <span className="text-sm font-medium">{t('userPricing.offlineTitle')}</span>
+              <span className="text-sm font-medium">Offline Ready</span>
             </div>
             <h2 className="font-heading text-3xl font-bold text-foreground mb-4">
-              {t('userPricing.offlineHeading')}
+              Navigate Without Internet
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-              {t('userPricing.offlineText')}
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Download charts and mooring data for offline use. Available on Sailor, Captain, and Charter Fleet plans.
             </p>
           </div>
         </section>
@@ -347,10 +412,10 @@ const UserPricingPage = () => {
         <section className="py-20 bg-gradient-ocean">
           <div className="container mx-auto px-4 text-center">
             <h2 className="font-heading text-3xl font-bold text-primary-foreground mb-6">
-              {t('userPricing.ctaTitle')}
+              Ready to Set Sail?
             </h2>
             <p className="text-primary-foreground/80 mb-8 max-w-xl mx-auto">
-              {t('userPricing.ctaSubtitle')}
+              Join thousands of boaters who book smarter with Mooring Booking.
             </p>
             <Button
               size="lg"
@@ -358,7 +423,7 @@ const UserPricingPage = () => {
               onClick={() => handleSelectPlan('basic')}
             >
               <Zap className="mr-2" size={20} />
-              {t('userPricing.getStartedFree')}
+              Get Started Free
             </Button>
           </div>
         </section>
