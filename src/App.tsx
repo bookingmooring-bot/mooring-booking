@@ -4,7 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 // Remove any Lovable / GPT-engineer injected badges from the DOM
 function useLovableBadgeRemover() {
@@ -26,43 +27,43 @@ function useLovableBadgeRemover() {
       });
     };
     remove();
-    // Also observe for dynamically added elements
     const observer = new MutationObserver(remove);
     observer.observe(document.body, { childList: true, subtree: true });
     return () => observer.disconnect();
   }, []);
 }
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import HowItWorks from "./pages/HowItWorks";
-import About from "./pages/About";
-import BecomeProvider from "./pages/BecomeProvider";
-import Explore from "./pages/Explore";
-import Pricing from "./pages/Pricing";
-import Affiliate from "./pages/Affiliate";
-import Support from "./pages/Support";
-import Blog from "./pages/Blog";
-import Contact from "./pages/Contact";
-import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
-import Cookies from "./pages/Cookies";
-import GDPR from "./pages/GDPR";
-import Admin from "./pages/Admin";
-import AIQualityDashboard from "./pages/AIQualityDashboard";
-import UserPricing from "./pages/UserPricing";
-import SailingManual from "./pages/SailingManual";
-import MarinaPartnership from "./pages/MarinaPartnership";
-import AICaptainPage from "./pages/AICaptainPage";
-import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
-import AddMooring from "./pages/AddMooring";
-import EditMooring from "./pages/EditMooring";
-import Unsubscribe from "./pages/Unsubscribe";
+
+const Index = lazy(() => import("./pages/Index"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const HowItWorks = lazy(() => import("./pages/HowItWorks"));
+const About = lazy(() => import("./pages/About"));
+const BecomeProvider = lazy(() => import("./pages/BecomeProvider"));
+const Explore = lazy(() => import("./pages/Explore"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const Affiliate = lazy(() => import("./pages/Affiliate"));
+const Support = lazy(() => import("./pages/Support"));
+const Blog = lazy(() => import("./pages/Blog"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Cookies = lazy(() => import("./pages/Cookies"));
+const GDPR = lazy(() => import("./pages/GDPR"));
+const Admin = lazy(() => import("./pages/Admin"));
+const AIQualityDashboard = lazy(() => import("./pages/AIQualityDashboard"));
+const UserPricing = lazy(() => import("./pages/UserPricing"));
+const SailingManual = lazy(() => import("./pages/SailingManual"));
+const MarinaPartnership = lazy(() => import("./pages/MarinaPartnership"));
+const AICaptainPage = lazy(() => import("./pages/AICaptainPage"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const AddMooring = lazy(() => import("./pages/AddMooring"));
+const EditMooring = lazy(() => import("./pages/EditMooring"));
+const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
+
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import AppRouteGuard from "./components/AppRouteGuard";
 import AIChatWidget from "./components/AIChatWidget";
-import { useLocation } from "react-router-dom";
 
 // Hide chat widget on public provider/auth pages
 const ConditionalChatWidget = () => {
@@ -84,6 +85,7 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <AppRouteGuard>
+              <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>}>
               <Routes>
                 {/* ─── ALWAYS ACCESSIBLE ─── */}
                 <Route path="/become-provider" element={<BecomeProvider />} />
@@ -115,6 +117,7 @@ const App = () => {
                 <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              </Suspense>
               <ConditionalChatWidget />
             </AppRouteGuard>
           </BrowserRouter>
