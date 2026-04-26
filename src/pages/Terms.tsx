@@ -93,8 +93,8 @@ const TermsPage = () => {
                     </ul>
                     <p className="mt-4"><strong className="text-foreground">{t('terms.forProviders', 'For Providers:')}</strong></p>
                     <ul className="list-disc list-inside space-y-2">
-                      <li>{t('terms.provider1', 'A 15% commission is charged on ALL bookings processed through the Platform')}</li>
-                      <li>{t('terms.provider2', 'Stripe processing fees (approximately 2.9% + €0.30) are deducted from the total booking amount BEFORE the 15/85 commission split')}</li>
+                      <li>{t('terms.provider1', 'A 12% commission is charged on ALL bookings processed through the Platform')}</li>
+                      <li>{t('terms.provider2', 'Stripe processing fees (approximately 2.9% + €0.30) are deducted from the total booking amount BEFORE the 12/88 commission split')}</li>
                       <li>{t('terms.provider3', 'Providers may offer 0-50% discount through the Platform')}</li>
                       <li>{t('terms.provider4', 'Payments are processed within 3-5 business days after checkout')}</li>
                       <li>{t('terms.provider5', 'Monthly invoices are issued for cash booking commissions')}</li>
@@ -116,7 +116,7 @@ const TermsPage = () => {
                       <li>{t('terms.provResp3', 'Respond to booking requests promptly')}</li>
                       <li>{t('terms.provResp4', 'Ensure moorings meet applicable local safety standards')}</li>
                       <li>{t('terms.provResp5', 'Honor all confirmed bookings')}</li>
-                      <li>{t('terms.provResp6', 'Pay the 15% commission on all Platform bookings without exception')}</li>
+                      <li>{t('terms.provResp6', 'Pay the 12% commission on all Platform bookings without exception')}</li>
                       <li>{t('terms.provResp7', 'Sign the right-of-disposal declaration (Izjava o pravu raspolaganja) confirming legal authorization over the mooring')}</li>
                       <li>{t('terms.provResp8', 'Sign the commission payment agreement')}</li>
                       <li>{t('terms.provResp9', 'Maintain valid liability insurance where required by local law')}</li>
@@ -213,7 +213,7 @@ const TermsPage = () => {
                 <div className="bg-card rounded-xl p-8 shadow-card">
                   <h2 className="font-heading text-xl font-bold text-foreground mb-4">{t('terms.subscriptionTitle')}</h2>
                   <div className="space-y-4 text-muted-foreground">
-                    <p>{t('terms.subscriptionText', 'The Platform offers three subscription tiers: Basic (Free), Premium Monthly (€19.99/month), and Premium Annual (€9.99/month billed annually at €119.88).')}</p>
+                    <p>{t('terms.subscriptionText', 'The Platform offers three subscription tiers: Basic (Free), Premium Monthly (€20/month), and Premium Annual (€8.25/month billed annually at €99).')}</p>
                     <ul className="list-disc list-inside space-y-2">
                       <li>{t('terms.sub1', 'Subscriptions auto-renew unless cancelled before the renewal date')}</li>
                       <li>{t('terms.sub2', 'No refunds for partial subscription periods')}</li>
@@ -231,7 +231,7 @@ const TermsPage = () => {
                     <ul className="list-disc list-inside space-y-2">
                       <li>{t('terms.now4today1', 'Now4Today is available for same-day bookings only (01:00 AM to 11:00 PM)')}</li>
                       <li>{t('terms.now4today2', 'A mandatory 20% surcharge is applied to the base price')}</li>
-                      <li>{t('terms.now4today3', 'The 15% platform commission is calculated on the full surcharge-inclusive amount')}</li>
+                      <li>{t('terms.now4today3', 'The 12% platform commission is calculated on the full surcharge-inclusive amount')}</li>
                       <li>{t('terms.now4today4', 'Owners can enable/disable Now4Today from their dashboard')}</li>
                     </ul>
                     <h3 className="font-heading font-semibold text-foreground mt-4">{t('terms.customPricingTitle', 'Custom Daily Pricing')}</h3>

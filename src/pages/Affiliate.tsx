@@ -11,8 +11,8 @@ const AffiliatePage = () => {
   const { t } = useTranslation();
 
   const tiers = [
-    { name: t('affiliate.starter'), commission: "5%", requirement: "0-10 bookings/month", features: [t('affiliate.basicDashboard', 'Basic affiliate dashboard'), t('affiliate.uniqueLink', 'Unique tracking link'), t('affiliate.monthlyPayouts', 'Monthly payouts'), t('affiliate.emailSupportTier', 'Email support')] },
-    { name: t('affiliate.pro'), commission: "10%", requirement: "11-50 bookings/month", features: [t('affiliate.advancedAnalytics', 'Advanced analytics'), t('affiliate.customLanding', 'Custom landing pages'), t('affiliate.biweeklyPayouts', 'Bi-weekly payouts'), t('affiliate.prioritySupportTier', 'Priority support'), t('affiliate.promoMaterials', 'Promotional materials')] },
+    { name: t('affiliate.starter'), commission: "15%", requirement: "0-10 bookings/month", features: [t('affiliate.basicDashboard', 'Basic affiliate dashboard'), t('affiliate.uniqueLink', 'Unique tracking link'), t('affiliate.monthlyPayouts', 'Monthly payouts'), t('affiliate.emailSupportTier', 'Email support')] },
+    { name: t('affiliate.pro'), commission: "15%", requirement: "11-50 bookings/month", features: [t('affiliate.advancedAnalytics', 'Advanced analytics'), t('affiliate.customLanding', 'Custom landing pages'), t('affiliate.biweeklyPayouts', 'Bi-weekly payouts'), t('affiliate.prioritySupportTier', 'Priority support'), t('affiliate.promoMaterials', 'Promotional materials')] },
     { name: t('affiliate.elite'), commission: "15%", requirement: "50+ bookings/month", features: [t('affiliate.vipDashboard', 'VIP dashboard'), t('affiliate.accountManager', 'Dedicated account manager'), t('affiliate.weeklyPayouts', 'Weekly payouts'), t('affiliate.coMarketing', 'Co-marketing opportunities'), t('affiliate.exclusivePromos', 'Exclusive promotions'), t('affiliate.apiAccess', 'API access')] },
   ];
 

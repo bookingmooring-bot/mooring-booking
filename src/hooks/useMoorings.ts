@@ -66,6 +66,7 @@ function dbToFrontend(m: DbMooring): Mooring {
         winterStorageType: m.winter_storage_type as 'wet' | 'dry' | 'both' | undefined,
         winterPriceMonthly: m.winter_price_monthly ? Number(m.winter_price_monthly) : undefined,
         status: m.status,
+        ownerId: m.owner_id ?? undefined,
     };
 }
 

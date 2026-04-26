@@ -49,7 +49,7 @@ function renderEmail(locale: Locale, firstName: string, city: string | null | un
         getTitle: 'What you get:',
         bullets: [
           '✅ Free listing of your moorings',
-          '✅ 85% of earnings are YOURS (15% commission)',
+          '✅ 88% of earnings are YOURS (12% commission)',
           '✅ Reach sailors from 11 Mediterranean countries',
           '✅ Online bookings and availability calendar',
         ],

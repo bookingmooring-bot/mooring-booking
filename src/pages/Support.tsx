@@ -29,7 +29,7 @@ const SupportPage = () => {
       questions: [
         { q: t('support.faq.payQ1', 'What payment methods are accepted?'), a: t('support.faq.payA1', 'We accept Visa, Mastercard, PayPal, and Google Pay. Some moorings also accept cash payment on arrival (commission still applies).') },
         { q: t('support.faq.payQ2', 'Is my payment secure?'), a: t('support.faq.payA2', 'Yes, all payments are processed through Stripe with bank-level encryption. We never store your full card details.') },
-        { q: t('support.faq.payQ3', 'When is the mooring owner paid?'), a: t('support.faq.payA3', 'Owners receive payment 3-5 business days after guest check-out for card payments, minus the 15% platform commission.') },
+        { q: t('support.faq.payQ3', 'When is the mooring owner paid?'), a: t('support.faq.payA3', 'Owners receive payment 3-5 business days after guest check-out for card payments, minus the 12% platform commission.') },
         { q: t('support.faq.payQ4', 'Why do prices vary so much?'), a: t('support.faq.payA4', 'Prices depend on location, season, amenities, and owner preferences. Owners can set custom daily prices via their calendar. Now4Today same-day bookings (01:00 AM–11:00 PM) have a 20% premium to reflect urgent availability.') },
         { q: t('support.faq.payQ5', 'Are there any hidden fees?'), a: t('support.faq.payA5', 'No hidden fees! The price you see includes all platform fees. The only additional costs may be optional services offered by the mooring owner.') },
       ]
@@ -38,7 +38,7 @@ const SupportPage = () => {
       category: t('support.forMooringOwners'),
       questions: [
         { q: t('support.faq.ownerQ1', 'How do I list my mooring?'), a: t('support.faq.ownerA1', 'Click \'Become a Provider\', create an account, and follow the 10-step registration process. It takes about 10 minutes.') },
-        { q: t('support.faq.ownerQ2', 'What is the commission rate?'), a: t('support.faq.ownerA2', 'We charge a flat 15% commission on all bookings. There are no monthly fees or hidden costs. You may offer 0-50% discount to users. Optional add-ons: Marketing Tools (€5/mo), Premium Listing (€9.99/mo), Mooring Insurance (€9.99/yr).') },
+        { q: t('support.faq.ownerQ2', 'What is the commission rate?'), a: t('support.faq.ownerA2', 'We charge a flat 12% commission on all bookings. There are no monthly fees or hidden costs. You may offer 0-50% discount to users. Optional add-ons: Marketing Tools (€5/mo), Premium Listing (€9.99/mo), Mooring Insurance (€9.99/yr).') },
         { q: t('support.faq.ownerQ3', 'How do I manage my calendar?'), a: t('support.faq.ownerA3', 'Access your provider dashboard to update availability, block dates, or set special pricing for peak seasons.') },
         { q: t('support.faq.ownerQ4', 'What if a guest doesn\'t show up?'), a: t('support.faq.ownerA4', 'You keep the full booking amount. Guests who don\'t cancel in time forfeit their payment according to your cancellation policy. No refunds for early departure.') },
         { q: t('support.faq.ownerQ5', 'How do I receive payments?'), a: t('support.faq.ownerA5', 'Payments are automatically transferred to your bank account 3-5 business days after each checkout. You\'ll receive a monthly statement.') },
@@ -58,7 +58,7 @@ const SupportPage = () => {
     {
       category: t('support.affiliateProgram'),
       questions: [
-        { q: t('support.faq.affQ1', 'How does the affiliate program work?'), a: t('support.faq.affA1', 'Sign up for free, get your unique tracking link, and earn 5-15% of our platform\'s 15% service fee for every booking.') },
+        { q: t('support.faq.affQ1', 'How does the affiliate program work?'), a: t('support.faq.affA1', 'Sign up for free, get your unique tracking link, and earn 15% of our platform\'s 15% service fee for every booking.') },
         { q: t('support.faq.affQ2', 'How long does the tracking cookie last?'), a: t('support.faq.affA2', 'Our tracking cookie lasts 30 days. If someone clicks your link and books within 30 days, you\'ll receive commission.') },
         { q: t('support.faq.affQ3', 'What are the minimum payout requirements?'), a: t('support.faq.affA3', 'Minimum payout is €50. Payments are processed monthly via Stripe or bank transfer. Elite affiliates get weekly payouts.') },
         { q: t('support.faq.affQ4', 'Can I promote on social media?'), a: t('support.faq.affA4', 'Yes! We encourage promotion on Instagram, YouTube, TikTok, blogs, and email lists.') },
@@ -75,7 +75,7 @@ const SupportPage = () => {
     {
       category: t('support.subscriptionPlans'),
       questions: [
-        { q: t('support.faq.subQ1', 'What subscription plans are available?'), a: t('support.faq.subA1', 'We offer three tiers: Basic (Free), Premium Monthly (€19.99/mo), and Premium Annual (€9.99/mo, billed €119.88/year).') },
+        { q: t('support.faq.subQ1', 'What subscription plans are available?'), a: t('support.faq.subA1', 'We offer three tiers: Basic (Free), Premium Monthly (€20/mo), and Premium Annual (€8.25/mo, billed €99/year).') },
         { q: t('support.faq.subQ2', 'Do I need to register to use the app?'), a: t('support.faq.subA2', 'Yes, free registration is required for all users. You can start with the free Basic plan and upgrade anytime.') },
         { q: t('support.faq.subQ3', 'Can I switch between plans?'), a: t('support.faq.subA3', 'Yes! You can upgrade from Basic to Premium at any time. Downgrading takes effect at the end of your current billing period.') },
         { q: t('support.faq.subQ4', 'What does Premium include that Basic doesn\'t?'), a: t('support.faq.subA4', 'Premium unlocks unlimited AI Captain, 7-day weather forecasts, offline maps, storm alerts, maneuvering guides, priority booking, and more.') },

@@ -105,7 +105,7 @@ const PricingPage = () => {
                     <span className="text-sm font-medium">{t('pricing.providerPlan')}</span>
                   </div>
                   <div className="font-heading text-5xl md:text-6xl font-bold text-primary-foreground mb-2">
-                    15<span className="text-3xl">%</span>
+                    12<span className="text-3xl">%</span>
                   </div>
                   <p className="text-primary-foreground/80">{t('pricing.commissionPerBooking')}</p>
                 </div>
@@ -186,12 +186,12 @@ const PricingPage = () => {
                   </div>
                   <div className="flex justify-between items-center py-2 text-secondary">
                     <span>{t('pricing.platformCommission')}</span>
-                    <span className="font-heading font-bold">€14.52</span>
+                    <span className="font-heading font-bold">€11.62</span>
                   </div>
                   <div className="border-t-2 border-success/30 my-2" />
                   <div className="flex justify-between items-center py-3 bg-success/5 rounded-lg px-3">
                     <span className="text-foreground font-semibold text-lg">{t('pricing.yourPayout')}</span>
-                    <span className="font-heading font-bold text-success text-xl">€82.28</span>
+                    <span className="font-heading font-bold text-success text-xl">€85.18</span>
                   </div>
                 </div>
               </div>
@@ -199,8 +199,115 @@ const PricingPage = () => {
           </div>
         </section>
 
-        {/* Sailor/Captain Subscription Tiers */}
+        {/* White Label Marina Partner Program */}
         <section className="py-20 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 bg-gold/20 text-gold px-4 py-2 rounded-full mb-6">
+                <Crown size={16} />
+                <span className="text-sm font-medium">{t('pricing.whiteLabel.badge', 'Marina Partner Program')}</span>
+              </div>
+              <h2 className="font-heading text-3xl font-bold text-foreground mb-4">
+                {t('pricing.whiteLabel.title', 'White Label Marina')}
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                {t('pricing.whiteLabel.subtitle', 'Premium partnership for professional marinas. Lower commission, premium listing included, and dedicated support.')}
+              </p>
+            </div>
+
+            <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Up to 50 berths */}
+              <div className="bg-card rounded-2xl p-6 shadow-card border border-gold/30">
+                <div className="inline-flex bg-gold text-primary-foreground px-3 py-1 rounded-full text-xs font-medium mb-4">
+                  {t('pricing.whiteLabel.upTo50', 'Up to 50 Berths')}
+                </div>
+                <h3 className="font-heading text-xl font-bold text-foreground mb-1">
+                  {t('pricing.whiteLabel.upTo50', 'Up to 50 Berths')}
+                </h3>
+                <div className="mb-4">
+                  <span className="font-heading text-4xl font-bold text-primary">€199</span>
+                  <span className="text-muted-foreground">/month</span>
+                </div>
+                <ul className="space-y-2 mb-6 text-sm">
+                  <li className="flex items-start gap-2 text-foreground">
+                    <Check className="text-success flex-shrink-0 mt-0.5" size={14} />
+                    <span>{t('pricing.whiteLabel.commission', '10% commission per booking (vs 12% standard)')}</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-foreground">
+                    <Check className="text-success flex-shrink-0 mt-0.5" size={14} />
+                    <span>{t('pricing.whiteLabel.txFee', '€5 flat fee per completed booking')}</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-foreground">
+                    <Check className="text-success flex-shrink-0 mt-0.5" size={14} />
+                    <span>{t('pricing.whiteLabel.premiumIncluded', 'Premium Listing included free (€9.99/mo value)')}</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-foreground">
+                    <Check className="text-success flex-shrink-0 mt-0.5" size={14} />
+                    <span>{t('pricing.whiteLabel.support', 'Dedicated account manager')}</span>
+                  </li>
+                </ul>
+                <Link to="/dashboard">
+                  <Button className="w-full bg-gradient-ocean font-semibold">
+                    {t('pricing.whiteLabel.upgrade', 'Upgrade to White Label')}
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Over 50 berths */}
+              <div className="bg-card rounded-2xl p-6 shadow-card border border-gold/30 ring-2 ring-gold relative">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gold text-primary-foreground px-4 py-1 rounded-full text-xs font-bold">
+                  {t('pricing.whiteLabel.recommended', 'Recommended')}
+                </div>
+                <div className="inline-flex bg-gold text-primary-foreground px-3 py-1 rounded-full text-xs font-medium mb-4">
+                  {t('pricing.whiteLabel.over50', 'Over 50 Berths')}
+                </div>
+                <h3 className="font-heading text-xl font-bold text-foreground mb-1">
+                  {t('pricing.whiteLabel.over50', 'Over 50 Berths')}
+                </h3>
+                <div className="mb-4">
+                  <span className="font-heading text-4xl font-bold text-primary">€299</span>
+                  <span className="text-muted-foreground">/month</span>
+                </div>
+                <ul className="space-y-2 mb-6 text-sm">
+                  <li className="flex items-start gap-2 text-foreground">
+                    <Check className="text-success flex-shrink-0 mt-0.5" size={14} />
+                    <span>{t('pricing.whiteLabel.commission', '10% commission per booking (vs 12% standard)')}</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-foreground">
+                    <Check className="text-success flex-shrink-0 mt-0.5" size={14} />
+                    <span>{t('pricing.whiteLabel.txFee', '€5 flat fee per completed booking')}</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-foreground">
+                    <Check className="text-success flex-shrink-0 mt-0.5" size={14} />
+                    <span>{t('pricing.whiteLabel.premiumIncluded', 'Premium Listing included free (€9.99/mo value)')}</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-foreground">
+                    <Check className="text-success flex-shrink-0 mt-0.5" size={14} />
+                    <span>{t('pricing.whiteLabel.support', 'Dedicated account manager')}</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-foreground">
+                    <Check className="text-success flex-shrink-0 mt-0.5" size={14} />
+                    <span>{t('pricing.whiteLabel.unlimitedBerths', 'Unlimited berth listings')}</span>
+                  </li>
+                </ul>
+                <Link to="/dashboard">
+                  <Button className="w-full bg-gold text-gold-foreground hover:bg-gold/90 font-semibold">
+                    {t('pricing.whiteLabel.upgrade', 'Upgrade to White Label')}
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            <div className="max-w-2xl mx-auto mt-8 text-center">
+              <p className="text-muted-foreground text-sm">
+                {t('pricing.whiteLabel.savings', 'Save 2% on every booking compared to standard. Premium Listing (€9.99/mo) included free.')}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Sailor/Captain Subscription Tiers */}
+        <section className="py-20 bg-muted">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-2 bg-secondary/10 text-secondary px-4 py-2 rounded-full mb-6">
@@ -244,7 +351,7 @@ const PricingPage = () => {
                 <div className="inline-flex bg-success text-primary-foreground px-3 py-1 rounded-full text-xs font-medium mb-4">{t('pricing.save50')}</div>
                 <h3 className="font-heading text-xl font-bold text-foreground mb-1">{t('homePricing.premiumAnnualName')}</h3>
                 <div className="mb-1">
-                  <span className="text-muted-foreground line-through text-lg">€19.99</span>{" "}
+                  <span className="text-muted-foreground line-through text-lg">€20</span>{" "}
                   <span className="font-heading text-4xl font-bold text-primary">{t('homePricing.premiumAnnualPrice')}</span><span className="text-muted-foreground">{t('homePricing.premiumAnnualPeriod')}</span>
                 </div>
                 <p className="text-success text-sm font-medium mb-4">{t('pricing.billedAnnually')}</p>

@@ -6,9 +6,12 @@ import {
     Trophy,
     Users,
     Loader2,
+    Receipt,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useProviderEarnings, MooringEarning, RawProviderBooking } from '@/hooks/useProviderEarnings';
+import { useProfile } from '@/hooks/useProfile';
+import { isWhiteLabel } from '@/lib/providerTier';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -112,7 +115,7 @@ function BookingStatusBadge({ status }: { status: string }) {
 
 // ─── Per-Mooring Table ───────────────────────────────────────────────────────
 
-function MooringBreakdownTable({ moorings }: { moorings: MooringEarning[] }) {
+function MooringBreakdownTable({ moorings, showTxFees }: { moorings: MooringEarning[]; showTxFees?: boolean }) {
     return (
         <div className="bg-card rounded-2xl shadow-card border border-border overflow-hidden">
             <div className="p-6 border-b border-border">
@@ -139,6 +142,7 @@ function MooringBreakdownTable({ moorings }: { moorings: MooringEarning[] }) {
                                 <th className="px-4 py-3 font-semibold text-right">Nights</th>
                                 <th className="px-4 py-3 font-semibold text-right">Gross</th>
                                 <th className="px-4 py-3 font-semibold text-right">Commission</th>
+                                {showTxFees && <th className="px-4 py-3 font-semibold text-right">Tx Fees</th>}
                                 <th className="px-4 py-3 font-semibold text-right text-secondary">Net</th>
                                 <th className="px-4 py-3 font-semibold text-center">Occupancy</th>
                             </tr>
@@ -167,6 +171,11 @@ function MooringBreakdownTable({ moorings }: { moorings: MooringEarning[] }) {
                                     <td className="px-4 py-3 text-right text-muted-foreground">
                                         −€{fmt(m.commissionPaid)}
                                     </td>
+                                    {showTxFees && (
+                                        <td className="px-4 py-3 text-right text-muted-foreground">
+                                            −€{fmt(m.transactionFeesPaid)}
+                                        </td>
+                                    )}
                                     <td className="px-4 py-3 text-right font-bold text-secondary">
                                         €{fmt(m.netEarnings)}
                                     </td>
@@ -235,7 +244,7 @@ function RecentBookingsList({ bookings }: { bookings: RawProviderBooking[] }) {
                                 <BookingStatusBadge status={b.booking_status} />
                                 <div className="text-right">
                                     <p className="text-secondary font-bold">
-                                        €{fmt(Number(b.total_price) - Number(b.commission_amount))}
+                                        €{fmt(Number(b.total_price) - Number(b.commission_amount) - Number(b.transaction_fee ?? 0))}
                                     </p>
                                     <p className="text-xs text-muted-foreground">net</p>
                                 </div>
@@ -254,6 +263,8 @@ export default function ProviderEarningsDashboard() {
     const [timeRange, setTimeRange] = useState<TimeRange>('all');
     const [filterPaid, setFilterPaid] = useState(false);
 
+    const { data: profile } = useProfile();
+    const wl = isWhiteLabel(profile);
     const { data: earnings, isLoading, error } = useProviderEarnings(filterPaid);
 
     // ── Loading state ──
@@ -282,7 +293,7 @@ export default function ProviderEarningsDashboard() {
         timeRange === 'all'
             ? earnings.netEarnings
             : filteredRecent.reduce(
-                (s, b) => s + Number(b.total_price) - Number(b.commission_amount),
+                (s, b) => s + Number(b.total_price) - Number(b.commission_amount) - Number(b.transaction_fee ?? 0),
                 0
             );
     const displayTotalBookings =
@@ -291,6 +302,10 @@ export default function ProviderEarningsDashboard() {
         timeRange === 'all'
             ? earnings.totalNights
             : filteredRecent.reduce((s, b) => s + Number(b.nights ?? 0), 0);
+    const displayTransactionFees =
+        timeRange === 'all'
+            ? earnings.totalTransactionFees
+            : filteredRecent.reduce((s, b) => s + Number(b.transaction_fee ?? 0), 0);
 
     return (
         <div className="space-y-8 animate-fade-in">
@@ -338,12 +353,12 @@ export default function ProviderEarningsDashboard() {
             </div>
 
             {/* ── KPI Cards ── */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className={`grid grid-cols-2 ${wl ? 'lg:grid-cols-5' : 'lg:grid-cols-4'} gap-4`}>
                 <KpiCard
                     icon={<TrendingUp className="text-secondary" size={20} />}
                     title="Net Earnings"
                     value={`€${fmt(displayNetEarnings)}`}
-                    subtitle="After 15% platform fee"
+                    subtitle={wl ? 'After 10% + €5/booking' : 'After 12% platform fee'}
                     highlight
                 />
                 <KpiCard
@@ -358,6 +373,14 @@ export default function ProviderEarningsDashboard() {
                     value={displayTotalNights.toString()}
                     subtitle="Total booked nights"
                 />
+                {wl && (
+                    <KpiCard
+                        icon={<Receipt className="text-gold" size={20} />}
+                        title="Transaction Fees"
+                        value={`€${fmt(displayTransactionFees)}`}
+                        subtitle={`€5 × ${displayTotalBookings} bookings`}
+                    />
+                )}
                 <KpiCard
                     icon={<Trophy className="text-yellow-500" size={20} />}
                     title="Best Mooring"
@@ -371,7 +394,7 @@ export default function ProviderEarningsDashboard() {
             </div>
 
             {/* ── Per-Mooring Breakdown Table ── */}
-            <MooringBreakdownTable moorings={earnings.byMooring} />
+            <MooringBreakdownTable moorings={earnings.byMooring} showTxFees={wl} />
 
             {/* ── Recent Guest Activity ── */}
             <RecentBookingsList bookings={filteredRecent} />

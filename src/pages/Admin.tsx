@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import {
   TrendingUp, Users, DollarSign, Calendar, AlertCircle, CheckCircle,
   Clock, Download, Filter, Search, Eye, Mail, MoreVertical,
-  ArrowUpRight, Anchor, CreditCard, Check, X
+  ArrowUpRight, Anchor, CreditCard, Check, X, Crown
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -325,6 +325,7 @@ const AdminDashboard = () => {
                     <TableRow>
                       <TableHead>Provider</TableHead>
                       <TableHead>Platform Role</TableHead>
+                      <TableHead>Tier</TableHead>
                       <TableHead>Moorings</TableHead>
                       <TableHead>Bookings</TableHead>
                       <TableHead>Total Revenue</TableHead>
@@ -342,6 +343,15 @@ const AdminDashboard = () => {
                           </div>
                         </TableCell>
                         <TableCell><Badge variant="outline">{provider.role}</Badge></TableCell>
+                        <TableCell>
+                          {provider.provider_tier === 'white-label' ? (
+                            <Badge className="bg-gold/20 text-gold border-gold/30 gap-1">
+                              <Crown size={12} /> White Label
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline">Standard</Badge>
+                          )}
+                        </TableCell>
                         <TableCell>{provider.mooringCount}</TableCell>
                         <TableCell>{provider.totalBookings}</TableCell>
                         <TableCell>€{provider.totalRevenue.toLocaleString()}</TableCell>
@@ -367,7 +377,7 @@ const AdminDashboard = () => {
                     ))}
                     {filteredProviders.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                           No providers found.
                         </TableCell>
                       </TableRow>

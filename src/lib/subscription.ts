@@ -60,7 +60,7 @@ export const canUseFeature = (feature: string, profile: Profile | null | undefin
 /**
  * AI question limit for basic users.
  */
-export const AI_BASIC_LIMIT = 5;
+export const AI_BASIC_LIMIT = 10;
 
 
 /**

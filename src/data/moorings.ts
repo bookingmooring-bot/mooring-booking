@@ -28,6 +28,7 @@ export interface Mooring {
   stripeAccountId?: string;
   activeServices?: string[];
   status?: string;
+  ownerId?: string;
 }
 
 // Comprehensive Mediterranean mooring database - 110+ listings (10+ per country)

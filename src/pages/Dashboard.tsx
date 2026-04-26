@@ -19,6 +19,7 @@ import ProviderSpendingDashboard from "@/components/provider/ProviderSpendingDas
 import ReviewMooringModal from "@/components/rating/ReviewMooringModal";
 import RateGuestModal from "@/components/rating/RateGuestModal";
 import { useStripeConnect } from "@/hooks/useStripeConnect";
+import WhiteLabelUpgradeCard from "@/components/provider/WhiteLabelUpgradeCard";
 
 const Dashboard = () => {
     const { user, signOut } = useAuth();
@@ -335,6 +336,9 @@ const Dashboard = () => {
                         )}
                     </div>
                 </div>
+
+                {/* White Label Upgrade / Status */}
+                <WhiteLabelUpgradeCard />
 
                 {/* Provider Bookings + Mooring List */}
                 <div className="bg-card rounded-2xl p-6 shadow-card border border-border border-l-4 border-l-secondary">

@@ -5,7 +5,16 @@
       "Bash(git push *)",
       "mcp__supabase__get_logs",
       "Bash(curl -s 'https://bblxawscmyzelinidkmb.supabase.co/functions/v1/resolve-fb-lead?fb_lead_id=2194088644760932')",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(git stash *)",
+      "mcp__supabase__list_tables",
+      "Bash(xargs grep *)",
+      "Read(//d/Desktop/Aplikacije1/**)",
+      "Bash(xargs -0 grep -l \"pricing\\\\|subscription\\\\|stripe\\\\|premium\\\\|PREMIUM\\\\|payment\")",
+      "Read(//d/Desktop/Aplikanje1/Mooring Booking/src/hooks/**)",
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "Bash(npx -p typescript tsc --noEmit)",
+      "Read(//mnt/d/Desktop/**)"
     ]
   }
 }

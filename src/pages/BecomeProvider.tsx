@@ -83,8 +83,8 @@ const benefits = [
   {
     icon: Shield,
     title: "Simple & Transparent",
-    description: "Only 15% commission on successful bookings. No upfront costs, no hidden fees.",
-    stat: "15%",
+    description: "Only 12% commission on successful bookings. No upfront costs, no hidden fees.",
+    stat: "12%",
     statLabel: "Fair commission"
   },
   {
@@ -558,8 +558,8 @@ For users:
 - Navigation coordinates are available only after a confirmed, paid booking
 
 For providers:
-- A 15% commission is charged on ALL bookings processed via the Platform
-- Stripe fees (~2.9% + €0.30) are deducted from the total BEFORE the 15/85 split
+- A 12% commission is charged on ALL bookings processed via the Platform
+- Stripe fees (~2.9% + €0.30) are deducted from the total BEFORE the 12/88 split
 - Providers may offer discounts of 0–50% via the Platform
 - Payouts are processed within 3–5 business days after request
 
@@ -570,7 +570,7 @@ Providers agree to:
 - Respond promptly to booking requests
 - Ensure moorings meet local safety standards
 - Honour all confirmed bookings
-- Pay the 15% commission on all bookings without exception
+- Pay the 12% commission on all bookings without exception
 - Sign a declaration of right of disposal
 - Maintain valid liability insurance where required by law
 
@@ -1016,7 +1016,7 @@ Address: Prague, Czech Republic
                     </div>
                     <div className="flex items-center gap-3">
                       <Check className="text-gold flex-shrink-0" size={16} />
-                      <span>85% earnings are yours (only 15% commission)</span>
+                      <span>88% earnings are yours (only 12% commission)</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <Check className="text-gold flex-shrink-0" size={16} />
@@ -1336,7 +1336,7 @@ Address: Prague, Czech Republic
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <Check className="text-gold flex-shrink-0" size={18} />
-                    <span>85% earnings are yours (only 15% commission)</span>
+                    <span>88% earnings are yours (only 12% commission)</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <Check className="text-gold flex-shrink-0" size={18} />
@@ -1388,7 +1388,7 @@ Address: Prague, Czech Republic
                     <h3 className="font-semibold mb-2">Summary of Terms of Use</h3>
                     <ul className="space-y-2 list-disc list-inside text-muted-foreground">
                       <li>I confirm that I am the owner or authorised user of the listed mooring.</li>
-                      <li>I agree to a 15% commission on every confirmed booking.</li>
+                      <li>I agree to a 12% commission on every confirmed booking.</li>
                       <li>I accept the General Terms and Conditions of the Mooring Booking platform.</li>
                       <li>I agree to the transfer of my data in accordance with GDPR.</li>
                       <li>Published photos are my property or I have the right to use them.</li>

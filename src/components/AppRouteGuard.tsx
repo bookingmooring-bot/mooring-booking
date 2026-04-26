@@ -38,6 +38,12 @@ export default function AppRouteGuard({ children }: AppRouteGuardProps) {
     // Wait until auth + profile are resolved
     if (authLoading || profileLoading) return;
 
+    // Admin on become-provider → redirect to dashboard
+    if (profile?.role === "admin" && location.pathname.startsWith("/become-provider")) {
+      navigate("/dashboard", { replace: true });
+      return;
+    }
+
     // Already on an always-allowed path → do nothing
     if (isAllowedPath) return;
 

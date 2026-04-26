@@ -18,6 +18,10 @@ export interface Profile {
     stripe_customer_id?: string | null;
     stripe_account_id?: string | null;
     stripe_onboarding_complete?: boolean | null;
+    provider_tier?: 'standard' | 'white-label';
+    white_label_berth_tier?: 'up-to-50' | 'over-50' | null;
+    white_label_subscription_id?: string | null;
+    white_label_activated_at?: string | null;
     created_at: string;
 }
 

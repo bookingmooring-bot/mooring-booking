@@ -84,6 +84,24 @@ Deno.serve(async (req: Request) => {
           break;
         }
 
+        // Server-side commission recalculation based on provider tier
+        const providerId = bookingData.provider_id as string | undefined;
+        if (providerId) {
+          const { data: providerProfile } = await supabase
+            .from('profiles')
+            .select('provider_tier')
+            .eq('id', providerId)
+            .single();
+
+          const tier = providerProfile?.provider_tier ?? 'standard';
+          const totalPrice = Number(bookingData.total_price ?? 0);
+          const rate = tier === 'white-label' ? 0.10 : 0.12;
+          const txFee = tier === 'white-label' ? 5 : 0;
+
+          bookingData.commission_amount = parseFloat((totalPrice * rate).toFixed(2));
+          bookingData.transaction_fee = txFee;
+        }
+
         // Insert the booking now that payment is confirmed
         const { data: booking, error: insertError } = await supabase
           .from('bookings')
@@ -100,7 +118,7 @@ Deno.serve(async (req: Request) => {
         if (insertError) {
           console.error('Failed to insert booking after payment:', insertError.message, 'session:', session.id);
         } else {
-          console.log('Booking created from payment:', booking.id, 'confirmation:', booking.confirmation_code);
+          console.log('Booking created from payment:', booking.id, 'confirmation:', booking.confirmation_code, 'tier:', providerId ? 'checked' : 'unknown');
         }
         break;
       }

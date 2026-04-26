@@ -6,9 +6,12 @@ import {
     Loader2,
     Anchor,
     Info,
+    Crown,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useProviderSpending, ADDON_PRICES, AddonCostRecord, AddonBreakdown, MooringCostBreakdown } from '@/hooks/useProviderSpending';
+import { useProfile } from '@/hooks/useProfile';
+import { isWhiteLabel, WL_SUBSCRIPTION_PRICES } from '@/lib/providerTier';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -56,7 +59,7 @@ function KpiCard({
 
 // ─── Active Add-ons Panel ─────────────────────────────────────────────────────
 
-function ActiveAddonsPanel({ byAddon }: { byAddon: AddonBreakdown[] }) {
+function ActiveAddonsPanel({ byAddon, isWl }: { byAddon: AddonBreakdown[]; isWl?: boolean }) {
     return (
         <div className="bg-card rounded-2xl shadow-card border border-border overflow-hidden">
             <div className="p-6 border-b border-border flex items-center justify-between">
@@ -96,14 +99,23 @@ function ActiveAddonsPanel({ byAddon }: { byAddon: AddonBreakdown[] }) {
                                     </div>
                                 </div>
                                 <div className="text-left sm:text-right shrink-0">
-                                    <p className="font-bold">
-                                        {addon.addon_type === 'now4today'
-                                            ? '+20% on guest'
-                                            : `€${fmt(meta?.price ?? addon.total_amount)}`}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground">
-                                        {cycleLabel(addon.billing_cycle)}
-                                    </p>
+                                    {isWl && addon.addon_type === 'premium_listing' ? (
+                                        <>
+                                            <p className="font-bold text-gold">Included</p>
+                                            <p className="text-xs text-muted-foreground">in White Label</p>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <p className="font-bold">
+                                                {addon.addon_type === 'now4today'
+                                                    ? '+20% on guest'
+                                                    : `€${fmt(meta?.price ?? addon.total_amount)}`}
+                                            </p>
+                                            <p className="text-xs text-muted-foreground">
+                                                {cycleLabel(addon.billing_cycle)}
+                                            </p>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         );
@@ -230,6 +242,9 @@ function CostHistoryList({ costs }: { costs: AddonCostRecord[] }) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function ProviderSpendingDashboard() {
+    const { data: profile } = useProfile();
+    const wl = isWhiteLabel(profile);
+    const wlPrice = wl ? WL_SUBSCRIPTION_PRICES[profile?.white_label_berth_tier ?? 'up-to-50'] : 0;
     const { data: spending, isLoading, error } = useProviderSpending();
 
     if (isLoading) {
@@ -270,6 +285,23 @@ export default function ProviderSpendingDashboard() {
                 </span>
             </div>
 
+            {/* ── White Label Subscription (if active) ── */}
+            {wl && (
+                <div className="p-4 bg-gold/10 border border-gold/30 rounded-xl flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <Crown size={20} className="text-gold" />
+                        <div>
+                            <p className="font-semibold text-foreground">White Label Marina Subscription</p>
+                            <p className="text-sm text-muted-foreground">
+                                {profile?.white_label_berth_tier === 'over-50' ? 'Over 50 Berths' : 'Up to 50 Berths'}
+                                {' · '}Premium Listing included
+                            </p>
+                        </div>
+                    </div>
+                    <p className="font-bold text-lg text-gold">€{wlPrice}/mo</p>
+                </div>
+            )}
+
             {/* ── KPI Cards ── */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <KpiCard
@@ -282,13 +314,13 @@ export default function ProviderSpendingDashboard() {
                 <KpiCard
                     icon={<Calendar className="text-primary" size={20} />}
                     title="Monthly Recurring"
-                    value={`€${fmt(spending.monthlyRecurring)}/mo`}
-                    subtitle="Active monthly subscriptions"
+                    value={`€${fmt(spending.monthlyRecurring + wlPrice)}/mo`}
+                    subtitle={wl ? 'Add-ons + White Label subscription' : 'Active monthly subscriptions'}
                 />
                 <KpiCard
                     icon={<CreditCard className="text-secondary" size={20} />}
                     title="12-Month Projection"
-                    value={`€${fmt(spending.twelveMonthProjection)}`}
+                    value={`€${fmt(spending.twelveMonthProjection + wlPrice * 12)}`}
                     subtitle="Monthly × 12 + yearly add-ons"
                 />
             </div>
@@ -310,7 +342,7 @@ export default function ProviderSpendingDashboard() {
             )}
 
             {/* ── Active Add-Ons Panel ── */}
-            <ActiveAddonsPanel byAddon={spending.byAddon} />
+            <ActiveAddonsPanel byAddon={spending.byAddon} isWl={wl} />
 
             {/* ── Per-Mooring Costs ── */}
             <MooringCostTable byMooring={spending.byMooring} />

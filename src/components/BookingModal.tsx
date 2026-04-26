@@ -11,6 +11,8 @@ import { useCreateBooking, useMooringAvailability } from "@/hooks/useBookings";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBookingPayment } from "@/hooks/useBookingPayment";
+import { useProviderTier } from "@/hooks/useProviderTier";
+import { calculateBookingFees, getCommissionRate } from "@/lib/providerTier";
 
 interface MooringData {
   id: string;
@@ -25,6 +27,7 @@ interface MooringData {
   lng?: number;
   ownerName?: string;
   ownerPhone?: string;
+  ownerId?: string;
 }
 
 interface BookingModalProps {
@@ -43,6 +46,7 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
   const { data: profile } = useProfile();
   const { user } = useAuth();
   const { data: availabilityData, isLoading: isLoadingAvailability } = useMooringAvailability(mooring.id);
+  const { data: providerTier = 'standard' } = useProviderTier(mooring.ownerId);
 
   const [step, setStep] = useState(1);
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date | undefined }>({
@@ -168,8 +172,9 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
 
   const buildBookingPayload = () => {
     const referralCode = sessionStorage.getItem('referral_code') ?? undefined;
+    const { commissionAmount, transactionFee } = calculateBookingFees(totalPrice, providerTier);
     const affiliateCommission = referralCode
-      ? parseFloat((totalPrice * 0.10).toFixed(2))
+      ? parseFloat((totalPrice * getCommissionRate(providerTier) * 0.15).toFixed(2))
       : undefined;
     return {
       mooring_id: mooring.id,
@@ -183,7 +188,8 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
       nights: Math.max(1, nights),
       price_per_night: discountedPrice,
       total_price: totalPrice,
-      commission_amount: parseFloat((totalPrice * 0.15).toFixed(2)),
+      commission_amount: commissionAmount,
+      transaction_fee: transactionFee,
       is_now4today: mooring.isNow4Today || false,
       referral_code: referralCode,
       affiliate_commission: affiliateCommission,

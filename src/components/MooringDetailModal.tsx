@@ -136,6 +136,7 @@ const MooringDetailModal = ({
                     lng: mooring.lng,
                     ownerName: mooring.ownerName,
                     ownerPhone: mooring.ownerPhone,
+                    ownerId: mooring.ownerId,
                 }}
                 isOpen={true}
                 onClose={() => {

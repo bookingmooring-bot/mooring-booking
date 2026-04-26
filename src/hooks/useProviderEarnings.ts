@@ -13,6 +13,7 @@ export interface RawProviderBooking {
     nights: number;
     total_price: number;
     commission_amount: number;
+    transaction_fee: number;
     guest_name: string;
     guest_email: string;
     boat_name: string | null;
@@ -37,9 +38,10 @@ export interface MooringEarning {
     totalNights: number;
     grossRevenue: number;
     commissionPaid: number;
+    transactionFeesPaid: number;
     netEarnings: number;
     avgNightsPerBooking: number;
-    occupancyRate: number | null; // 0–100 percentage, null if no availability data
+    occupancyRate: number | null;
 }
 
 export interface ProviderEarningsSummary {
@@ -47,6 +49,7 @@ export interface ProviderEarningsSummary {
     totalNights: number;
     grossRevenue: number;
     totalCommission: number;
+    totalTransactionFees: number;
     netEarnings: number;
     bestMooring: MooringEarning | null;
     byMooring: MooringEarning[]; // sorted by netEarnings DESC
@@ -110,7 +113,8 @@ export function useProviderEarnings(filterPaid = false) {
                 .from('bookings')
                 .select(`
           id, mooring_id, user_id, check_in, check_out, nights,
-          total_price, commission_amount, guest_name, guest_email,
+          total_price, commission_amount, transaction_fee,
+          guest_name, guest_email,
           boat_name, boat_length, booking_status, payment_status,
           confirmation_code, created_at,
           moorings (name, location, country)
@@ -152,6 +156,10 @@ export function useProviderEarnings(filterPaid = false) {
                         (sum, b) => sum + Number(b.commission_amount ?? 0),
                         0
                     );
+                    const txFees = mBookings.reduce(
+                        (sum, b) => sum + Number(b.transaction_fee ?? 0),
+                        0
+                    );
                     const nights = mBookings.reduce(
                         (sum, b) => sum + Number(b.nights ?? 0),
                         0
@@ -172,7 +180,8 @@ export function useProviderEarnings(filterPaid = false) {
                         totalNights: nights,
                         grossRevenue: gross,
                         commissionPaid: commission,
-                        netEarnings: gross - commission,
+                        transactionFeesPaid: txFees,
+                        netEarnings: gross - commission - txFees,
                         avgNightsPerBooking:
                             mBookings.length > 0
                                 ? Math.round((nights / mBookings.length) * 10) / 10
@@ -199,13 +208,18 @@ export function useProviderEarnings(filterPaid = false) {
                 (sum, b) => sum + Number(b.commission_amount ?? 0),
                 0
             );
+            const totalTransactionFees = bookings.reduce(
+                (sum, b) => sum + Number(b.transaction_fee ?? 0),
+                0
+            );
 
             return {
                 totalBookings,
                 totalNights,
                 grossRevenue,
                 totalCommission,
-                netEarnings: grossRevenue - totalCommission,
+                totalTransactionFees,
+                netEarnings: grossRevenue - totalCommission - totalTransactionFees,
                 bestMooring: byMooring[0] ?? null,
                 byMooring,
                 recentBookings: bookings.slice(0, 10),

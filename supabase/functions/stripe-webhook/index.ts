@@ -45,10 +45,82 @@ async function updateProfileTier(
   }
 }
 
+const WL_PRICE_IDS = {
+  'up-to-50': Deno.env.get('STRIPE_PRICE_WL_UP_TO_50'),
+  'over-50': Deno.env.get('STRIPE_PRICE_WL_OVER_50'),
+};
+
+function isWhiteLabelPrice(priceId: string): false | 'up-to-50' | 'over-50' {
+  if (priceId === WL_PRICE_IDS['up-to-50']) return 'up-to-50';
+  if (priceId === WL_PRICE_IDS['over-50']) return 'over-50';
+  return false;
+}
+
 function tierFromPriceId(priceId: string): 'premium-monthly' | 'premium-annual' {
   const annualPriceId = Deno.env.get('STRIPE_PRICE_PREMIUM_ANNUAL');
   if (priceId === annualPriceId) return 'premium-annual';
-  return 'premium-monthly'; // default to monthly for any other paid price
+  return 'premium-monthly';
+}
+
+async function activateWhiteLabel(
+  customerId: string,
+  berthTier: 'up-to-50' | 'over-50',
+  subscriptionId: string
+) {
+  const { data: profile, error } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('stripe_customer_id', customerId)
+    .single();
+
+  if (error || !profile) {
+    console.error('No profile for WL activation, customer:', customerId, error?.message);
+    return;
+  }
+
+  const { error: updateError } = await supabase
+    .from('profiles')
+    .update({
+      provider_tier: 'white-label',
+      white_label_berth_tier: berthTier,
+      white_label_subscription_id: subscriptionId,
+      white_label_activated_at: new Date().toISOString(),
+    })
+    .eq('id', profile.id);
+
+  if (updateError) {
+    console.error('Failed to activate WL for profile:', profile.id, updateError.message);
+  } else {
+    console.log(`Activated White Label (${berthTier}) for profile ${profile.id}`);
+  }
+}
+
+async function deactivateWhiteLabel(customerId: string) {
+  const { data: profile, error } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('stripe_customer_id', customerId)
+    .single();
+
+  if (error || !profile) {
+    console.error('No profile for WL deactivation, customer:', customerId, error?.message);
+    return;
+  }
+
+  const { error: updateError } = await supabase
+    .from('profiles')
+    .update({
+      provider_tier: 'standard',
+      white_label_berth_tier: null,
+      white_label_subscription_id: null,
+    })
+    .eq('id', profile.id);
+
+  if (updateError) {
+    console.error('Failed to deactivate WL for profile:', profile.id, updateError.message);
+  } else {
+    console.log(`Deactivated White Label for profile ${profile.id}`);
+  }
 }
 
 async function notifyAdminStripeAlert(
@@ -110,18 +182,33 @@ Deno.serve(async (req: Request) => {
       case 'customer.subscription.updated': {
         const sub = event.data.object as Stripe.Subscription;
         const priceId = sub.items.data[0]?.price.id ?? '';
-        const tier = tierFromPriceId(priceId);
-        const expiresAt =
-          sub.status === 'active' || sub.status === 'trialing'
-            ? new Date(sub.current_period_end * 1000).toISOString()
-            : null;
-        await updateProfileTier(sub.customer as string, tier, expiresAt);
+        const wlTier = isWhiteLabelPrice(priceId);
+
+        if (wlTier) {
+          if (sub.status === 'active' || sub.status === 'trialing') {
+            await activateWhiteLabel(sub.customer as string, wlTier, sub.id);
+          }
+        } else {
+          const tier = tierFromPriceId(priceId);
+          const expiresAt =
+            sub.status === 'active' || sub.status === 'trialing'
+              ? new Date(sub.current_period_end * 1000).toISOString()
+              : null;
+          await updateProfileTier(sub.customer as string, tier, expiresAt);
+        }
         break;
       }
 
       case 'customer.subscription.deleted': {
         const sub = event.data.object as Stripe.Subscription;
-        await updateProfileTier(sub.customer as string, 'basic', null);
+        const priceId = sub.items.data[0]?.price.id ?? '';
+        const wlTier = isWhiteLabelPrice(priceId);
+
+        if (wlTier) {
+          await deactivateWhiteLabel(sub.customer as string);
+        } else {
+          await updateProfileTier(sub.customer as string, 'basic', null);
+        }
         break;
       }
 

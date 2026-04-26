@@ -207,6 +207,7 @@ const ExploreMap = ({ moorings }: ExploreMapProps) => {
             lng: selectedMooring.lng,
             ownerName: selectedMooring.ownerName,
             ownerPhone: selectedMooring.ownerPhone,
+            ownerId: selectedMooring.ownerId,
           }}
           isOpen={isBookingOpen}
           onClose={() => setIsBookingOpen(false)}
