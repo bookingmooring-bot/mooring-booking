@@ -125,6 +125,17 @@ function initialBearing(lat1: number, lng1: number, lat2: number, lng2: number):
     return +((toDeg(Math.atan2(y, x)) + 360) % 360).toFixed(0);
 }
 
+// OpenSeaMap nautical chart link — centers between two points with seamarks layer.
+// OpenSeaMap doesn't have routing; we just position the map so the user sees both
+// points with nautical info (depths, beacons, channels) instead of road routing.
+function buildOpenSeaMapUrl(fromLat: number, fromLng: number, toLat: number, toLng: number, distanceKm: number | null | undefined): string {
+    const midLat = ((fromLat + toLat) / 2).toFixed(4);
+    const midLng = ((fromLng + toLng) / 2).toFixed(4);
+    const km = Number.isFinite(distanceKm as number) ? (distanceKm as number) : 50;
+    const zoom = km < 5 ? 13 : km < 20 ? 11 : km < 50 ? 10 : km < 150 ? 9 : 7;
+    return `https://map.openseamap.org/?zoom=${zoom}&lat=${midLat}&lon=${midLng}`;
+}
+
 function estimateEta(distanceNm: number, speedKnots: number): string {
     if (speedKnots <= 0) return "N/A";
     const hours = distanceNm / speedKnots;
@@ -258,8 +269,6 @@ async function fetchAvailableMoorings(
         }
 
         const top = available.slice(0, 5);
-        const fromLat = userLat.toFixed(4);
-        const fromLng = userLng.toFixed(4);
         const lines = top.map((m, i) => {
             const flag = m.country_flag ? `${m.country_flag} ` : "";
             const amenStr = m.amenities?.length > 0 ? m.amenities.join(", ") : "—";
@@ -271,19 +280,17 @@ async function fetchAvailableMoorings(
             const layer = m.mooring_layer || 'premium';
             const layerBadge = layer === 'concierge' ? " 📞 Concierge" : layer === 'explore' ? " 🧭 Navigate Only" : "";
             const dist = Number.isFinite(m.distance_km) ? ` | 📏 ${m.distance_km.toFixed(1)} km od tebe` : "";
-            const destLat = m.lat.toFixed(4);
-            const destLng = m.lng.toFixed(4);
-            const osmLink = `https://www.openstreetmap.org/directions?from=${fromLat}%2C+${fromLng}&to=${destLat}%2C+${destLng}#map=13/${destLat}/${destLng}`;
+            const seaMapLink = buildOpenSeaMapUrl(userLat, userLng, m.lat, m.lng, m.distance_km);
 
             if (layer === 'explore') {
-                return `${i + 1}. **${m.name}**${layerBadge} — ${flag}${m.location}, ${m.country}\n   Zaštita od vjetra: ${m.wind_protection}${rating}${dist}\n   🧭 Ruta: ${osmLink}\n   ⚠️ Samo navigacijski podatak — nema rezervacije.`;
+                return `${i + 1}. **${m.name}**${layerBadge} — ${flag}${m.location}, ${m.country}\n   Zaštita od vjetra: ${m.wind_protection}${rating}${dist}\n   🧭 Nautička karta: ${seaMapLink}\n   ⚠️ Samo navigacijski podatak — nema rezervacije.`;
             }
 
             const bookLink = layer === 'concierge'
                 ? `https://mooringbooking.com/explore?mooring=${m.id}&checkIn=${checkIn}&checkOut=${checkOut}`
                 : `https://mooringbooking.com/explore?mooring=${m.id}&checkIn=${checkIn}&checkOut=${checkOut}`;
             const bookLabel = layer === 'concierge' ? "📞 Zatraži rezervaciju" : "📌 Rezerviraj";
-            return `${i + 1}. **${m.name}**${verified}${premium}${layerBadge} — ${flag}${m.location}, ${m.country}\n   💰 €${m.price_per_night}/noć${maxBoat ? ` | ${maxBoat}` : ""} | Zaštita od vjetra: ${m.wind_protection}${rating}${dist}${lastMin}\n   🛠️ Pogodnosti: ${amenStr}\n   🧭 Ruta: ${osmLink}\n   ${bookLabel}: ${bookLink}`;
+            return `${i + 1}. **${m.name}**${verified}${premium}${layerBadge} — ${flag}${m.location}, ${m.country}\n   💰 €${m.price_per_night}/noć${maxBoat ? ` | ${maxBoat}` : ""} | Zaštita od vjetra: ${m.wind_protection}${rating}${dist}${lastMin}\n   🛠️ Pogodnosti: ${amenStr}\n   🧭 Nautička karta: ${seaMapLink}\n   ${bookLabel}: ${bookLink}`;
         });
 
         return {
@@ -806,39 +813,51 @@ async function ensureConversationId(
     }
 }
 
-interface ChatMessageRow {
-    conversation_id: string;
-    user_id: string;
-    role: "user" | "assistant";
-    content: string;
-    intent?: string | null;
-    confidence?: number | null;
-    metadata?: Record<string, unknown>;
+// Atomic persist via RPC. Trigger on ai_chat_messages handles title + counters.
+// Returns the resolved conversation id (server may have minted a new one) or null on failure.
+interface PersistArgs {
+    userId: string;
+    conversationId: string | null;
+    userContent: string;
+    assistantContent: string;
+    intent: Intent;
+    confidence: number | null;
+    assistantMetadata: Record<string, unknown>;
 }
 
-async function insertChatMessages(rows: ChatMessageRow[]): Promise<void> {
-    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return;
-    if (rows.length === 0) return;
+async function persistChatPair(args: PersistArgs): Promise<string | null> {
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return null;
     try {
         const controller = new AbortController();
-        const tid = setTimeout(() => controller.abort(), 2500);
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/ai_chat_messages`, {
+        const tid = setTimeout(() => controller.abort(), 4000);
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/persist_chat_pair`, {
             method: "POST",
             headers: {
                 "apikey": SUPABASE_SERVICE_ROLE_KEY,
                 "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
                 "Content-Type": "application/json",
-                "Prefer": "return=minimal",
             },
             signal: controller.signal,
-            body: JSON.stringify(rows),
+            body: JSON.stringify({
+                p_user_id: args.userId,
+                p_conversation_id: args.conversationId,
+                p_user_content: args.userContent,
+                p_assistant_content: args.assistantContent,
+                p_intent: args.intent,
+                p_confidence: args.confidence,
+                p_assistant_metadata: args.assistantMetadata,
+            }),
         });
         clearTimeout(tid);
         if (!res.ok) {
-            console.error("ai_chat_messages insert failed:", res.status, await res.text());
+            console.error("persist_chat_pair failed:", res.status, await res.text());
+            return null;
         }
+        const data = await res.json();
+        return typeof data === "string" ? data : null;
     } catch (e) {
-        console.error("insertChatMessages error:", (e as Error).message);
+        console.error("persistChatPair error:", (e as Error).message);
+        return null;
     }
 }
 
@@ -1332,11 +1351,11 @@ ${preferencesBlock}
 1. ALWAYS reply in the SAME language as user's last message.
 2. NIKAD ne ponavljaj pozdrav korisnika kao cijeli odgovor. Kad korisnik napiše samo pozdrav, predstavi se kratko i PITAJ što ga zanima.
 3. Za vrijeme: koristi podatke iz "TRENUTNI STATUS" (čv, °C, hPa, m, Beaufort). NIKAD ne traži od korisnika meteorološke podatke — vjetar, valove, temperaturu i tlak ti već imaš iz Windy-a. Samo traži datum/period ili odredište ako je potrebno.
-4. Za navigaciju/rute: NM, procijenjeno trajanje, ključne točke. **UVIJEK na kraju daj kliktabilan OpenStreetMap link za vodjenje** u formatu:
-   https://www.openstreetmap.org/directions?from=${lat.toFixed(4)}%2C+${lng.toFixed(4)}&to=DEST_LAT%2C+DEST_LNG#map=13/DEST_LAT/DEST_LNG
-   — zamijeni DEST_LAT i DEST_LNG s koordinatama odredišta (iz "PRETRAGA VEZOVA" ili poznatih marina). Ako nema konkretnog odredišta — ne dodaji link. NIKAD ne preporučuj Google/Apple Maps niti druge servise.
+4. Za navigaciju/rute: NM, procijenjeno trajanje, ključne točke. **UVIJEK na kraju daj kliktabilan OpenSeaMap link** za nautičku kartu (oznake plovnih puteva, dubine, svjetionici) u formatu:
+   https://map.openseamap.org/?zoom=ZZ&lat=MID_LAT&lon=MID_LNG
+   — gdje je MID_LAT/MID_LNG sredina između tvoje pozicije (${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E) i odredišta. Zoom ZZ: 13 ako udaljenost <5 km, 11 ako <20 km, 10 ako <50 km, 9 ako <150 km, 7 inače. **NIKAD ne koristi openstreetmap.org/directions** — ti rutaju po kopnu, beskorisni za more. Ne preporučuj Google/Apple Maps niti druge servise.
 5. Za kvarove: strukturiraj kao 🔍 Dijagnoza → ⚠️ Sigurnost → 🔎 Provjeri → 🛠️ Popravak → 🏪 Mehaničar ako. Koristi "RELEVANTNO ZNANJE" ako je dostupno. (U "bullets" stilu — isti koraci, ali jedan bullet po koraku, bez emoji naslova.)
-6. Za vez/rezervaciju: navedi slobodne vezove iz "PRETRAGA VEZOVA" s imenom, lokacijom, cijenom. **OBAVEZNO prepiši i 🧭 Ruta: link doslovno iz priloženih podataka** (to je kliktabilan OpenStreetMap link za navigaciju).
+6. Za vez/rezervaciju: navedi slobodne vezove iz "PRETRAGA VEZOVA" s imenom, lokacijom, cijenom. **OBAVEZNO prepiši i 🧭 Nautička karta: link doslovno iz priloženih podataka** (to je kliktabilan OpenSeaMap link sa nautičkim oznakama).
 7. Hitni slučajevi (MAYDAY, SOS, tonuće): odmah daj VHF Ch.16 + MRCC broj iz "HITNI KONTAKT". **Hitnost nadjačava sve stilske preferencije** — koristi jasne korake, bez obzira na "bullets/detailed" postavku.
 8. Format: prilagodi "KORISNIČKIM PREFERENCIJAMA". Ako nema preferencije — koristi emoji naslove i numerirane liste.
 9. Završi sve rečenice.
@@ -1446,36 +1465,27 @@ H) DIJAGNOSTIKA: Daj KOMPLETNU dijagnostičku proceduru: 🔍 Dijagnoza → ⚠�
             emergency: intent === "EMERGENCY",
         });
 
-        // FAZA 8: persist user+assistant pair for authenticated users.
-        // Fire-and-forget-ish: await so the rows exist before the client re-fetches,
-        // but don't fail the response if the write errors.
-        if (userId && activeConversationId && lastUserMsg) {
-            await insertChatMessages([
-                {
-                    conversation_id: activeConversationId,
-                    user_id: userId,
-                    role: "user",
-                    content: lastUserMsg,
-                    metadata: {},
+        // FAZA 8: atomic persist of user+assistant pair via RPC. Trigger on
+        // ai_chat_messages sets title from first user message and bumps counters.
+        if (userId && lastUserMsg) {
+            const persistedId = await persistChatPair({
+                userId,
+                conversationId: activeConversationId,
+                userContent: lastUserMsg,
+                assistantContent: reply,
+                intent,
+                confidence,
+                assistantMetadata: {
+                    sources,
+                    weather: intent === "CHECK_WEATHER" ? weather : null,
+                    forecast: intent === "CHECK_WEATHER" ? forecastResult.forecast : null,
+                    navData,
+                    mayday: maydayPayload,
+                    flags,
+                    qualityId,
                 },
-                {
-                    conversation_id: activeConversationId,
-                    user_id: userId,
-                    role: "assistant",
-                    content: reply,
-                    intent,
-                    confidence,
-                    metadata: {
-                        sources,
-                        weather: intent === "CHECK_WEATHER" ? weather : null,
-                        forecast: intent === "CHECK_WEATHER" ? forecastResult.forecast : null,
-                        navData,
-                        mayday: maydayPayload,
-                        flags,
-                        qualityId,
-                    },
-                },
-            ]);
+            });
+            if (persistedId) activeConversationId = persistedId;
         }
 
         return new Response(JSON.stringify({
