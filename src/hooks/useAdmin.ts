@@ -149,6 +149,77 @@ export function useUpdateMooringStatus() {
     });
 }
 
+// ─── Admin: All Users (with auth provider, fb lead, mooring layers) ───
+
+export interface AdminUser {
+    id: string;
+    full_name: string | null;
+    email: string | null;
+    phone: string | null;
+    avatar_url: string | null;
+    role: string;
+    subscription_tier: string;
+    provider_tier: string | null;
+    auth_provider: 'google' | 'apple' | 'email' | 'fb_lead';
+    fb_lead_status: string | null;
+    fb_campaign_name: string | null;
+    mooring_layers: string[] | null;
+    mooring_count: number;
+    created_at: string;
+}
+
+export function useAdminAllUsers() {
+    const { user } = useAuth();
+
+    return useQuery({
+        queryKey: ['admin', 'all-users'],
+        queryFn: async () => {
+            const { data, error } = await supabase.rpc('admin_get_all_users');
+            if (error) throw error;
+            return (data ?? []) as AdminUser[];
+        },
+        enabled: !!user,
+    });
+}
+
+// ─── Admin: FB Leads ───
+
+export interface FbLead {
+    id: string;
+    fb_lead_id: string | null;
+    fb_form_id: string | null;
+    fb_ad_id: string | null;
+    fb_campaign_name: string | null;
+    full_name: string | null;
+    email: string | null;
+    phone: string | null;
+    city: string | null;
+    country: string | null;
+    has_mooring: boolean;
+    mooring_type: string | null;
+    mooring_quantities: any;
+    status: string;
+    user_id: string | null;
+    invite_email_sent: boolean;
+    invite_email_sent_at: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export function useAdminFbLeads() {
+    const { user } = useAuth();
+
+    return useQuery({
+        queryKey: ['admin', 'fb-leads'],
+        queryFn: async () => {
+            const { data, error } = await supabase.rpc('admin_get_fb_leads');
+            if (error) throw error;
+            return (data ?? []) as FbLead[];
+        },
+        enabled: !!user,
+    });
+}
+
 export function useUpdateCommissionStatus() {
     const queryClient = useQueryClient();
 

@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import {
   TrendingUp, Users, DollarSign, Calendar, AlertCircle, CheckCircle,
   Clock, Download, Filter, Search, Eye, Mail, MoreVertical,
-  ArrowUpRight, Anchor, CreditCard, Check, X, Crown
+  ArrowUpRight, Anchor, CreditCard, Check, X, Crown, UserPlus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,18 +30,30 @@ import {
   useAdminCommissions,
   useAdminPendingMoorings,
   useUpdateMooringStatus,
-  useUpdateCommissionStatus
+  useUpdateCommissionStatus,
+  useAdminAllUsers,
 } from "@/hooks/useAdmin";
 import { useAllBookings } from "@/hooks/useBookings";
 import { format } from "date-fns";
 import AffiliateAdminTable from "@/components/admin/AffiliateAdminTable";
+import FbLeadsTable from "@/components/admin/FbLeadsTable";
+import AuthProviderBadge from "@/components/admin/AuthProviderBadge";
+import MooringLayerBadge from "@/components/admin/MooringLayerBadge";
+import SubscriptionTierBadge from "@/components/admin/SubscriptionTierBadge";
+import type { MooringLayer } from "@/lib/mooringLayer";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const AdminDashboard = () => {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
+  const [userSearch, setUserSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [authFilter, setAuthFilter] = useState("all");
+  const [usersSubTab, setUsersSubTab] = useState("all-users");
 
   const { data: providers = [], isLoading: loadingProviders } = useAdminProviders();
+  const { data: allUsers = [], isLoading: loadingUsers } = useAdminAllUsers();
   const { data: commissions = [], isLoading: loadingCommissions } = useAdminCommissions();
   const { data: pendingMoorings = [], isLoading: loadingPending } = useAdminPendingMoorings();
   const { data: bookings = [], isLoading: loadingBookings } = useAllBookings();
@@ -84,6 +96,14 @@ const AdminDashboard = () => {
       color: "text-primary"
     },
     {
+      title: "Total Users",
+      value: allUsers.length.toLocaleString(),
+      change: `${allUsers.filter(u => u.auth_provider === 'fb_lead').length} from FB`,
+      trend: "up",
+      icon: UserPlus,
+      color: "text-purple-500"
+    },
+    {
       title: t('admin.pendingCommissions') || "Pending Commissions",
       value: `€${totalPendingCommissions.toLocaleString()}`,
       change: "Needs attention",
@@ -123,6 +143,24 @@ const AdminDashboard = () => {
     p.email?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const filteredUsers = useMemo(() => {
+    return allUsers.filter((u) => {
+      const matchesRole = roleFilter === 'all' || u.role === roleFilter;
+      const matchesAuth = authFilter === 'all' || u.auth_provider === authFilter;
+      const q = userSearch.toLowerCase();
+      const matchesSearch =
+        !q ||
+        u.full_name?.toLowerCase().includes(q) ||
+        u.email?.toLowerCase().includes(q);
+      return matchesRole && matchesAuth && matchesSearch;
+    });
+  }, [allUsers, userSearch, roleFilter, authFilter]);
+
+  const usersByProvider = useMemo(() => {
+    const map = new Map(allUsers.map((u) => [u.id, u]));
+    return map;
+  }, [allUsers]);
+
   return (
     <div className="min-h-screen bg-muted">
       <Header />
@@ -143,7 +181,7 @@ const AdminDashboard = () => {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
             {stats.map((stat) => (
               <div key={stat.title} className="bg-card rounded-xl p-6 shadow-card">
                 <div className="flex items-center justify-between mb-4">
@@ -161,6 +199,12 @@ const AdminDashboard = () => {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             <TabsList className="bg-card shadow-card overflow-x-auto flex-nowrap w-full justify-start md:justify-center">
               <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="users">
+                <Users size={14} className="mr-1" /> Users
+                <span className="ml-1.5 bg-primary/20 text-primary text-[10px] px-1.5 py-0.5 rounded-full">
+                  {allUsers.length}
+                </span>
+              </TabsTrigger>
               <TabsTrigger value="approvals" className="relative">
                 Approvals
                 {pendingMoorings.length > 0 && (
@@ -231,6 +275,131 @@ const AdminDashboard = () => {
               </div>
             </TabsContent>
 
+            {/* Users Tab */}
+            <TabsContent value="users" className="space-y-6">
+              {/* Sub-tabs: All Users / FB Leads */}
+              <Tabs value={usersSubTab} onValueChange={setUsersSubTab}>
+                <TabsList className="bg-card shadow-card">
+                  <TabsTrigger value="all-users">All Users</TabsTrigger>
+                  <TabsTrigger value="fb-leads">FB Leads</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="all-users">
+                  <div className="bg-card rounded-xl p-6 shadow-card space-y-4">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                      <h3 className="font-heading font-semibold text-lg">
+                        All Users ({filteredUsers.length})
+                      </h3>
+                      <div className="flex flex-wrap gap-3">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+                          <Input
+                            placeholder="Search users..."
+                            value={userSearch}
+                            onChange={(e) => setUserSearch(e.target.value)}
+                            className="pl-9 w-56"
+                          />
+                        </div>
+                        <Select value={roleFilter} onValueChange={setRoleFilter}>
+                          <SelectTrigger className="w-36">
+                            <SelectValue placeholder="Role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Roles</SelectItem>
+                            <SelectItem value="user">User</SelectItem>
+                            <SelectItem value="provider">Provider</SelectItem>
+                            <SelectItem value="admin">Admin</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select value={authFilter} onValueChange={setAuthFilter}>
+                          <SelectTrigger className="w-36">
+                            <SelectValue placeholder="Auth" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Sources</SelectItem>
+                            <SelectItem value="email">Email</SelectItem>
+                            <SelectItem value="google">Google</SelectItem>
+                            <SelectItem value="apple">Apple</SelectItem>
+                            <SelectItem value="fb_lead">FB Lead</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>User</TableHead>
+                          <TableHead>Auth Provider</TableHead>
+                          <TableHead>Role</TableHead>
+                          <TableHead>Subscription</TableHead>
+                          <TableHead>Mooring Layers</TableHead>
+                          <TableHead>Moorings</TableHead>
+                          <TableHead>Created</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {loadingUsers ? (
+                          <TableRow>
+                            <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
+                              Loading users...
+                            </TableCell>
+                          </TableRow>
+                        ) : filteredUsers.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
+                              No users found.
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          filteredUsers.map((u) => (
+                            <TableRow key={u.id}>
+                              <TableCell>
+                                <p className="font-medium">{u.full_name || 'Unnamed'}</p>
+                                <p className="text-muted-foreground text-xs">{u.email}</p>
+                              </TableCell>
+                              <TableCell>
+                                <AuthProviderBadge provider={u.auth_provider} />
+                                {u.fb_campaign_name && (
+                                  <p className="text-[10px] text-muted-foreground mt-1 truncate max-w-[140px]">
+                                    {u.fb_campaign_name}
+                                  </p>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="outline" className="capitalize">{u.role}</Badge>
+                              </TableCell>
+                              <TableCell>
+                                <SubscriptionTierBadge tier={u.subscription_tier} />
+                              </TableCell>
+                              <TableCell>
+                                {u.mooring_layers && u.mooring_layers.length > 0 ? (
+                                  <div className="flex flex-wrap gap-1">
+                                    {u.mooring_layers.map((layer) => (
+                                      <MooringLayerBadge key={layer} layer={layer as MooringLayer} />
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <span className="text-muted-foreground text-sm">-</span>
+                                )}
+                              </TableCell>
+                              <TableCell>{u.mooring_count}</TableCell>
+                              <TableCell className="text-muted-foreground text-sm">
+                                {format(new Date(u.created_at), 'MMM d, yyyy')}
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="fb-leads">
+                  <FbLeadsTable />
+                </TabsContent>
+              </Tabs>
+            </TabsContent>
+
             {/* Approvals Tab */}
             <TabsContent value="approvals">
               <div className="bg-card rounded-xl p-6 shadow-card">
@@ -245,6 +414,7 @@ const AdminDashboard = () => {
                       <TableHead>Provider Info</TableHead>
                       <TableHead>Location</TableHead>
                       <TableHead>Price / Night</TableHead>
+                      <TableHead>Layer</TableHead>
                       <TableHead>Submitted</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
@@ -270,6 +440,16 @@ const AdminDashboard = () => {
                         </TableCell>
                         <TableCell>{mooring.location}, {mooring.country}</TableCell>
                         <TableCell>€{mooring.price_per_night}</TableCell>
+                        <TableCell>
+                          {mooring.mooring_layer ? (
+                            <div className="flex flex-col gap-1">
+                              <MooringLayerBadge layer={mooring.mooring_layer as MooringLayer} />
+                              {mooring.data_source && mooring.data_source !== 'manual' && (
+                                <Badge variant="outline" className="text-[10px] w-fit">{mooring.data_source}</Badge>
+                              )}
+                            </div>
+                          ) : '-'}
+                        </TableCell>
                         <TableCell>{format(new Date(mooring.created_at), 'MMM d, yyyy')}</TableCell>
                         <TableCell className="text-right space-x-2">
                           <Button
@@ -293,7 +473,7 @@ const AdminDashboard = () => {
                     ))}
                     {pendingMoorings.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                           No moorings waiting for approval.
                         </TableCell>
                       </TableRow>
@@ -324,8 +504,10 @@ const AdminDashboard = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Provider</TableHead>
+                      <TableHead>Source</TableHead>
                       <TableHead>Platform Role</TableHead>
                       <TableHead>Tier</TableHead>
+                      <TableHead>Mooring Layers</TableHead>
                       <TableHead>Moorings</TableHead>
                       <TableHead>Bookings</TableHead>
                       <TableHead>Total Revenue</TableHead>
@@ -342,6 +524,12 @@ const AdminDashboard = () => {
                             <p className="text-muted-foreground text-sm">{provider.email}</p>
                           </div>
                         </TableCell>
+                        <TableCell>
+                          {(() => {
+                            const enriched = usersByProvider.get(provider.id);
+                            return enriched ? <AuthProviderBadge provider={enriched.auth_provider} /> : '-';
+                          })()}
+                        </TableCell>
                         <TableCell><Badge variant="outline">{provider.role}</Badge></TableCell>
                         <TableCell>
                           {provider.provider_tier === 'white-label' ? (
@@ -351,6 +539,19 @@ const AdminDashboard = () => {
                           ) : (
                             <Badge variant="outline">Standard</Badge>
                           )}
+                        </TableCell>
+                        <TableCell>
+                          {(() => {
+                            const enriched = usersByProvider.get(provider.id);
+                            if (!enriched?.mooring_layers?.length) return <span className="text-muted-foreground text-sm">-</span>;
+                            return (
+                              <div className="flex flex-wrap gap-1">
+                                {enriched.mooring_layers.map((l) => (
+                                  <MooringLayerBadge key={l} layer={l as MooringLayer} />
+                                ))}
+                              </div>
+                            );
+                          })()}
                         </TableCell>
                         <TableCell>{provider.mooringCount}</TableCell>
                         <TableCell>{provider.totalBookings}</TableCell>
@@ -377,7 +578,7 @@ const AdminDashboard = () => {
                     ))}
                     {filteredProviders.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
                           No providers found.
                         </TableCell>
                       </TableRow>
