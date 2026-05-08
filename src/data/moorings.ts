@@ -36,4 +36,11 @@ export interface Mooring {
   dataSource?: 'manual' | 'osm' | 'google_maps' | 'registry';
   contactEmail?: string;
   contactPhone?: string;
+  address?: string;
+  mooringUnits?: number;
+  maxBoatLength?: number;
+  maxDraft?: number;
+  maxBeam?: number;
+  vhfChannel?: string;
+  operatingHours?: string;
 }

@@ -40,6 +40,13 @@ export interface DbMooring {
     data_source: string | null;
     contact_email: string | null;
     contact_phone: string | null;
+    address: string | null;
+    mooring_units: number | null;
+    max_boat_length: number | null;
+    max_draft: number | null;
+    max_beam: number | null;
+    vhf_channel: string | null;
+    operating_hours: string | null;
 }
 
 // Convert DB mooring to the frontend Mooring interface
@@ -59,7 +66,7 @@ function dbToFrontend(m: DbMooring): Mooring {
         isPremiumListing: m.is_premium_listing || false,
         isMarketingTools: m.marketing_tools || false,
         isMooringInsurance: m.insurance_mediation || false,
-        windProtection: m.wind_protection as Mooring['windProtection'],
+        windProtection: (m.wind_protection || 'good') as Mooring['windProtection'],
         amenities: m.amenities || [],
         image: m.image_urls?.[0] || '',
         distance: '', // Not stored in DB
@@ -78,6 +85,13 @@ function dbToFrontend(m: DbMooring): Mooring {
         dataSource: m.data_source as Mooring['dataSource'],
         contactEmail: m.contact_email ?? undefined,
         contactPhone: m.contact_phone ?? undefined,
+        address: m.address ?? undefined,
+        mooringUnits: m.mooring_units ?? undefined,
+        maxBoatLength: m.max_boat_length ? Number(m.max_boat_length) : undefined,
+        maxDraft: m.max_draft ? Number(m.max_draft) : undefined,
+        maxBeam: m.max_beam ? Number(m.max_beam) : undefined,
+        vhfChannel: m.vhf_channel ?? undefined,
+        operatingHours: m.operating_hours ?? undefined,
     };
 }
 

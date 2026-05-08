@@ -16,6 +16,11 @@ import {
     ShowerHead,
     Fuel,
     Toilet,
+    Mail,
+    Clock,
+    Radio,
+    Ruler,
+    Ship,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -52,6 +57,15 @@ interface MooringDetailModalProps {
         winterPriceMonthly?: number;
         mooringLayer?: MooringLayer;
         ownerId?: string;
+        contactEmail?: string;
+        contactPhone?: string;
+        address?: string;
+        mooringUnits?: number;
+        maxBoatLength?: number;
+        maxDraft?: number;
+        maxBeam?: number;
+        vhfChannel?: string;
+        operatingHours?: string;
     };
     isOpen: boolean;
     onClose: () => void;
@@ -120,7 +134,7 @@ const MooringDetailModal = ({
         ? Math.round(mooring.price * (1 - mooring.discountPercent / 100))
         : mooring.price;
 
-    const windCfg = windProtectionConfig[mooring.windProtection];
+    const windCfg = windProtectionConfig[mooring.windProtection] ?? windProtectionConfig.good;
 
     const handleBookNow = () => {
         setIsBookingOpen(true);
@@ -367,6 +381,82 @@ const MooringDetailModal = ({
                             </span>
                         </div>
                     </div>
+
+                    {/* Marina specs */}
+                    {(mooring.mooringUnits || mooring.maxBoatLength || mooring.maxDraft || mooring.maxBeam) && (
+                        <div>
+                            <h3 className="font-heading font-semibold text-foreground mb-2">
+                                Marina Specifications
+                            </h3>
+                            <div className="grid grid-cols-2 gap-2">
+                                {mooring.mooringUnits && (
+                                    <div className="flex items-center gap-2.5 bg-muted/50 rounded-lg px-3 py-2.5">
+                                        <Anchor size={16} className="text-secondary" />
+                                        <span className="text-sm text-foreground">{mooring.mooringUnits} berths</span>
+                                    </div>
+                                )}
+                                {mooring.maxBoatLength && (
+                                    <div className="flex items-center gap-2.5 bg-muted/50 rounded-lg px-3 py-2.5">
+                                        <Ruler size={16} className="text-secondary" />
+                                        <span className="text-sm text-foreground">Max LOA {mooring.maxBoatLength}m</span>
+                                    </div>
+                                )}
+                                {mooring.maxDraft && (
+                                    <div className="flex items-center gap-2.5 bg-muted/50 rounded-lg px-3 py-2.5">
+                                        <Ship size={16} className="text-secondary" />
+                                        <span className="text-sm text-foreground">Max draft {mooring.maxDraft}m</span>
+                                    </div>
+                                )}
+                                {mooring.maxBeam && (
+                                    <div className="flex items-center gap-2.5 bg-muted/50 rounded-lg px-3 py-2.5">
+                                        <Ruler size={16} className="text-secondary" />
+                                        <span className="text-sm text-foreground">Max beam {mooring.maxBeam}m</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Contact & operations */}
+                    {(mooring.contactPhone || mooring.contactEmail || mooring.vhfChannel || mooring.operatingHours || mooring.address) && (
+                        <div>
+                            <h3 className="font-heading font-semibold text-foreground mb-2">
+                                Contact & Info
+                            </h3>
+                            <div className="space-y-2">
+                                {mooring.address && (
+                                    <div className="flex items-center gap-2.5 bg-muted/50 rounded-lg px-3 py-2.5">
+                                        <MapPin size={16} className="text-secondary flex-shrink-0" />
+                                        <span className="text-sm text-foreground">{mooring.address}</span>
+                                    </div>
+                                )}
+                                {mooring.contactPhone && (
+                                    <div className="flex items-center gap-2.5 bg-muted/50 rounded-lg px-3 py-2.5">
+                                        <Phone size={16} className="text-secondary flex-shrink-0" />
+                                        <a href={`tel:${mooring.contactPhone}`} className="text-sm text-primary hover:underline">{mooring.contactPhone}</a>
+                                    </div>
+                                )}
+                                {mooring.contactEmail && (
+                                    <div className="flex items-center gap-2.5 bg-muted/50 rounded-lg px-3 py-2.5">
+                                        <Mail size={16} className="text-secondary flex-shrink-0" />
+                                        <a href={`mailto:${mooring.contactEmail}`} className="text-sm text-primary hover:underline">{mooring.contactEmail}</a>
+                                    </div>
+                                )}
+                                {mooring.vhfChannel && (
+                                    <div className="flex items-center gap-2.5 bg-muted/50 rounded-lg px-3 py-2.5">
+                                        <Radio size={16} className="text-secondary flex-shrink-0" />
+                                        <span className="text-sm text-foreground">VHF Ch. {mooring.vhfChannel}</span>
+                                    </div>
+                                )}
+                                {mooring.operatingHours && (
+                                    <div className="flex items-center gap-2.5 bg-muted/50 rounded-lg px-3 py-2.5">
+                                        <Clock size={16} className="text-secondary flex-shrink-0" />
+                                        <span className="text-sm text-foreground">{mooring.operatingHours}</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Owner info (teaser) */}
                     {mooring.ownerName && (

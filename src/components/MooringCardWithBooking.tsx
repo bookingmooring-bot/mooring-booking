@@ -36,6 +36,15 @@ interface MooringCardWithBookingProps {
   initialCheckOut?: string;
   autoOpenBooking?: boolean;
   mooringLayer?: MooringLayer;
+  contactEmail?: string;
+  contactPhone?: string;
+  address?: string;
+  mooringUnits?: number;
+  maxBoatLength?: number;
+  maxDraft?: number;
+  maxBeam?: number;
+  vhfChannel?: string;
+  operatingHours?: string;
 }
 
 const amenityIcons: Record<string, React.ReactNode> = {
@@ -78,6 +87,15 @@ const MooringCardWithBooking = ({
   initialCheckOut,
   autoOpenBooking,
   mooringLayer,
+  contactEmail,
+  contactPhone,
+  address,
+  mooringUnits,
+  maxBoatLength,
+  maxDraft,
+  maxBeam,
+  vhfChannel,
+  operatingHours,
 }: MooringCardWithBookingProps) => {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
@@ -279,6 +297,15 @@ const MooringCardWithBooking = ({
           winterStorage,
           winterPriceMonthly,
           mooringLayer,
+          contactEmail,
+          contactPhone,
+          address,
+          mooringUnits,
+          maxBoatLength,
+          maxDraft,
+          maxBeam,
+          vhfChannel,
+          operatingHours,
         }}
         isOpen={isDetailOpen}
         onClose={() => setIsDetailOpen(false)}

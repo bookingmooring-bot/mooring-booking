@@ -539,6 +539,15 @@ const ExplorePage = () => {
                             description={mooring.description}
                             winterStorage={mooring.winterStorage}
                             mooringLayer={mooring.mooringLayer}
+                            contactEmail={mooring.contactEmail}
+                            contactPhone={mooring.contactPhone}
+                            address={mooring.address}
+                            mooringUnits={mooring.mooringUnits}
+                            maxBoatLength={mooring.maxBoatLength}
+                            maxDraft={mooring.maxDraft}
+                            maxBeam={mooring.maxBeam}
+                            vhfChannel={mooring.vhfChannel}
+                            operatingHours={mooring.operatingHours}
                             initialCheckIn={committedCheckIn || undefined}
                             initialCheckOut={committedCheckOut || undefined}
                             autoOpenBooking={!!urlMooringId && mooring.id === urlMooringId}
