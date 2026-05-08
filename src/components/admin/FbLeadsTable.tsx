@@ -11,6 +11,38 @@ import { format } from 'date-fns';
 
 type StatusFilter = 'all' | 'invited' | 'onboarding' | 'active' | 'inactive';
 
+const mooringTypeLabels: Record<string, { label: string; emoji: string }> = {
+  'θεση_σε_λιμανι': { label: 'Marina Berth', emoji: '🏗️' },
+  'σημαδουρα': { label: 'Mooring Buoy', emoji: '⚓' },
+  'ιδιωτικη_προβλητα': { label: 'Private Dock', emoji: '🛥️' },
+  'vez_u_marini': { label: 'Marina Berth', emoji: '🏗️' },
+  'posto_in_porto': { label: 'Marina Berth', emoji: '🏗️' },
+  'pontile_privato': { label: 'Private Dock', emoji: '🛥️' },
+  'place_de_port': { label: 'Marina Berth', emoji: '🏗️' },
+};
+
+const countLabels: Record<string, string> = {
+  '1': '1',
+  '2_3': '2-3',
+  '4_5': '4-5',
+  'πανω_απο_5': '5+',
+  'piu_di_5': '5+',
+  'plus_de_5': '5+',
+};
+
+const availabilityLabels: Record<string, { label: string; color: string }> = {
+  'ναι': { label: 'Available', color: 'text-success' },
+  'εν_μερει': { label: 'Partial', color: 'text-warning' },
+  'δεν_ειμαι_σιγουρος_ακομα': { label: 'Unsure', color: 'text-muted-foreground' },
+  'si': { label: 'Available', color: 'text-success' },
+  'parzialmente': { label: 'Partial', color: 'text-warning' },
+  'oui': { label: 'Available', color: 'text-success' },
+  'partiellement': { label: 'Partial', color: 'text-warning' },
+  'εν_μερει_': { label: 'Partial', color: 'text-warning' },
+  'da': { label: 'Available', color: 'text-success' },
+  'djelomicno': { label: 'Partial', color: 'text-warning' },
+};
+
 const statusStyles: Record<string, string> = {
   invited: 'bg-blue-500/20 text-blue-600 border-blue-500/30',
   onboarding: 'bg-warning/20 text-warning border-warning/30',
@@ -133,13 +165,37 @@ export default function FbLeadsTable() {
                     ) : '-'}
                   </TableCell>
                   <TableCell>
-                    {l.has_mooring ? (
-                      <Badge className="bg-success/20 text-success border-success/30">Yes</Badge>
+                    {l.has_mooring || l.mooring_type ? (
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-1.5">
+                          {(() => {
+                            const mt = mooringTypeLabels[l.mooring_type ?? ''];
+                            return mt ? (
+                              <span className="text-xs font-medium bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                                {mt.emoji} {mt.label}
+                              </span>
+                            ) : (
+                              <Badge className="bg-success/20 text-success border-success/30">Yes</Badge>
+                            );
+                          })()}
+                        </div>
+                        {l.mooring_quantities && (
+                          <div className="flex items-center gap-2 text-xs">
+                            {l.mooring_quantities.count && (
+                              <span className="bg-muted px-1.5 py-0.5 rounded font-medium">
+                                {countLabels[l.mooring_quantities.count] ?? l.mooring_quantities.count} moorings
+                              </span>
+                            )}
+                            {l.mooring_quantities.availability && (
+                              <span className={availabilityLabels[l.mooring_quantities.availability]?.color ?? 'text-muted-foreground'}>
+                                {availabilityLabels[l.mooring_quantities.availability]?.label ?? l.mooring_quantities.availability}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     ) : (
                       <Badge variant="outline">No</Badge>
-                    )}
-                    {l.mooring_type && (
-                      <span className="text-xs text-muted-foreground ml-1">{l.mooring_type}</span>
                     )}
                   </TableCell>
                   <TableCell>
