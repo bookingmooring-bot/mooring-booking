@@ -16,7 +16,7 @@ export const openNavigation = (destination: NavigationDestination) => {
     description: `Navigating to ${label || 'your mooring'}`
   });
 
-  const openSeaMapUrl = `https://map.openseamap.org/?zoom=14&lat=${lat}&lon=${lng}&layers=BFTFFFTFFTF0FFFFFFFFFF`;
+  const openSeaMapUrl = `https://map.openseamap.org/?zoom=14&lat=${lat}&lon=${lng}&layers=BFTFFFFFFFFTF`;
   window.open(openSeaMapUrl, '_blank', 'noopener,noreferrer');
 };
 
@@ -30,7 +30,6 @@ export const openNauticalNavigation = (destination: NavigationDestination) => {
     description: `Marine chart for ${label || 'your mooring'}`
   });
 
-  // OpenSeaMap has nautical charts overlaid on OSM
-  const openSeaMapUrl = `https://map.openseamap.org/?zoom=14&lat=${lat}&lon=${lng}&layers=BFTFFFTFFTF0FFFFFFFFFF`;
+  const openSeaMapUrl = `https://map.openseamap.org/?zoom=14&lat=${lat}&lon=${lng}&layers=BFTFFFFFFFFTF`;
   window.open(openSeaMapUrl, '_blank', 'noopener,noreferrer');
 };
