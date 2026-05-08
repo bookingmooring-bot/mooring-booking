@@ -1,4 +1,4 @@
-{
+﻿{
   "nav": {
     "explore": "Razišči",
     "howItWorks": "Kako Deluje",
@@ -997,7 +997,7 @@
     "dataSecurityTitle": "Varnost Podatkov",
     "dataSecurityText": "Uporabljamo industrijsko šifriranje, varne strežnike in redne varnostne revizije za zaščito vaših podatkov. Ves omrežni promet je šifriran prek TLS/SSL.",
     "contactTitle": "Stopite v Stik",
-    "contactText": "Za vprašanja o zasebnosti nas kontaktirajte na privacy@mooringbooking.com."
+    "contactText": "Za vprašanja o zasebnosti nas kontaktirajte na privacy@mooring-booking.com."
   },
   "gdpr": {
     "subtitle": "Vaše pravice v skladu z Uredbo o varstvu osebnih podatkov",

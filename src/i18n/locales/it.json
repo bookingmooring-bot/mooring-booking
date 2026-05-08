@@ -1,4 +1,4 @@
-{
+﻿{
   "nav": {
     "explore": "Esplora",
     "howItWorks": "Come Funziona",
@@ -542,7 +542,7 @@
     "right5": "Presentare un reclamo a un'autorità di controllo",
     "cookiesText": "Utilizziamo cookie per fornire e migliorare i nostri servizi. Per dettagli completi, consulta la nostra Cookie Policy.",
     "dataSecurityText": "Utilizziamo crittografia standard del settore, server sicuri e audit di sicurezza regolari per proteggere i tuoi dati. Tutto il traffico di rete è crittografato tramite TLS/SSL.",
-    "contactText": "Per domande sulla privacy, contattaci a privacy@mooringbooking.com o tramite il modulo di contatto."
+    "contactText": "Per domande sulla privacy, contattaci a privacy@mooring-booking.com o tramite il modulo di contatto."
   },
   "gdpr": {
     "subtitle": "I tuoi diritti ai sensi del GDPR",

@@ -1,4 +1,4 @@
-{
+﻿{
   "nav": {
     "explore": "Esplora",
     "howItWorks": "Kif Taħdem",
@@ -997,7 +997,7 @@
     "dataSecurityTitle": "Sigurtà tad-Data",
     "dataSecurityText": "Nużaw encryption industrijali, servers siguri u awditi tas-sigurtà regolari biex nħarsu d-data tiegħek. It-traffiku kollu tan-netwerk jiġi encrypted permezz ta' TLS/SSL.",
     "contactTitle": "Ikkuntattjana",
-    "contactText": "Għal mistoqsijiet dwar il-privatezza, ikkuntattjana fuq privacy@mooringbooking.com."
+    "contactText": "Għal mistoqsijiet dwar il-privatezza, ikkuntattjana fuq privacy@mooring-booking.com."
   },
   "gdpr": {
     "subtitle": "Id-drittijiet tiegħek skont ir-Regolament tal-Protezzjoni tad-Data",

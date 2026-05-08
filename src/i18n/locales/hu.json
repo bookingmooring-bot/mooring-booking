@@ -1,4 +1,4 @@
-{
+﻿{
   "nav": {
     "explore": "Felfedezés",
     "howItWorks": "Hogyan Működik",
@@ -997,7 +997,7 @@
     "dataSecurityTitle": "Adatbiztonság",
     "dataSecurityText": "Ipari szintű titkosítást, biztonságos szervereket és rendszeres biztonsági auditokat alkalmazunk adatai védelme érdekében. Minden hálózati forgalom TLS/SSL-en keresztül titkosított.",
     "contactTitle": "Lépjen Kapcsolatba Velünk",
-    "contactText": "Adatvédelemmel kapcsolatos kérdések esetén vegye fel velünk a kapcsolatot a privacy@mooringbooking.com e-mail címen."
+    "contactText": "Adatvédelemmel kapcsolatos kérdések esetén vegye fel velünk a kapcsolatot a privacy@mooring-booking.com e-mail címen."
   },
   "gdpr": {
     "subtitle": "Az Ön jogai az Általános Adatvédelmi Rendelet értelmében",

@@ -1,4 +1,4 @@
-{
+﻿{
   "nav": {
     "explore": "Preskúmať",
     "howItWorks": "Ako To Funguje",
@@ -997,7 +997,7 @@
     "dataSecurityTitle": "Bezpečnosť Údajov",
     "dataSecurityText": "Používame priemyselné šifrovanie, bezpečné servery a pravidelné bezpečnostné audity na ochranu vašich údajov. Všetka sieťová prevádzka je šifrovaná cez TLS/SSL.",
     "contactTitle": "Kontaktujte Nás",
-    "contactText": "Pre otázky o ochrane súkromia nás kontaktujte na privacy@mooringbooking.com."
+    "contactText": "Pre otázky o ochrane súkromia nás kontaktujte na privacy@mooring-booking.com."
   },
   "gdpr": {
     "subtitle": "Vaše práva podľa Všeobecného nariadenia o ochrane údajov",

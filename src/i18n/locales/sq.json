@@ -1,4 +1,4 @@
-{
+﻿{
   "nav": {
     "explore": "Eksploro",
     "howItWorks": "Si Funksionon",
@@ -997,7 +997,7 @@
     "dataSecurityTitle": "Siguria e të Dhënave",
     "dataSecurityText": "Përdorim enkriptim industrial, serverë të sigurt dhe auditime të rregullta sigurie për të mbrojtur të dhënat tuaja. I gjithë trafiku i rrjetit enkriptohet nëpërmjet TLS/SSL.",
     "contactTitle": "Na Kontaktoni",
-    "contactText": "Për pyetje rreth privatësisë, na kontaktoni në privacy@mooringbooking.com."
+    "contactText": "Për pyetje rreth privatësisë, na kontaktoni në privacy@mooring-booking.com."
   },
   "gdpr": {
     "subtitle": "Të drejtat tuaja sipas Rregullores së Mbrojtjes së të Dhënave",

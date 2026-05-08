@@ -1,4 +1,4 @@
-{
+﻿{
   "nav": {
     "explore": "Explorar",
     "howItWorks": "Cómo Funciona",
@@ -561,7 +561,7 @@
     "right5": "Podnijeti pritužbu nadzornom tijelu",
     "cookiesText": "Koristimo kolačiće za pružanje i poboljšanje naših usluga. Za potpune pojedinosti pogledajte naša Pravila Kolačića.",
     "dataSecurityText": "Koristimo šifriranje industrijskog standarda, sigurne servere i redovite sigurnosne revizije za zaštitu vaših podataka. Sav mrežni promet je šifriran putem TLS/SSL.",
-    "contactText": "Za pitanja o privatnosti, kontaktirajte nas na privacy@mooringbooking.com ili putem obrasca za kontakt."
+    "contactText": "Za pitanja o privatnosti, kontaktirajte nas na privacy@mooring-booking.com ili putem obrasca za kontakt."
   },
   "gdpr": {
     "subtitle": "Sus derechos bajo el Reglamento General de Protección de Datos",

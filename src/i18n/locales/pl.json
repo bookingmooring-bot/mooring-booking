@@ -1,4 +1,4 @@
-{
+﻿{
   "nav": {
     "explore": "Odkrywaj",
     "howItWorks": "Jak To Działa",
@@ -997,7 +997,7 @@
     "dataSecurityTitle": "Bezpieczeństwo Danych",
     "dataSecurityText": "Używamy szyfrowania przemysłowego, bezpiecznych serwerów i regularnych audytów bezpieczeństwa do ochrony Twoich danych. Cały ruch sieciowy jest szyfrowany przez TLS/SSL.",
     "contactTitle": "Kontakt",
-    "contactText": "W przypadku pytań dotyczących prywatności skontaktuj się z nami pod adresem privacy@mooringbooking.com."
+    "contactText": "W przypadku pytań dotyczących prywatności skontaktuj się z nami pod adresem privacy@mooring-booking.com."
   },
   "gdpr": {
     "subtitle": "Twoje prawa zgodnie z Ogólnym Rozporządzeniem o Ochronie Danych",
