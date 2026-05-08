@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { allMoorings as hardcodedMoorings, Mooring } from '@/data/moorings';
+import type { Mooring } from '@/data/moorings';
 import type { MooringLayer } from '@/lib/mooringLayer';
 import { geocodeQuery, haversineKm, formatDistance } from '@/lib/geocoding';
 

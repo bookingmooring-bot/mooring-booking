@@ -7,6 +7,7 @@ import MooringDetailModal from "./MooringDetailModal";
 import type { MooringLayer } from "@/lib/mooringLayer";
 import { getLayerBadge } from "@/lib/mooringLayer";
 import { openNavigation } from "@/lib/navigation";
+import MooringImagePlaceholder from "./MooringImagePlaceholder";
 
 interface MooringCardWithBookingProps {
   id: string;
@@ -104,11 +105,15 @@ const MooringCardWithBooking = ({
           tabIndex={0}
           onKeyDown={(e) => e.key === 'Enter' && openDetail()}
         >
-          <img
-            src={image}
-            alt={name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
+          {image ? (
+            <img
+              src={image}
+              alt={name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          ) : (
+            <MooringImagePlaceholder name={name} />
+          )}
 
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">

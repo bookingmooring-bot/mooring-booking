@@ -5,8 +5,8 @@ import { Mooring } from "@/data/moorings";
 import { Button } from "@/components/ui/button";
 import { Star, MapPin, Navigation, Anchor, Phone } from "lucide-react";
 import BookingModal from "./BookingModal";
+import MooringImagePlaceholder from "./MooringImagePlaceholder";
 import "leaflet/dist/leaflet.css";
-import { mooringLocations } from "./MooringMap";
 
 // Fix for default marker icons in react-leaflet
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -65,23 +65,7 @@ const ExploreMap = ({ moorings }: ExploreMapProps) => {
     (m) => m.lat && m.lng && isFinite(m.lat) && isFinite(m.lng) && (m.lat !== 0 || m.lng !== 0)
   );
 
-  // Fallback to Mediterranean sample moorings if DB returned no valid moorings
-  const displayMoorings: Array<{ id: string; name: string; location: string; country: string; lat: number; lng: number; price: number; rating?: number; reviewCount?: number; discountPercent?: number; image?: string }> =
-    validMoorings.length > 0
-      ? validMoorings
-      : mooringLocations.map((ml) => ({
-          id: ml.id,
-          name: ml.name,
-          location: ml.location,
-          country: ml.country,
-          lat: ml.lat,
-          lng: ml.lng,
-          price: ml.price,
-          rating: ml.rating,
-          reviewCount: 0,
-          discountPercent: undefined,
-          image: "",
-        }));
+  const displayMoorings = validMoorings;
 
   // Center on Mediterranean
   const defaultCenter: [number, number] = [40.5, 18.0];
@@ -132,12 +116,16 @@ const ExploreMap = ({ moorings }: ExploreMapProps) => {
             >
               <Popup>
                 <div className="p-2 min-w-[200px]">
-                  {mooring.image && (
+                  {mooring.image ? (
                     <img
                       src={mooring.image}
                       alt={mooring.name}
                       className="w-full h-24 object-cover rounded-lg mb-2"
                     />
+                  ) : (
+                    <div className="w-full h-24 rounded-lg mb-2 overflow-hidden">
+                      <MooringImagePlaceholder name={mooring.name} />
+                    </div>
                   )}
                   <h3 className="font-bold text-sm">{mooring.name}</h3>
                   <p className="text-xs text-gray-600 flex items-center gap-1 mb-1">

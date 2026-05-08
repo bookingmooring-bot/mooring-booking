@@ -25,6 +25,7 @@ import type { MooringLayer } from "@/lib/mooringLayer";
 import { getLayerBadge, getBookingMode, getLayerDisclaimer } from "@/lib/mooringLayer";
 import { openNavigation } from "@/lib/navigation";
 import { useProfile } from "@/hooks/useProfile";
+import MooringImagePlaceholder from "./MooringImagePlaceholder";
 
 interface MooringDetailModalProps {
     mooring: {
@@ -171,11 +172,15 @@ const MooringDetailModal = ({
             <div className="relative bg-card rounded-2xl shadow-hover w-full max-w-2xl max-h-[95vh] overflow-y-auto animate-fade-in">
                 {/* Hero Image */}
                 <div className="relative aspect-[16/8] overflow-hidden rounded-t-2xl">
-                    <img
-                        src={mooring.image}
-                        alt={mooring.name}
-                        className="w-full h-full object-cover"
-                    />
+                    {mooring.image ? (
+                        <img
+                            src={mooring.image}
+                            alt={mooring.name}
+                            className="w-full h-full object-cover"
+                        />
+                    ) : (
+                        <MooringImagePlaceholder name={mooring.name} />
+                    )}
 
                     {/* Gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />

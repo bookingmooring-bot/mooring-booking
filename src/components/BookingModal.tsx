@@ -548,14 +548,16 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
                 {/* Owner Contact */}
                 <div className="bg-card rounded-lg p-2 sm:p-3 mb-3">
                   <p className="text-xs text-muted-foreground">{t('booking.mooringOwner', 'Mooring Owner')}</p>
-                  <p className="font-medium text-foreground">{mooring.ownerName || "Alessandro Rossi"}</p>
-                  <button
-                    onClick={callOwner}
-                    className="text-secondary flex items-center gap-1 mt-1 text-sm"
-                  >
-                    <Phone size={14} />
-                    {mooring.ownerPhone || "+385 91 234 5678"}
-                  </button>
+                  <p className="font-medium text-foreground">{mooring.ownerName}</p>
+                  {mooring.ownerPhone && (
+                    <button
+                      onClick={callOwner}
+                      className="text-secondary flex items-center gap-1 mt-1 text-sm"
+                    >
+                      <Phone size={14} />
+                      {mooring.ownerPhone}
+                    </button>
+                  )}
                 </div>
 
                 {/* Navigation Button */}
@@ -570,7 +572,7 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
 
               {/* WhatsApp */}
               {(mooring.ownerPhone) && (
-                <a href={`https://wa.me/${(mooring.ownerPhone || "+385912345678").replace(/[\s\-\(\)]/g, "")}?text=${encodeURIComponent(`Booking confirmed at ${mooring.name}! Confirmation #MB-${Date.now().toString(36).toUpperCase()}. Check-in: ${checkInStr}, Check-out: ${checkOutStr}. Total: €${grandTotal}.`)}`} target="_blank" rel="noopener noreferrer" className="block mt-2">
+                <a href={`https://wa.me/${(mooring.ownerPhone).replace(/[\s\-\(\)]/g, "")}?text=${encodeURIComponent(`Booking confirmed at ${mooring.name}! Confirmation #MB-${Date.now().toString(36).toUpperCase()}. Check-in: ${checkInStr}, Check-out: ${checkOutStr}. Total: €${grandTotal}.`)}`} target="_blank" rel="noopener noreferrer" className="block mt-2">
                   <Button variant="outline" className="w-full border-[hsl(142,70%,45%)] text-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,45%)]/10">
                     📱 Send to WhatsApp
                   </Button>
