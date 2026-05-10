@@ -1,4 +1,4 @@
-{
+﻿{
     "nav":  {
                 "explore":  "Explore",
                 "howItWorks":  "How It Works",
@@ -96,14 +96,14 @@
     "howItWorks":  {
                        "title":  "How Mooring Booking Works",
                        "subtitle":  "From discovery to docking in 4 simple steps",
-                       "step1Title":  "Search",
-                       "step1Desc":  "Find your perfect mooring by location, date, and boat size across 10+ Mediterranean countries. Free for all registered users.",
-                       "step2Title":  "Book Instantly",
-                       "step2Desc":  "Reserve your spot in seconds with secure payments. Get up to 20% discount on every booking. Now4Today urgent bookings available 48h in advance.",
-                       "step3Title":  "Navigate \u0026 AI Captain",
-                       "step3Desc":  "GPS coordinates unlock after booking. Premium members get unlimited AI Captain with 7-day forecasts, storm alerts, maneuvering guides, offline maps, and turn-by-turn navigation. Basic users get 10 AI questions/day.",
-                       "step4Title":  "Enjoy \u0026 Review",
-                       "step4Desc":  "Arrive at your mooring, dock safely, and share your experience. Premium Annual members (€8.25/mo) enjoy priority booking, exclusive discounts up to 25%, and dedicated support."
+                       "step1Title":  "Explore 1,000+ Marinas",
+                       "step1Desc":  "Browse marinas across 20+ Mediterranean countries. Filter by location, dates, boat size, and amenities. Three layers: Premium (verified), Concierge (we book for you), and Explore (full directory).",
+                       "step2Title":  "Book Your Way",
+                       "step2Desc":  "Premium marinas: book instantly with secure payment. Concierge marinas: we contact the marina and confirm for you. Explore marinas: view details, specs, and navigate directly.",
+                       "step3Title":  "AI Captain \u0026 Navigate",
+                       "step3Desc":  "Your onboard AI assistant: weather forecasts, storm alerts, route planning, nautical charts, and seamanship advice. Open nautical charts with one tap. 10 free questions/day, unlimited for Premium.",
+                       "step4Title":  "Arrive \u0026 Review",
+                       "step4Desc":  "Dock safely with full marina details: berths, max LOA, draft, VHF channel, contact info. Rate your experience to help fellow sailors. Premium members enjoy priority booking and up to 25% off."
                    },
     "testimonials":  {
                          "title":  "What Our Community Says",
@@ -156,28 +156,28 @@
                         "stat3Label":  "Simple commission"
                     },
     "footer":  {
-                   "description": "Mediterranean's #1 mooring marketplace. Find and book moorings, docks and marina berths across 10+ countries.",
-                   "allRightsReserved": "All Rights Reserved",
-                   "about": "About",
-                   "aboutUs": "About Us",
-                   "howItWorksLink": "How It Works",
-                   "blog": "Blog",
-                   "aiCaptain": "AI Captain",
-                   "contact": "Contact",
-                   "faq": "FAQ",
-                   "forYou": "For You",
-                   "registerMooring": "Register Mooring",
-                   "pricing": "Pricing",
-                   "affiliateProgram": "Affiliate Program",
-                   "marinaPartnership": "Marina Partnership (B2B)",
-                   "support": "Support",
-                   "sailingManual": "Sailing Manual",
-                   "contactUs": "Contact Us",
-                   "stripeSecure": "Payments are secure and processed via Stripe",
-                   "privacyPolicy": "Privacy Policy",
-                   "termsOfService": "Terms of Service",
-                   "cookiePolicy": "Cookie Policy",
-                   "gdpr": "GDPR"
+                   "description":  "Mediterranean\u0027s #1 mooring marketplace. Find and book moorings, docks and marina berths across 10+ countries.",
+                   "allRightsReserved":  "All Rights Reserved",
+                   "about":  "About",
+                   "aboutUs":  "About Us",
+                   "howItWorksLink":  "How It Works",
+                   "blog":  "Blog",
+                   "aiCaptain":  "AI Captain",
+                   "contact":  "Contact",
+                   "faq":  "FAQ",
+                   "forYou":  "For You",
+                   "registerMooring":  "Register Mooring",
+                   "pricing":  "Pricing",
+                   "affiliateProgram":  "Affiliate Program",
+                   "marinaPartnership":  "Marina Partnership (B2B)",
+                   "support":  "Support",
+                   "sailingManual":  "Sailing Manual",
+                   "contactUs":  "Contact Us",
+                   "stripeSecure":  "Payments are secure and processed via Stripe",
+                   "privacyPolicy":  "Privacy Policy",
+                   "termsOfService":  "Terms of Service",
+                   "cookiePolicy":  "Cookie Policy",
+                   "gdpr":  "GDPR"
                },
     "aiChat":  {
                    "title":  "AI Captain Jack",
@@ -190,38 +190,59 @@
                    "sources":  "Sources",
                    "lowConfidence":  "Verify with the pilot book or marina before relying on this.",
                    "intent":  {
-                       "SEARCH_MOORING":  "Mooring search",
-                       "DIAGNOSE_ENGINE":  "Engine diagnostic",
-                       "CHECK_WEATHER":  "Weather",
-                       "EMERGENCY":  "Emergency",
-                       "BOOKING_HELP":  "Booking help",
-                       "NAVIGATION_ROUTE":  "Navigation",
-                       "GENERAL_CHAT":  "Chat"
-                   },
-                   "loading": "Loading…",
-                   "onboarding": {
-                       "title": "Before your first message",
-                       "subtitle": "Set up AI Captain. Saved once, used forever.",
-                       "settingsTitle": "AI Captain settings",
-                       "settingsSubtitle": "Change your answer style and experience level anytime.",
-                       "styleLabel": "Answer style",
-                       "levelLabel": "Experience level",
-                       "submit": "Start chat →",
-                       "save": "Save",
-                       "cancel": "Cancel",
-                       "saving": "Saving…",
-                       "styles": {
-                           "bullets": { "label": "Bullet points", "hint": "Short & quick" },
-                           "balanced": { "label": "Balanced", "hint": "Medium length" },
-                           "detailed": { "label": "Detailed", "hint": "Long answers" }
-                       },
-                       "levels": {
-                           "beginner": { "label": "Beginner", "hint": "New to sailing" },
-                           "intermediate": { "label": "Intermediate", "hint": "Sail occasionally" },
-                           "advanced": { "label": "Advanced", "hint": "Sail regularly" },
-                           "professional": { "label": "Professional captain", "hint": "Certified captain" }
-                       }
-                   }
+                                  "SEARCH_MOORING":  "Mooring search",
+                                  "DIAGNOSE_ENGINE":  "Engine diagnostic",
+                                  "CHECK_WEATHER":  "Weather",
+                                  "EMERGENCY":  "Emergency",
+                                  "BOOKING_HELP":  "Booking help",
+                                  "NAVIGATION_ROUTE":  "Navigation",
+                                  "GENERAL_CHAT":  "Chat"
+                              },
+                   "loading":  "Loading…",
+                   "onboarding":  {
+                                      "title":  "Before your first message",
+                                      "subtitle":  "Set up AI Captain. Saved once, used forever.",
+                                      "settingsTitle":  "AI Captain settings",
+                                      "settingsSubtitle":  "Change your answer style and experience level anytime.",
+                                      "styleLabel":  "Answer style",
+                                      "levelLabel":  "Experience level",
+                                      "submit":  "Start chat →",
+                                      "save":  "Save",
+                                      "cancel":  "Cancel",
+                                      "saving":  "Saving…",
+                                      "styles":  {
+                                                     "bullets":  {
+                                                                     "label":  "Bullet points",
+                                                                     "hint":  "Short \u0026 quick"
+                                                                 },
+                                                     "balanced":  {
+                                                                      "label":  "Balanced",
+                                                                      "hint":  "Medium length"
+                                                                  },
+                                                     "detailed":  {
+                                                                      "label":  "Detailed",
+                                                                      "hint":  "Long answers"
+                                                                  }
+                                                 },
+                                      "levels":  {
+                                                     "beginner":  {
+                                                                      "label":  "Beginner",
+                                                                      "hint":  "New to sailing"
+                                                                  },
+                                                     "intermediate":  {
+                                                                          "label":  "Intermediate",
+                                                                          "hint":  "Sail occasionally"
+                                                                      },
+                                                     "advanced":  {
+                                                                      "label":  "Advanced",
+                                                                      "hint":  "Sail regularly"
+                                                                  },
+                                                     "professional":  {
+                                                                          "label":  "Professional captain",
+                                                                          "hint":  "Certified captain"
+                                                                      }
+                                                 }
+                                  }
                },
     "provider":  {
                      "title":  "Create Your Provider Profile",
@@ -395,11 +416,11 @@
                       "step3Title":  "Promote",
                       "step3Desc":  "Share on social media, your blog, or email list. Track clicks in real-time.",
                       "step4Title":  "Earn",
-                      "step4Desc":  "Get 15% of our platform's 12% service fee for every booking made through your link.",
+                      "step4Desc":  "Get 15% of our platform\u0027s 12% service fee for every booking made through your link.",
                       "successStories":  "Affiliate Success Stories",
                       "successStoriesSubtitle":  "Real earnings from real affiliates. Join them and start earning €3,000-€8,000+ monthly!",
                       "commissionTiers":  "Commission Tiers",
-                      "commissionTiersSubtitle":  "The more bookings you drive, the higher your commission rate. Earn a flat 15% of our platform's 12% service fee.",
+                      "commissionTiersSubtitle":  "The more bookings you drive, the higher your commission rate. Earn a flat 15% of our platform\u0027s 12% service fee.",
                       "starter":  "Starter",
                       "pro":  "Pro",
                       "elite":  "Elite",
@@ -409,7 +430,7 @@
                       "bookings":  "Bookings",
                       "earnings":  "Earnings",
                       "readyToStart":  "Ready to Start Earning?",
-                      "readyToStartDesc":  "Join our affiliate program today and earn 15% of our platform's 12% service fee on every mooring booking you refer.",
+                      "readyToStartDesc":  "Join our affiliate program today and earn 15% of our platform\u0027s 12% service fee on every mooring booking you refer.",
                       "minPayout":  "Minimum payout: €50 • Monthly payments via Stripe or bank transfer",
                       "mostPopular":  "Most Popular"
                   },
@@ -582,31 +603,31 @@
                     "now4TodayBookings":  "Now4Today instant bookings",
                     "marketingTools":  "Marketing Tools (QR code + affiliate link)",
                     "premiumListing":  "Premium Listing (priority in search results)",
-                    "whiteLabel": {
-                        "title": "Marina Partner Program",
-                        "subtitle": "Professional marinas get lower commission, premium listing included, and dedicated support.",
-                        "upTo50": "Up to 50 Berths",
-                        "over50": "Over 50 Berths",
-                        "monthlyPrice": "per month",
-                        "commissionRate": "10% commission per booking",
-                        "transactionFee": "€5 flat fee per booking",
-                        "premiumIncluded": "Premium Listing included (€9.99/mo value)",
-                        "commissionShort": "commission",
-                        "perBooking": "booking",
-                        "perBookingFee": "per booking flat fee",
-                        "included": "included",
-                        "upgrade": "Upgrade to White Label",
-                        "savingsNote": "Save 2% on every booking compared to standard plan"
-                    }
+                    "whiteLabel":  {
+                                       "title":  "Marina Partner Program",
+                                       "subtitle":  "Professional marinas get lower commission, premium listing included, and dedicated support.",
+                                       "upTo50":  "Up to 50 Berths",
+                                       "over50":  "Over 50 Berths",
+                                       "monthlyPrice":  "per month",
+                                       "commissionRate":  "10% commission per booking",
+                                       "transactionFee":  "€5 flat fee per booking",
+                                       "premiumIncluded":  "Premium Listing included (€9.99/mo value)",
+                                       "commissionShort":  "commission",
+                                       "perBooking":  "booking",
+                                       "perBookingFee":  "per booking flat fee",
+                                       "included":  "included",
+                                       "upgrade":  "Upgrade to White Label",
+                                       "savingsNote":  "Save 2% on every booking compared to standard plan"
+                                   }
                 },
-    "dashboard": {
-        "whiteLabel": {
-            "active": "Active",
-            "upgradeTitle": "Upgrade to White Label Marina",
-            "upgradeDesc": "Reduce your commission to 10%, get premium listing included, and dedicated support.",
-            "notConfigured": "Stripe not configured yet. Contact support."
-        }
-    },
+    "dashboard":  {
+                      "whiteLabel":  {
+                                         "active":  "Active",
+                                         "upgradeTitle":  "Upgrade to White Label Marina",
+                                         "upgradeDesc":  "Reduce your commission to 10%, get premium listing included, and dedicated support.",
+                                         "notConfigured":  "Stripe not configured yet. Contact support."
+                                     }
+                  },
     "userPricing":  {
                         "chooseYourPlan":  "Choose Your Plan",
                         "heroTitle":  "Sail Smarter with",

@@ -75,12 +75,12 @@ const HomeMap = () => {
     );
   }
 
-  // Get unique countries for the bottom labels
-  const countries = Array.from(
-    new Map(
-      moorings.map(m => [m.country, m.country])
-    ).values()
-  ).slice(0, 6);
+  // Get unique countries sorted by number of moorings
+  const countryCounts = new Map<string, number>();
+  moorings.forEach(m => countryCounts.set(m.country, (countryCounts.get(m.country) || 0) + 1));
+  const countries = Array.from(countryCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .map(([c]) => c);
 
   return (
     <div className="w-full h-[400px] rounded-xl overflow-hidden shadow-card relative">
