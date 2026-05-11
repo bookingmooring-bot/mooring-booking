@@ -40,7 +40,9 @@ const Dashboard = () => {
         phone: '',
         boat_name: '',
         boat_length: '',
+        provider_slug: '',
     });
+    const [slugStatus, setSlugStatus] = useState<string | null>(null);
     const [reviewTarget, setReviewTarget] = useState<Booking | null>(null);
     const [rateGuestTarget, setRateGuestTarget] = useState<Booking | null>(null);
 
@@ -52,6 +54,7 @@ const Dashboard = () => {
                 phone: profile.phone || '',
                 boat_name: profile.boat_name || '',
                 boat_length: profile.boat_length?.toString() || '',
+                provider_slug: profile.provider_slug || '',
             });
         }
     }, [profile]);
@@ -120,12 +123,16 @@ const Dashboard = () => {
     const handleSaveSettings = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await updateProfile.mutateAsync({
+            const updateData: Record<string, unknown> = {
                 full_name: settingsForm.full_name,
                 phone: settingsForm.phone,
                 boat_name: settingsForm.boat_name,
                 boat_length: settingsForm.boat_length ? parseFloat(settingsForm.boat_length) : null,
-            });
+            };
+            if (profile?.provider_tier === 'white-label' && settingsForm.provider_slug) {
+                updateData.provider_slug = settingsForm.provider_slug.toLowerCase().trim();
+            }
+            await updateProfile.mutateAsync(updateData);
             toast({
                 title: "Settings Saved",
                 description: "Your profile information has been updated.",
@@ -169,6 +176,35 @@ const Dashboard = () => {
                             </div>
                         </div>
                     </div>
+
+                    {profile?.provider_tier === 'white-label' && (
+                        <div className="space-y-4 pt-4 border-t border-border">
+                            <h3 className="text-lg font-semibold">White Label URL</h3>
+                            <div className="space-y-2">
+                                <Label htmlFor="provider_slug">Your custom URL</Label>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm text-muted-foreground whitespace-nowrap">mooring-booking.com/</span>
+                                    <Input
+                                        id="provider_slug"
+                                        value={settingsForm.provider_slug}
+                                        onChange={(e) => {
+                                            const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+                                            setSettingsForm({ ...settingsForm, provider_slug: val });
+                                            setSlugStatus(null);
+                                        }}
+                                        placeholder="your-marina-name"
+                                        maxLength={50}
+                                    />
+                                </div>
+                                {slugStatus && <p className="text-sm text-destructive">{slugStatus}</p>}
+                                {settingsForm.provider_slug && !slugStatus && (
+                                    <p className="text-sm text-muted-foreground">
+                                        Your page: mooring-booking.com/{settingsForm.provider_slug}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                     <div className="space-y-4 pt-4 border-t border-border">
                         <VesselProfileManager />

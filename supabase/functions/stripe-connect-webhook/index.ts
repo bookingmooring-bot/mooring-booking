@@ -89,13 +89,15 @@ Deno.serve(async (req: Request) => {
         if (providerId) {
           const { data: providerProfile } = await supabase
             .from('profiles')
-            .select('provider_tier')
+            .select('provider_tier, commission_rate')
             .eq('id', providerId)
             .single();
 
           const tier = providerProfile?.provider_tier ?? 'standard';
           const totalPrice = Number(bookingData.total_price ?? 0);
-          const rate = tier === 'white-label' ? 0.10 : 0.12;
+          const rate = providerProfile?.commission_rate
+            ? Number(providerProfile.commission_rate)
+            : (tier === 'white-label' ? 0.10 : 0.12);
           const txFee = tier === 'white-label' ? 5 : 0;
 
           bookingData.commission_amount = parseFloat((totalPrice * rate).toFixed(2));
@@ -119,6 +121,43 @@ Deno.serve(async (req: Request) => {
           console.error('Failed to insert booking after payment:', insertError.message, 'session:', session.id);
         } else {
           console.log('Booking created from payment:', booking.id, 'confirmation:', booking.confirmation_code, 'tier:', providerId ? 'checked' : 'unknown');
+
+          // WhatsApp notification (non-blocking, Sailor+ tier only)
+          try {
+            if (providerId) {
+              const { data: provProfile } = await supabase
+                .from('profiles')
+                .select('subscription_tier, phone, full_name')
+                .eq('id', providerId)
+                .single();
+
+              const sailorTiers = ['sailor', 'captain', 'charter-fleet'];
+              if (provProfile && sailorTiers.includes(provProfile.subscription_tier ?? '')) {
+                const whatsappUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/send-whatsapp-notification`;
+                fetch(whatsappUrl, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+                  },
+                  body: JSON.stringify({
+                    booking_id: booking.id,
+                    guest_phone: booking.guest_phone,
+                    guest_name: booking.guest_name,
+                    mooring_name: bookingData.mooring_name ?? 'Mooring',
+                    check_in: booking.check_in,
+                    check_out: booking.check_out,
+                    total_price: booking.total_price,
+                    confirmation_code: booking.confirmation_code,
+                    owner_phone: provProfile.phone,
+                    owner_name: provProfile.full_name,
+                  }),
+                }).catch((e) => console.error('WhatsApp notification fire-and-forget error:', e));
+              }
+            }
+          } catch (waErr) {
+            console.error('WhatsApp notification setup error (non-blocking):', waErr);
+          }
         }
         break;
       }

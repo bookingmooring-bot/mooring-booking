@@ -97,6 +97,7 @@ async function activateWhiteLabel(
       white_label_berth_tier: berthTier,
       white_label_subscription_id: subscriptionId,
       white_label_activated_at: new Date().toISOString(),
+      commission_rate: 0.10,
     })
     .eq('id', profile.id);
 

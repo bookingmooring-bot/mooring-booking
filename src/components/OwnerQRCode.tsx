@@ -8,13 +8,15 @@ interface OwnerQRCodeProps {
   ownerId: string;
   ownerName: string;
   mooringName?: string;
+  providerSlug?: string | null;
 }
 
-const OwnerQRCode = ({ ownerId, ownerName, mooringName }: OwnerQRCodeProps) => {
+const OwnerQRCode = ({ ownerId, ownerName, mooringName, providerSlug }: OwnerQRCodeProps) => {
   const [copied, setCopied] = useState(false);
-  
-  // Generate unique profile URL
-  const profileUrl = `https://mooring-booking.com/owner/${ownerId}`;
+
+  const profileUrl = providerSlug
+    ? `https://mooring-booking.com/${providerSlug}`
+    : `https://mooring-booking.com/owner/${ownerId}`;
   const affiliateUrl = `https://mooring-booking.com/book?ref=${ownerId}`;
   
   const handleCopyLink = async (url: string) => {

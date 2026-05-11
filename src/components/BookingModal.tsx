@@ -47,7 +47,9 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
   const { data: profile } = useProfile();
   const { user } = useAuth();
   const { data: availabilityData, isLoading: isLoadingAvailability } = useMooringAvailability(mooring.id);
-  const { data: providerTier = 'standard' } = useProviderTier(mooring.ownerId);
+  const { data: providerTierData } = useProviderTier(mooring.ownerId);
+  const providerTier = providerTierData?.tier ?? 'standard';
+  const providerCommissionRate = providerTierData?.commissionRate;
 
   const [step, setStep] = useState(1);
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date | undefined }>({
@@ -177,9 +179,9 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
 
   const buildBookingPayload = () => {
     const referralCode = sessionStorage.getItem('referral_code') ?? undefined;
-    const { commissionAmount, transactionFee } = calculateBookingFees(totalPrice, providerTier);
+    const { commissionAmount, transactionFee } = calculateBookingFees(totalPrice, providerTier, providerCommissionRate);
     const affiliateCommission = referralCode
-      ? parseFloat((totalPrice * getCommissionRate(providerTier) * 0.15).toFixed(2))
+      ? parseFloat((totalPrice * getCommissionRate(providerTier, providerCommissionRate) * 0.15).toFixed(2))
       : undefined;
     return {
       mooring_id: mooring.id,
@@ -572,11 +574,16 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
 
               {/* WhatsApp */}
               {(mooring.ownerPhone) && (
-                <a href={`https://wa.me/${(mooring.ownerPhone).replace(/[\s\-\(\)]/g, "")}?text=${encodeURIComponent(`Booking confirmed at ${mooring.name}! Confirmation #MB-${Date.now().toString(36).toUpperCase()}. Check-in: ${checkInStr}, Check-out: ${checkOutStr}. Total: €${grandTotal}.`)}`} target="_blank" rel="noopener noreferrer" className="block mt-2">
-                  <Button variant="outline" className="w-full border-[hsl(142,70%,45%)] text-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,45%)]/10">
-                    📱 Send to WhatsApp
-                  </Button>
-                </a>
+                <>
+                  <a href={`https://wa.me/${(mooring.ownerPhone).replace(/[\s\-\(\)]/g, "")}?text=${encodeURIComponent(`Booking confirmed at ${mooring.name}! Confirmation #MB-${Date.now().toString(36).toUpperCase()}. Check-in: ${checkInStr}, Check-out: ${checkOutStr}. Total: €${grandTotal}.`)}`} target="_blank" rel="noopener noreferrer" className="block mt-2">
+                    <Button variant="outline" className="w-full border-[hsl(142,70%,45%)] text-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,45%)]/10">
+                      📱 Send to WhatsApp
+                    </Button>
+                  </a>
+                  {['sailor', 'captain', 'charter-fleet'].includes(profile?.subscription_tier ?? '') && (
+                    <p className="text-xs text-center text-emerald-600 mt-1">WhatsApp notification sent automatically</p>
+                  )}
+                </>
               )}
 
               <p className="text-xs text-muted-foreground text-center mt-3">

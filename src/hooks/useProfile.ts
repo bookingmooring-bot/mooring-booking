@@ -28,6 +28,8 @@ export interface Profile {
     storm_alerts_enabled?: boolean;
     storm_wind_threshold_kn?: number;
     storm_wave_threshold_m?: number;
+    commission_rate?: number;
+    provider_slug?: string | null;
     created_at: string;
 }
 

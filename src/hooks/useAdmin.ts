@@ -243,3 +243,21 @@ export function useUpdateCommissionStatus() {
         },
     });
 }
+
+export function useUpdateProviderCommission() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ providerId, rate }: { providerId: string; rate: number }) => {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ commission_rate: rate })
+                .eq('id', providerId);
+
+            if (error) throw new Error(error.message);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['admin', 'providers'] });
+        },
+    });
+}

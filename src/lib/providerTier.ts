@@ -18,8 +18,8 @@ export const WL_SUBSCRIPTION_PRICES: Record<BerthTier, number> = {
   'over-50': 299,
 };
 
-export const getCommissionRate = (tier: ProviderTier): number =>
-  COMMISSION_RATES[tier] ?? COMMISSION_RATES.standard;
+export const getCommissionRate = (tier: ProviderTier, overrideRate?: number): number =>
+  overrideRate ?? COMMISSION_RATES[tier] ?? COMMISSION_RATES.standard;
 
 export const getTransactionFee = (tier: ProviderTier): number =>
   TRANSACTION_FEES[tier] ?? TRANSACTION_FEES.standard;
@@ -27,8 +27,9 @@ export const getTransactionFee = (tier: ProviderTier): number =>
 export const calculateBookingFees = (
   totalPrice: number,
   tier: ProviderTier,
+  commissionRate?: number,
 ): { commissionAmount: number; transactionFee: number } => ({
-  commissionAmount: parseFloat((totalPrice * getCommissionRate(tier)).toFixed(2)),
+  commissionAmount: parseFloat((totalPrice * getCommissionRate(tier, commissionRate)).toFixed(2)),
   transactionFee: getTransactionFee(tier),
 });
 

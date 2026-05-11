@@ -32,6 +32,7 @@ import {
   useUpdateMooringStatus,
   useUpdateCommissionStatus,
   useAdminAllUsers,
+  useUpdateProviderCommission,
 } from "@/hooks/useAdmin";
 import { useAllBookings } from "@/hooks/useBookings";
 import { format } from "date-fns";
@@ -60,6 +61,7 @@ const AdminDashboard = () => {
 
   const updateMooring = useUpdateMooringStatus();
   const updateCommission = useUpdateCommissionStatus();
+  const updateCommissionRate = useUpdateProviderCommission();
 
   // Calculated Stats
   const totalRevenue = useMemo(() => {
@@ -512,6 +514,7 @@ const AdminDashboard = () => {
                       <TableHead>Bookings</TableHead>
                       <TableHead>Total Revenue</TableHead>
                       <TableHead>Total Commission</TableHead>
+                      <TableHead>Commission Rate</TableHead>
                       <TableHead></TableHead>
                     </TableRow>
                   </TableHeader>
@@ -558,6 +561,26 @@ const AdminDashboard = () => {
                         <TableCell>€{provider.totalRevenue.toLocaleString()}</TableCell>
                         <TableCell className="text-success font-medium">
                           €{provider.totalCommission.toLocaleString()}
+                        </TableCell>
+                        <TableCell>
+                          <Select
+                            value={String(provider.commission_rate ?? 0.12)}
+                            onValueChange={(val) =>
+                              updateCommissionRate.mutate({ providerId: provider.id, rate: parseFloat(val) })
+                            }
+                          >
+                            <SelectTrigger className="w-24">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="0.10">10%</SelectItem>
+                              <SelectItem value="0.11">11%</SelectItem>
+                              <SelectItem value="0.12">12%</SelectItem>
+                              <SelectItem value="0.13">13%</SelectItem>
+                              <SelectItem value="0.14">14%</SelectItem>
+                              <SelectItem value="0.15">15%</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </TableCell>
                         <TableCell>
                           <DropdownMenu>
