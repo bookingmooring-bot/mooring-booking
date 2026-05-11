@@ -75,9 +75,16 @@ const HomeMap = () => {
     );
   }
 
-  // Get unique countries sorted by number of moorings
+  const medCountries = new Set([
+    'Italy', 'Greece', 'Spain', 'France', 'Croatia', 'Turkey',
+    'Montenegro', 'Albania', 'Slovenia', 'Malta', 'Cyprus',
+    'Portugal', 'Morocco', 'Tunisia',
+  ]);
   const countryCounts = new Map<string, number>();
-  moorings.forEach(m => countryCounts.set(m.country, (countryCounts.get(m.country) || 0) + 1));
+  moorings.forEach(m => {
+    if (medCountries.has(m.country))
+      countryCounts.set(m.country, (countryCounts.get(m.country) || 0) + 1);
+  });
   const countries = Array.from(countryCounts.entries())
     .sort((a, b) => b[1] - a[1])
     .map(([c]) => c);
