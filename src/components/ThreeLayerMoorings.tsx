@@ -53,7 +53,7 @@ const LayerSection = ({ layer, moorings }: { layer: MooringLayer; moorings: Moor
         <p className={`${config.accent} font-medium mb-8`}>{config.subtitle}</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {moorings.slice(0, 6).map((mooring) => (
+          {[...moorings].sort((a, b) => (b.image ? 1 : 0) - (a.image ? 1 : 0)).slice(0, 6).map((mooring) => (
             <MooringCardWithBooking
               key={mooring.id}
               id={mooring.id}

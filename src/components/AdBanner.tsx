@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 interface AdBannerProps {
   position: "top" | "sidebar" | "inline" | "footer";
@@ -7,31 +7,31 @@ interface AdBannerProps {
 
 const adContent = {
   top: {
-    title: "⛵ Premium Sailing Gear",
-    description: "Get 20% off with code MOORING20",
-    cta: "Shop Now",
-    link: "#ad-sailing-gear",
+    title: "⚓ ACI Marina Split — 318 berths",
+    description: "From €65/night · Fuel, Wi-Fi, restaurant, repair service & more",
+    cta: "View Marina",
+    link: "/explore?id=ebb3dcd0-0f53-42cd-b7f6-24309aa15e5f",
     bg: "bg-gradient-to-r from-secondary/10 to-primary/10",
   },
   sidebar: {
-    title: "🏖️ Marina Insurance",
-    description: "Protect your vessel from €9.99/mo",
-    cta: "Get Quote",
-    link: "#ad-insurance",
+    title: "🏖️ Marina Kaštela — 429 berths",
+    description: "From €70/night · Full service marina near Split",
+    cta: "View Marina",
+    link: "/explore?id=f00f7e82-92f2-458d-ac30-3a9ee022fb39",
     bg: "bg-gradient-to-r from-gold/10 to-secondary/10",
   },
   inline: {
-    title: "📱 Download Our App",
-    description: "Book moorings on the go. Available on iOS & Android.",
-    cta: "Download",
-    link: "#ad-app-download",
+    title: "⛵ Marina Stobreč — Split",
+    description: "From €35/night · 100 berths · Fuel, Wi-Fi, security",
+    cta: "View Marina",
+    link: "/explore?id=5ac568d9-bfa2-4da4-94a5-b0e114454488",
     bg: "bg-gradient-to-r from-primary/10 to-accent/10",
   },
   footer: {
-    title: "🧭 Yacht Charter Partners",
-    description: "Explore the Mediterranean with our trusted charter partners",
-    cta: "Explore",
-    link: "#ad-charter",
+    title: "🧭 Explore 1,000+ Mediterranean Marinas",
+    description: "Croatia, Italy, Greece, Spain, France, Turkey & more — find your perfect berth",
+    cta: "Explore All",
+    link: "/explore",
     bg: "bg-gradient-to-r from-muted to-secondary/5",
   },
 };
@@ -55,7 +55,7 @@ const AdBanner = ({ position, size = "medium" }: AdBannerProps) => {
       className={`${ad.bg} border border-border/50 rounded-lg ${sizeClasses[size]} cursor-pointer hover:shadow-card transition-all group relative`}
       onClick={handleClick}
     >
-      <span className="absolute top-1 right-2 text-[9px] text-muted-foreground/50 uppercase tracking-wider">Ad</span>
+      <span className="absolute top-1 right-2 text-[9px] text-muted-foreground/50 uppercase tracking-wider">Featured</span>
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           <h4 className="font-heading font-semibold text-foreground text-sm truncate">{ad.title}</h4>
@@ -67,7 +67,7 @@ const AdBanner = ({ position, size = "medium" }: AdBannerProps) => {
           onClick={(e) => e.stopPropagation()}
         >
           {ad.cta}
-          <ExternalLink size={12} />
+          <ChevronRight size={14} />
         </a>
       </div>
     </div>
