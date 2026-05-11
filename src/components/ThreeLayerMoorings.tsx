@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Star, Phone, Compass, Loader2, AlertTriangle } from "lucide-react";
+import { Star, Phone, Compass, Loader2, AlertTriangle, ShieldCheck, Info } from "lucide-react";
 import MooringCardWithBooking from "./MooringCardWithBooking";
 import { useMoorings } from "@/hooks/useMoorings";
 import { getLayerDisclaimer } from "@/lib/mooringLayer";
@@ -15,22 +15,22 @@ const layerConfig: Record<MooringLayer, {
 }> = {
   premium: {
     icon: <Star className="text-gold" size={24} />,
-    title: "Premium Marinas",
-    subtitle: "Instant booking. Guaranteed availability.",
+    title: "Premium Partners",
+    subtitle: "Verified marinas, buoy fields & berths with live availability — book instantly through your AI Captain.",
     accent: "text-gold",
     bg: "bg-background",
   },
   concierge: {
     icon: <Phone className="text-blue-500" size={24} />,
-    title: "Concierge Booking",
-    subtitle: "We contact the marina on your behalf. You wait, we handle it.",
+    title: "Captain's Concierge",
+    subtitle: "Your AI Captain sends a booking request on your behalf — you relax, we handle the rest.",
     accent: "text-blue-500",
     bg: "bg-muted",
   },
   explore: {
     icon: <Compass className="text-emerald-500" size={24} />,
-    title: "Explore & Navigate",
-    subtitle: "Anchorages, coves and natural stops — for reference and navigation only.",
+    title: "Open Chart — Explore & Navigate",
+    subtitle: "Anchorages, coves, piers and natural harbours mapped for your passage — explore freely, navigate safely.",
     accent: "text-emerald-500",
     bg: "bg-background",
   },
@@ -82,16 +82,18 @@ const LayerSection = ({ layer, moorings }: { layer: MooringLayer; moorings: Moor
           ))}
         </div>
 
-        {disclaimer && (
-          <div className={`mt-6 flex items-start gap-3 rounded-lg p-4 text-xs text-muted-foreground ${
-            layer === 'explore'
-              ? 'bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800'
-              : 'bg-card border'
-          }`}>
-            {layer === 'explore' && <AlertTriangle className="text-amber-500 shrink-0 mt-0.5" size={16} />}
-            <p>{disclaimer}</p>
-          </div>
-        )}
+        <div className={`mt-6 flex items-start gap-3 rounded-lg p-4 text-xs text-muted-foreground ${
+          layer === 'explore'
+            ? 'bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800'
+            : layer === 'premium'
+            ? 'bg-gold/5 border border-gold/20'
+            : 'bg-card border'
+        }`}>
+          {layer === 'explore' && <AlertTriangle className="text-amber-500 shrink-0 mt-0.5" size={16} />}
+          {layer === 'premium' && <ShieldCheck className="text-gold shrink-0 mt-0.5" size={16} />}
+          {layer === 'concierge' && <Info className="text-blue-500 shrink-0 mt-0.5" size={16} />}
+          <p>{disclaimer}</p>
+        </div>
       </div>
     </section>
   );

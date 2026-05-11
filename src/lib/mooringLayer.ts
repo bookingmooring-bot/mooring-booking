@@ -10,9 +10,9 @@ export function getLayerBadge(layer: MooringLayer): { label: string; color: stri
     case 'premium':
       return { label: 'Premium Partner', color: 'text-gold', bgColor: 'bg-gold/10' };
     case 'concierge':
-      return { label: 'Concierge Booking', color: 'text-blue-500', bgColor: 'bg-blue-500/10' };
+      return { label: "Captain's Concierge", color: 'text-blue-500', bgColor: 'bg-blue-500/10' };
     case 'explore':
-      return { label: 'Navigate Only', color: 'text-emerald-500', bgColor: 'bg-emerald-500/10' };
+      return { label: 'Open Chart', color: 'text-emerald-500', bgColor: 'bg-emerald-500/10' };
   }
 }
 
@@ -31,13 +31,13 @@ export function getLayerSortPriority(layer: MooringLayer): number {
   }
 }
 
-export function getLayerDisclaimer(layer: MooringLayer): string | null {
+export function getLayerDisclaimer(layer: MooringLayer): string {
   switch (layer) {
+    case 'premium':
+      return 'Premium Partner facilities operate under their own terms and conditions. Mooring Booking acts solely as a booking intermediary and is not a party to the berthing contract between the user and the facility. Availability, pricing and on-site services are set exclusively by the partner. Mooring Booking does not guarantee the physical condition of any berth, dock or mooring and accepts no liability for loss, damage or injury arising from the use of any facility. Please review the partner\'s own policies before arrival.';
     case 'concierge':
-      return 'Concierge Booking listings are compiled from publicly available sources. Mooring Booking has no contractual relationship with these facilities. Payment is only captured upon marina confirmation. Full terms apply — see Master Terms of Service v3.0.';
+      return 'Captain\'s Concierge listings are compiled from publicly available sources. Mooring Booking has no contractual or commercial relationship with these facilities and acts only as a communication intermediary forwarding your request. Your payment method is pre-authorised but not charged until the facility confirms availability. If the facility declines or does not respond, the hold is released in full. Mooring Booking does not guarantee acceptance, pricing accuracy, berth availability or service quality at any Concierge listing. The final berthing agreement is between you and the facility. Full terms apply — see Master Terms of Service.';
     case 'explore':
-      return 'Explore & Navigate listings are for informational and navigation reference purposes only. No booking or right of access is created by viewing any listing. Users are solely responsible for verifying navigational data through official charts before approaching any location. Always consult official nautical charts and contact the relevant harbour master.';
-    default:
-      return null;
+      return 'Open Chart listings are for informational and navigational reference only. These locations are sourced from public nautical databases and community data — Mooring Booking has no information about ownership, management or availability and cannot facilitate bookings or reservations. No right of access, mooring or berthing is created by viewing any listing. Users are solely responsible for verifying all navigational data, depth, weather and legal access rights through official charts and local harbour authorities before approaching any location. Mooring Booking accepts no liability for the accuracy of the data or for any loss, damage or injury that may result from its use.';
   }
 }
