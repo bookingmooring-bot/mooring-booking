@@ -1,7 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
-const WINDY_API_KEY = Deno.env.get("WINDY_API_KEY") ?? "4w1wpCKBi8zaoPySF3fMcXfXjUQQGzJy";
+const WINDY_API_KEY = Deno.env.get("WINDY_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
@@ -21,6 +21,7 @@ type Intent =
     | "EMERGENCY"
     | "BOOKING_HELP"
     | "NAVIGATION_ROUTE"
+    | "FIND_RESTAURANT"
     | "GENERAL_CHAT";
 
 const INTENT_KEYWORDS: Array<{ intent: Intent; words: string[] }> = [
@@ -81,6 +82,19 @@ const INTENT_KEYWORDS: Array<{ intent: Intent; words: string[] }> = [
             "provizij", "commission", "rezervaciju", "my booking", "moja rezervacija",
             "potvrda", "confirmation", "račun", "invoice", "faktura", "payment",
             "membership", "pretplata", "premium", "upgrade",
+        ],
+    },
+    {
+        intent: "FIND_RESTAURANT",
+        words: [
+            "restoran", "restaurant", "ristorante", "essen", "tavern", "konoba",
+            "hrana", "food", "jelo", "jesti", "eat", "dining", "dinner", "lunch",
+            "večer", "ručak", "doručak", "breakfast", "brunch",
+            "pizza", "riba", "fish", "seafood", "morsk", "pasta", "grill",
+            "café", "kafe", "kafić", "bar", "bistro", "trattoria",
+            "gdje jesti", "where to eat", "dove mangiare", "wo essen",
+            "où manger", "preporuka za hranu", "recommend food",
+            "gastro", "gastronomij", "lokalna kuhinja", "local cuisine",
         ],
     },
 ];
@@ -985,6 +999,7 @@ async function callGemini(
     prompt: string,
     history: Array<{ role: string; parts: Array<{ text: string }> }>,
     maxOutputTokens = 1800,
+    useGoogleSearch = false,
 ): Promise<string> {
     if (!GEMINI_API_KEY) {
         return "⚓ AI Kapetan nije konfiguriran (nedostaje API ključ). Kontaktirajte podršku.";
@@ -999,29 +1014,38 @@ async function callGemini(
     for (const modelName of modelsToTry) {
         for (const apiVersion of ["v1", "v1beta"]) {
             try {
+                const requestBody: Record<string, unknown> = {
+                    system_instruction: { parts: [{ text: prompt }] },
+                    contents: history,
+                    generationConfig: {
+                        maxOutputTokens,
+                        temperature: 0.60,
+                        topP: 0.9,
+                    },
+                };
+                if (useGoogleSearch) {
+                    requestBody.tools = [{ google_search: {} }];
+                }
+
                 const res = await fetch(
                     `https://generativelanguage.googleapis.com/${apiVersion}/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`,
                     {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         signal: controller.signal,
-                        body: JSON.stringify({
-                            system_instruction: { parts: [{ text: prompt }] },
-                            contents: history,
-                            generationConfig: {
-                                maxOutputTokens,
-                                temperature: 0.60,
-                                topP: 0.9,
-                            },
-                        }),
+                        body: JSON.stringify(requestBody),
                     }
                 );
 
                 if (res.ok) {
                     clearTimeout(tid);
                     const json = await res.json();
-                    return json.candidates?.[0]?.content?.parts?.[0]?.text
-                        ?? "Nije moguće generirati odgovor.";
+                    const parts = json.candidates?.[0]?.content?.parts;
+                    if (parts) {
+                        const textParts = parts.filter((p: { text?: string }) => p.text).map((p: { text: string }) => p.text);
+                        if (textParts.length > 0) return textParts.join("\n");
+                    }
+                    return "Nije moguće generirati odgovor.";
                 }
 
                 const errText = await res.text();
@@ -1072,6 +1096,7 @@ Deno.serve(async (req: Request) => {
         const intent: Intent = lastUserMsg ? classifyIntent(lastUserMsg) : "GENERAL_CHAT";
         const shouldSearchMoorings = intent === "SEARCH_MOORING";
         const shouldNavigate = intent === "NAVIGATION_ROUTE";
+        const shouldSearchWeb = intent === "FIND_RESTAURANT";
 
         // FAZA 6: intent-aware rate limit (EMERGENCY & premium bypass)
         const tierStr = (userProfile?.tier ?? "basic") as string;
@@ -1119,7 +1144,7 @@ Deno.serve(async (req: Request) => {
         // Parallel: full forecast + moorings (conditional) + RAG KB + rescue authority
         const [forecastResult, mooringsResult, kbHits, rescue] = await Promise.all([
             fetchFullForecast(lat, lng),
-            (shouldSearchMoorings || shouldNavigate)
+            (shouldSearchMoorings || shouldNavigate || shouldSearchWeb)
                 ? fetchAvailableMoorings(checkIn, checkOut, lat, lng, boatLength)
                 : Promise.resolve({ text: "", rows: [] as MooringRow[], checkIn, checkOut }),
             lastUserMsg ? kbSearch(lastUserMsg, 3) : Promise.resolve([] as KbHit[]),
@@ -1367,6 +1392,7 @@ ${preferencesBlock}
 15. NIKAD ne izmišljaj — ako nije u priloženim podacima, reci "trenutno nemam potvrđen podatak" i predloži direktni kontakt s marinom. **NIKAD ne preporučuj konkurentske aplikacije, karte ili servise** (Navionics, Marine Traffic, Google/Apple Maps, pilot-knjige drugih brendova). AI Kapetan je jedini izvor.
 16. Ako je poznat GAZ broda (iz "Brod —" sekcije), uvijek provjeri max_draft marine prije preporuke i upozori korisnika ako je tijesno.
 17. Ako je poznat DATUM isteka osiguranja i blizu je, diskretno podsjeti korisnika.
+18. Za restorane i hranu: Imaš pristup Google pretrazi! Kad korisnik pita za restoran, konobu, hranu — pretražuj web i preporuči STVARNE restorane blizu korisnikove pozicije ili blizu odredišta/marine. Navedi ime restorana, tip kuhinje, lokaciju, i zašto je dobar izbor za nautičare (blizina marine, terasa s pogledom na more, svježa riba, itd.). Preporuči 3-5 restorana. Ako marina iz baze ima "restaurant" u amenities, napomeni da i sama marina ima restoran u sklopu.
 ${!isPremiumTier && tierStr !== 'ai-only' ? `
 ═══ BASIC PLAN OGRANIČENJA ═══
 G) MANEVRI: Korisnik je na Basic planu. Za pitanja o manevrima (sidrenje, privezivanje, MOB) daj KRATKI sažetak (3-4 koraka) i napomeni: "Za detaljne step-by-step vodiče prilagođene tvom tipu broda i uvjetima, nadogradi na Sailor ili Captain plan."
@@ -1402,7 +1428,7 @@ H) DIJAGNOSTIKA: Daj KOMPLETNU dijagnostičku proceduru: 🔍 Dijagnoza → ⚠�
                 : prefs?.answerStyle === "detailed"
                     ? 1800
                     : 900; // balanced / unset
-        const reply = await callGemini(systemPrompt, history, maxTokensForStyle);
+        const reply = await callGemini(systemPrompt, history, maxTokensForStyle, shouldSearchWeb);
 
         const { confidence, flags } = validateReply(reply, mooringsResult.rows, rescue);
 
@@ -1435,6 +1461,13 @@ H) DIJAGNOSTIKA: Daj KOMPLETNU dijagnostičku proceduru: 🔍 Dijagnoza → ⚠�
                 title: `${rescue.country_name} MRCC`,
                 url: rescue.coast_guard_url ?? undefined,
                 detail: `${rescue.coast_guard_name ?? "MRCC"} · VHF Ch.${rescue.vhf_emergency_channel}`,
+            });
+        }
+        if (shouldSearchWeb) {
+            sources.push({
+                type: "google_search",
+                title: "Google Search — restaurants near location",
+                detail: `lat ${lat.toFixed(2)}, lng ${lng.toFixed(2)}`,
             });
         }
 

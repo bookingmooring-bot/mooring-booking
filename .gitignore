@@ -25,6 +25,26 @@ _leads_*.json
 _meta_insights_all.json
 _pages.json
 
+# Tokens and credentials files
+token.json
+
+# One-time utility scripts with hardcoded keys
+scripts/seed-moorings.mjs
+scripts/import-marinas.mjs
+scripts/backfill-missed-leads.mjs
+
+# Data files and reports
+*.xlsx
+~$*
+AUDIT_REPORT.md
+LEAD_BACKFILL_REPORT*.md
+
+# Large binary files (videos are in public/videos/ and served from there)
+*.mp4
+
+# Supabase temp files
+supabase/.temp/
+
 # Logs
 logs
 *.log

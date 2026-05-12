@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 const SITE_URL = 'https://mooring-booking.com';
-const RESEND_API_KEY_FALLBACK = 're_SzjDqUk7_4UFxm9iXQyiTeSgrkN9MTGsX';
+const RESEND_API_KEY_FALLBACK = '';
 
 type Locale = 'hr' | 'en';
 

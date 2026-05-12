@@ -113,7 +113,7 @@ export default function ProviderDashboard({
                       <div>
                         <p className="font-semibold text-foreground">{m.name || 'Mooring'}</p>
                         <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                          m.status === 'approved' ? 'bg-green-100 text-green-700' :
+                          m.status === 'active' ? 'bg-green-100 text-green-700' :
                           m.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                           'bg-gray-100 text-gray-600'
                         }`}>

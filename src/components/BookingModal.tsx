@@ -468,10 +468,10 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
               >
                 {bookingPayment.isPending ? (
                   <span className="flex items-center gap-2 justify-center">
-                    <Loader2 size={18} className="animate-spin" /> Preusmjeravanje na plaćanje...
+                    <Loader2 size={18} className="animate-spin" /> {t('booking.redirectingPayment', 'Redirecting to payment...')}
                   </span>
                 ) : (
-                  '💳 Plati karticom (Stripe)'
+                  t('booking.payWithCard', 'Pay with Card (Stripe)')
                 )}
               </Button>
 
@@ -484,15 +484,15 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
               >
                 {createBooking.isPending ? (
                   <span className="flex items-center gap-2 justify-center">
-                    <Loader2 size={16} className="animate-spin" /> Saving...
+                    <Loader2 size={16} className="animate-spin" /> {t('booking.saving', 'Saving...')}
                   </span>
                 ) : (
-                  '💵 Plati gotovinom / na licu mjesta'
+                  t('booking.payWithCash', 'Pay with Cash / On-site')
                 )}
               </Button>
 
               <p className="text-xs text-muted-foreground text-center">
-                Stripe plaćanje je sigurno i šifrirano. Pritiskom na "Plati karticom" bit ćeš preusmjeren na Stripe.
+                {t('booking.stripeSecure', 'Stripe payment is secure and encrypted. You will be redirected to Stripe to complete payment.')}
               </p>
             </div>
           )}

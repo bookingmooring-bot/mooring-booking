@@ -593,7 +593,7 @@ export function useProviderForm() {
             image_urls: imageUrls.length > 0 ? imageUrls : undefined,
             owner_phone: formData.phone,
             owner_whatsapp: formData.whatsapp || '',
-            status: 'approved',
+            status: 'active',
           })
           .eq('id', editingMooringId)
           .eq('owner_id', user!.id);
@@ -640,7 +640,7 @@ export function useProviderForm() {
 
         if (rpcData) {
           setLastMooringId(rpcData);
-          await supabase.from('moorings').update({ status: 'approved' }).eq('id', rpcData);
+          await supabase.from('moorings').update({ status: 'active' }).eq('id', rpcData);
         }
         setMooringCount(prev => prev + 1);
         setJustSubmitted(true);

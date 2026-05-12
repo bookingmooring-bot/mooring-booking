@@ -1,4 +1,4 @@
-﻿{
+{
     "nav":  {
                 "explore":  "Explore",
                 "howItWorks":  "How It Works",
@@ -81,6 +81,9 @@
                     "back":  "Back",
                     "continue":  "Continue",
                     "confirmPay":  "Confirm \u0026 Pay",
+                    "payWithCard":  "Pay with Card (Stripe)",
+                    "payWithCash":  "Pay with Cash / On-site",
+                    "redirectingPayment":  "Redirecting to payment...",
                     "confirmed":  "Booking Confirmed!",
                     "reserved":  "Your mooring at",
                     "hasBeenReserved":  "has been reserved.",
