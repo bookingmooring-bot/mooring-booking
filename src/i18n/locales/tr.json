@@ -1,4 +1,4 @@
-﻿{
+{
   "nav": {
     "explore": "Keşfet",
     "howItWorks": "Nasıl Çalışır",
@@ -91,7 +91,10 @@
     "navigateToMooring": "Bağlamaya Git",
     "confirmationSent": "Onay gönderildi",
     "done": "Tamam",
-    "coordsCopied": "Koordinatlar kopyalandı!"
+    "coordsCopied": "Koordinatlar kopyalandı!",
+    "payWithCard": "Kartla öde (Stripe)",
+    "payWithCash": "Nakit / yerinde öde",
+    "redirectingPayment": "Ödemeye yönlendiriliyor..."
   },
   "howItWorks": {
     "title": "Mooring Booking Nasıl Çalışır",
@@ -180,7 +183,8 @@
     "madeWith": "İle yapıldı",
     "by": "tarafından",
     "marinaPartnership": "B2B Ortaklıkları & Seyahat Acenteleri",
-    "stripeSecure": "Odemeler guvenli ve Stripe araciligiyla islenmektedir"
+    "stripeSecure": "Odemeler guvenli ve Stripe araciligiyla islenmektedir",
+    "aiCaptain": "AI Kaptan"
   },
   "aiChat": {
     "title": "AI Kaptan Jack",
@@ -189,7 +193,63 @@
     "send": "Gönder",
     "welcome": "Gemiye hoş geldiniz! Ben AI Kaptan Jack, denizin derinliklerinde ve limanların sırlarında cesaretli rehberinizim. Navigasyon, denizcilik tavsiyeleri, hava tahminleri, kriz durumları, manevra, bağlama, uygun fiyatlı bağlama noktaları ve marinaların aranması, teknik tamir, liman çıkışı ve girişi konularında yardım ediyorum. Bugün hangi rotayı belirleyeceğiz?",
     "thinking": "Veri denizinin derinliklerinde yol alıyorum... Lütfen bekleyin, yakında yanıtlarla demirleyeceğiz!",
-    "farewell": "Sakin denizler! Sadık AI Kaptanınız her zaman bir sonraki maceraya hazır."
+    "farewell": "Sakin denizler! Sadık AI Kaptanınız her zaman bir sonraki maceraya hazır.",
+    "sources": "Kaynaklar",
+    "lowConfidence": "Buna güvenmeden önce kılavuz kitap veya marina ile doğrulayın.",
+    "loading": "Yükleniyor…",
+    "intent": {
+      "SEARCH_MOORING": "Bağlama yeri ara",
+      "DIAGNOSE_ENGINE": "Motor teşhisi",
+      "CHECK_WEATHER": "Hava durumu",
+      "EMERGENCY": "Acil durum",
+      "BOOKING_HELP": "Rezervasyon yardımı",
+      "NAVIGATION_ROUTE": "Navigasyon",
+      "GENERAL_CHAT": "Sohbet"
+    },
+    "onboarding": {
+      "title": "İlk mesajdan önce",
+      "subtitle": "AI Kaptan'ı ayarlayın. Bir kez kaydedilir, sonsuza kadar kullanılır.",
+      "settingsTitle": "AI Kaptan ayarları",
+      "settingsSubtitle": "Yanıt stilini ve deneyim seviyesini istediğiniz zaman değiştirin.",
+      "styleLabel": "Yanıt stili",
+      "levelLabel": "Deneyim seviyesi",
+      "submit": "Sohbeti başlat →",
+      "save": "Kaydet",
+      "cancel": "İptal",
+      "saving": "Kaydediliyor…",
+      "styles": {
+        "bullets": {
+          "label": "Madde işaretleri",
+          "hint": "Kısa ve hızlı"
+        },
+        "balanced": {
+          "label": "Dengeli",
+          "hint": "Orta uzunluk"
+        },
+        "detailed": {
+          "label": "Detaylı",
+          "hint": "Uzun yanıtlar"
+        }
+      },
+      "levels": {
+        "beginner": {
+          "label": "Başlangıç",
+          "hint": "Yelkencilikte yeni"
+        },
+        "intermediate": {
+          "label": "Orta",
+          "hint": "Ara sıra yelken açıyorum"
+        },
+        "advanced": {
+          "label": "İleri",
+          "hint": "Düzenli yelken açıyorum"
+        },
+        "professional": {
+          "label": "Profesyonel kaptan",
+          "hint": "Sertifikalı kaptan"
+        }
+      }
+    }
   },
   "provider": {
     "title": "Sağlayıcı Profilinizi Oluşturun",
@@ -699,6 +759,22 @@
       "a5": "Možete otkazati unutar 24 sata od primanja rezervacije bez penala. Nakon toga, otkazivanje može utjecati na vaš rang.",
       "q6": "Koje načine plaćanja moram prihvatiti?",
       "a6": "Vi birate koje načine plaćanja prihvaćate - gotovinu, Visa, Mastercard, PayPal ili Google Pay. Preporučujemo prihvaćanje više opcija."
+    },
+    "whiteLabel": {
+      "title": "Marina Ortaklık Programı",
+      "subtitle": "Profesyonel marinalar daha düşük komisyon, premium listeleme ve özel destek alır.",
+      "upTo50": "50 bağlama yerine kadar",
+      "over50": "50 üzeri bağlama yeri",
+      "monthlyPrice": "aylık",
+      "commissionRate": "Rezervasyon başına %10 komisyon",
+      "transactionFee": "Rezervasyon başına €5 sabit ücret",
+      "premiumIncluded": "Premium listeleme dahil (€9.99/ay değerinde)",
+      "commissionShort": "komisyon",
+      "perBooking": "rezervasyon",
+      "perBookingFee": "rezervasyon başına sabit ücret",
+      "included": "dahil",
+      "upgrade": "White Label'a yükselt",
+      "savingsNote": "Standart plana göre her rezervasyonda %2 tasarruf edin"
     }
   },
   "userPricing": {
@@ -1060,5 +1136,96 @@
     "signInBtn": "Giriş Yap",
     "haveAccount": "Zaten hesabınız var mı? Giriş yapın",
     "noAccount": "Hesabınız yok mu? Kaydolun"
+  },
+  "dashboard": {
+    "whiteLabel": {
+      "active": "Aktif",
+      "upgradeTitle": "White Label Marina'ya Yükselt",
+      "upgradeDesc": "Komisyonunuzu %10'a düşürün, premium listeleme ve özel destek alın.",
+      "notConfigured": "Stripe henüz yapılandırılmadı. Destek ile iletişime geçin."
+    }
+  },
+  "aiCaptainTeaser": {
+    "badge": "AI Kaptan",
+    "title": "AI Kaptanınızla tanışın",
+    "subtitle": "7/24 mevcut AI denizcilik uzmanı — fırtına uyarıları ve rota planlamadan tekne teşhisi ve yanaşma manevralarına.",
+    "feature": {
+      "weather": "Hava durumu ve fırtına uyarıları",
+      "navigation": "Adım adım navigasyon",
+      "mooring": "Bağlama ve yanaşma yardımı",
+      "diagnostics": "Tekne teşhisi"
+    },
+    "readMore": "Devamını oku"
+  },
+  "aiCaptainPage": {
+    "badge": "AI Kaptan Jack",
+    "heroTitle": "AI Kaptan'ın",
+    "heroHighlight": "yapabilecekleri",
+    "heroSubtitle": "Google Gemini AI ile güçlendirilmiş 7/24 denizcilik uzmanınız. Fırtına uyarılarından tekne teşhisine — AI Kaptan denizde yanınızda.",
+    "ctaStart": "Ücretsiz başla",
+    "ctaPlans": "Planları gör",
+    "capabilitiesTitle": "Tüm yetenekler",
+    "capabilitiesSubtitle": "AI Kaptan'ın suda size yardımcı olduğu on güçlü alan.",
+    "cap": {
+      "weather": {
+        "title": "Hava tahmini ve fırtınalar",
+        "desc": "Windy verileriyle 7 günlük tahminler — rüzgar hızı, dalga yüksekliği, görüş mesafesi ve fırtına uyarıları."
+      },
+      "navigation": {
+        "title": "Adım adım navigasyon",
+        "desc": "Mevcut konumunuzdan Akdeniz'deki herhangi bir bağlama yerine veya limana hassas GPS navigasyonu."
+      },
+      "mooring": {
+        "title": "Bağlama ve yanaşma rehberi",
+        "desc": "Teknenizi yaklaştırma ve bağlama için adım adım talimatlar — şamandıralar, rıhtım ve dar marinalar."
+      },
+      "routing": {
+        "title": "Rota planlama",
+        "desc": "Kalkış noktası, tekne tipi ve hava pencerelerine dayalı AI tarafından oluşturulan çok günlük rotallar."
+      },
+      "diagnostics": {
+        "title": "Tekne teşhisi",
+        "desc": "Motor sorunları, elektrik arızaları, çapa ırgatı, sintine pompası — AI Kaptan teşhiste size rehberlik eder."
+      },
+      "colregs": {
+        "title": "COLREGS ve güvenlik kuralları",
+        "desc": "Denizde Çatışmayı Önleme Uluslararası Kuralları. Her kural için açık açıklamalar."
+      },
+      "maneuvers": {
+        "title": "Manevra rehberleri",
+        "desc": "Dar limanda katamaran, güçlü akıntıda demirleme, rüzgarda yanaşma — detaylı adım adım yardım."
+      },
+      "discover": {
+        "title": "Uygun fiyatlı bağlama yerleri keşfedin",
+        "desc": "AI Kaptan'a herhangi bir konuma yakın en ucuz veya en iyi değerlendirilen bağlama yerlerini bulmasını söyleyin."
+      },
+      "offline": {
+        "title": "Çevrimdışı erişim (Premium)",
+        "desc": "Premium üyeler AI Kaptan'ı 24 saatlik önbellekli hava, çevrimdışı haritalar ve kayıtlı rehberlerle kullanabilir."
+      },
+      "multilang": {
+        "title": "Çok dilli destek",
+        "desc": "Türkçe, İngilizce, İtalyanca, Yunanca, Almanca, Fransızca, İspanyolca, Hırvatça ve daha fazla dilde iletişim kurun."
+      }
+    },
+    "planTitle": "Ücretsiz vs Premium",
+    "planSubtitle": "Ücretsiz başlayın. Tam AI Kaptan deneyimi için yükseltin.",
+    "planFeature": "Özellik",
+    "planBasic": "Temel (Ücretsiz)",
+    "planPremium": "Premium",
+    "planRow": {
+      "booking": "Bağlama yerlerini keşfet ve rezerve et",
+      "aiBasic": "AI Kaptan (10 soru)",
+      "weather3": "3 günlük tahmin",
+      "aiUnlimited": "Sınırsız AI Kaptan",
+      "weather7": "Detaylı 7 günlük tahminler",
+      "offline": "Çevrimdışı haritalar ve hava önbelleği",
+      "stormAlerts": "Fırtına ve rüzgar uyarıları",
+      "routing": "AI rota planlama",
+      "maneuvers": "Manevra rehberleri",
+      "priority": "Öncelikli rezervasyon kuyruğu"
+    },
+    "ctaTitle": "Daha akıllı yelken açmaya hazır mısınız?",
+    "ctaSubtitle": "Her gün AI Kaptan kullanan binlerce denizciye katılın. Başlamak ücretsiz."
   }
 }

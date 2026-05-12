@@ -1,4 +1,4 @@
-﻿{
+{
   "nav": {
     "explore": "Eksploro",
     "howItWorks": "Si Funksionon",
@@ -91,7 +91,10 @@
     "navigateToMooring": "Navigo te Ankorimi",
     "confirmationSent": "Konfirmimi u dërgua te",
     "done": "Përfundoi",
-    "coordsCopied": "Koordinatat u kopjuan!"
+    "coordsCopied": "Koordinatat u kopjuan!",
+    "payWithCard": "Paguaj me kartë (Stripe)",
+    "payWithCash": "Paguaj me para në dorë / në vend",
+    "redirectingPayment": "Duke ridrejtuar te pagesa..."
   },
   "howItWorks": {
     "title": "Si Funksionon Mooring Booking",
@@ -160,7 +163,7 @@
     "about": "Rreth Nesh",
     "forYou": "Për Ju",
     "sailingManual": "Manuali i Lundrimit",
-    "faq": "Pyetje të Shpeshta",
+    "faq": "Pyetje të shpeshta",
     "aboutUs": "Rreth Nesh",
     "howItWorksLink": "Si Funksionon",
     "blog": "Blog",
@@ -180,7 +183,8 @@
     "madeWith": "Krijuar me",
     "by": "nga",
     "marinaPartnership": "Partneritete B2B & Agjenci Turistike",
-    "stripeSecure": "Pagesat jane te sigurta dhe perpunohen nepermjet Stripe"
+    "stripeSecure": "Pagesat jane te sigurta dhe perpunohen nepermjet Stripe",
+    "aiCaptain": "AI Kapiteni"
   },
   "aiChat": {
     "title": "AI Kapiten Jack",
@@ -189,7 +193,63 @@
     "send": "Dërgo",
     "welcome": "Mirë se vini në bord! Unë jam AI Kapiten Jack, navigatori juaj i guximshëm nëpër thellësitë e detit dhe sekretet e porteve. Ndihmoj me navigim, këshilla nautike, parashikime moti, situata krizash, manovra, ankorim, kërkim të ankorimeve dhe marinave të lira, riparime teknike, nisje dhe hyrje në porte. Çfarë kursi vendosim sot?",
     "thinking": "Po lundroj nëpër thellësitë e detit të të dhënave... Ju lutemi prisni, së shpejti ankorojmë me përgjigje!",
-    "farewell": "Det i qetë! AI Kapiteni juaj besnik gjithmonë gati për aventurën tjetër."
+    "farewell": "Det i qetë! AI Kapiteni juaj besnik gjithmonë gati për aventurën tjetër.",
+    "sources": "Burime",
+    "lowConfidence": "Verifikoni me librin e pilotimit ose marinën përpara se të mbështeteni në këtë.",
+    "loading": "Duke u ngarkuar…",
+    "intent": {
+      "SEARCH_MOORING": "Kërko vend ankorimi",
+      "DIAGNOSE_ENGINE": "Diagnostikim motori",
+      "CHECK_WEATHER": "Moti",
+      "EMERGENCY": "Emergjencë",
+      "BOOKING_HELP": "Ndihmë rezervimi",
+      "NAVIGATION_ROUTE": "Navigim",
+      "GENERAL_CHAT": "Bisedë"
+    },
+    "onboarding": {
+      "title": "Para mesazhit të parë",
+      "subtitle": "Konfiguroni AI Kapitenin. Ruhet një herë, përdoret përgjithmonë.",
+      "settingsTitle": "Cilësimet e AI Kapitenit",
+      "settingsSubtitle": "Ndryshoni stilin e përgjigjes dhe nivelin e përvojës në çdo kohë.",
+      "styleLabel": "Stili i përgjigjes",
+      "levelLabel": "Niveli i përvojës",
+      "submit": "Fillo bisedën →",
+      "save": "Ruaj",
+      "cancel": "Anulo",
+      "saving": "Duke ruajtur…",
+      "styles": {
+        "bullets": {
+          "label": "Pika",
+          "hint": "Shkurt dhe shpejt"
+        },
+        "balanced": {
+          "label": "I balancuar",
+          "hint": "Gjatësi mesatare"
+        },
+        "detailed": {
+          "label": "I detajuar",
+          "hint": "Përgjigje të gjata"
+        }
+      },
+      "levels": {
+        "beginner": {
+          "label": "Fillestar",
+          "hint": "I ri në lundrim"
+        },
+        "intermediate": {
+          "label": "Mesatar",
+          "hint": "Lundoj herë pas here"
+        },
+        "advanced": {
+          "label": "I avancuar",
+          "hint": "Lundoj rregullisht"
+        },
+        "professional": {
+          "label": "Kapiten profesionist",
+          "hint": "Kapiten i certifikuar"
+        }
+      }
+    }
   },
   "provider": {
     "title": "Krijoni Profilin Tuaj të Ofruesit",
@@ -743,6 +803,22 @@
       "a5": "Pa penalitet mund të anuloni brenda 24 orësh nga pranimi i rezervimit. Pas kësaj, anulimi mund të ndikojë vlerësimin tuaj.",
       "q6": "Cilat metoda pagese duhet të pranoj?",
       "a6": "Ju vendosni cilat metoda pagese pranoni — cash, Visa, Mastercard, PayPal ose Google Pay."
+    },
+    "whiteLabel": {
+      "title": "Programi Partner i Marinës",
+      "subtitle": "Marinat profesionale marrin komisione më të ulëta, listim premium të përfshirë dhe mbështetje të dedikuar.",
+      "upTo50": "Deri në 50 vende",
+      "over50": "Mbi 50 vende",
+      "monthlyPrice": "në muaj",
+      "commissionRate": "10% komisioni për rezervim",
+      "transactionFee": "€5 tarifa fikse për rezervim",
+      "premiumIncluded": "Listim Premium i përfshirë (vlera €9.99/muaj)",
+      "commissionShort": "komisioni",
+      "perBooking": "rezervim",
+      "perBookingFee": "tarifa fikse për rezervim",
+      "included": "i përfshirë",
+      "upgrade": "Kaloni në White Label",
+      "savingsNote": "Kurseni 2% në çdo rezervim krahasuar me planin standard"
     }
   },
   "support": {
@@ -1060,5 +1136,96 @@
     "minute": "minutë",
     "days": "ditë",
     "months": "muaj"
+  },
+  "dashboard": {
+    "whiteLabel": {
+      "active": "Aktiv",
+      "upgradeTitle": "Kaloni në White Label Marina",
+      "upgradeDesc": "Ulni komisionin tuaj në 10%, merrni listim premium të përfshirë dhe mbështetje të dedikuar.",
+      "notConfigured": "Stripe ende nuk është konfiguruar. Kontaktoni mbështetjen."
+    }
+  },
+  "aiCaptainTeaser": {
+    "badge": "AI Kapiteni",
+    "title": "Njihuni me AI Kapitenin tuaj",
+    "subtitle": "Një ekspert detar AI i disponueshëm 24/7 — nga alarmet e stuhisë dhe planifikimi i rrugës deri te diagnostikimi i barkës.",
+    "feature": {
+      "weather": "Moti dhe alarme stuhie",
+      "navigation": "Navigim hap pas hapi",
+      "mooring": "Ndihmë ankorimi",
+      "diagnostics": "Diagnostikim barke"
+    },
+    "readMore": "Lexo më shumë"
+  },
+  "aiCaptainPage": {
+    "badge": "AI Kapiteni Jack",
+    "heroTitle": "Gjithçka që",
+    "heroHighlight": "AI Kapiteni mund të bëjë",
+    "heroSubtitle": "Eksperti juaj detar 24/7 me Google Gemini AI. Nga alarmet e stuhisë deri te diagnostikimi — AI Kapiteni ju mbulon në det.",
+    "ctaStart": "Fillo falas",
+    "ctaPlans": "Shiko planet",
+    "capabilitiesTitle": "Të gjitha aftësitë",
+    "capabilitiesSubtitle": "Dhjetë fusha ku AI Kapiteni ju ndihmon në ujë.",
+    "cap": {
+      "weather": {
+        "title": "Parashikimi i motit dhe stuhitë",
+        "desc": "Parashikime 7-ditore me të dhëna Windy — shpejtësia e erës, lartësia e valëve, dukshmëria dhe alarme stuhie."
+      },
+      "navigation": {
+        "title": "Navigim hap pas hapi",
+        "desc": "Navigim GPS detar i saktë nga pozicioni juaj aktual në çdo vend ankorimi ose port."
+      },
+      "mooring": {
+        "title": "Udhëzues ankorimi",
+        "desc": "Udhëzime hap pas hapi për t'iu afruar dhe siguruar mjetin tuaj — bova, skelë dhe marina të ngushta."
+      },
+      "routing": {
+        "title": "Planifikim rruge",
+        "desc": "Rrugë lundruese shumëditore të gjeneruara nga AI bazuar në pikën e nisjes, llojin e barkës dhe dritaret e motit."
+      },
+      "diagnostics": {
+        "title": "Diagnostikim barke",
+        "desc": "Probleme motori, defekte elektrike, arganë spirancë, pompë santine — AI Kapiteni ju udhëzon."
+      },
+      "colregs": {
+        "title": "COLREGS dhe rregulla sigurie",
+        "desc": "Rregullore ndërkombëtare për parandalimin e përplasjeve në det. Shpjegime të qarta për çdo rregull."
+      },
+      "maneuvers": {
+        "title": "Udhëzues manovrash",
+        "desc": "Katamaran në port të ngushtë, ankorim në rrymë të fortë, lidhje me erë — ndihmë e detajuar hap pas hapi."
+      },
+      "discover": {
+        "title": "Zbuloni vende ankorimi të përballueshme",
+        "desc": "Pyetni AI Kapitenin të gjejë vendet e ankorimit më të lira ose më të vlerësuara pranë çdo vendndodhjeje."
+      },
+      "offline": {
+        "title": "Qasje jashtë linje (Premium)",
+        "desc": "Anëtarët Premium mund të përdorin AI Kapitenin me mot të ruajtur 24 orë, harta offline dhe udhëzues të ruajtur."
+      },
+      "multilang": {
+        "title": "Mbështetje shumëgjuhëshe",
+        "desc": "Komunikoni në shqip, anglisht, italisht, greqisht, gjermanisht, frëngjisht, spanjisht, turqisht dhe më shumë."
+      }
+    },
+    "planTitle": "Falas vs Premium",
+    "planSubtitle": "Filloni falas. Përmirësoni për përvojën e plotë të AI Kapitenit.",
+    "planFeature": "Veçori",
+    "planBasic": "Bazik (Falas)",
+    "planPremium": "Premium",
+    "planRow": {
+      "booking": "Shfletoni dhe rezervoni vende ankorimi",
+      "aiBasic": "AI Kapiteni (10 pyetje)",
+      "weather3": "Parashikim 3-ditor",
+      "aiUnlimited": "AI Kapiteni i pakufizuar",
+      "weather7": "Parashikime të detajuara 7-ditore",
+      "offline": "Harta offline dhe cache moti",
+      "stormAlerts": "Alarme stuhie dhe ere",
+      "routing": "AI planifikim rruge",
+      "maneuvers": "Udhëzues manovrash",
+      "priority": "Radhë rezervimi me përparësi"
+    },
+    "ctaTitle": "Gati për lundrim më të zgjuar?",
+    "ctaSubtitle": "Bashkohuni me mijëra detarë që përdorin AI Kapitenin çdo ditë. Falas për të filluar."
   }
 }

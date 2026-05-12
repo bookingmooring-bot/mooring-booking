@@ -1,4 +1,4 @@
-﻿{
+{
   "nav": {
     "explore": "Esplora",
     "howItWorks": "Come Funziona",
@@ -91,7 +91,10 @@
     "navigateToMooring": "Naviga all'Ormeggio",
     "confirmationSent": "Conferma inviata a",
     "done": "Fatto",
-    "coordsCopied": "Coordinate copiate!"
+    "coordsCopied": "Coordinate copiate!",
+    "payWithCard": "Paga con carta (Stripe)",
+    "payWithCash": "Paga in contanti / sul posto",
+    "redirectingPayment": "Reindirizzamento al pagamento..."
   },
   "howItWorks": {
     "title": "Come Funziona Mooring Booking",
@@ -179,7 +182,9 @@
     "madeWith": "Creato con",
     "by": "da",
     "marinaPartnership": "Partnership B2B & Agenzie di Viaggio",
-    "stripeSecure": "I pagamenti sono sicuri ed elaborati tramite Stripe"
+    "stripeSecure": "I pagamenti sono sicuri ed elaborati tramite Stripe",
+    "aiCaptain": "AI Capitano",
+    "faq": "FAQ"
   },
   "aiChat": {
     "title": "AI Capitano Jack",
@@ -188,7 +193,63 @@
     "send": "Invia",
     "welcome": "Benvenuto a bordo! Sono AI Capitano Jack, il tuo intrepido navigatore attraverso le profondità del mare e i segreti dei porti. Assisto nella navigazione, consigli nautici, previsioni meteorologiche, situazioni di crisi, manovre, ormeggio, ricerca di ormeggi e marine convenienti, riparazioni tecniche, uscita e ingresso nei porti. Quale rotta tracciamo oggi?",
     "thinking": "Navigo nelle profondità del mare dei dati... Attendere prego, ancoriamo presto con le risposte!",
-    "farewell": "Mare calmo! Il tuo fedele AI Capitano sempre pronto per la prossima avventura."
+    "farewell": "Mare calmo! Il tuo fedele AI Capitano sempre pronto per la prossima avventura.",
+    "sources": "Fonti",
+    "lowConfidence": "Verificare con il libro di pilotaggio o il porto turistico prima di fare affidamento su questo.",
+    "loading": "Caricamento…",
+    "intent": {
+      "SEARCH_MOORING": "Ricerca ormeggio",
+      "DIAGNOSE_ENGINE": "Diagnostica motore",
+      "CHECK_WEATHER": "Meteo",
+      "EMERGENCY": "Emergenza",
+      "BOOKING_HELP": "Aiuto prenotazione",
+      "NAVIGATION_ROUTE": "Navigazione",
+      "GENERAL_CHAT": "Chat"
+    },
+    "onboarding": {
+      "title": "Prima del primo messaggio",
+      "subtitle": "Configura AI Capitano. Salvato una volta, usato per sempre.",
+      "settingsTitle": "Impostazioni AI Capitano",
+      "settingsSubtitle": "Cambia lo stile di risposta e il livello di esperienza in qualsiasi momento.",
+      "styleLabel": "Stile di risposta",
+      "levelLabel": "Livello di esperienza",
+      "submit": "Inizia chat →",
+      "save": "Salva",
+      "cancel": "Annulla",
+      "saving": "Salvataggio…",
+      "styles": {
+        "bullets": {
+          "label": "Punti elenco",
+          "hint": "Breve e veloce"
+        },
+        "balanced": {
+          "label": "Bilanciato",
+          "hint": "Lunghezza media"
+        },
+        "detailed": {
+          "label": "Dettagliato",
+          "hint": "Risposte lunghe"
+        }
+      },
+      "levels": {
+        "beginner": {
+          "label": "Principiante",
+          "hint": "Nuovo alla vela"
+        },
+        "intermediate": {
+          "label": "Intermedio",
+          "hint": "Navigo occasionalmente"
+        },
+        "advanced": {
+          "label": "Avanzato",
+          "hint": "Navigo regolarmente"
+        },
+        "professional": {
+          "label": "Capitano professionista",
+          "hint": "Capitano certificato"
+        }
+      }
+    }
   },
   "provider": {
     "title": "Crea il Tuo Profilo Fornitore",
@@ -698,6 +759,22 @@
       "a5": "Puoi cancellare entro 24 ore dalla ricezione della prenotazione senza penali. Successivamente, la cancellazione potrebbe influire sul tuo ranking.",
       "q6": "Quali metodi di pagamento devo accettare?",
       "a6": "Sei tu a scegliere quali metodi di pagamento accettare: contanti, Visa, Mastercard, PayPal o Google Pay. Consigliamo di accettare più opzioni."
+    },
+    "whiteLabel": {
+      "title": "Programma Partner Marina",
+      "subtitle": "Le marine professionali ottengono commissioni ridotte, inserzione premium inclusa e supporto dedicato.",
+      "upTo50": "Fino a 50 ormeggi",
+      "over50": "Oltre 50 ormeggi",
+      "monthlyPrice": "al mese",
+      "commissionRate": "10% commissione per prenotazione",
+      "transactionFee": "€5 tariffa fissa per prenotazione",
+      "premiumIncluded": "Inserzione Premium inclusa (valore €9.99/mese)",
+      "commissionShort": "commissione",
+      "perBooking": "prenotazione",
+      "perBookingFee": "tariffa fissa per prenotazione",
+      "included": "incluso",
+      "upgrade": "Passa a White Label",
+      "savingsNote": "Risparmia il 2% su ogni prenotazione rispetto al piano standard"
     }
   },
   "userPricing": {
@@ -1059,5 +1136,96 @@
     "signInBtn": "Accedi",
     "haveAccount": "Hai già un account? Accedi",
     "noAccount": "Non hai un account? Registrati"
+  },
+  "dashboard": {
+    "whiteLabel": {
+      "active": "Attivo",
+      "upgradeTitle": "Passa a White Label Marina",
+      "upgradeDesc": "Riduci la commissione al 10%, ottieni inserzione premium inclusa e supporto dedicato.",
+      "notConfigured": "Stripe non ancora configurato. Contatta il supporto."
+    }
+  },
+  "aiCaptainTeaser": {
+    "badge": "AI Capitano",
+    "title": "Incontra il tuo AI Capitano",
+    "subtitle": "Un esperto nautico AI disponibile 24/7 — dagli avvisi di tempesta e pianificazione rotte alla diagnostica della barca e manovre di attracco.",
+    "feature": {
+      "weather": "Meteo e avvisi tempesta",
+      "navigation": "Navigazione passo-passo",
+      "mooring": "Aiuto ormeggio e attracco",
+      "diagnostics": "Diagnostica barca"
+    },
+    "readMore": "Leggi di più"
+  },
+  "aiCaptainPage": {
+    "badge": "AI Capitano Jack",
+    "heroTitle": "Tutto ciò che",
+    "heroHighlight": "AI Capitano può fare",
+    "heroSubtitle": "Il tuo esperto nautico 24/7 alimentato da Google Gemini AI. Dagli avvisi di tempesta alla diagnostica — AI Capitano ti copre in mare.",
+    "ctaStart": "Inizia gratis",
+    "ctaPlans": "Vedi piani",
+    "capabilitiesTitle": "Tutte le capacità",
+    "capabilitiesSubtitle": "Dieci aree potenti in cui AI Capitano ti assiste in acqua.",
+    "cap": {
+      "weather": {
+        "title": "Previsioni meteo e tempeste",
+        "desc": "Previsioni a 7 giorni con dati Windy — velocità del vento, altezza onde, visibilità e avvisi tempesta."
+      },
+      "navigation": {
+        "title": "Navigazione passo-passo",
+        "desc": "Navigazione GPS nautica precisa dalla tua posizione attuale a qualsiasi ormeggio o porto nel Mediterraneo."
+      },
+      "mooring": {
+        "title": "Guida ormeggio e attracco",
+        "desc": "Istruzioni passo-passo per avvicinarsi e assicurare la tua imbarcazione — boe, banchina e marine strette."
+      },
+      "routing": {
+        "title": "Pianificazione rotta",
+        "desc": "Rotte di navigazione multi-giorno generate dall'AI basate su punto di partenza, tipo di barca e finestre meteo."
+      },
+      "diagnostics": {
+        "title": "Diagnostica barca",
+        "desc": "Problemi al motore, guasti elettrici, verricello ancora, pompa di sentina — AI Capitano ti guida nella diagnostica."
+      },
+      "colregs": {
+        "title": "COLREGS e regole di sicurezza",
+        "desc": "Regolamento internazionale per prevenire le collisioni in mare (COLREGS). Spiegazioni chiare per ogni regola."
+      },
+      "maneuvers": {
+        "title": "Guide alle manovre",
+        "desc": "Catamarano in porto stretto, ancoraggio in correnti forti, attracco con vento — assistenza dettagliata passo-passo."
+      },
+      "discover": {
+        "title": "Scopri ormeggi convenienti",
+        "desc": "Chiedi ad AI Capitano di trovare gli ormeggi più economici o meglio valutati vicino a qualsiasi posizione."
+      },
+      "offline": {
+        "title": "Accesso offline (Premium)",
+        "desc": "I membri Premium possono usare AI Capitano con meteo cached 24h, mappe offline e guide di navigazione salvate."
+      },
+      "multilang": {
+        "title": "Supporto multilingue",
+        "desc": "Comunica in italiano, inglese, croato, greco, tedesco, francese, spagnolo, turco e altre lingue."
+      }
+    },
+    "planTitle": "Gratuito vs Premium",
+    "planSubtitle": "Inizia gratis. Passa a Premium per l'esperienza completa di AI Capitano.",
+    "planFeature": "Funzionalità",
+    "planBasic": "Base (Gratuito)",
+    "planPremium": "Premium",
+    "planRow": {
+      "booking": "Sfoglia e prenota ormeggi",
+      "aiBasic": "AI Capitano (10 domande totali)",
+      "weather3": "Previsioni a 3 giorni",
+      "aiUnlimited": "AI Capitano illimitato",
+      "weather7": "Previsioni dettagliate a 7 giorni",
+      "offline": "Mappe offline e cache meteo",
+      "stormAlerts": "Avvisi tempesta e vento",
+      "routing": "Pianificazione rotte AI",
+      "maneuvers": "Guide alle manovre",
+      "priority": "Coda prenotazione prioritaria"
+    },
+    "ctaTitle": "Pronto a navigare più intelligente?",
+    "ctaSubtitle": "Unisciti a migliaia di velisti che usano AI Capitano ogni giorno. Gratuito per iniziare."
   }
 }

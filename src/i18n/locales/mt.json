@@ -1,4 +1,4 @@
-﻿{
+{
   "nav": {
     "explore": "Esplora",
     "howItWorks": "Kif Taħdem",
@@ -91,7 +91,10 @@
     "navigateToMooring": "Naviga lejn il-Mooring",
     "confirmationSent": "Konferma mibgħuta lil",
     "done": "Lest",
-    "coordsCopied": "Koordinati kkupjati!"
+    "coordsCopied": "Koordinati kkupjati!",
+    "payWithCard": "Ħallas bil-kard (Stripe)",
+    "payWithCash": "Ħallas bil-flus / fuq il-post",
+    "redirectingPayment": "Qed tiġi diretta għall-ħlas..."
   },
   "howItWorks": {
     "title": "Kif Jaħdem Mooring Booking",
@@ -160,7 +163,7 @@
     "about": "Dwar",
     "forYou": "Għalik",
     "sailingManual": "Manwal tan-Navigazzjoni",
-    "faq": "Mistoqsijiet Frekwenti",
+    "faq": "FAQ",
     "aboutUs": "Dwar",
     "howItWorksLink": "Kif Jaħdem",
     "blog": "Blog",
@@ -180,7 +183,8 @@
     "madeWith": "Magħmul bi",
     "by": "minn",
     "marinaPartnership": "Sħubijiet B2B & Aġenziji tal-Ivvjaġġar",
-    "stripeSecure": "Il-hlasijiet huma siguri u pprocssati permezz ta' Stripe"
+    "stripeSecure": "Il-hlasijiet huma siguri u pprocssati permezz ta' Stripe",
+    "aiCaptain": "AI Kaptan"
   },
   "aiChat": {
     "title": "AI Kaptan Jack",
@@ -189,7 +193,63 @@
     "send": "Ibgħat",
     "welcome": "Merħba abbord! Jien AI Kaptan Jack, il-navigatur kuraġġuż tiegħek fil-fond tal-baħar u s-sigriet tal-portijiet. Ngħin fin-navigazzjoni, pariri nawtiċi, previsjonijiet tat-temp, sitwazzjonijiet ta' kriżi, manovri, ramm, tfittxija ta' ormeggi u marini bi prezzijiet raġonevoli, tiswijiet tekniċi, it-tluq u l-wasla fil-portijiet. Liema rotta nistabbilixxu llum?",
     "thinking": "Qed inbaħħar fil-fond tal-baħar tad-data... Jekk jogħġbok stenna, dalwaqt norbtu bl-tweġibiet!",
-    "farewell": "Baħar kalm! L-AI Kaptan fidil tiegħek dejjem lest għall-avventura jmiss."
+    "farewell": "Baħar kalm! L-AI Kaptan fidil tiegħek dejjem lest għall-avventura jmiss.",
+    "sources": "Sorsi",
+    "lowConfidence": "Ivverifika mal-ktieb tal-pilota jew il-marina qabel ma tafda fuq dan.",
+    "loading": "Qed jitgħabba…",
+    "intent": {
+      "SEARCH_MOORING": "Fittex ankraġġ",
+      "DIAGNOSE_ENGINE": "Dijanjożi tal-magna",
+      "CHECK_WEATHER": "Temp",
+      "EMERGENCY": "Emerġenza",
+      "BOOKING_HELP": "Għajnuna fil-booking",
+      "NAVIGATION_ROUTE": "Navigazzjoni",
+      "GENERAL_CHAT": "Chat"
+    },
+    "onboarding": {
+      "title": "Qabel l-ewwel messaġġ",
+      "subtitle": "Issettja AI Kaptan. Issejvjat darba, użat għal dejjem.",
+      "settingsTitle": "Settings tal-AI Kaptan",
+      "settingsSubtitle": "Ibdel l-istil ta' tweġiba u l-livell ta' esperjenza fi kwalunkwe ħin.",
+      "styleLabel": "Stil ta' tweġiba",
+      "levelLabel": "Livell ta' esperjenza",
+      "submit": "Ibda chat →",
+      "save": "Issejvja",
+      "cancel": "Ikkanċella",
+      "saving": "Qed jissejvja…",
+      "styles": {
+        "bullets": {
+          "label": "Punti",
+          "hint": "Qasir u mgħaġġel"
+        },
+        "balanced": {
+          "label": "Ibbilanċjat",
+          "hint": "Tul medju"
+        },
+        "detailed": {
+          "label": "Dettaljat",
+          "hint": "Tweġibiet twal"
+        }
+      },
+      "levels": {
+        "beginner": {
+          "label": "Principjant",
+          "hint": "Ġdid fis-sailing"
+        },
+        "intermediate": {
+          "label": "Intermedju",
+          "hint": "Insajlja xi kultant"
+        },
+        "advanced": {
+          "label": "Avvanzat",
+          "hint": "Insajlja regolarment"
+        },
+        "professional": {
+          "label": "Kaptan professjonali",
+          "hint": "Kaptan iċċertifikat"
+        }
+      }
+    }
   },
   "provider": {
     "title": "Oħloq il-Profil tal-Fornitur Tiegħek",
@@ -743,6 +803,22 @@
       "a5": "Mingħajr penali tista' tikkanċella fi 24 siegħa mill-aċċettazzjoni tal-booking. Wara hekk, il-kanċellament jista' jaffettwa r-rating tiegħek.",
       "q6": "Liema metodi ta' ħlas għandi naċċetta?",
       "a6": "Inti tiddeċiedi liema metodi ta' ħlas taċċetta — flus kontanti, Visa, Mastercard, PayPal jew Google Pay."
+    },
+    "whiteLabel": {
+      "title": "Programm Sħab tal-Marina",
+      "subtitle": "Marinas professjonali jiksbu kummissjoni aktar baxxa, listing premium inkluż u support dedikat.",
+      "upTo50": "Sa 50 post",
+      "over50": "Aktar minn 50 post",
+      "monthlyPrice": "fix-xahar",
+      "commissionRate": "10% kummissjoni kull booking",
+      "transactionFee": "€5 miżata fissa kull booking",
+      "premiumIncluded": "Listing Premium inkluż (valur €9.99/xahar)",
+      "commissionShort": "kummissjoni",
+      "perBooking": "booking",
+      "perBookingFee": "miżata fissa kull booking",
+      "included": "inkluż",
+      "upgrade": "Aġġorna għal White Label",
+      "savingsNote": "Iffranka 2% fuq kull booking meta mqabbel mal-pjan standard"
     }
   },
   "support": {
@@ -1060,5 +1136,96 @@
     "minute": "minuta",
     "days": "ijiem",
     "months": "xhur"
+  },
+  "dashboard": {
+    "whiteLabel": {
+      "active": "Attiv",
+      "upgradeTitle": "Aġġorna għal White Label Marina",
+      "upgradeDesc": "Naqqas il-kummissjoni tiegħek għal 10%, ikseb listing premium inkluż u support dedikat.",
+      "notConfigured": "Stripe għadu mhux konfigurat. Ikkuntattja s-support."
+    }
+  },
+  "aiCaptainTeaser": {
+    "badge": "AI Kaptan",
+    "title": "Iltaqa' mal-AI Kaptan tiegħek",
+    "subtitle": "Espert nawtiku AI disponibbli 24/7 — minn avviżi ta' maltempata u ppjanar ta' rotta sa dijanjostika tal-dgħajsa.",
+    "feature": {
+      "weather": "Temp u avviżi ta' maltempata",
+      "navigation": "Navigazzjoni pass b'pass",
+      "mooring": "Għajnuna fl-ankraġġ",
+      "diagnostics": "Dijanjostika tad-dgħajsa"
+    },
+    "readMore": "Aqra aktar"
+  },
+  "aiCaptainPage": {
+    "badge": "AI Kaptan Jack",
+    "heroTitle": "Dak kollu li",
+    "heroHighlight": "AI Kaptan jista' jagħmel",
+    "heroSubtitle": "L-espert nawtiku tiegħek 24/7 b'Google Gemini AI. Mill-avviżi ta' maltempata sad-dijanjostika — AI Kaptan igħattik fuq il-baħar.",
+    "ctaStart": "Ibda b'xejn",
+    "ctaPlans": "Ara l-pjanijiet",
+    "capabilitiesTitle": "Il-kapaċitajiet kollha",
+    "capabilitiesSubtitle": "Għaxar oqsma fejn AI Kaptan jgħinek fuq l-ilma.",
+    "cap": {
+      "weather": {
+        "title": "Tbassir tat-temp u maltempati",
+        "desc": "Tbassir ta' 7 ijiem b'data Windy — veloċità tar-riħ, għoli tal-mewġ, viżibilità u avviżi."
+      },
+      "navigation": {
+        "title": "Navigazzjoni pass b'pass",
+        "desc": "Navigazzjoni GPS nawtika preċiża mill-pożizzjoni attwali tiegħek sa kwalunkwe ankraġġ jew port."
+      },
+      "mooring": {
+        "title": "Gwida għall-ankraġġ",
+        "desc": "Istruzzjonijiet pass b'pass biex tersaq u tissikura d-dgħajsa tiegħek."
+      },
+      "routing": {
+        "title": "Ippjanar ta' rotta",
+        "desc": "Rotot ta' navigazzjoni ta' ħafna ġranet ġenerati mill-AI."
+      },
+      "diagnostics": {
+        "title": "Dijanjostika tad-dgħajsa",
+        "desc": "Problemi tal-magna, ħsarat elettriċi, winch tal-ankra, pompa tas-sentina — AI Kaptan jmexxik."
+      },
+      "colregs": {
+        "title": "COLREGS u regoli tas-sigurtà",
+        "desc": "Regolamenti internazzjonali għall-prevenzjoni ta' kolliżjonijiet fuq il-baħar."
+      },
+      "maneuvers": {
+        "title": "Gwidi tal-manovri",
+        "desc": "Katamaran f'port dejjaq, ankraġġ f'kurrenti qawwija, rabta fir-riħ — assistenza dettaljata."
+      },
+      "discover": {
+        "title": "Skopri ankraġġi affordabbli",
+        "desc": "Staqsi lil-AI Kaptan biex isib l-ankraġġi l-irħas jew l-aħjar vvalutati."
+      },
+      "offline": {
+        "title": "Aċċess offline (Premium)",
+        "desc": "Membri Premium jistgħu jużaw AI Kaptan b'temp cached ta' 24 siegħa, mapep offline u gwidi ssejvjati."
+      },
+      "multilang": {
+        "title": "Support multilingwi",
+        "desc": "Ikkomunika bil-Malti, Ingliż, Taljan, Grieg, Ġermaniż, Franċiż u aktar."
+      }
+    },
+    "planTitle": "B'xejn vs Premium",
+    "planSubtitle": "Ibda b'xejn. Aġġorna għall-esperjenza sħiħa tal-AI Kaptan.",
+    "planFeature": "Karatteristika",
+    "planBasic": "Bażiku (B'xejn)",
+    "planPremium": "Premium",
+    "planRow": {
+      "booking": "Fittex u ibbukkja ankraġġi",
+      "aiBasic": "AI Kaptan (10 mistoqsijiet)",
+      "weather3": "Tbassir ta' 3 ijiem",
+      "aiUnlimited": "AI Kaptan illimitat",
+      "weather7": "Tbassir dettaljat ta' 7 ijiem",
+      "offline": "Mapep offline u cache tat-temp",
+      "stormAlerts": "Avviżi ta' maltempata u riħ",
+      "routing": "AI ppjanar ta' rotot",
+      "maneuvers": "Gwidi tal-manovri",
+      "priority": "Kju ta' booking bi prijorità"
+    },
+    "ctaTitle": "Lest għal navigazzjoni aktar intelliġenti?",
+    "ctaSubtitle": "Ingħaqad ma' eluf ta' baħħara li jużaw AI Kaptan kuljum. B'xejn biex tibda."
   }
 }

@@ -1,4 +1,4 @@
-﻿{
+{
   "nav": {
     "explore": "Explorar",
     "howItWorks": "Cómo Funciona",
@@ -91,7 +91,10 @@
     "navigateToMooring": "Navegar al Amarre",
     "confirmationSent": "Confirmación enviada a",
     "done": "Listo",
-    "coordsCopied": "¡Coordenadas copiadas!"
+    "coordsCopied": "¡Coordenadas copiadas!",
+    "payWithCard": "Pagar con tarjeta (Stripe)",
+    "payWithCash": "Pagar en efectivo / en el sitio",
+    "redirectingPayment": "Redirigiendo al pago..."
   },
   "howItWorks": {
     "title": "Cómo Funciona Mooring Booking",
@@ -179,7 +182,9 @@
     "madeWith": "Hecho con",
     "by": "por",
     "marinaPartnership": "Asociaciones B2B y Agencias de Viajes",
-    "stripeSecure": "Los pagos son seguros y procesados a traves de Stripe"
+    "stripeSecure": "Los pagos son seguros y procesados a traves de Stripe",
+    "aiCaptain": "AI Capitán",
+    "faq": "Preguntas frecuentes"
   },
   "aiChat": {
     "title": "AI Capitán Jeck",
@@ -188,7 +193,63 @@
     "send": "Enviar",
     "welcome": "¡Bienvenido a bordo! Soy AI Capitán Jeck, tu intrépido navegante a través de las profundidades del mar y los secretos de los puertos. Asisto en navegación, consejos náuticos, pronósticos del tiempo, situaciones de crisis, maniobras, amarre, búsqueda de amarres y marinas asequibles, reparaciones técnicas, salida y entrada en puertos. ¿Qué rumbo fijamos hoy?",
     "thinking": "Navegando por las profundidades del mar de datos... ¡Por favor espera, pronto anclaremos con respuestas!",
-    "farewell": "¡Mar en calma! Tu fiel AI Capitán siempre listo para la próxima aventura."
+    "farewell": "¡Mar en calma! Tu fiel AI Capitán siempre listo para la próxima aventura.",
+    "sources": "Fuentes",
+    "lowConfidence": "Verifique con el libro de navegación o el puerto deportivo antes de confiar en esto.",
+    "loading": "Cargando…",
+    "intent": {
+      "SEARCH_MOORING": "Buscar amarre",
+      "DIAGNOSE_ENGINE": "Diagnóstico motor",
+      "CHECK_WEATHER": "Clima",
+      "EMERGENCY": "Emergencia",
+      "BOOKING_HELP": "Ayuda reserva",
+      "NAVIGATION_ROUTE": "Navegación",
+      "GENERAL_CHAT": "Chat"
+    },
+    "onboarding": {
+      "title": "Antes del primer mensaje",
+      "subtitle": "Configure AI Capitán. Se guarda una vez, se usa siempre.",
+      "settingsTitle": "Configuración AI Capitán",
+      "settingsSubtitle": "Cambie el estilo de respuesta y nivel de experiencia en cualquier momento.",
+      "styleLabel": "Estilo de respuesta",
+      "levelLabel": "Nivel de experiencia",
+      "submit": "Iniciar chat →",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "saving": "Guardando…",
+      "styles": {
+        "bullets": {
+          "label": "Puntos",
+          "hint": "Corto y rápido"
+        },
+        "balanced": {
+          "label": "Equilibrado",
+          "hint": "Longitud media"
+        },
+        "detailed": {
+          "label": "Detallado",
+          "hint": "Respuestas largas"
+        }
+      },
+      "levels": {
+        "beginner": {
+          "label": "Principiante",
+          "hint": "Nuevo en la navegación"
+        },
+        "intermediate": {
+          "label": "Intermedio",
+          "hint": "Navego ocasionalmente"
+        },
+        "advanced": {
+          "label": "Avanzado",
+          "hint": "Navego regularmente"
+        },
+        "professional": {
+          "label": "Capitán profesional",
+          "hint": "Capitán certificado"
+        }
+      }
+    }
   },
   "provider": {
     "title": "Crea Tu Perfil de Proveedor",
@@ -717,6 +778,22 @@
       "a5": "Možete otkazati unutar 24 sata od primanja rezervacije bez penala. Nakon toga, otkazivanje može utjecati na vaš rang.",
       "q6": "Koje načine plaćanja moram prihvatiti?",
       "a6": "Vi birate koje načine plaćanja prihvaćate - gotovinu, Visa, Mastercard, PayPal ili Google Pay. Preporučujemo prihvaćanje više opcija."
+    },
+    "whiteLabel": {
+      "title": "Programa Partner Marina",
+      "subtitle": "Las marinas profesionales obtienen comisión reducida, listado premium incluido y soporte dedicado.",
+      "upTo50": "Hasta 50 amarres",
+      "over50": "Más de 50 amarres",
+      "monthlyPrice": "por mes",
+      "commissionRate": "10% comisión por reserva",
+      "transactionFee": "€5 tarifa fija por reserva",
+      "premiumIncluded": "Listado Premium incluido (valor €9.99/mes)",
+      "commissionShort": "comisión",
+      "perBooking": "reserva",
+      "perBookingFee": "tarifa fija por reserva",
+      "included": "incluido",
+      "upgrade": "Actualizar a White Label",
+      "savingsNote": "Ahorre 2% en cada reserva comparado con el plan estándar"
     }
   },
   "userPricing": {
@@ -1078,5 +1155,96 @@
     "signInBtn": "Iniciar Sesión",
     "haveAccount": "¿Ya tienes cuenta? Inicia sesión",
     "noAccount": "¿No tienes cuenta? Regístrate"
+  },
+  "dashboard": {
+    "whiteLabel": {
+      "active": "Activo",
+      "upgradeTitle": "Actualizar a White Label Marina",
+      "upgradeDesc": "Reduce tu comisión al 10%, obtén listado premium incluido y soporte dedicado.",
+      "notConfigured": "Stripe aún no configurado. Contacte soporte."
+    }
+  },
+  "aiCaptainTeaser": {
+    "badge": "AI Capitán",
+    "title": "Conoce a tu AI Capitán",
+    "subtitle": "Un experto náutico AI disponible 24/7 — desde alertas de tormenta y planificación de rutas hasta diagnósticos de barco y maniobras de atraque.",
+    "feature": {
+      "weather": "Clima y alertas de tormenta",
+      "navigation": "Navegación paso a paso",
+      "mooring": "Ayuda de amarre y atraque",
+      "diagnostics": "Diagnóstico de barco"
+    },
+    "readMore": "Leer más"
+  },
+  "aiCaptainPage": {
+    "badge": "AI Capitán Jack",
+    "heroTitle": "Todo lo que",
+    "heroHighlight": "AI Capitán puede hacer",
+    "heroSubtitle": "Tu experto náutico 24/7 impulsado por Google Gemini AI. Desde alertas de tormenta hasta diagnósticos — AI Capitán te cubre en el mar.",
+    "ctaStart": "Empezar gratis",
+    "ctaPlans": "Ver planes",
+    "capabilitiesTitle": "Capacidades completas",
+    "capabilitiesSubtitle": "Diez áreas poderosas donde AI Capitán te asiste en el agua.",
+    "cap": {
+      "weather": {
+        "title": "Pronóstico y tormentas",
+        "desc": "Pronósticos de 7 días con datos Windy — velocidad del viento, altura de olas, visibilidad y alertas de tormenta."
+      },
+      "navigation": {
+        "title": "Navegación paso a paso",
+        "desc": "Navegación GPS náutica precisa desde tu posición actual a cualquier amarre o puerto del Mediterráneo."
+      },
+      "mooring": {
+        "title": "Guía de amarre y atraque",
+        "desc": "Instrucciones paso a paso para acercarse y asegurar tu embarcación — boyas, muelle y marinas estrechas."
+      },
+      "routing": {
+        "title": "Planificación de rutas",
+        "desc": "Rutas de navegación de varios días generadas por AI basadas en punto de partida, tipo de barco y ventanas meteorológicas."
+      },
+      "diagnostics": {
+        "title": "Diagnóstico de barco",
+        "desc": "Problemas de motor, fallos eléctricos, molinete de ancla, bomba de achique — AI Capitán te guía en el diagnóstico."
+      },
+      "colregs": {
+        "title": "COLREGS y reglas de seguridad",
+        "desc": "Reglamento internacional para prevenir colisiones en el mar. Explicaciones claras para cada regla."
+      },
+      "maneuvers": {
+        "title": "Guías de maniobras",
+        "desc": "Catamarán en puerto estrecho, fondeo en corrientes fuertes, atraque con viento — asistencia detallada paso a paso."
+      },
+      "discover": {
+        "title": "Descubre amarres económicos",
+        "desc": "Pide a AI Capitán que encuentre los amarres más baratos o mejor valorados cerca de cualquier ubicación."
+      },
+      "offline": {
+        "title": "Acceso sin conexión (Premium)",
+        "desc": "Los miembros Premium pueden usar AI Capitán con clima cached 24h, mapas offline y guías guardadas."
+      },
+      "multilang": {
+        "title": "Soporte multilingüe",
+        "desc": "Comunícate en español, inglés, italiano, griego, alemán, francés, croata, turco y más idiomas."
+      }
+    },
+    "planTitle": "Gratis vs Premium",
+    "planSubtitle": "Empieza gratis. Actualiza para la experiencia completa de AI Capitán.",
+    "planFeature": "Característica",
+    "planBasic": "Básico (Gratis)",
+    "planPremium": "Premium",
+    "planRow": {
+      "booking": "Explorar y reservar amarres",
+      "aiBasic": "AI Capitán (10 preguntas)",
+      "weather3": "Pronóstico de 3 días",
+      "aiUnlimited": "AI Capitán ilimitado",
+      "weather7": "Pronósticos detallados de 7 días",
+      "offline": "Mapas offline y cache de clima",
+      "stormAlerts": "Alertas de tormenta y viento",
+      "routing": "Planificación de rutas AI",
+      "maneuvers": "Guías de maniobras",
+      "priority": "Cola de reserva prioritaria"
+    },
+    "ctaTitle": "¿Listo para navegar más inteligente?",
+    "ctaSubtitle": "Únete a miles de navegantes que usan AI Capitán cada día. Gratis para empezar."
   }
 }

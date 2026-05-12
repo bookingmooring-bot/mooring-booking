@@ -1,4 +1,4 @@
-﻿{
+{
   "nav": {
     "explore": "Istraži",
     "howItWorks": "Kako Funkcionira",
@@ -91,7 +91,10 @@
     "navigateToMooring": "Navigiraj do Veza",
     "confirmationSent": "Potvrda poslana na",
     "done": "Gotovo",
-    "coordsCopied": "Koordinate kopirane u međuspremnik!"
+    "coordsCopied": "Koordinate kopirane u međuspremnik!",
+    "payWithCard": "Plati karticom (Stripe)",
+    "payWithCash": "Plati gotovinom / na licu mjesta",
+    "redirectingPayment": "Preusmjeravanje na plaćanje..."
   },
   "howItWorks": {
     "title": "Kako Mooring Booking Radi",
@@ -180,7 +183,8 @@
     "madeWith": "Napravljeno s",
     "by": "od",
     "stripeSecure": "Plaćanja su sigurna i obrađena putem Stripe platforme",
-    "aiCaptain": "AI Kapetan"
+    "aiCaptain": "AI Kapetan",
+    "faq": "Česta pitanja"
   },
   "aiChat": {
     "title": "AI Kapetanm Jack",
@@ -193,38 +197,59 @@
     "thinking": "Plovim kroz morske dubine podataka... Molimo sačekajte, ubrzo sidrimo s odgovorima!",
     "farewell": "Mirno more! Vaš vjerni AI Kapetan uvijek spreman za sljedeću avanturu.",
     "sources": "Izvori",
-    "lowConfidence": "Provjerite u pilot knjizi ili nazovite marinu prije nego što se oslonite na ovaj podatak.",
+    "lowConfidence": "Provjerite s pilotskom knjigom ili marinom prije oslanjanja na ovo.",
     "intent": {
-      "SEARCH_MOORING": "Pretraga vezova",
+      "SEARCH_MOORING": "Pretraga veza",
       "DIAGNOSE_ENGINE": "Dijagnostika motora",
       "CHECK_WEATHER": "Vrijeme",
       "EMERGENCY": "Hitno",
-      "BOOKING_HELP": "Pomoć oko rezervacija",
+      "BOOKING_HELP": "Pomoć s rezervacijom",
       "NAVIGATION_ROUTE": "Navigacija",
       "GENERAL_CHAT": "Razgovor"
     },
     "loading": "Učitavanje…",
     "onboarding": {
       "title": "Prije prve poruke",
-      "subtitle": "Podesi AI Kapetana. Pamti se samo jednom.",
+      "subtitle": "Postavite AI Kapetana. Sprema se jednom, koristi zauvijek.",
       "settingsTitle": "Postavke AI Kapetana",
-      "settingsSubtitle": "Promijeni stil odgovora i razinu iskustva kad god želiš.",
+      "settingsSubtitle": "Promijenite stil odgovora i razinu iskustva bilo kada.",
       "styleLabel": "Stil odgovora",
-      "levelLabel": "Nivo iskustva",
-      "submit": "Počni razgovor →",
+      "levelLabel": "Razina iskustva",
+      "submit": "Započni razgovor →",
       "save": "Spremi",
       "cancel": "Odustani",
-      "saving": "Spremam…",
+      "saving": "Spremanje…",
       "styles": {
-        "bullets": { "label": "Bullet points", "hint": "Kratko i jasno" },
-        "balanced": { "label": "Balansirano", "hint": "Srednja dužina" },
-        "detailed": { "label": "Detaljno", "hint": "Opširni odgovori" }
+        "bullets": {
+          "label": "Kratke točke",
+          "hint": "Kratko i brzo"
+        },
+        "balanced": {
+          "label": "Uravnoteženo",
+          "hint": "Srednja duljina"
+        },
+        "detailed": {
+          "label": "Detaljno",
+          "hint": "Dugi odgovori"
+        }
       },
       "levels": {
-        "beginner": { "label": "Početnik", "hint": "Tek krećem s plovidbom" },
-        "intermediate": { "label": "Srednji nivo", "hint": "Plovim povremeno" },
-        "advanced": { "label": "Iskusan", "hint": "Redovito plovim" },
-        "professional": { "label": "Profesionalni kapetan", "hint": "Certificirani kapetan" }
+        "beginner": {
+          "label": "Početnik",
+          "hint": "Novi u jedrenju"
+        },
+        "intermediate": {
+          "label": "Srednji",
+          "hint": "Povremeno jedrim"
+        },
+        "advanced": {
+          "label": "Napredan",
+          "hint": "Redovito jedrim"
+        },
+        "professional": {
+          "label": "Profesionalni kapetan",
+          "hint": "Certificirani kapetan"
+        }
       }
     }
   },
@@ -348,7 +373,32 @@
     "consentTermMarketing": "Suglasan/na sam s ponovnom naplatom €5/mj za Marketing Alate (QR kod i affiliate link).",
     "consentTermPremium": "Suglasan/na sam s ponovnom naplatom €8.25/mj za Premium oglas.",
     "consentTermInsurance": "Suglasan/na sam s ponovnom naplatom €9.99/god za usluge Posredovanja u osiguranju.",
-    "consentTermNow4Today": "Razumijem da Now4Today rezervacije nose obaveznu 20% nadoplatu cijene, a 12% provizija obračunava se na puni povećani iznos."
+    "consentTermNow4Today": "Razumijem da Now4Today rezervacije nose obaveznu 20% nadoplatu cijene, a 12% provizija obračunava se na puni povećani iznos.",
+    "declarationRightOfDisposal": "Izjava o pravu raspolaganja — Izjavljujem da sam ovlašteni predstavnik pravne osobe s punim pravom raspolaganja nad navedenim vezom/vezovima te da su sve potrebne koncesije i dozvole važeće.",
+    "concessionNumber": "Broj koncesije",
+    "concessionNumberPlaceholder": "npr. HR-CRO-2025-0042",
+    "concessionNumberDesc": "Unesite službeni broj koncesije ili dozvole izdane od nadležnog tijela za ovaj vez.",
+    "mooringUnits": "Broj vezova",
+    "mooringUnitsDesc": "Ako imate više vezova na istoj ili bliskoj lokaciji, unesite ukupan broj. Svaki se vez posebno rezervira putem kalendara.",
+    "offerWinterStorage": "Ponudi zimsko spremanje",
+    "winterSeason": "Sezona: Listopad – Travanj",
+    "wetStorage": "Mokro (u vodi)",
+    "dryStorage": "Suho (na kopnu/kolijevka)",
+    "bothStorage": "Oba dostupna",
+    "now4todayTitle": "Now4Today",
+    "monthlyAddOnTotal": "Ukupno mjesečni dodaci",
+    "yearlyAddOnTotal": "Ukupno godišnji dodaci",
+    "activePromotions": "Aktivne promocije i usluge",
+    "marketingToolsActive": "Marketing alati (QR + Affiliate)",
+    "premiumListingActive": "Premium listanje (Prioritet u pretrazi)",
+    "active": "Aktivno",
+    "servicesBillingNote": "Sve usluge su povezane s vašim profilom i Stripe računom. Naplata počinje objavom profila.",
+    "stripeAccountId": "Stripe ID računa",
+    "stripePayoutsNote": "Isplate se obrađuju 3-5 radnih dana nakon odjave gosta.",
+    "noStripeAccount": "Nemate Stripe račun?",
+    "createStripeFree": "Kreirajte besplatno",
+    "calendarCustomPrice": "Dvostruki klik na bilo koji dan za postavljanje prilagođene cijene.",
+    "addressPlaceholder": "Puna adresa (vidljiva nakon rezervacije)"
   },
   "admin": {
     "title": "Admin Nadzorna Ploča",
@@ -684,7 +734,8 @@
     "expansionBio": "Grčki jedriličarski prvak. Vodi naše širenje na Egejsko i Istočno Sredozemlje.",
     "readyToFind": "Spremni Pronaći Savršen Vez?",
     "exploreMoorings": "Istražite Vezove",
-    "listYourMooring": "Objavite Svoj Vez"
+    "listYourMooring": "Objavite Svoj Vez",
+    "tagline": "Airbnb za"
   },
   "pricing": {
     "heroTitle": "Jednostavne, Transparentne",
@@ -730,20 +781,20 @@
     "marketingTools": "Marketing Alati (QR kod + affiliate link)",
     "premiumListing": "Premium Oglas (prioritet u rezultatima pretrage)",
     "whiteLabel": {
-        "title": "Marina Partner Program",
-        "subtitle": "Profesionalne marine dobivaju nižu proviziju, uključen premium oglas i posvećenu podršku.",
-        "upTo50": "Do 50 vezova",
-        "over50": "Preko 50 vezova",
-        "monthlyPrice": "mjesečno",
-        "commissionRate": "10% provizija po rezervaciji",
-        "transactionFee": "€5 fiksna naknada po rezervaciji",
-        "premiumIncluded": "Premium Oglas uključen (vrijednost €9,99/mj)",
-        "commissionShort": "provizija",
-        "perBooking": "rezervacija",
-        "perBookingFee": "fiksna naknada po rezervaciji",
-        "included": "uključeno",
-        "upgrade": "Nadogradi na White Label",
-        "savingsNote": "Uštedite 2% na svakoj rezervaciji u odnosu na standardni plan"
+      "title": "Program za marine partnere",
+      "subtitle": "Profesionalne marine dobivaju nižu proviziju, premium listanje uključeno i posvećenu podršku.",
+      "upTo50": "Do 50 vezova",
+      "over50": "Preko 50 vezova",
+      "monthlyPrice": "mjesečno",
+      "commissionRate": "10% provizije po rezervaciji",
+      "transactionFee": "€5 fiksna naknada po rezervaciji",
+      "premiumIncluded": "Premium listanje uključeno (vrijednost €9.99/mj)",
+      "commissionShort": "provizija",
+      "perBooking": "rezervacija",
+      "perBookingFee": "fiksna naknada po rezervaciji",
+      "included": "uključeno",
+      "upgrade": "Nadogradi na White Label",
+      "savingsNote": "Uštedite 2% na svakoj rezervaciji u odnosu na standardni plan"
     },
     "faq": {
       "q1": "Kada se isplaćujem?",
@@ -764,7 +815,7 @@
     "whiteLabel": {
       "active": "Aktivno",
       "upgradeTitle": "Nadogradi na White Label Marinu",
-      "upgradeDesc": "Smanjite proviziju na 10%, dobijte uključen premium oglas i posvećenu podršku.",
+      "upgradeDesc": "Smanjite proviziju na 10%, dobijte premium listanje uključeno i posvećenu podršku.",
       "notConfigured": "Stripe još nije konfiguriran. Kontaktirajte podršku."
     }
   },
@@ -1130,85 +1181,85 @@
   },
   "aiCaptainTeaser": {
     "badge": "AI Kapetan",
-    "title": "Upoznajte vašeg AI Kapetana",
-    "subtitle": "Nautički AI stručnjak dostupan 24/7 — od upozorenja na oluje i planiranja rute do dijagnostike broda i manevara privezivanja.",
+    "title": "Upoznajte svog AI Kapetana",
+    "subtitle": "AI nautički stručnjak dostupan 24/7 — od upozorenja na oluje i planiranja ruta do dijagnostike broda i manevriranja pri pristajanju.",
     "feature": {
-      "weather": "Vremenska upozorenja",
+      "weather": "Vrijeme i upozorenja na oluje",
       "navigation": "Navigacija korak po korak",
-      "mooring": "Pomoć pri privezivanju",
+      "mooring": "Pomoć pri vezu i pristajanju",
       "diagnostics": "Dijagnostika broda"
     },
-    "readMore": "Pročitaj više"
+    "readMore": "Saznaj više"
   },
   "aiCaptainPage": {
     "badge": "AI Kapetan Jack",
     "heroTitle": "Sve što",
     "heroHighlight": "AI Kapetan može",
-    "heroSubtitle": "Vaš 24/7 nautički stručnjak pokrenut Google Gemini AI-em. Od upozorenja na oluje do dijagnostike broda — AI Kapetan vas pokriva na moru.",
-    "ctaStart": "Počni besplatno",
+    "heroSubtitle": "Vaš 24/7 nautički stručnjak pokretan Google Gemini AI. Od upozorenja na oluje do dijagnostike broda — AI Kapetan vas pokriva na moru.",
+    "ctaStart": "Započni besplatno",
     "ctaPlans": "Pogledaj planove",
-    "capabilitiesTitle": "Sve sposobnosti",
-    "capabilitiesSubtitle": "Deset moćnih područja gdje AI Kapetan pomaže na vodi.",
+    "capabilitiesTitle": "Sve mogućnosti",
+    "capabilitiesSubtitle": "Deset moćnih područja u kojima vam AI Kapetan pomaže na vodi.",
     "cap": {
       "weather": {
         "title": "Vremenska prognoza i oluje",
-        "desc": "7-dnevne prognoze s brzinom vjetra, visinom valova, vidljivošću i upozorenjima na oluje. Znaj prije nego kreš."
+        "desc": "7-dnevne prognoze s Windy podacima — brzina vjetra, visina valova, vidljivost i upozorenja na oluje."
       },
       "navigation": {
         "title": "Navigacija korak po korak",
-        "desc": "Precizna GPS nautička navigacija s vaše trenutne pozicije do bilo kojeg veza ili luke na Mediteranu."
+        "desc": "Precizna GPS navigacija od vaše trenutne pozicije do bilo kojeg veza ili luke na Mediteranu."
       },
       "mooring": {
-        "title": "Vodič za privezivanje",
-        "desc": "Upute korak po korak za prilazan i privezivanje — bove, pristanište i tijesne marine."
+        "title": "Vodič za vez i pristajanje",
+        "desc": "Upute korak po korak za prilaz i osiguranje vašeg plovila — bove, operacije na obali i uske marine."
       },
       "routing": {
-        "title": "Planiranje rute",
-        "desc": "AI rute za više dana prema polazištu, tipu broda i vremenskim uvjetima. Otkrijte skrivene vezove."
+        "title": "Planiranje ruta",
+        "desc": "AI generirane višednevne jedriličarske rute temeljene na polazištu, tipu broda i vremenskim prozorima."
       },
       "diagnostics": {
         "title": "Dijagnostika broda",
-        "desc": "Problemi s motorom, električni kvarovi, sidreni vinč, pumpa — AI Kapetan vodi kroz dijagnozu i privremene popravke."
+        "desc": "Problemi s motorom, električni kvarovi, sidreni vitlo, kaljužna pumpa — AI Kapetan vodi vas kroz dijagnostiku."
       },
       "colregs": {
         "title": "COLREGS i sigurnosna pravila",
-        "desc": "Međunarodna plovidbena pravila na zahtjev. Jasna objašnjenja za svako pravilo, na jeziku razumljivom svima."
+        "desc": "Međunarodni propisi za sprječavanje sudara na moru (COLREGS). Jasna objašnjenja za svako pravilo."
       },
       "maneuvers": {
         "title": "Vodiči za manevre",
-        "desc": "Ulazak katamarana u usku luku, sidrenje u jakim strujama, pristajanje u vjetru — detaljna pomoć korak po korak."
+        "desc": "Katamaran ulazi u usku luku, sidrenje u jakim strujama, pristajanje na vjetru — detaljna pomoć korak po korak."
       },
       "discover": {
-        "title": "Pronađi povoljne vezove",
-        "desc": "Pitajte AI Kapetana da pronađe najjeftinije ili najocjenjenije vezove blizu bilo koje lokacije. Direktni linkovi za rezervaciju."
+        "title": "Otkrijte povoljne vezove",
+        "desc": "Pitajte AI Kapetana da pronađe najjeftinije ili najbolje ocijenjene vezove blizu bilo koje lokacije."
       },
       "offline": {
         "title": "Offline pristup (Premium)",
-        "desc": "Premium članovi mogu koristiti AI Kapetana s 24-satnim cachom vremenskih prognoza, offline kartama i spremljenim navigacijskim vodičima — čak i bez interneta."
+        "desc": "Premium korisnici mogu koristiti AI Kapetana s 24-satnim cachiranim vremenom, offline kartama i spremljenim vodičima."
       },
       "multilang": {
         "title": "Višejezična podrška",
-        "desc": "Komunicirajte na hrvatskom, engleskom, talijanskom, grčkom, njemačkom, turskom i više. AI Kapetan vas razumije."
+        "desc": "Komunicirajte na hrvatskom, engleskom, talijanskom, grčkom, njemačkom, francuskom, španjolskom, turskom i drugim jezicima."
       }
     },
     "planTitle": "Besplatno vs Premium",
-    "planSubtitle": "Počnite besplatno. Nadogradite za puni AI Kapetan doživljaj.",
-    "planFeature": "Funkcija",
-    "planBasic": "Basic (Besplatno)",
+    "planSubtitle": "Započnite besplatno. Nadogradite za potpuni AI Kapetan doživljaj.",
+    "planFeature": "Značajka",
+    "planBasic": "Osnovni (Besplatno)",
     "planPremium": "Premium",
     "planRow": {
-      "booking": "Pretraži i rezerviraj vezove",
+      "booking": "Pregledaj i rezerviraj vezove",
       "aiBasic": "AI Kapetan (10 pitanja ukupno)",
-      "weather3": "3-dnevna vremenska prognoza",
+      "weather3": "3-dnevna prognoza",
       "aiUnlimited": "Neograničeni AI Kapetan",
       "weather7": "7-dnevne detaljne prognoze",
-      "offline": "Offline karte i cache",
+      "offline": "Offline karte i cache vremena",
       "stormAlerts": "Upozorenja na oluje i vjetar",
-      "routing": "AI planiranje rute",
+      "routing": "AI planiranje ruta",
       "maneuvers": "Vodiči za manevre",
-      "priority": "Prioritetna rezervacija"
+      "priority": "Prioritetni red za rezervacije"
     },
-    "ctaTitle": "Spremi za pametnije plovidbu?",
-    "ctaSubtitle": "Pridružite se tisućama nautičara koji koriste AI Kapetana svaki dan. Besplatno za početak."
+    "ctaTitle": "Spremni za pametnije jedrenje?",
+    "ctaSubtitle": "Pridružite se tisućama mornara koji koriste AI Kapetana svaki dan. Besplatno za početak."
   }
 }

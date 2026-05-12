@@ -1,4 +1,4 @@
-﻿{
+{
   "nav": {
     "explore": "Razišči",
     "howItWorks": "Kako Deluje",
@@ -91,7 +91,10 @@
     "navigateToMooring": "Navigiraj do Priveza",
     "confirmationSent": "Potrditev poslana na",
     "done": "Končano",
-    "coordsCopied": "Koordinate kopirane!"
+    "coordsCopied": "Koordinate kopirane!",
+    "payWithCard": "Plačaj s kartico (Stripe)",
+    "payWithCash": "Plačaj z gotovino / na kraju",
+    "redirectingPayment": "Preusmeritev na plačilo..."
   },
   "howItWorks": {
     "title": "Kako Deluje Mooring Booking",
@@ -160,7 +163,7 @@
     "about": "O Nas",
     "forYou": "Za Vas",
     "sailingManual": "Priročnik za Jadranje",
-    "faq": "Pogosta Vprašanja",
+    "faq": "Pogosta vprašanja",
     "aboutUs": "O Nas",
     "howItWorksLink": "Kako Deluje",
     "blog": "Blog",
@@ -180,7 +183,8 @@
     "madeWith": "Narejeno z",
     "by": "od",
     "marinaPartnership": "B2B partnerstva & turistične agencije",
-    "stripeSecure": "Placila so varna in obdelana prek Stripe"
+    "stripeSecure": "Placila so varna in obdelana prek Stripe",
+    "aiCaptain": "AI Kapitan"
   },
   "aiChat": {
     "title": "AI Kapitan Jack",
@@ -189,7 +193,63 @@
     "send": "Pošlji",
     "welcome": "Dobrodošli na krovu! Sem AI Kapitan Jack, vaš neustrašeni navigator skozi globine morja in skrivnosti pristanišč. Pomagam pri navigaciji, pomorskih nasvetih, vremenskih napovedih, kriznih situacijah, manevriranju, privezovanju, iskanju ugodnih privezov in marin, tehničnih popravilih, odhodu in prihodu v pristanišča. Katero smer nastavimo danes?",
     "thinking": "Plavam skozi morske globine podatkov... Prosim počakajte, kmalu sidramo z odgovori!",
-    "farewell": "Mirno morje! Vaš zvesti AI Kapitan vedno pripravljen na naslednjo pustolovščino."
+    "farewell": "Mirno morje! Vaš zvesti AI Kapitan vedno pripravljen na naslednjo pustolovščino.",
+    "sources": "Viri",
+    "lowConfidence": "Preverite s pilotsko knjigo ali marino, preden se zanašate na to.",
+    "loading": "Nalaganje…",
+    "intent": {
+      "SEARCH_MOORING": "Iskanje priveza",
+      "DIAGNOSE_ENGINE": "Diagnostika motorja",
+      "CHECK_WEATHER": "Vreme",
+      "EMERGENCY": "Nujni primer",
+      "BOOKING_HELP": "Pomoč pri rezervaciji",
+      "NAVIGATION_ROUTE": "Navigacija",
+      "GENERAL_CHAT": "Klepet"
+    },
+    "onboarding": {
+      "title": "Pred prvim sporočilom",
+      "subtitle": "Nastavite AI Kapitana. Shranjeno enkrat, uporabljeno za vedno.",
+      "settingsTitle": "Nastavitve AI Kapitana",
+      "settingsSubtitle": "Spremenite slog odgovora in raven izkušenj kadar koli.",
+      "styleLabel": "Slog odgovora",
+      "levelLabel": "Raven izkušenj",
+      "submit": "Začni klepet →",
+      "save": "Shrani",
+      "cancel": "Prekliči",
+      "saving": "Shranjevanje…",
+      "styles": {
+        "bullets": {
+          "label": "Alineje",
+          "hint": "Kratko in hitro"
+        },
+        "balanced": {
+          "label": "Uravnoteženo",
+          "hint": "Srednja dolžina"
+        },
+        "detailed": {
+          "label": "Podrobno",
+          "hint": "Dolgi odgovori"
+        }
+      },
+      "levels": {
+        "beginner": {
+          "label": "Začetnik",
+          "hint": "Nov v jadranju"
+        },
+        "intermediate": {
+          "label": "Srednji",
+          "hint": "Občasno jadram"
+        },
+        "advanced": {
+          "label": "Napreden",
+          "hint": "Redno jadram"
+        },
+        "professional": {
+          "label": "Profesionalni kapitan",
+          "hint": "Certificiran kapitan"
+        }
+      }
+    }
   },
   "provider": {
     "title": "Ustvarite Svoj Profil Ponudnika",
@@ -743,6 +803,22 @@
       "a5": "Brez kazni lahko prekličete v 24 urah od sprejema rezervacije. Po tem pa preklic lahko vpliva na vašo oceno.",
       "q6": "Katere načine plačila moram sprejemati?",
       "a6": "Vi odločate, katere načine plačila sprejemate — gotovina, Visa, Mastercard, PayPal ali Google Pay."
+    },
+    "whiteLabel": {
+      "title": "Partnerski program za marine",
+      "subtitle": "Profesionalne marine dobijo nižjo provizijo, premium seznam vključen in posebno podporo.",
+      "upTo50": "Do 50 privezov",
+      "over50": "Več kot 50 privezov",
+      "monthlyPrice": "na mesec",
+      "commissionRate": "10% provizije na rezervacijo",
+      "transactionFee": "€5 fiksna pristojbina na rezervacijo",
+      "premiumIncluded": "Premium seznam vključen (vrednost €9.99/mesec)",
+      "commissionShort": "provizija",
+      "perBooking": "rezervacija",
+      "perBookingFee": "fiksna pristojbina na rezervacijo",
+      "included": "vključeno",
+      "upgrade": "Nadgradi na White Label",
+      "savingsNote": "Prihranite 2% na vsaki rezervaciji v primerjavi s standardnim paketom"
     }
   },
   "support": {
@@ -1060,5 +1136,96 @@
     "minute": "minuta",
     "days": "dni",
     "months": "mesecev"
+  },
+  "dashboard": {
+    "whiteLabel": {
+      "active": "Aktivno",
+      "upgradeTitle": "Nadgradi na White Label Marino",
+      "upgradeDesc": "Zmanjšajte provizijo na 10%, pridobite premium seznam in posebno podporo.",
+      "notConfigured": "Stripe še ni konfiguriran. Kontaktirajte podporo."
+    }
+  },
+  "aiCaptainTeaser": {
+    "badge": "AI Kapitan",
+    "title": "Spoznajte svojega AI Kapitana",
+    "subtitle": "AI navtični strokovnjak na voljo 24/7 — od opozoril pred nevihto in načrtovanja poti do diagnostike čolna in manevriranja pri privezovanju.",
+    "feature": {
+      "weather": "Vreme in opozorila pred nevihto",
+      "navigation": "Navigacija korak za korakom",
+      "mooring": "Pomoč pri privezu",
+      "diagnostics": "Diagnostika čolna"
+    },
+    "readMore": "Preberi več"
+  },
+  "aiCaptainPage": {
+    "badge": "AI Kapitan Jack",
+    "heroTitle": "Vse kar",
+    "heroHighlight": "AI Kapitan zmore",
+    "heroSubtitle": "Vaš 24/7 navtični strokovnjak z Google Gemini AI. Od opozoril pred nevihto do diagnostike — AI Kapitan vas pokriva na morju.",
+    "ctaStart": "Začni brezplačno",
+    "ctaPlans": "Poglej pakete",
+    "capabilitiesTitle": "Vse zmogljivosti",
+    "capabilitiesSubtitle": "Deset področij, kjer vam AI Kapitan pomaga na vodi.",
+    "cap": {
+      "weather": {
+        "title": "Vremenska napoved in nevihte",
+        "desc": "7-dnevne napovedi z Windy podatki — hitrost vetra, višina valov, vidljivost in opozorila pred nevihto."
+      },
+      "navigation": {
+        "title": "Navigacija korak za korakom",
+        "desc": "Natančna GPS navigacija od vaše trenutne lokacije do katerega koli priveza ali pristanišča."
+      },
+      "mooring": {
+        "title": "Vodič za privezovanje",
+        "desc": "Navodila korak za korakom za približevanje in zavarovanje plovila — boje, pomol in ozke marine."
+      },
+      "routing": {
+        "title": "Načrtovanje poti",
+        "desc": "AI generirane večdnevne jadralne poti na podlagi izhodišča, tipa čolna in vremenskih oken."
+      },
+      "diagnostics": {
+        "title": "Diagnostika čolna",
+        "desc": "Težave z motorjem, električne napake, sidrni vitel, kalužna črpalka — AI Kapitan vas vodi skozi diagnostiko."
+      },
+      "colregs": {
+        "title": "COLREGS in varnostna pravila",
+        "desc": "Mednarodni pravilnik za preprečevanje trčenj na morju. Jasne razlage za vsako pravilo."
+      },
+      "maneuvers": {
+        "title": "Vodiči za manevre",
+        "desc": "Katamaran v ozkem pristanišču, sidranje v močnih tokovih, privezovanje v vetru — podrobna pomoč."
+      },
+      "discover": {
+        "title": "Odkrijte ugodne priveze",
+        "desc": "Vprašajte AI Kapitana za najugodnejše ali najbolje ocenjene priveze v bližini."
+      },
+      "offline": {
+        "title": "Dostop brez povezave (Premium)",
+        "desc": "Premium člani lahko uporabljajo AI Kapitana s 24-urnimi predpomnjenimi vremenskimi podatki in offline kartami."
+      },
+      "multilang": {
+        "title": "Večjezična podpora",
+        "desc": "Komunicirajte v slovenščini, angleščini, italijanščini, hrvaščini, nemščini, francoščini in drugih jezikih."
+      }
+    },
+    "planTitle": "Brezplačno vs Premium",
+    "planSubtitle": "Začnite brezplačno. Nadgradite za polno izkušnjo AI Kapitana.",
+    "planFeature": "Funkcionalnost",
+    "planBasic": "Osnovno (Brezplačno)",
+    "planPremium": "Premium",
+    "planRow": {
+      "booking": "Brskaj in rezerviraj priveze",
+      "aiBasic": "AI Kapitan (10 vprašanj)",
+      "weather3": "3-dnevna napoved",
+      "aiUnlimited": "Neomejen AI Kapitan",
+      "weather7": "Podrobne 7-dnevne napovedi",
+      "offline": "Offline karte in predpomnilnik vremena",
+      "stormAlerts": "Opozorila pred nevihto in vetrom",
+      "routing": "AI načrtovanje poti",
+      "maneuvers": "Vodiči za manevre",
+      "priority": "Prednostna čakalna vrsta"
+    },
+    "ctaTitle": "Pripravljeni na pametnejše jadranje?",
+    "ctaSubtitle": "Pridružite se tisočem jadralcem, ki vsak dan uporabljajo AI Kapitana. Brezplačno za začetek."
   }
 }

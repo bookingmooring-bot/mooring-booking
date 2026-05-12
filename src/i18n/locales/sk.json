@@ -1,4 +1,4 @@
-﻿{
+{
   "nav": {
     "explore": "Preskúmať",
     "howItWorks": "Ako To Funguje",
@@ -91,7 +91,10 @@
     "navigateToMooring": "Navigovať ku Kotvisko",
     "confirmationSent": "Potvrdenie odoslané na",
     "done": "Hotovo",
-    "coordsCopied": "Súradnice skopírované!"
+    "coordsCopied": "Súradnice skopírované!",
+    "payWithCard": "Zaplatiť kartou (Stripe)",
+    "payWithCash": "Zaplatiť hotovosťou / na mieste",
+    "redirectingPayment": "Presmerovanie na platbu..."
   },
   "howItWorks": {
     "title": "Ako Mooring Booking Funguje",
@@ -160,7 +163,7 @@
     "about": "O Nás",
     "forYou": "Pre Vás",
     "sailingManual": "Príručka pre Plavbu",
-    "faq": "Časté Otázky",
+    "faq": "Časté otázky",
     "aboutUs": "O Nás",
     "howItWorksLink": "Ako To Funguje",
     "blog": "Blog",
@@ -180,7 +183,8 @@
     "madeWith": "Vytvorené s",
     "by": "od",
     "marinaPartnership": "B2B partnerstvá & cestovné agentúry",
-    "stripeSecure": "Platby su bezpecne a spracovane prostrednictvom Stripe"
+    "stripeSecure": "Platby su bezpecne a spracovane prostrednictvom Stripe",
+    "aiCaptain": "AI Kapitán"
   },
   "aiChat": {
     "title": "Kapitán Jeck",
@@ -189,7 +193,63 @@
     "send": "Odoslať",
     "welcome": "Vitajte na palube! Som Jeck – váš neohrožený navigátor hĺbkami mora a tajomstvami prístavov. Pomáham s navigáciou, námornými radami, predpoveďou počasia, krízovými situáciami, manévrovaním, kotvením, hľadaním dostupných kotvísk a marín, technickými opravami, výjazdom a vjazdom do prístavov. Aký kurz nastavujeme dnes?",
     "thinking": "Plaviem hĺbinami dátového mora... Prosím čakajte, čoskoro zakotvíme s odpoveďami!",
-    "farewell": "Pokojné more! Váš verný Kapitán Jeck vždy pripravený na ďalšie dobrodružstvo."
+    "farewell": "Pokojné more! Váš verný Kapitán Jeck vždy pripravený na ďalšie dobrodružstvo.",
+    "sources": "Zdroje",
+    "lowConfidence": "Overte si to s príručkou alebo prístavom pred spoľahnutím sa.",
+    "loading": "Načítavanie…",
+    "intent": {
+      "SEARCH_MOORING": "Hľadanie kotviaceho miesta",
+      "DIAGNOSE_ENGINE": "Diagnostika motora",
+      "CHECK_WEATHER": "Počasie",
+      "EMERGENCY": "Núdzový stav",
+      "BOOKING_HELP": "Pomoc s rezerváciou",
+      "NAVIGATION_ROUTE": "Navigácia",
+      "GENERAL_CHAT": "Chat"
+    },
+    "onboarding": {
+      "title": "Pred prvou správou",
+      "subtitle": "Nastavte AI Kapitána. Uložené raz, používané navždy.",
+      "settingsTitle": "Nastavenia AI Kapitána",
+      "settingsSubtitle": "Zmeňte štýl odpovedí a úroveň skúseností kedykoľvek.",
+      "styleLabel": "Štýl odpovede",
+      "levelLabel": "Úroveň skúseností",
+      "submit": "Začať chat →",
+      "save": "Uložiť",
+      "cancel": "Zrušiť",
+      "saving": "Ukladanie…",
+      "styles": {
+        "bullets": {
+          "label": "Odrážky",
+          "hint": "Krátko a rýchlo"
+        },
+        "balanced": {
+          "label": "Vyvážený",
+          "hint": "Stredná dĺžka"
+        },
+        "detailed": {
+          "label": "Podrobný",
+          "hint": "Dlhé odpovede"
+        }
+      },
+      "levels": {
+        "beginner": {
+          "label": "Začiatočník",
+          "hint": "Nový v jachtingu"
+        },
+        "intermediate": {
+          "label": "Stredne pokročilý",
+          "hint": "Občas plachtím"
+        },
+        "advanced": {
+          "label": "Pokročilý",
+          "hint": "Pravidelne plachtím"
+        },
+        "professional": {
+          "label": "Profesionálny kapitán",
+          "hint": "Certifikovaný kapitán"
+        }
+      }
+    }
   },
   "provider": {
     "title": "Vytvoriť Profil Poskytovateľa",
@@ -743,6 +803,22 @@
       "a5": "Môžete zrušiť bez sankcie do 24 hodín od prijatia rezervácie. Potom môže zrušenie ovplyvniť vaše hodnotenie.",
       "q6": "Aké platobné metódy musím akceptovať?",
       "a6": "Vy rozhodujete, aké platobné metódy akceptujete — hotovosť, Visa, Mastercard, PayPal alebo Google Pay."
+    },
+    "whiteLabel": {
+      "title": "Partnerský program pre maríny",
+      "subtitle": "Profesionálne maríny získajú nižšiu províziu, prémiový zápis a dedikovanú podporu.",
+      "upTo50": "Do 50 miest",
+      "over50": "Viac ako 50 miest",
+      "monthlyPrice": "mesačne",
+      "commissionRate": "10% provízie za rezerváciu",
+      "transactionFee": "€5 paušálny poplatok za rezerváciu",
+      "premiumIncluded": "Prémiový zápis zahrnutý (hodnota €9.99/mesiac)",
+      "commissionShort": "provízia",
+      "perBooking": "rezervácia",
+      "perBookingFee": "paušálny poplatok za rezerváciu",
+      "included": "zahrnuté",
+      "upgrade": "Prejsť na White Label",
+      "savingsNote": "Ušetrite 2% na každej rezervácii oproti štandardnému plánu"
     }
   },
   "support": {
@@ -1060,5 +1136,96 @@
     "minute": "minúta",
     "days": "dní",
     "months": "mesiacov"
+  },
+  "dashboard": {
+    "whiteLabel": {
+      "active": "Aktívne",
+      "upgradeTitle": "Prejsť na White Label Marínu",
+      "upgradeDesc": "Znížte províziu na 10%, získajte prémiový zápis a dedikovanú podporu.",
+      "notConfigured": "Stripe ešte nie je nakonfigurovaný. Kontaktujte podporu."
+    }
+  },
+  "aiCaptainTeaser": {
+    "badge": "AI Kapitán",
+    "title": "Spoznajte svojho AI Kapitána",
+    "subtitle": "AI námorný expert dostupný 24/7 — od upozornení na búrky a plánovania trás po diagnostiku lode a manévre pri kotvení.",
+    "feature": {
+      "weather": "Počasie a upozornenia na búrky",
+      "navigation": "Navigácia krok za krokom",
+      "mooring": "Pomoc s kotvením",
+      "diagnostics": "Diagnostika lode"
+    },
+    "readMore": "Čítať ďalej"
+  },
+  "aiCaptainPage": {
+    "badge": "AI Kapitán Jack",
+    "heroTitle": "Všetko čo",
+    "heroHighlight": "AI Kapitán dokáže",
+    "heroSubtitle": "Váš 24/7 námorný expert poháňaný Google Gemini AI. Od upozornení na búrky po diagnostiku — AI Kapitán vás na mori pokryje.",
+    "ctaStart": "Začať zadarmo",
+    "ctaPlans": "Zobraziť plány",
+    "capabilitiesTitle": "Všetky schopnosti",
+    "capabilitiesSubtitle": "Desať oblastí, kde vám AI Kapitán pomáha na vode.",
+    "cap": {
+      "weather": {
+        "title": "Predpoveď počasia a búrky",
+        "desc": "7-dňové predpovede s dátami Windy — rýchlosť vetra, výška vĺn, viditeľnosť a upozornenia na búrky."
+      },
+      "navigation": {
+        "title": "Navigácia krok za krokom",
+        "desc": "Presná GPS námorná navigácia z vašej pozície ku kotviaciemu miestu alebo prístavu."
+      },
+      "mooring": {
+        "title": "Sprievodca kotvením",
+        "desc": "Pokyny krok za krokom pre priblíženie a zaistenie vašej lode — bóje, mólo a úzke maríny."
+      },
+      "routing": {
+        "title": "Plánovanie trasy",
+        "desc": "AI generované viacdňové plavebné trasy na základe miesta odchodu, typu lode a poveternostných okien."
+      },
+      "diagnostics": {
+        "title": "Diagnostika lode",
+        "desc": "Problémy s motorom, elektrické poruchy, kotviaci naviják, bilžné čerpadlo — AI Kapitán vás prevedie diagnostikou."
+      },
+      "colregs": {
+        "title": "COLREGS a bezpečnostné pravidlá",
+        "desc": "Medzinárodné pravidlá na predchádzanie zrážkam na mori. Jasné vysvetlenia pre každé pravidlo."
+      },
+      "maneuvers": {
+        "title": "Sprievodcovia manévrami",
+        "desc": "Katamarán v úzkom prístave, kotvenie v silných prúdoch, pristávanie vo vetre — podrobná pomoc."
+      },
+      "discover": {
+        "title": "Objavte cenovo dostupné kotviská",
+        "desc": "Opýtajte sa AI Kapitána na najlacnejšie alebo najlepšie hodnotené kotviská v blízkosti."
+      },
+      "offline": {
+        "title": "Offline prístup (Premium)",
+        "desc": "Premium členovia môžu používať AI Kapitána s 24h cachovaným počasím, offline mapami a uloženými sprievodcami."
+      },
+      "multilang": {
+        "title": "Viacjazyčná podpora",
+        "desc": "Komunikujte slovensky, anglicky, taliansky, grécky, nemecky, francúzsky, španielsky a ďalšími jazykmi."
+      }
+    },
+    "planTitle": "Zadarmo vs Premium",
+    "planSubtitle": "Začnite zadarmo. Upgradujte pre kompletný AI Kapitán zážitok.",
+    "planFeature": "Funkcia",
+    "planBasic": "Základný (Zadarmo)",
+    "planPremium": "Premium",
+    "planRow": {
+      "booking": "Prehliadať a rezervovať kotviská",
+      "aiBasic": "AI Kapitán (10 otázok)",
+      "weather3": "3-dňová predpoveď",
+      "aiUnlimited": "Neobmedzený AI Kapitán",
+      "weather7": "Podrobné 7-dňové predpovede",
+      "offline": "Offline mapy a cache počasia",
+      "stormAlerts": "Upozornenia na búrky a vietor",
+      "routing": "AI plánovanie trás",
+      "maneuvers": "Sprievodcovia manévrami",
+      "priority": "Prioritná fronta rezervácií"
+    },
+    "ctaTitle": "Pripravení na inteligentnejšiu plavbu?",
+    "ctaSubtitle": "Pripojte sa k tisícom námorníkov používajúcich AI Kapitána denne. Zadarmo pre štart."
   }
 }

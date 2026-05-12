@@ -1,4 +1,4 @@
-﻿{
+{
   "nav": {
     "explore": "Erkunden",
     "howItWorks": "Wie es funktioniert",
@@ -91,7 +91,10 @@
     "navigateToMooring": "Zum Liegeplatz Navigieren",
     "confirmationSent": "Bestätigung gesendet an",
     "done": "Fertig",
-    "coordsCopied": "Koordinaten kopiert!"
+    "coordsCopied": "Koordinaten kopiert!",
+    "payWithCard": "Mit Karte bezahlen (Stripe)",
+    "payWithCash": "Bar bezahlen / vor Ort",
+    "redirectingPayment": "Weiterleitung zur Zahlung..."
   },
   "howItWorks": {
     "title": "So funktioniert Mooring Booking",
@@ -179,7 +182,9 @@
     "madeWith": "Erstellt mit",
     "by": "von",
     "marinaPartnership": "B2B-Partnerschaften & Reiseagenturen",
-    "stripeSecure": "Zahlungen sind sicher und werden ueber Stripe abgewickelt"
+    "stripeSecure": "Zahlungen sind sicher und werden ueber Stripe abgewickelt",
+    "aiCaptain": "AI Kapitän",
+    "faq": "FAQ"
   },
   "aiChat": {
     "title": "KI Kapitän",
@@ -188,7 +193,63 @@
     "send": "Senden",
     "welcome": "Willkommen an Bord! Ich bin KI Kapitän, Ihr furchtloser Navigator durch die Tiefen des Meeres und die Geheimnisse der Häfen. Ich helfe bei Navigation, nautischen Ratschlägen, Wettervorhersagen, Krisensituationen, Manövern, Festmachen, der Suche nach günstigen Liegeplätzen und Marinas, technischen Reparaturen sowie Ein- und Auslaufen in Häfen. Welchen Kurs setzen wir heute?",
     "thinking": "Ich navigiere durch die Tiefen der Datensee... Bitte warten, wir werfen bald Anker mit Antworten!",
-    "farewell": "Ruhige See! Ihr treuer KI Kapitän ist immer bereit für das nächste Abenteuer."
+    "farewell": "Ruhige See! Ihr treuer KI Kapitän ist immer bereit für das nächste Abenteuer.",
+    "sources": "Quellen",
+    "lowConfidence": "Überprüfen Sie mit dem Hafenhandbuch oder der Marina, bevor Sie sich darauf verlassen.",
+    "loading": "Wird geladen…",
+    "intent": {
+      "SEARCH_MOORING": "Liegeplatz suchen",
+      "DIAGNOSE_ENGINE": "Motordiagnose",
+      "CHECK_WEATHER": "Wetter",
+      "EMERGENCY": "Notfall",
+      "BOOKING_HELP": "Buchungshilfe",
+      "NAVIGATION_ROUTE": "Navigation",
+      "GENERAL_CHAT": "Chat"
+    },
+    "onboarding": {
+      "title": "Vor der ersten Nachricht",
+      "subtitle": "AI Kapitän einrichten. Einmal gespeichert, für immer genutzt.",
+      "settingsTitle": "AI Kapitän Einstellungen",
+      "settingsSubtitle": "Ändern Sie den Antwortstil und das Erfahrungsniveau jederzeit.",
+      "styleLabel": "Antwortstil",
+      "levelLabel": "Erfahrungsniveau",
+      "submit": "Chat starten →",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "saving": "Speichern…",
+      "styles": {
+        "bullets": {
+          "label": "Stichpunkte",
+          "hint": "Kurz & schnell"
+        },
+        "balanced": {
+          "label": "Ausgewogen",
+          "hint": "Mittlere Länge"
+        },
+        "detailed": {
+          "label": "Detailliert",
+          "hint": "Lange Antworten"
+        }
+      },
+      "levels": {
+        "beginner": {
+          "label": "Anfänger",
+          "hint": "Neu beim Segeln"
+        },
+        "intermediate": {
+          "label": "Fortgeschritten",
+          "hint": "Gelegentlich segeln"
+        },
+        "advanced": {
+          "label": "Erfahren",
+          "hint": "Regelmäßig segeln"
+        },
+        "professional": {
+          "label": "Professioneller Kapitän",
+          "hint": "Zertifizierter Kapitän"
+        }
+      }
+    }
   },
   "provider": {
     "title": "Erstellen Sie Ihr Anbieter-Profil",
@@ -698,6 +759,22 @@
       "a5": "Možete otkazati unutar 24 sata od primanja rezervacije bez penala. Nakon toga, otkazivanje može utjecati na vaš rang.",
       "q6": "Koje načine plaćanja moram prihvatiti?",
       "a6": "Vi birate koje načine plaćanja prihvaćate - gotovinu, Visa, Mastercard, PayPal ili Google Pay. Preporučujemo prihvaćanje više opcija."
+    },
+    "whiteLabel": {
+      "title": "Marina-Partnerprogramm",
+      "subtitle": "Professionelle Marinas erhalten niedrigere Provision, Premium-Listing inklusive und dedizierten Support.",
+      "upTo50": "Bis zu 50 Liegeplätze",
+      "over50": "Über 50 Liegeplätze",
+      "monthlyPrice": "pro Monat",
+      "commissionRate": "10% Provision pro Buchung",
+      "transactionFee": "€5 Pauschalgebühr pro Buchung",
+      "premiumIncluded": "Premium-Listing inklusive (Wert €9.99/Monat)",
+      "commissionShort": "Provision",
+      "perBooking": "Buchung",
+      "perBookingFee": "Pauschalgebühr pro Buchung",
+      "included": "inklusive",
+      "upgrade": "Auf White Label upgraden",
+      "savingsNote": "Sparen Sie 2% bei jeder Buchung im Vergleich zum Standardplan"
     }
   },
   "userPricing": {
@@ -1059,5 +1136,96 @@
     "signInBtn": "Anmelden",
     "haveAccount": "Bereits ein Konto? Anmelden",
     "noAccount": "Noch kein Konto? Registrieren"
+  },
+  "dashboard": {
+    "whiteLabel": {
+      "active": "Aktiv",
+      "upgradeTitle": "Auf White Label Marina upgraden",
+      "upgradeDesc": "Reduzieren Sie Ihre Provision auf 10%, erhalten Sie Premium-Listing inklusive und dedizierten Support.",
+      "notConfigured": "Stripe noch nicht konfiguriert. Kontaktieren Sie den Support."
+    }
+  },
+  "aiCaptainTeaser": {
+    "badge": "AI Kapitän",
+    "title": "Lernen Sie Ihren AI Kapitän kennen",
+    "subtitle": "Ein AI-Nautikexperte 24/7 verfügbar — von Sturmwarnungen und Routenplanung bis zu Bootsdiagnostik und Anlegemanövern.",
+    "feature": {
+      "weather": "Wetter & Sturmwarnungen",
+      "navigation": "Schritt-für-Schritt Navigation",
+      "mooring": "Anlegeplatz & Anlegehilfe",
+      "diagnostics": "Bootsdiagnostik"
+    },
+    "readMore": "Mehr erfahren"
+  },
+  "aiCaptainPage": {
+    "badge": "AI Kapitän Jack",
+    "heroTitle": "Alles was",
+    "heroHighlight": "AI Kapitän kann",
+    "heroSubtitle": "Ihr 24/7 Nautikexperte powered by Google Gemini AI. Von Sturmwarnungen bis Diagnostik — AI Kapitän hat Sie auf See abgedeckt.",
+    "ctaStart": "Kostenlos starten",
+    "ctaPlans": "Pläne ansehen",
+    "capabilitiesTitle": "Alle Fähigkeiten",
+    "capabilitiesSubtitle": "Zehn leistungsstarke Bereiche, in denen AI Kapitän Sie auf dem Wasser unterstützt.",
+    "cap": {
+      "weather": {
+        "title": "Wettervorhersage & Stürme",
+        "desc": "7-Tage-Vorhersagen mit Windy-Daten — Windgeschwindigkeit, Wellenhöhe, Sichtweite und Sturmwarnungen."
+      },
+      "navigation": {
+        "title": "Schritt-für-Schritt Navigation",
+        "desc": "Präzise GPS-Nautiknavigation von Ihrer aktuellen Position zu jedem Liegeplatz oder Hafen im Mittelmeer."
+      },
+      "mooring": {
+        "title": "Anlege-Leitfaden",
+        "desc": "Schritt-für-Schritt Anleitungen zum Anlegen und Sichern Ihres Schiffes — Bojen, Kai und enge Marinas."
+      },
+      "routing": {
+        "title": "Routenplanung",
+        "desc": "AI-generierte mehrtägige Segelrouten basierend auf Abfahrtspunkt, Bootstyp und Wetterfenstern."
+      },
+      "diagnostics": {
+        "title": "Bootsdiagnostik",
+        "desc": "Motorprobleme, elektrische Fehler, Ankerwinde, Bilgepumpe — AI Kapitän führt Sie durch die Diagnose."
+      },
+      "colregs": {
+        "title": "COLREGS & Sicherheitsregeln",
+        "desc": "Internationale Regeln zur Verhütung von Zusammenstößen auf See. Klare Erklärungen für jede Regel."
+      },
+      "maneuvers": {
+        "title": "Manöver-Leitfäden",
+        "desc": "Katamaran im engen Hafen, Ankern in starker Strömung, Anlegen bei Wind — detaillierte Schritt-für-Schritt Hilfe."
+      },
+      "discover": {
+        "title": "Günstige Liegeplätze entdecken",
+        "desc": "Fragen Sie AI Kapitän, die günstigsten oder bestbewerteten Liegeplätze in Ihrer Nähe zu finden."
+      },
+      "offline": {
+        "title": "Offline-Zugang (Premium)",
+        "desc": "Premium-Mitglieder können AI Kapitän mit 24h gecachtem Wetter, Offline-Karten und gespeicherten Guides nutzen."
+      },
+      "multilang": {
+        "title": "Mehrsprachige Unterstützung",
+        "desc": "Kommunizieren Sie auf Deutsch, Englisch, Italienisch, Griechisch, Kroatisch, Französisch, Spanisch, Türkisch und mehr."
+      }
+    },
+    "planTitle": "Kostenlos vs Premium",
+    "planSubtitle": "Starten Sie kostenlos. Upgraden Sie für das volle AI Kapitän Erlebnis.",
+    "planFeature": "Funktion",
+    "planBasic": "Basis (Kostenlos)",
+    "planPremium": "Premium",
+    "planRow": {
+      "booking": "Liegeplätze suchen & buchen",
+      "aiBasic": "AI Kapitän (10 Fragen)",
+      "weather3": "3-Tage-Vorhersage",
+      "aiUnlimited": "Unbegrenzter AI Kapitän",
+      "weather7": "Detaillierte 7-Tage-Vorhersagen",
+      "offline": "Offline-Karten & Wetter-Cache",
+      "stormAlerts": "Sturm- & Windwarnungen",
+      "routing": "AI Routenplanung",
+      "maneuvers": "Manöver-Leitfäden",
+      "priority": "Prioritätswarteschlange"
+    },
+    "ctaTitle": "Bereit für smarteres Segeln?",
+    "ctaSubtitle": "Schließen Sie sich Tausenden von Seglern an, die AI Kapitän täglich nutzen. Kostenlos zum Start."
   }
 }

@@ -1,4 +1,4 @@
-﻿{
+{
   "nav": {
     "explore": "Odkrywaj",
     "howItWorks": "Jak To Działa",
@@ -91,7 +91,10 @@
     "navigateToMooring": "Nawiguj do Cumowiska",
     "confirmationSent": "Potwierdzenie wysłane na",
     "done": "Gotowe",
-    "coordsCopied": "Współrzędne skopiowane!"
+    "coordsCopied": "Współrzędne skopiowane!",
+    "payWithCard": "Zapłać kartą (Stripe)",
+    "payWithCash": "Zapłać gotówką / na miejscu",
+    "redirectingPayment": "Przekierowanie do płatności..."
   },
   "howItWorks": {
     "title": "Jak Działa Mooring Booking",
@@ -180,7 +183,8 @@
     "madeWith": "Stworzone z",
     "by": "przez",
     "marinaPartnership": "Partnerstwa B2B i agencje turystyczne",
-    "stripeSecure": "Platnosci sa bezpieczne i przetwarzane przez Stripe"
+    "stripeSecure": "Platnosci sa bezpieczne i przetwarzane przez Stripe",
+    "aiCaptain": "AI Kapitan"
   },
   "aiChat": {
     "title": "AI Kapitan Jack",
@@ -189,7 +193,63 @@
     "send": "Wyślij",
     "welcome": "Witamy na pokładzie! Jestem AI Kapitanem Jack, Twoim nieustraszonym nawigatorem przez głębiny morza i tajemnice portów. Pomagam w nawigacji, poradach nautycznych, prognozach pogody, sytuacjach kryzysowych, manewrowaniu, cumowaniu, wyszukiwaniu niedrogich miejsc cumowniczych i marin, naprawach technicznych, odpływaniu i wpływaniu do portów. Jaki kurs wyznaczamy dziś?",
     "thinking": "Płynę przez morskie głębiny danych... Proszę czekać, wkrótce zacumujemy z odpowiedziami!",
-    "farewell": "Spokojne morze! Twój wierny AI Kapitan zawsze gotowy na kolejną przygodę."
+    "farewell": "Spokojne morze! Twój wierny AI Kapitan zawsze gotowy na kolejną przygodę.",
+    "sources": "Źródła",
+    "lowConfidence": "Zweryfikuj z książką pilotażową lub mariną przed poleganiem na tym.",
+    "loading": "Ładowanie…",
+    "intent": {
+      "SEARCH_MOORING": "Szukaj cumowiska",
+      "DIAGNOSE_ENGINE": "Diagnostyka silnika",
+      "CHECK_WEATHER": "Pogoda",
+      "EMERGENCY": "Nagły wypadek",
+      "BOOKING_HELP": "Pomoc z rezerwacją",
+      "NAVIGATION_ROUTE": "Nawigacja",
+      "GENERAL_CHAT": "Czat"
+    },
+    "onboarding": {
+      "title": "Przed pierwszą wiadomością",
+      "subtitle": "Skonfiguruj AI Kapitana. Zapisane raz, używane na zawsze.",
+      "settingsTitle": "Ustawienia AI Kapitana",
+      "settingsSubtitle": "Zmień styl odpowiedzi i poziom doświadczenia w dowolnym momencie.",
+      "styleLabel": "Styl odpowiedzi",
+      "levelLabel": "Poziom doświadczenia",
+      "submit": "Rozpocznij czat →",
+      "save": "Zapisz",
+      "cancel": "Anuluj",
+      "saving": "Zapisywanie…",
+      "styles": {
+        "bullets": {
+          "label": "Punkty",
+          "hint": "Krótko i szybko"
+        },
+        "balanced": {
+          "label": "Zrównoważony",
+          "hint": "Średnia długość"
+        },
+        "detailed": {
+          "label": "Szczegółowy",
+          "hint": "Długie odpowiedzi"
+        }
+      },
+      "levels": {
+        "beginner": {
+          "label": "Początkujący",
+          "hint": "Nowy w żeglarstwie"
+        },
+        "intermediate": {
+          "label": "Średniozaawansowany",
+          "hint": "Żegluję okazjonalnie"
+        },
+        "advanced": {
+          "label": "Zaawansowany",
+          "hint": "Żegluję regularnie"
+        },
+        "professional": {
+          "label": "Profesjonalny kapitan",
+          "hint": "Certyfikowany kapitan"
+        }
+      }
+    }
   },
   "provider": {
     "title": "Utwórz Profil Dostawcy",
@@ -743,6 +803,22 @@
       "a5": "Możesz anulować bez kary w ciągu 24 godzin od przyjęcia rezerwacji. Następnie anulowanie może wpłynąć na Twoją ocenę.",
       "q6": "Jakie metody płatności muszę akceptować?",
       "a6": "Ty decydujesz, jakie metody płatności akceptujesz — gotówka, Visa, Mastercard, PayPal lub Google Pay."
+    },
+    "whiteLabel": {
+      "title": "Program Partnerski Mariny",
+      "subtitle": "Profesjonalne mariny otrzymują niższą prowizję, premium listing w cenie i dedykowane wsparcie.",
+      "upTo50": "Do 50 miejsc",
+      "over50": "Ponad 50 miejsc",
+      "monthlyPrice": "miesięcznie",
+      "commissionRate": "10% prowizji za rezerwację",
+      "transactionFee": "€5 opłata ryczałtowa za rezerwację",
+      "premiumIncluded": "Premium listing w cenie (wartość €9.99/mies.)",
+      "commissionShort": "prowizja",
+      "perBooking": "rezerwacja",
+      "perBookingFee": "opłata ryczałtowa za rezerwację",
+      "included": "w cenie",
+      "upgrade": "Przejdź na White Label",
+      "savingsNote": "Zaoszczędź 2% na każdej rezerwacji w porównaniu z planem standardowym"
     }
   },
   "support": {
@@ -1060,5 +1136,96 @@
     "minute": "minuta",
     "days": "dni",
     "months": "miesiące"
+  },
+  "dashboard": {
+    "whiteLabel": {
+      "active": "Aktywny",
+      "upgradeTitle": "Przejdź na White Label Marina",
+      "upgradeDesc": "Zmniejsz prowizję do 10%, uzyskaj premium listing i dedykowane wsparcie.",
+      "notConfigured": "Stripe jeszcze nie skonfigurowany. Skontaktuj się ze wsparciem."
+    }
+  },
+  "aiCaptainTeaser": {
+    "badge": "AI Kapitan",
+    "title": "Poznaj swojego AI Kapitana",
+    "subtitle": "Ekspert morski AI dostępny 24/7 — od alertów burzowych i planowania tras po diagnostykę łodzi i manewry cumowania.",
+    "feature": {
+      "weather": "Pogoda i alerty burzowe",
+      "navigation": "Nawigacja krok po kroku",
+      "mooring": "Pomoc w cumowaniu",
+      "diagnostics": "Diagnostyka łodzi"
+    },
+    "readMore": "Czytaj więcej"
+  },
+  "aiCaptainPage": {
+    "badge": "AI Kapitan Jack",
+    "heroTitle": "Wszystko co",
+    "heroHighlight": "AI Kapitan potrafi",
+    "heroSubtitle": "Twój ekspert morski 24/7 zasilany Google Gemini AI. Od alertów burzowych po diagnostykę — AI Kapitan ma cię na morzu.",
+    "ctaStart": "Zacznij za darmo",
+    "ctaPlans": "Zobacz plany",
+    "capabilitiesTitle": "Pełne możliwości",
+    "capabilitiesSubtitle": "Dziesięć potężnych obszarów, w których AI Kapitan pomaga ci na wodzie.",
+    "cap": {
+      "weather": {
+        "title": "Prognoza pogody i burze",
+        "desc": "7-dniowe prognozy z danymi Windy — prędkość wiatru, wysokość fal, widoczność i alerty burzowe."
+      },
+      "navigation": {
+        "title": "Nawigacja krok po kroku",
+        "desc": "Dokładna nawigacja GPS morska z twojej pozycji do dowolnego cumowiska lub portu na Morzu Śródziemnym."
+      },
+      "mooring": {
+        "title": "Przewodnik cumowania",
+        "desc": "Instrukcje krok po kroku podejścia i zabezpieczenia jednostki — boje, nabrzeże i wąskie mariny."
+      },
+      "routing": {
+        "title": "Planowanie trasy",
+        "desc": "Wielodniowe trasy żeglarskie generowane przez AI na podstawie punktu wyjścia, typu łodzi i okien pogodowych."
+      },
+      "diagnostics": {
+        "title": "Diagnostyka łodzi",
+        "desc": "Problemy z silnikiem, awarie elektryczne, winda kotwiczna, pompa zęzowa — AI Kapitan prowadzi przez diagnostykę."
+      },
+      "colregs": {
+        "title": "COLREGS i zasady bezpieczeństwa",
+        "desc": "Międzynarodowe przepisy zapobiegania zderzeniom na morzu. Jasne wyjaśnienia każdej reguły."
+      },
+      "maneuvers": {
+        "title": "Przewodniki manewrów",
+        "desc": "Katamaran w wąskim porcie, kotwiczenie w silnym prądzie, cumowanie przy wietrze — szczegółowa pomoc."
+      },
+      "discover": {
+        "title": "Odkryj przystępne cumowiska",
+        "desc": "Poproś AI Kapitana o znalezienie najtańszych lub najlepiej ocenianych cumowisk w pobliżu."
+      },
+      "offline": {
+        "title": "Dostęp offline (Premium)",
+        "desc": "Członkowie Premium mogą korzystać z AI Kapitana z 24h cached pogodą, mapami offline i zapisanymi przewodnikami."
+      },
+      "multilang": {
+        "title": "Wsparcie wielojęzyczne",
+        "desc": "Komunikuj się po polsku, angielsku, włosku, grecku, niemiecku, francusku, hiszpańsku, turecku i więcej."
+      }
+    },
+    "planTitle": "Za darmo vs Premium",
+    "planSubtitle": "Zacznij za darmo. Ulepsz dla pełnego doświadczenia AI Kapitana.",
+    "planFeature": "Funkcja",
+    "planBasic": "Podstawowy (Za darmo)",
+    "planPremium": "Premium",
+    "planRow": {
+      "booking": "Przeglądaj i rezerwuj cumowiska",
+      "aiBasic": "AI Kapitan (10 pytań)",
+      "weather3": "Prognoza 3-dniowa",
+      "aiUnlimited": "Nieograniczony AI Kapitan",
+      "weather7": "Szczegółowe prognozy 7-dniowe",
+      "offline": "Mapy offline i cache pogody",
+      "stormAlerts": "Alerty burzowe i wiatrowe",
+      "routing": "AI planowanie tras",
+      "maneuvers": "Przewodniki manewrów",
+      "priority": "Kolejka rezerwacji priorytetowej"
+    },
+    "ctaTitle": "Gotowy na mądrzejsze żeglowanie?",
+    "ctaSubtitle": "Dołącz do tysięcy żeglarzy używających AI Kapitana codziennie. Za darmo na start."
   }
 }

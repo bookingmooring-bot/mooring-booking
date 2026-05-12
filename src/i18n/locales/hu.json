@@ -1,4 +1,4 @@
-﻿{
+{
   "nav": {
     "explore": "Felfedezés",
     "howItWorks": "Hogyan Működik",
@@ -91,7 +91,10 @@
     "navigateToMooring": "Navigálás a Kikötőhelyhez",
     "confirmationSent": "Visszaigazolás elküldve:",
     "done": "Kész",
-    "coordsCopied": "Koordináták vágólapra másolva!"
+    "coordsCopied": "Koordináták vágólapra másolva!",
+    "payWithCard": "Fizetés kártyával (Stripe)",
+    "payWithCash": "Készpénzes fizetés / helyszínen",
+    "redirectingPayment": "Átirányítás a fizetéshez..."
   },
   "howItWorks": {
     "title": "Hogyan Működik a Mooring Booking",
@@ -180,7 +183,8 @@
     "madeWith": "Készítve",
     "by": "által",
     "marinaPartnership": "B2B partnerségek & utazási irodák",
-    "stripeSecure": "A kifizetesek biztonsagosak es a Stripe-on keresztul kerulnek feldolgozasra"
+    "stripeSecure": "A kifizetesek biztonsagosak es a Stripe-on keresztul kerulnek feldolgozasra",
+    "aiCaptain": "AI Kapitány"
   },
   "aiChat": {
     "title": "AI Kapitány Jack",
@@ -189,7 +193,63 @@
     "send": "Küldés",
     "welcome": "Üdvözöljük a fedélzeten! Én vagyok az AI Kapitány Jack, a tengeri mélységek és kikötők titkainak bátor navigátora. Segítek a navigációban, nautikus tanácsadásban, időjárás-előrejelzésekben, válsághelyzetekben, manőverezésben, kikötésben, megfizethető kikötőhelyek és marinák keresésében, műszaki javításokban, kikötők elhagyásában és megközelítésében. Milyen irányt veszünk fel ma?",
     "thinking": "Az adattenger mélyein hajózom... Kérem várjon, hamarosan horgonyt vetünk a válaszokkal!",
-    "farewell": "Csendes tenger! Az ön hűséges AI Kapitánya mindig készen áll a következő kalandra."
+    "farewell": "Csendes tenger! Az ön hűséges AI Kapitánya mindig készen áll a következő kalandra.",
+    "sources": "Források",
+    "lowConfidence": "Ellenőrizze a pilótakönyvvel vagy a kikötővel, mielőtt erre hagyatkozna.",
+    "loading": "Betöltés…",
+    "intent": {
+      "SEARCH_MOORING": "Kikötőhely keresés",
+      "DIAGNOSE_ENGINE": "Motor diagnosztika",
+      "CHECK_WEATHER": "Időjárás",
+      "EMERGENCY": "Vészhelyzet",
+      "BOOKING_HELP": "Foglalási segítség",
+      "NAVIGATION_ROUTE": "Navigáció",
+      "GENERAL_CHAT": "Csevegés"
+    },
+    "onboarding": {
+      "title": "Az első üzenet előtt",
+      "subtitle": "Állítsa be az AI Kapitányt. Egyszer mentve, örökké használva.",
+      "settingsTitle": "AI Kapitány beállítások",
+      "settingsSubtitle": "Bármikor módosíthatja a válaszstílust és a tapasztalati szintet.",
+      "styleLabel": "Válaszstílus",
+      "levelLabel": "Tapasztalati szint",
+      "submit": "Csevegés indítása →",
+      "save": "Mentés",
+      "cancel": "Mégse",
+      "saving": "Mentés…",
+      "styles": {
+        "bullets": {
+          "label": "Felsorolás",
+          "hint": "Rövid és gyors"
+        },
+        "balanced": {
+          "label": "Kiegyensúlyozott",
+          "hint": "Közepes hossz"
+        },
+        "detailed": {
+          "label": "Részletes",
+          "hint": "Hosszú válaszok"
+        }
+      },
+      "levels": {
+        "beginner": {
+          "label": "Kezdő",
+          "hint": "Új a vitorlázásban"
+        },
+        "intermediate": {
+          "label": "Középhaladó",
+          "hint": "Alkalmanként vitorlázom"
+        },
+        "advanced": {
+          "label": "Haladó",
+          "hint": "Rendszeresen vitorlázom"
+        },
+        "professional": {
+          "label": "Professzionális kapitány",
+          "hint": "Minősített kapitány"
+        }
+      }
+    }
   },
   "provider": {
     "title": "Szolgáltatói Profil Létrehozása",
@@ -743,6 +803,22 @@
       "a5": "A foglalás elfogadásától számított 24 órán belül büntetés nélkül törölhet. Ezt követően a törlés befolyásolhatja értékelését.",
       "q6": "Milyen fizetési módokat kell elfogadnom?",
       "a6": "Ön dönti el, hogy milyen fizetési módokat fogad el — készpénz, Visa, Mastercard, PayPal vagy Google Pay. Ajánljuk több lehetőség elfogadását."
+    },
+    "whiteLabel": {
+      "title": "Marina Partner Program",
+      "subtitle": "A professzionális kikötők alacsonyabb jutalékot, prémium listázást és dedikált támogatást kapnak.",
+      "upTo50": "50 kikötőhelyig",
+      "over50": "50 felett",
+      "monthlyPrice": "havonta",
+      "commissionRate": "10% jutalék foglalásonként",
+      "transactionFee": "€5 átalánydíj foglalásonként",
+      "premiumIncluded": "Prémium listázás benne (€9.99/hó értékben)",
+      "commissionShort": "jutalék",
+      "perBooking": "foglalás",
+      "perBookingFee": "átalánydíj foglalásonként",
+      "included": "benne van",
+      "upgrade": "Váltás White Label-re",
+      "savingsNote": "Takarítson meg 2%-ot minden foglalásnál a standard csomaghoz képest"
     }
   },
   "support": {
@@ -1060,5 +1136,96 @@
     "minute": "perc",
     "days": "nap",
     "months": "hónap"
+  },
+  "dashboard": {
+    "whiteLabel": {
+      "active": "Aktív",
+      "upgradeTitle": "Váltás White Label Marinára",
+      "upgradeDesc": "Csökkentse jutalékát 10%-ra, kapjon prémium listázást és dedikált támogatást.",
+      "notConfigured": "A Stripe még nincs beállítva. Lépjen kapcsolatba a támogatással."
+    }
+  },
+  "aiCaptainTeaser": {
+    "badge": "AI Kapitány",
+    "title": "Ismerje meg AI Kapitányát",
+    "subtitle": "Egy AI tengerészeti szakértő 24/7 elérhető — viharriasztástól és útvonaltervezéstől a hajódiagnosztikáig.",
+    "feature": {
+      "weather": "Időjárás és viharriasztás",
+      "navigation": "Lépésről lépésre navigáció",
+      "mooring": "Kikötési segítség",
+      "diagnostics": "Hajódiagnosztika"
+    },
+    "readMore": "Tovább olvasom"
+  },
+  "aiCaptainPage": {
+    "badge": "AI Kapitány Jack",
+    "heroTitle": "Minden amit",
+    "heroHighlight": "az AI Kapitány tud",
+    "heroSubtitle": "Az Ön 24/7 tengerészeti szakértője Google Gemini AI-val. Viharriasztástól a diagnosztikáig — az AI Kapitány fedezi Önt a tengeren.",
+    "ctaStart": "Ingyenesen kezdés",
+    "ctaPlans": "Csomagok megtekintése",
+    "capabilitiesTitle": "Összes képesség",
+    "capabilitiesSubtitle": "Tíz erős terület, ahol az AI Kapitány segít a vízen.",
+    "cap": {
+      "weather": {
+        "title": "Időjárás-előrejelzés és viharok",
+        "desc": "7 napos előrejelzések Windy adatokkal — szélsebesség, hullámagasság, látótávolság és viharriasztás."
+      },
+      "navigation": {
+        "title": "Lépésről lépésre navigáció",
+        "desc": "Pontos GPS tengerészeti navigáció az Ön jelenlegi pozíciójából bármely kikötőhelyre vagy kikötőbe."
+      },
+      "mooring": {
+        "title": "Kikötési útmutató",
+        "desc": "Lépésről lépésre útmutatás a hajó megközelítéséhez és rögzítéséhez — bóják, rakpart és szűk kikötők."
+      },
+      "routing": {
+        "title": "Útvonaltervezés",
+        "desc": "AI által generált többnapos vitorlás útvonalak az indulási pont, hajótípus és időjárási ablakok alapján."
+      },
+      "diagnostics": {
+        "title": "Hajódiagnosztika",
+        "desc": "Motorproblémák, elektromos hibák, horgonycsörlő, fenékszivattyú — az AI Kapitány végigvezeti a diagnózison."
+      },
+      "colregs": {
+        "title": "COLREGS és biztonsági szabályok",
+        "desc": "Nemzetközi szabályok a tengeri ütközések megelőzésére. Egyértelmű magyarázatok minden szabályhoz."
+      },
+      "maneuvers": {
+        "title": "Manőver-útmutatók",
+        "desc": "Katamarán szűk kikötőben, horgonyzás erős áramlatban, kikötés szélben — részletes segítség."
+      },
+      "discover": {
+        "title": "Fedezzen fel kedvező kikötőhelyeket",
+        "desc": "Kérje az AI Kapitányt, hogy találja meg a legolcsóbb vagy legjobban értékelt kikötőhelyeket."
+      },
+      "offline": {
+        "title": "Offline hozzáférés (Prémium)",
+        "desc": "Prémium tagok használhatják az AI Kapitányt 24 órás gyorsítótárazott időjárással, offline térképekkel."
+      },
+      "multilang": {
+        "title": "Többnyelvű támogatás",
+        "desc": "Kommunikáljon magyarul, angolul, olaszul, görögül, németül, franciául, spanyolul, törökül és más nyelveken."
+      }
+    },
+    "planTitle": "Ingyenes vs Prémium",
+    "planSubtitle": "Kezdje ingyenesen. Váltson Prémiumra a teljes AI Kapitány élményért.",
+    "planFeature": "Funkció",
+    "planBasic": "Alap (Ingyenes)",
+    "planPremium": "Premium",
+    "planRow": {
+      "booking": "Böngésszen és foglaljon kikötőhelyeket",
+      "aiBasic": "AI Kapitány (10 kérdés)",
+      "weather3": "3 napos előrejelzés",
+      "aiUnlimited": "Korlátlan AI Kapitány",
+      "weather7": "Részletes 7 napos előrejelzések",
+      "offline": "Offline térképek és időjárás-gyorsítótár",
+      "stormAlerts": "Vihar- és szélriasztás",
+      "routing": "AI útvonaltervezés",
+      "maneuvers": "Manőver-útmutatók",
+      "priority": "Elsőbbségi foglalási sor"
+    },
+    "ctaTitle": "Készen áll az okosabb vitorlázásra?",
+    "ctaSubtitle": "Csatlakozzon a tengerészek ezreihez, akik naponta használják az AI Kapitányt. Ingyenesen indulhat."
   }
 }
