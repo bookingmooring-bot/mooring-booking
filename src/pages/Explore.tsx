@@ -15,7 +15,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useAvailableMoorings, useMooringsByLocation } from "@/hooks/useMoorings";
 import { useDebounce } from "@/hooks/useDebounce";
 import ExploreMap from "@/components/ExploreMap";
-import AdBanner from "@/components/AdBanner";
 import { useTranslation } from "react-i18next";
 import type { MooringLayer } from "@/lib/mooringLayer";
 import { getLayerSortPriority } from "@/lib/mooringLayer";
@@ -503,11 +502,6 @@ const ExplorePage = () => {
                     <ExploreMap moorings={filteredMoorings} />
                   </div>
                 )}
-
-                {/* Ad banner */}
-                <div className="mb-6">
-                  <AdBanner position="sidebar" size="small" />
-                </div>
 
                 {/* Grid view */}
                 {viewMode === "grid" && (

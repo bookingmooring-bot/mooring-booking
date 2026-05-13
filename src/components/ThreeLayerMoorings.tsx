@@ -131,6 +131,12 @@ const ThreeLayerMoorings = () => {
       <LayerSection layer="concierge" moorings={concierge} />
       <LayerSection layer="explore" moorings={explore} />
 
+      <div className="text-center py-6 bg-muted/50">
+        <p className="text-sm text-muted-foreground">
+          💡 Our AI Captain can be your concierge — ask him to book on your behalf!
+        </p>
+      </div>
+
       <div className="text-center py-8 bg-background">
         <Link
           to="/explore"

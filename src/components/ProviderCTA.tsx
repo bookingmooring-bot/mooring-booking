@@ -1,4 +1,4 @@
-import { Anchor, ArrowRight, TrendingUp, Users, Shield } from "lucide-react";
+import { Anchor, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -6,12 +6,6 @@ import { useTranslation } from "react-i18next";
 const ProviderCTA = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-
-  const stats = [
-    { icon: TrendingUp, value: t('providerCta.stat1'), label: t('providerCta.stat1Label') },
-    { icon: Users, value: t('providerCta.stat2'), label: t('providerCta.stat2Label') },
-    { icon: Shield, value: t('providerCta.stat3'), label: t('providerCta.stat3Label') },
-  ];
 
   const handleBecomeProvider = () => {
     navigate('/become-provider');
@@ -32,16 +26,6 @@ const ProviderCTA = () => {
             {t('providerCta.title')}<span className="block text-gold">{t('providerCta.titleHighlight')}</span>
           </h2>
           <p className="text-lg text-primary-foreground/80 mb-10 max-w-2xl mx-auto">{t('providerCta.subtitle')}</p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            {stats.map((stat) => (
-              <div key={stat.label} className="bg-primary-foreground/10 backdrop-blur-sm rounded-xl p-6">
-                <stat.icon className="text-gold mx-auto mb-3" size={32} />
-                <div className="font-heading text-3xl font-bold text-primary-foreground mb-1">{stat.value}</div>
-                <div className="text-primary-foreground/70 text-sm">{stat.label}</div>
-              </div>
-            ))}
-          </div>
 
           <Button size="lg" className="bg-gold text-gold-foreground hover:bg-gold/90 font-heading font-semibold text-lg px-8 h-14 shadow-hover" onClick={handleBecomeProvider}>
             {t('providerCta.button')}<ArrowRight className="ml-2" size={20} />

@@ -10,7 +10,6 @@ import AICaptainTeaser from "@/components/AICaptainTeaser";
 import Footer from "@/components/Footer";
 import WeatherWidget from "@/components/WeatherWidget";
 import MapErrorBoundary from "@/components/MapErrorBoundary";
-import AdBanner from "@/components/AdBanner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
 import { MapPin } from "lucide-react";
@@ -68,25 +67,10 @@ const Index = () => {
         </section>
         
         <ThreeLayerMoorings />
-        
-        {/* Ad Banner */}
-        <section className="py-4 bg-background">
-          <div className="container mx-auto px-4">
-            <AdBanner position="top" size="large" />
-          </div>
-        </section>
-        
+
         <HowItWorks />
         <AICaptainTeaser />
 
-        
-        {/* Ad Banner */}
-        <section className="py-4 bg-background">
-          <div className="container mx-auto px-4">
-            <AdBanner position="footer" size="medium" />
-          </div>
-        </section>
-        
         <HomePricing />
         <ProviderCTA />
       </main>
