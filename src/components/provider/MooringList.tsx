@@ -94,10 +94,10 @@ const MooringList = () => {
                     title: `Mooring ${newStatus === 'active' ? 'Activated' : 'Deactivated'}`,
                     description: `The mooring has been successfully ${newStatus === 'active' ? 'activated' : 'deactivated'}.`
                 });
-            } catch (error: any) {
+            } catch (error: unknown) {
                 toast({
                     title: "Error",
-                    description: error.message || `Failed to ${actionText} mooring.`,
+                    description: error instanceof Error ? error.message : `Failed to ${actionText} mooring.`,
                     variant: "destructive"
                 });
             }
@@ -116,10 +116,10 @@ const MooringList = () => {
                 title: "Add-On Updated",
                 description: `Setting saved successfully.`,
             });
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast({
                 title: "Error",
-                description: error.message || "Failed to update add-on.",
+                description: error instanceof Error ? error.message : "Failed to update add-on.",
                 variant: "destructive"
             });
         }

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Stripe from 'https://esm.sh/stripe@13?target=deno';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -12,11 +11,13 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 );
 
+const allowedOrigin = Deno.env.get('APP_URL') || 'https://mooring-booking.com';
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       headers: {
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': allowedOrigin,
         'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
       },
     });

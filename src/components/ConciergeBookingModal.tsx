@@ -98,8 +98,8 @@ const ConciergeBookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initi
       });
       setRequestResult({ bookingId: result.bookingId, expiresAt: result.expiresAt });
       setStep(4);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to submit request");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to submit request");
     }
   };
 

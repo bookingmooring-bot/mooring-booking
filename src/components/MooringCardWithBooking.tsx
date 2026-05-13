@@ -98,6 +98,7 @@ const MooringCardWithBooking = ({
   operatingHours,
 }: MooringCardWithBookingProps) => {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     if (autoOpenBooking) setIsDetailOpen(true);
@@ -123,11 +124,12 @@ const MooringCardWithBooking = ({
           tabIndex={0}
           onKeyDown={(e) => e.key === 'Enter' && openDetail()}
         >
-          {image ? (
+          {image && !imgError ? (
             <img
               src={image}
               alt={name}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              onError={() => setImgError(true)}
             />
           ) : (
             <MooringImagePlaceholder name={name} />

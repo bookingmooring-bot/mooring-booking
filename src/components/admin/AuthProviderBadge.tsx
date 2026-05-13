@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Badge } from '@/components/ui/badge';
 
 const styles: Record<string, string> = {
@@ -14,10 +15,10 @@ const labels: Record<string, string> = {
   fb_lead: 'FB Lead',
 };
 
-export default function AuthProviderBadge({ provider }: { provider: string }) {
+export default memo(function AuthProviderBadge({ provider }: { provider: string }) {
   return (
     <Badge className={styles[provider] ?? ''}>
       {labels[provider] ?? provider}
     </Badge>
   );
-}
+});

@@ -87,8 +87,8 @@ const EditMooring = () => {
                     });
                 }
                 setInitialCalendarDays(baseline);
-            } catch (err: any) {
-                toast({ title: "Error loading mooring", description: err.message, variant: "destructive" });
+            } catch (err: unknown) {
+                toast({ title: "Error loading mooring", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
                 navigate('/dashboard');
             } finally {
                 setIsLoading(false);
@@ -187,9 +187,9 @@ const EditMooring = () => {
                 description: "Your edits have been submitted. Depending on changes, it might require review.",
             });
             navigate('/dashboard');
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Updating mooring error:', err);
-            toast({ title: "Error", description: err.message, variant: "destructive" });
+            toast({ title: "Error", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
         } finally {
             setIsSubmitting(false);
         }

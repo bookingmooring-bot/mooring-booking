@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Star, Heart, MapPin, Waves, Zap, Wifi, Droplets } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import MooringImagePlaceholder from "./MooringImagePlaceholder";
 
 interface MooringCardProps {
   id: string;
@@ -47,19 +49,25 @@ const MooringCard = ({
   image,
   distance,
 }: MooringCardProps) => {
-  const discountedPrice = discountPercent 
-    ? Math.round(price * (1 - discountPercent / 100)) 
+  const [imgError, setImgError] = useState(false);
+  const discountedPrice = discountPercent
+    ? Math.round(price * (1 - discountPercent / 100))
     : price;
 
   return (
     <div className="group bg-card rounded-xl overflow-hidden shadow-card hover:shadow-hover transition-all duration-300 cursor-pointer">
       {/* Image Container */}
       <div className="relative aspect-[16/10] overflow-hidden">
-        <img 
-          src={image} 
-          alt={name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+        {image && !imgError ? (
+          <img
+            src={image}
+            alt={name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <MooringImagePlaceholder name={name} />
+        )}
         
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">

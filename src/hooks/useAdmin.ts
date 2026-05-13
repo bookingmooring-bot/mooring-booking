@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
-import { Profile } from './useProfile';
+import { Profile, useProfile } from './useProfile';
 import { Mooring } from '@/data/moorings';
 import { DbMooring } from './useMoorings';
 
@@ -35,56 +35,29 @@ export interface ProviderStats extends Profile {
 
 export function useAdminProviders() {
     const { user } = useAuth();
+    const { data: profile } = useProfile();
 
     return useQuery({
         queryKey: ['admin', 'providers'],
         queryFn: async () => {
-            const { data: profiles, error: profileError } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('role', 'provider');
+            const { data, error } = await supabase.rpc('admin_get_provider_stats');
+            if (error) throw error;
 
-            if (profileError) throw profileError;
-
-            // Get moorings count
-            const { data: moorings, error: mooringsError } = await supabase
-                .from('moorings')
-                .select('owner_id');
-
-            if (mooringsError) throw mooringsError;
-
-            // Get bookings stats
-            const { data: bookings, error: bookingsError } = await supabase
-                .from('bookings')
-                .select('provider_id, total_price, commission_amount')
-                .eq('payment_status', 'paid');
-
-            if (bookingsError) throw bookingsError;
-
-            const providerStats: ProviderStats[] = profiles.map((profile) => {
-                const providerMoorings = moorings.filter(m => m.owner_id === profile.id);
-                const providerBookings = bookings.filter(b => b.provider_id === profile.id);
-
-                const totalRevenue = providerBookings.reduce((sum, b) => sum + Number(b.total_price || 0), 0);
-                const totalCommission = providerBookings.reduce((sum, b) => sum + Number(b.commission_amount || 0), 0);
-
-                return {
-                    ...profile,
-                    mooringCount: providerMoorings.length,
-                    totalBookings: providerBookings.length,
-                    totalRevenue,
-                    totalCommission
-                };
-            });
-
-            return providerStats;
+            return (data ?? []).map((row: Record<string, unknown>) => ({
+                ...row,
+                mooringCount: Number(row.mooring_count ?? 0),
+                totalBookings: Number(row.total_bookings ?? 0),
+                totalRevenue: Number(row.total_revenue ?? 0),
+                totalCommission: Number(row.total_commission ?? 0),
+            })) as ProviderStats[];
         },
-        enabled: !!user,
+        enabled: !!user && profile?.role === 'admin',
     });
 }
 
 export function useAdminCommissions() {
     const { user } = useAuth();
+    const { data: profile } = useProfile();
 
     return useQuery({
         queryKey: ['admin', 'commissions'],
@@ -101,12 +74,13 @@ export function useAdminCommissions() {
             if (error) throw error;
             return data as Commission[];
         },
-        enabled: !!user,
+        enabled: !!user && profile?.role === 'admin',
     });
 }
 
 export function useAdminPendingMoorings() {
     const { user } = useAuth();
+    const { data: profile } = useProfile();
 
     return useQuery({
         queryKey: ['admin', 'pending-moorings'],
@@ -123,7 +97,7 @@ export function useAdminPendingMoorings() {
             if (error) throw error;
             return data;
         },
-        enabled: !!user,
+        enabled: !!user && profile?.role === 'admin',
     });
 }
 
@@ -170,6 +144,7 @@ export interface AdminUser {
 
 export function useAdminAllUsers() {
     const { user } = useAuth();
+    const { data: profile } = useProfile();
 
     return useQuery({
         queryKey: ['admin', 'all-users'],
@@ -178,7 +153,7 @@ export function useAdminAllUsers() {
             if (error) throw error;
             return (data ?? []) as AdminUser[];
         },
-        enabled: !!user,
+        enabled: !!user && profile?.role === 'admin',
     });
 }
 
@@ -197,7 +172,7 @@ export interface FbLead {
     country: string | null;
     has_mooring: boolean;
     mooring_type: string | null;
-    mooring_quantities: any;
+    mooring_quantities: Record<string, number> | null;
     status: string;
     user_id: string | null;
     invite_email_sent: boolean;
@@ -208,6 +183,7 @@ export interface FbLead {
 
 export function useAdminFbLeads() {
     const { user } = useAuth();
+    const { data: profile } = useProfile();
 
     return useQuery({
         queryKey: ['admin', 'fb-leads'],
@@ -216,7 +192,7 @@ export function useAdminFbLeads() {
             if (error) throw error;
             return (data ?? []) as FbLead[];
         },
-        enabled: !!user,
+        enabled: !!user && profile?.role === 'admin',
     });
 }
 

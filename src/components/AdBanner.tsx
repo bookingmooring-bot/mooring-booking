@@ -1,77 +1,123 @@
-import { ChevronRight } from "lucide-react";
+import { memo } from "react";
+import { ChevronRight, Mail } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface AdBannerProps {
   position: "top" | "sidebar" | "inline" | "footer";
   size?: "small" | "medium" | "large";
 }
 
-const adContent = {
+interface AdSlot {
+  sponsorLabel: string;
+  title: string;
+  description: string;
+  cta: string;
+  link: string;
+  logo?: string;
+  bg: string;
+  accentColor: string;
+}
+
+const adSlots: Record<string, AdSlot> = {
   top: {
-    title: "⚓ ACI Marina Split — 318 berths",
-    description: "From €65/night · Fuel, Wi-Fi, restaurant, repair service & more",
-    cta: "View Marina",
-    link: "/explore?id=ebb3dcd0-0f53-42cd-b7f6-24309aa15e5f",
-    bg: "bg-gradient-to-r from-secondary/10 to-primary/10",
+    sponsorLabel: "Sponsored",
+    title: "Advertise Your Marina Here",
+    description: "Reach 50,000+ sailors monthly — premium placement on the #1 Mediterranean mooring platform",
+    cta: "Get Started",
+    link: "mailto:ads@mooring-booking.com?subject=Ad%20Inquiry%20-%20Top%20Banner&body=Hi%2C%20I%27m%20interested%20in%20advertising%20on%20Mooring%20Booking.%20Please%20send%20me%20pricing%20details.",
+    bg: "bg-gradient-to-r from-ocean/5 via-secondary/5 to-gold/5",
+    accentColor: "bg-ocean",
   },
   sidebar: {
-    title: "🏖️ Marina Kaštela — 429 berths",
-    description: "From €70/night · Full service marina near Split",
-    cta: "View Marina",
-    link: "/explore?id=f00f7e82-92f2-458d-ac30-3a9ee022fb39",
-    bg: "bg-gradient-to-r from-gold/10 to-secondary/10",
+    sponsorLabel: "Ad",
+    title: "Your Business Here",
+    description: "Charter, marina, or marine gear? Reach sailors searching right now.",
+    cta: "Advertise",
+    link: "mailto:ads@mooring-booking.com?subject=Ad%20Inquiry%20-%20Sidebar&body=Hi%2C%20I%27m%20interested%20in%20sidebar%20advertising%20on%20Mooring%20Booking.",
+    bg: "bg-gradient-to-r from-gold/5 to-secondary/5",
+    accentColor: "bg-gold",
   },
   inline: {
-    title: "⛵ Marina Stobreč — Split",
-    description: "From €35/night · 100 berths · Fuel, Wi-Fi, security",
-    cta: "View Marina",
-    link: "/explore?id=5ac568d9-bfa2-4da4-94a5-b0e114454488",
-    bg: "bg-gradient-to-r from-primary/10 to-accent/10",
+    sponsorLabel: "Sponsored",
+    title: "Promote Your Charter Fleet",
+    description: "Targeted ads to verified boat owners — highest conversion in the Med",
+    cta: "Learn More",
+    link: "mailto:ads@mooring-booking.com?subject=Ad%20Inquiry%20-%20Inline&body=Hi%2C%20I%27m%20interested%20in%20inline%20advertising%20on%20Mooring%20Booking.",
+    bg: "bg-gradient-to-r from-primary/5 to-accent/5",
+    accentColor: "bg-primary",
   },
   footer: {
-    title: "🧭 Explore 1,000+ Mediterranean Marinas",
-    description: "Croatia, Italy, Greece, Spain, France, Turkey & more — find your perfect berth",
-    cta: "Explore All",
-    link: "/explore",
-    bg: "bg-gradient-to-r from-muted to-secondary/5",
+    sponsorLabel: "Sponsored",
+    title: "Advertise to 50,000+ Mediterranean Sailors",
+    description: "Premium ad placements for marinas, charter companies, marine equipment & nautical services",
+    cta: "Contact Sales",
+    link: "mailto:ads@mooring-booking.com?subject=Advertising%20Inquiry&body=Hi%2C%20I%27m%20interested%20in%20advertising%20on%20Mooring%20Booking.%20Please%20send%20me%20your%20media%20kit%20and%20pricing.",
+    bg: "bg-gradient-to-r from-muted/80 to-secondary/10",
+    accentColor: "bg-ocean",
   },
 };
 
-const AdBanner = ({ position, size = "medium" }: AdBannerProps) => {
-  const ad = adContent[position];
-  
-  const handleClick = () => {
-    // Track ad click for revenue
-    console.log(`[Ad Analytics] Click: ${position} banner - ${ad.title}`);
-  };
+const sizeClasses = {
+  small: "p-2.5 sm:p-3",
+  medium: "p-3 sm:p-5",
+  large: "p-4 sm:p-6",
+};
 
-  const sizeClasses = {
-    small: "p-2 text-xs",
-    medium: "p-3 sm:p-4",
-    large: "p-4 sm:p-6",
-  };
+const AdBanner = memo(({ position, size = "medium" }: AdBannerProps) => {
+  const { t } = useTranslation();
+  const ad = adSlots[position];
 
   return (
-    <div 
-      className={`${ad.bg} border border-border/50 rounded-lg ${sizeClasses[size]} cursor-pointer hover:shadow-card transition-all group relative`}
-      onClick={handleClick}
+    <div
+      className={`${ad.bg} border border-dashed border-border/60 rounded-xl ${sizeClasses[size]} hover:border-primary/30 hover:shadow-card transition-all group relative overflow-hidden`}
     >
-      <span className="absolute top-1 right-2 text-[9px] text-muted-foreground/50 uppercase tracking-wider">Featured</span>
-      <div className="flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <h4 className="font-heading font-semibold text-foreground text-sm truncate">{ad.title}</h4>
-          <p className="text-xs text-muted-foreground mt-0.5 truncate">{ad.description}</p>
+      {/* Accent bar */}
+      <div className={`absolute left-0 top-0 bottom-0 w-1 ${ad.accentColor} rounded-l-xl opacity-60 group-hover:opacity-100 transition-opacity`} />
+
+      {/* Sponsor label */}
+      <span className="absolute top-1.5 right-2.5 text-[9px] text-muted-foreground/40 uppercase tracking-widest font-medium select-none">
+        {ad.sponsorLabel}
+      </span>
+
+      <div className="flex items-center justify-between gap-4 pl-3">
+        <div className="min-w-0 flex-1">
+          {/* Ad icon + title */}
+          <div className="flex items-center gap-2">
+            <div className={`w-7 h-7 rounded-lg ${ad.accentColor}/10 border border-current/10 flex items-center justify-center flex-shrink-0`}>
+              <Mail size={14} className="text-muted-foreground/60" />
+            </div>
+            <h4 className="font-heading font-semibold text-foreground text-sm truncate">
+              {ad.title}
+            </h4>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1 truncate pl-9">
+            {ad.description}
+          </p>
         </div>
-        <a 
-          href={ad.link} 
-          className="flex-shrink-0 inline-flex items-center gap-1 bg-secondary text-secondary-foreground px-3 py-1.5 rounded-md text-xs font-medium hover:bg-secondary/90 transition-colors"
-          onClick={(e) => e.stopPropagation()}
+
+        <a
+          href={ad.link}
+          className="flex-shrink-0 inline-flex items-center gap-1.5 bg-ocean text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-ocean/90 transition-colors shadow-sm"
         >
           {ad.cta}
           <ChevronRight size={14} />
         </a>
       </div>
+
+      {/* Bottom stats bar — only on large */}
+      {size === "large" && (
+        <div className="flex items-center gap-4 mt-3 pl-12 text-[10px] text-muted-foreground/50">
+          <span>50K+ {t("ad.monthlyVisitors", "monthly visitors")}</span>
+          <span className="w-0.5 h-3 bg-border/40 rounded-full" />
+          <span>15+ {t("ad.countries", "countries")}</span>
+          <span className="w-0.5 h-3 bg-border/40 rounded-full" />
+          <span>{t("ad.targetedReach", "Targeted sailor audience")}</span>
+        </div>
+      )}
     </div>
   );
-};
+});
+
+AdBanner.displayName = "AdBanner";
 
 export default AdBanner;

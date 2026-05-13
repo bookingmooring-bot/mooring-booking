@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Stripe from 'https://esm.sh/stripe@13?target=deno';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -12,8 +11,9 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 );
 
+const allowedOrigin = Deno.env.get('APP_URL') || 'https://mooring-booking.com';
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': allowedOrigin,
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
@@ -108,7 +108,18 @@ Deno.serve(async (req: Request) => {
 
     // Provider HAS Stripe → create Checkout Session with Connect split
     const appUrl = Deno.env.get('APP_URL') || 'https://mooring-booking.com';
-    const totalPrice = Number(bookingData.total_price ?? 0);
+
+    // Server-side price validation: recalculate from mooring price × nights
+    const nights = Math.max(1, Number(bookingData.nights ?? 1));
+    const serverPrice = Number(mooring.price) * nights;
+    const clientPrice = Number(bookingData.total_price ?? 0);
+    if (Math.abs(clientPrice - serverPrice) > 1) {
+      return new Response(
+        JSON.stringify({ error: 'Price mismatch — expected ' + serverPrice.toFixed(2) }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    const totalPrice = serverPrice;
     const tier = provider.provider_tier ?? 'standard';
     const rate = provider.commission_rate
       ? Number(provider.commission_rate)

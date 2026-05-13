@@ -64,7 +64,7 @@ const ProviderProfile = lazy(() => import("./pages/ProviderProfile"));
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import AppRouteGuard from "./components/AppRouteGuard";
-import AIChatWidget from "./components/AIChatWidget";
+const AIChatWidget = lazy(() => import("./components/AIChatWidget"));
 import OfflineIndicator from "./components/OfflineIndicator";
 
 // Hide chat widget on public provider/auth pages
@@ -72,7 +72,11 @@ const ConditionalChatWidget = () => {
   const location = useLocation();
   const hiddenRoutes = ["/auth"];
   if (hiddenRoutes.some(r => location.pathname.startsWith(r))) return null;
-  return <AIChatWidget />;
+  return (
+    <Suspense fallback={null}>
+      <AIChatWidget />
+    </Suspense>
+  );
 };
 
 const queryClient = new QueryClient();

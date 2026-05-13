@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Crown } from 'lucide-react';
 
@@ -21,7 +22,7 @@ const labels: Record<string, string> = {
   'premium-annual': 'Premium Yr',
 };
 
-export default function SubscriptionTierBadge({ tier }: { tier: string }) {
+export default memo(function SubscriptionTierBadge({ tier }: { tier: string }) {
   const isCharter = tier === 'charter-fleet';
   return (
     <Badge variant={tier === 'basic' ? 'outline' : 'default'} className={styles[tier] ?? ''}>
@@ -29,4 +30,4 @@ export default function SubscriptionTierBadge({ tier }: { tier: string }) {
       {labels[tier] ?? tier}
     </Badge>
   );
-}
+});

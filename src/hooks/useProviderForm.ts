@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/lib/supabase";
+import { supabase, supabaseUrl } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { CalendarDay } from "@/components/MonthlyCalendar";
 import { MooringFormData, generateCalendarDays as generateFullCalendarDays } from "@/components/provider/MooringForm";
@@ -140,7 +140,6 @@ export function useProviderForm() {
     if (fromLead) setAutoOpenFromLead(true);
 
     if (fbLeadId && /^\d{6,32}$/.test(fbLeadId)) {
-      const supabaseUrl = (import.meta as any).env?.VITE_SUPABASE_URL || 'https://bblxawscmyzelinidkmb.supabase.co';
       fetch(`${supabaseUrl}/functions/v1/resolve-fb-lead?fb_lead_id=${encodeURIComponent(fbLeadId)}`)
         .then(r => r.json())
         .then(data => {
@@ -338,7 +337,7 @@ export function useProviderForm() {
         .eq('mooring_id', mooringId);
 
       if (availData) {
-        availData.forEach((ad: any) => {
+        availData.forEach((ad: { date: string; available: boolean; custom_price?: number }) => {
           const dayIndex = baseline.findIndex(bd => bd.date.toISOString().split('T')[0] === ad.date);
           if (dayIndex !== -1) {
             baseline[dayIndex].available = ad.available;
@@ -352,7 +351,7 @@ export function useProviderForm() {
       setShowForm(true);
       setJustSubmitted(false);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({ title: 'Error', description: 'Could not load mooring data.', variant: 'destructive' });
     }
   };
@@ -432,8 +431,8 @@ export function useProviderForm() {
       setEditingMooringId(null);
       setShowForm(false);
       refreshMoorings();
-    } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } catch (err: unknown) {
+      toast({ title: "Error", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
     } finally {
       setIsSubmitting(false);
     }
@@ -660,11 +659,11 @@ export function useProviderForm() {
       setShowConsent(false);
       setShowForm(false);
       refreshMoorings();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Publish error:', err);
       toast({
         title: "Error",
-        description: err.message || "Failed to publish profile. Please try again.",
+        description: err instanceof Error ? err.message : "Failed to publish profile. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -687,7 +686,7 @@ export function useProviderForm() {
 
         try {
           await fetch(
-            `${import.meta.env.VITE_SUPABASE_URL || 'https://bblxawscmyzelinidkmb.supabase.co'}/functions/v1/process-fb-lead`,
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/process-fb-lead`,
             {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -723,8 +722,8 @@ export function useProviderForm() {
 
       setShowForm(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (err: any) {
-      const msg = err.message || "";
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "";
       const description = msg.toLowerCase().includes("rate limit")
         ? "Too many attempts. Please wait a few minutes and try again."
         : msg || "Something went wrong.";

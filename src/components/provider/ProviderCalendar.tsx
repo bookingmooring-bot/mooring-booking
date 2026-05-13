@@ -56,8 +56,8 @@ const ProviderCalendar = () => {
                 }
 
                 setCalendarDays(baseline);
-            } catch (err: any) {
-                toast({ title: "Error loading availability", description: err.message, variant: "destructive" });
+            } catch (err: unknown) {
+                toast({ title: "Error loading availability", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
             } finally {
                 setIsAvailLoading(false);
             }
@@ -97,8 +97,8 @@ const ProviderCalendar = () => {
 
             toast({ title: "✅ Availability Saved", description: "Calendar has been successfully updated." });
             setHasChanges(false);
-        } catch (err: any) {
-            toast({ title: "Error saving changes", description: err.message, variant: "destructive" });
+        } catch (err: unknown) {
+            toast({ title: "Error saving changes", description: err instanceof Error ? err.message : String(err), variant: "destructive" });
         } finally {
             setIsSaving(false);
         }

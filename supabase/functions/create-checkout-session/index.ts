@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Stripe from 'https://esm.sh/stripe@13?target=deno';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -12,8 +11,9 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 );
 
+const allowedOrigin = Deno.env.get('APP_URL') || 'https://mooring-booking.com';
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': allowedOrigin,
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
@@ -45,6 +45,29 @@ Deno.serve(async (req: Request) => {
 
     if (!priceId) {
       return new Response(JSON.stringify({ error: 'Missing priceId' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Validate priceId against known Stripe prices
+    const validPrices = [
+      Deno.env.get('STRIPE_PRICE_SAILOR_MONTHLY'),
+      Deno.env.get('STRIPE_PRICE_SAILOR_ANNUAL'),
+      Deno.env.get('STRIPE_PRICE_CAPTAIN_MONTHLY'),
+      Deno.env.get('STRIPE_PRICE_CAPTAIN_ANNUAL'),
+      Deno.env.get('STRIPE_PRICE_CHARTER_FLEET_MONTHLY'),
+      Deno.env.get('STRIPE_PRICE_CHARTER_FLEET_ANNUAL'),
+      Deno.env.get('STRIPE_PRICE_AI_ONLY_MONTHLY'),
+      Deno.env.get('STRIPE_PRICE_AI_ONLY_ANNUAL'),
+      Deno.env.get('STRIPE_PRICE_PREMIUM_MONTHLY'),
+      Deno.env.get('STRIPE_PRICE_PREMIUM_ANNUAL'),
+      Deno.env.get('STRIPE_PRICE_WL_UP_TO_50'),
+      Deno.env.get('STRIPE_PRICE_WL_OVER_50'),
+    ].filter(Boolean);
+
+    if (!validPrices.includes(priceId)) {
+      return new Response(JSON.stringify({ error: 'Invalid price ID' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });

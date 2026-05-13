@@ -133,10 +133,6 @@ const HeroSection = () => {
               <span className="text-xs md:text-sm font-medium text-foreground">{t('hero.countries')}</span>
             </div>
             <div className="flex items-center gap-2 bg-card/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg">
-              <span className="text-xl">⭐</span>
-              <span className="text-xs md:text-sm font-medium text-foreground">{t('hero.reviews')}</span>
-            </div>
-            <div className="flex items-center gap-2 bg-card/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg">
               <span className="text-xl">🔒</span>
               <span className="text-xs md:text-sm font-medium text-foreground">{t('hero.secure')}</span>
             </div>

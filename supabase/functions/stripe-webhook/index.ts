@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Stripe from 'https://esm.sh/stripe@13?target=deno';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -144,7 +143,7 @@ async function notifyAdminStripeAlert(
 ) {
   try {
     await fetch(
-      'https://bblxawscmyzelinidkmb.supabase.co/functions/v1/send-admin-notification',
+      `${Deno.env.get('SUPABASE_URL')}/functions/v1/send-admin-notification`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

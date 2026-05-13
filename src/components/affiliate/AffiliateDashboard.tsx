@@ -30,10 +30,11 @@ export default function AffiliateDashboard() {
         try {
             await applyMutation.mutateAsync();
             toast({ title: '🎉 Application Submitted!', description: 'Your affiliate application is pending review.' });
-        } catch (err: any) {
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : String(err);
             toast({
                 title: 'Error',
-                description: err.message?.includes('duplicate') ? 'You already have an application.' : err.message,
+                description: msg.includes('duplicate') ? 'You already have an application.' : msg,
                 variant: 'destructive',
             });
         }

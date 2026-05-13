@@ -90,11 +90,11 @@ const AddMooring = () => {
                 description: "Your new mooring has been submitted and is pending review.",
             });
             navigate('/dashboard');
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Adding mooring error:', err);
             toast({
                 title: "Error",
-                description: err.message || "Failed to add new mooring. Please try again.",
+                description: err instanceof Error ? err.message : "Failed to add new mooring. Please try again.",
                 variant: "destructive",
             });
         } finally {

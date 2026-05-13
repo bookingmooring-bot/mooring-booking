@@ -3,46 +3,20 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 import en from './locales/en.json';
-import hr from './locales/hr.json';
-import el from './locales/el.json';
-import sq from './locales/sq.json';
-import it from './locales/it.json';
-import mt from './locales/mt.json';
-import fr from './locales/fr.json';
-import tr from './locales/tr.json';
-import es from './locales/es.json';
-import sl from './locales/sl.json';
-import de from './locales/de.json';
-import hu from './locales/hu.json';
-import cs from './locales/cs.json';
-import sk from './locales/sk.json';
-import pl from './locales/pl.json';
 
-const resources = {
-  en: { translation: en },
-  hr: { translation: hr },
-  el: { translation: el },
-  sq: { translation: sq },
-  it: { translation: it },
-  mt: { translation: mt },
-  fr: { translation: fr },
-  tr: { translation: tr },
-  es: { translation: es },
-  sl: { translation: sl },
-  de: { translation: de },
-  hu: { translation: hu },
-  cs: { translation: cs },
-  sk: { translation: sk },
-  pl: { translation: pl },
-};
+const localeModules = import.meta.glob('./locales/*.json') as Record<string, () => Promise<{ default: Record<string, unknown> }>>;
+
+const supportedLngs = ['en', 'hr', 'de', 'el', 'it', 'fr', 'es', 'tr', 'hu', 'cs', 'sk', 'pl', 'sl', 'sq', 'mt'];
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    resources,
+    resources: {
+      en: { translation: en },
+    },
     fallbackLng: 'en',
-    supportedLngs: ['en', 'hr', 'de', 'el', 'it', 'fr', 'es', 'tr', 'hu', 'cs', 'sk', 'pl', 'sl', 'sq', 'mt'],
+    supportedLngs,
     load: 'languageOnly',
     detection: {
       order: ['navigator', 'localStorage', 'htmlTag'],
@@ -53,6 +27,24 @@ i18n
       escapeValue: false,
     },
   });
+
+async function loadLocale(lng: string) {
+  if (lng === 'en' || i18n.hasResourceBundle(lng, 'translation')) return;
+  const path = `./locales/${lng}.json`;
+  const loader = localeModules[path];
+  if (!loader) return;
+  const mod = await loader();
+  i18n.addResourceBundle(lng, 'translation', mod.default || mod, true, true);
+}
+
+const detectedLng = i18n.language?.split('-')[0];
+if (detectedLng && detectedLng !== 'en') {
+  loadLocale(detectedLng);
+}
+
+i18n.on('languageChanged', (lng) => {
+  loadLocale(lng.split('-')[0]);
+});
 
 export const languages = [
   { code: 'en', name: 'English', flag: '🇬🇧' },

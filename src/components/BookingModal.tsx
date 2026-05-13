@@ -142,7 +142,7 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
     return true;
   };
 
-  const handleSelect = (range: any) => {
+  const handleSelect = (range: { from?: Date; to?: Date } | undefined) => {
     if (!range) {
       setDateRange({ from: undefined, to: undefined });
       return;
@@ -245,8 +245,8 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
       sessionStorage.removeItem('referral_code');
       setStep(4);
       toast.success(t('booking.confirmed', 'Booking Confirmed!'));
-    } catch (error: any) {
-      toast.error('Booking failed: ' + (error.message || 'Please try again'));
+    } catch (error: unknown) {
+      toast.error('Booking failed: ' + (error instanceof Error ? error.message : 'Please try again'));
     }
   };
 

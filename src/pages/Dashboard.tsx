@@ -140,10 +140,10 @@ const Dashboard = () => {
                 title: "Settings Saved",
                 description: "Your profile information has been updated.",
             });
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast({
                 title: "Error",
-                description: error.message || "Failed to save settings.",
+                description: error instanceof Error ? error.message : "Failed to save settings.",
                 variant: "destructive",
             });
         }

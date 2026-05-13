@@ -8,8 +8,9 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "
 const EMBED_MODEL = "gemini-embedding-001";
 const EMBED_DIM = 768;
 
+const allowedOrigin = Deno.env.get("APP_URL") || "https://mooring-booking.com";
 const CORS = {
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": allowedOrigin,
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 

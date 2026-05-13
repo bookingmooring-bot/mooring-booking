@@ -16,7 +16,7 @@ const layerConfig: Record<MooringLayer, {
   premium: {
     icon: <Star className="text-gold" size={24} />,
     title: "Premium Partners",
-    subtitle: "Verified marinas, buoy fields & berths with live availability — book instantly through your AI Captain.",
+    subtitle: "Verified marinas, buoy fields & berths with live availability — book instantly.",
     accent: "text-gold",
     bg: "bg-background",
   },
@@ -53,7 +53,14 @@ const LayerSection = ({ layer, moorings }: { layer: MooringLayer; moorings: Moor
         <p className={`${config.accent} font-medium mb-8`}>{config.subtitle}</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...moorings].sort((a, b) => (b.image ? 1 : 0) - (a.image ? 1 : 0)).slice(0, 6).map((mooring) => (
+          {[...moorings].sort((a, b) => {
+            const now = Date.now();
+            const sevenDays = 7 * 24 * 60 * 60 * 1000;
+            const aNew = a.createdAt && (now - new Date(a.createdAt).getTime()) < sevenDays ? 1 : 0;
+            const bNew = b.createdAt && (now - new Date(b.createdAt).getTime()) < sevenDays ? 1 : 0;
+            if (bNew !== aNew) return bNew - aNew;
+            return (b.image ? 1 : 0) - (a.image ? 1 : 0);
+          }).slice(0, 6).map((mooring) => (
             <MooringCardWithBooking
               key={mooring.id}
               id={mooring.id}

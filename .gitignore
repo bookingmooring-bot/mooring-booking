@@ -32,6 +32,9 @@ token.json
 scripts/seed-moorings.mjs
 scripts/import-marinas.mjs
 scripts/backfill-missed-leads.mjs
+check_booking.ts
+check_db.ts
+fix_db.ts
 
 # Data files and reports
 *.xlsx

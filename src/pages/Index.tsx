@@ -41,9 +41,6 @@ const Index = () => {
               <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-2">
                 Explore the Mediterranean
               </h2>
-              <p className="text-muted-foreground">
-                10,000+ moorings across 11 countries
-              </p>
             </div>
             
             {/* Interactive Map with Error Boundary Fallback to Grid */}

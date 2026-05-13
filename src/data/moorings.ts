@@ -43,4 +43,5 @@ export interface Mooring {
   maxBeam?: number;
   vhfChannel?: string;
   operatingHours?: string;
+  createdAt?: string;
 }

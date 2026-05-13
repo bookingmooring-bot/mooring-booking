@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Stripe from 'https://esm.sh/stripe@13?target=deno';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -20,7 +19,7 @@ async function notifyAdminStripeAlert(
 ) {
   try {
     await fetch(
-      'https://bblxawscmyzelinidkmb.supabase.co/functions/v1/send-admin-notification',
+      `${Deno.env.get('SUPABASE_URL')}/functions/v1/send-admin-notification`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -82,6 +81,24 @@ Deno.serve(async (req: Request) => {
         } catch {
           console.error('Failed to parse booking_data JSON for session:', session.id);
           break;
+        }
+
+        // Server-side price validation: re-verify against mooring
+        const mooringId = bookingData.mooring_id as string | undefined;
+        if (mooringId) {
+          const { data: mooring } = await supabase
+            .from('moorings')
+            .select('price')
+            .eq('id', mooringId)
+            .single();
+          if (mooring) {
+            const expectedTotal = Number(mooring.price) * Math.max(1, Number(bookingData.nights ?? 1));
+            const clientTotal = Number(bookingData.total_price ?? 0);
+            if (Math.abs(clientTotal - expectedTotal) > 1) {
+              bookingData.total_price = expectedTotal;
+              console.warn('Price mismatch corrected:', clientTotal, '->', expectedTotal, 'session:', session.id);
+            }
+          }
         }
 
         // Server-side commission recalculation based on provider tier

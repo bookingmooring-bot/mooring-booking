@@ -284,7 +284,15 @@ const estimateWaveHeight = (windKnots: number): number => {
   return 3.0 + (windKnots - 35) * 0.1;
 };
 
-const owmItemToWeather = (item: any, timestamp: number): NauticalWeather => {
+interface OWMForecastItem {
+  wind?: { speed?: number; gust?: number; deg?: number };
+  weather?: { id?: number; description?: string }[];
+  main?: { temp?: number; dew_point?: number; pressure?: number; humidity?: number };
+  visibility?: number;
+  dt: number;
+}
+
+const owmItemToWeather = (item: OWMForecastItem, timestamp: number): NauticalWeather => {
   const windSpeed = msToKnots(item.wind?.speed || 0);
   const windGust = msToKnots(item.wind?.gust || item.wind?.speed || 0);
   const windDirDeg = item.wind?.deg || 0;
@@ -322,7 +330,7 @@ const fetchOWMForecastList = async (lat: number, lng: number): Promise<NauticalW
   );
   if (!res.ok) throw new Error(`OWM error ${res.status}`);
   const data = await res.json();
-  return data.list.map((item: any) => owmItemToWeather(item, item.dt * 1000));
+  return data.list.map((item: OWMForecastItem) => owmItemToWeather(item, item.dt * 1000));
 };
 
 // ─── Simulated weather fallback ───────────────────────────────────────────────

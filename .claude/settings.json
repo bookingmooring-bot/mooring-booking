@@ -14,7 +14,12 @@
       "Read(//d/Desktop/Aplikanje1/Mooring Booking/src/hooks/**)",
       "Bash(./node_modules/.bin/tsc --noEmit)",
       "Bash(npx -p typescript tsc --noEmit)",
-      "Read(//mnt/d/Desktop/**)"
+      "Read(//mnt/d/Desktop/**)",
+      "Bash(grep -E \"\\\\.\\(sql|json|ts\\)$\")",
+      "Bash(python -c ' *)",
+      "Bash(chcp 65001)",
+      "Bash(node scripts/import-marinas.mjs --dry-run)",
+      "Bash(node scripts/import-marinas.mjs)"
     ]
   }
 }
