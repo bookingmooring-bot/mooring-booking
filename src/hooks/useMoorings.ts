@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import type { Mooring } from '@/data/moorings';
 import type { MooringLayer } from '@/lib/mooringLayer';
 import { geocodeQuery, haversineKm, formatDistance } from '@/lib/geocoding';
+import { saveMooringsOffline, getMooringsOffline } from '@/lib/offlineStorage';
 
 export interface DbMooring {
     id: string;
@@ -96,6 +97,11 @@ function dbToFrontend(m: DbMooring): Mooring {
 }
 
 async function fetchMoorings(): Promise<Mooring[]> {
+    if (!navigator.onLine) {
+        const cached = await getMooringsOffline<Mooring>();
+        if (cached.length > 0) return cached;
+    }
+
     const { data, error } = await supabase
         .from('moorings')
         .select('*')
@@ -104,6 +110,8 @@ async function fetchMoorings(): Promise<Mooring[]> {
 
     if (error) {
         console.error('Failed to fetch moorings from Supabase:', error.message);
+        const cached = await getMooringsOffline<Mooring>();
+        if (cached.length > 0) return cached;
         return [];
     }
 
@@ -111,7 +119,9 @@ async function fetchMoorings(): Promise<Mooring[]> {
         return [];
     }
 
-    return data.map(dbToFrontend);
+    const moorings = data.map(dbToFrontend);
+    saveMooringsOffline(moorings).catch(() => {});
+    return moorings;
 }
 
 export function useMoorings() {

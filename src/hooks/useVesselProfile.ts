@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 
+export type VesselStatus = 'available' | 'in-use' | 'maintenance';
+
 export interface Vessel {
     id: string;
     user_id: string;
@@ -17,6 +19,11 @@ export interface Vessel {
     engine_model: string | null;
     engine_hours: number | null;
     is_default: boolean;
+    registration_number: string | null;
+    home_port: string | null;
+    status: VesselStatus;
+    charter_notes: string | null;
+    image_url: string | null;
     created_at: string;
     updated_at: string;
 }

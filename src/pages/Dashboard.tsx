@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
@@ -6,7 +6,7 @@ import { useUserBookings, useProviderBookings, Booking } from "@/hooks/useBookin
 import { useQueryClient } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Loader2, Ship, Calendar, Settings, ShieldCheck, Save, Star, Clock, Phone } from "lucide-react";
+import { Loader2, Ship, Calendar, Settings, ShieldCheck, Save, Star, Clock, Phone, Users } from "lucide-react";
 import VesselProfileManager from "@/components/VesselProfileManager";
 import NotificationPreferences from "@/components/NotificationPreferences";
 import AffiliateDashboard from "@/components/affiliate/AffiliateDashboard";
@@ -23,6 +23,8 @@ import RateGuestModal from "@/components/rating/RateGuestModal";
 import { useStripeConnect } from "@/hooks/useStripeConnect";
 import WhiteLabelUpgradeCard from "@/components/provider/WhiteLabelUpgradeCard";
 
+const FleetDashboard = lazy(() => import("@/components/fleet/FleetDashboard"));
+
 const Dashboard = () => {
     const { user, signOut } = useAuth();
     const { data: profile, isLoading: profileLoading } = useProfile();
@@ -34,7 +36,8 @@ const Dashboard = () => {
     const queryClient = useQueryClient();
     const stripeConnect = useStripeConnect();
 
-    const [activeTab, setActiveTab] = useState<'dashboard' | 'settings' | 'moorings' | 'calendar' | 'earnings' | 'spending' | 'affiliate'>('dashboard');
+    const [activeTab, setActiveTab] = useState<'dashboard' | 'settings' | 'moorings' | 'calendar' | 'earnings' | 'spending' | 'affiliate' | 'fleet'>('dashboard');
+    const isCharterFleet = profile?.subscription_tier === 'charter-fleet';
     const [settingsForm, setSettingsForm] = useState({
         full_name: '',
         phone: '',
@@ -571,6 +574,7 @@ const Dashboard = () => {
                                     { key: 'earnings', label: '💰 Earnings' },
                                     { key: 'spending', label: '💳 Spending' },
                                 ] : []),
+                                ...(isCharterFleet ? [{ key: 'fleet', label: 'Fleet' }] : []),
                                 { key: 'affiliate', label: '🔗 Affiliate' },
                                 { key: 'settings', label: '⚙️ Settings' },
                             ].map((tab) => (
@@ -606,6 +610,12 @@ const Dashboard = () => {
                     ) : activeTab === 'spending' ? (
                         <div className="mt-8 animate-fade-in">
                             <ProviderSpendingDashboard />
+                        </div>
+                    ) : activeTab === 'fleet' ? (
+                        <div className="mt-8 animate-fade-in">
+                            <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin text-primary" size={24} /></div>}>
+                                <FleetDashboard />
+                            </Suspense>
                         </div>
                     ) : activeTab === 'affiliate' ? (
                         <div className="mt-8 animate-fade-in">

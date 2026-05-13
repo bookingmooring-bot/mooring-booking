@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { X, Calendar as CalendarIcon, CreditCard, User, Check, Anchor, Navigation, Phone, Copy, Loader2 } from "lucide-react";
+import { useState, useEffect, lazy, Suspense } from "react";
+import { X, Calendar as CalendarIcon, CreditCard, User, Check, Anchor, Navigation, Phone, Copy, Loader2, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
@@ -14,6 +14,8 @@ import { useBookingPayment } from "@/hooks/useBookingPayment";
 import { useProviderTier } from "@/hooks/useProviderTier";
 import { calculateBookingFees, getCommissionRate } from "@/lib/providerTier";
 import { calculateServiceFee } from "@/lib/subscription";
+
+const BulkBookingModal = lazy(() => import("@/components/fleet/BulkBookingModal"));
 
 interface MooringData {
   id: string;
@@ -52,6 +54,8 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
   const providerCommissionRate = providerTierData?.commissionRate;
 
   const [step, setStep] = useState(1);
+  const [showBulkBooking, setShowBulkBooking] = useState(false);
+  const isCharterFleet = profile?.subscription_tier === 'charter-fleet';
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to?: Date | undefined }>({
     from: undefined,
     to: undefined,
@@ -334,7 +338,26 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
               </div>
             </div>
           </div>
+          {isCharterFleet && step < 4 && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-3 w-full border-blue-300 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/20"
+              onClick={() => setShowBulkBooking(true)}
+            >
+              <Users size={14} className="mr-1" /> Book for Fleet
+            </Button>
+          )}
         </div>
+
+        {showBulkBooking && (
+          <Suspense fallback={null}>
+            <BulkBookingModal
+              mooring={{ ...mooring, maxBoatLength: undefined, maxDraft: undefined, maxBeam: undefined, mooringLayer: 'premium' as const } as any}
+              onClose={() => setShowBulkBooking(false)}
+            />
+          </Suspense>
+        )}
 
         {/* Step Content */}
         <div className="p-3 sm:p-4">

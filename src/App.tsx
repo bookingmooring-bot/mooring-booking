@@ -65,6 +65,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import AppRouteGuard from "./components/AppRouteGuard";
 import AIChatWidget from "./components/AIChatWidget";
+import OfflineIndicator from "./components/OfflineIndicator";
 
 // Hide chat widget on public provider/auth pages
 const ConditionalChatWidget = () => {
@@ -84,6 +85,7 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <OfflineIndicator />
           <BrowserRouter>
             <AppRouteGuard>
               <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>}>
