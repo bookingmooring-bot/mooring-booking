@@ -484,40 +484,58 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
                 </div>
               </div>
 
-              {/* Stripe Card Payment */}
-              <Button
-                onClick={handlePayWithCard}
-                disabled={bookingPayment.isPending}
-                className="w-full bg-gradient-ocean font-semibold h-12 text-base"
-              >
-                {bookingPayment.isPending ? (
-                  <span className="flex items-center gap-2 justify-center">
-                    <Loader2 size={18} className="animate-spin" /> {t('booking.redirectingPayment', 'Redirecting to payment...')}
-                  </span>
-                ) : (
-                  t('booking.payWithCard', 'Pay with Card (Stripe)')
-                )}
-              </Button>
+              {grandTotal <= 0 ? (
+                <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3 text-center">
+                  <p className="text-sm text-amber-700 dark:text-amber-300 font-medium">
+                    {t('booking.contactForPricing', 'This mooring has no listed price. Please contact the marina directly to arrange your booking.')}
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {/* Stripe Card Payment */}
+                  <Button
+                    onClick={handlePayWithCard}
+                    disabled={bookingPayment.isPending}
+                    className="w-full bg-gradient-ocean font-semibold h-12 text-base"
+                  >
+                    {bookingPayment.isPending ? (
+                      <span className="flex items-center gap-2 justify-center">
+                        <Loader2 size={18} className="animate-spin" /> {t('booking.redirectingPayment', 'Redirecting to payment...')}
+                      </span>
+                    ) : (
+                      t('booking.payWithCard', 'Pay with Card (Stripe)')
+                    )}
+                  </Button>
 
-              {/* Cash fallback */}
+                  {/* Cash fallback */}
+                  <Button
+                    onClick={handlePayCash}
+                    disabled={createBooking.isPending}
+                    variant="outline"
+                    className="w-full h-10"
+                  >
+                    {createBooking.isPending ? (
+                      <span className="flex items-center gap-2 justify-center">
+                        <Loader2 size={16} className="animate-spin" /> {t('booking.saving', 'Saving...')}
+                      </span>
+                    ) : (
+                      t('booking.payWithCash', 'Pay with Cash / On-site')
+                    )}
+                  </Button>
+
+                  <p className="text-xs text-muted-foreground text-center">
+                    {t('booking.stripeSecure', 'Stripe payment is secure and encrypted. You will be redirected to Stripe to complete payment.')}
+                  </p>
+                </>
+              )}
+
               <Button
-                onClick={handlePayCash}
-                disabled={createBooking.isPending}
                 variant="outline"
-                className="w-full h-10"
+                onClick={() => setStep(2)}
+                className="w-full"
               >
-                {createBooking.isPending ? (
-                  <span className="flex items-center gap-2 justify-center">
-                    <Loader2 size={16} className="animate-spin" /> {t('booking.saving', 'Saving...')}
-                  </span>
-                ) : (
-                  t('booking.payWithCash', 'Pay with Cash / On-site')
-                )}
+                {t('booking.back', 'Back')}
               </Button>
-
-              <p className="text-xs text-muted-foreground text-center">
-                {t('booking.stripeSecure', 'Stripe payment is secure and encrypted. You will be redirected to Stripe to complete payment.')}
-              </p>
             </div>
           )}
 
@@ -618,7 +636,7 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
         </div>
 
         {/* Footer */}
-        {step < 4 && (
+        {step < 4 && step !== 3 && (
           <div className="sticky bottom-0 bg-card border-t border-border p-3 sm:p-4 flex gap-3 sm:gap-4">
             {step > 1 && (
               <Button
@@ -634,7 +652,7 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
               className="flex-1 bg-gradient-ocean font-semibold"
               disabled={(step === 1 && !canProceedStep1) || (step === 2 && !canProceedStep2)}
             >
-              {step === 3 ? t('booking.confirmPay', 'Confirm & Pay') : t('booking.continue', 'Continue')}
+              {t('booking.continue', 'Continue')}
             </Button>
           </div>
         )}
