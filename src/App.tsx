@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { NavigationProvider } from "./contexts/NavigationContext";
 import { lazy, Suspense, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -86,6 +87,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <NavigationProvider>
         <TooltipProvider>
           <Toaster />
           <Sonner />
@@ -130,6 +132,7 @@ const App = () => {
             </AppRouteGuard>
           </BrowserRouter>
         </TooltipProvider>
+        </NavigationProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

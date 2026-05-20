@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Star, Heart, MapPin, Waves, Zap, Wifi, Droplets, Navigation, Compass } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,7 @@ import { cn } from "@/lib/utils";
 import MooringDetailModal from "./MooringDetailModal";
 import type { MooringLayer } from "@/lib/mooringLayer";
 import { getLayerBadge } from "@/lib/mooringLayer";
-import { openNavigation } from "@/lib/navigation";
+import { useNavigation } from "@/contexts/NavigationContext";
 import MooringImagePlaceholder from "./MooringImagePlaceholder";
 
 interface MooringCardWithBookingProps {
@@ -97,6 +98,8 @@ const MooringCardWithBooking = ({
   vhfChannel,
   operatingHours,
 }: MooringCardWithBookingProps) => {
+  const { t } = useTranslation();
+  const { openNavigation } = useNavigation();
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
 
@@ -228,8 +231,9 @@ const MooringCardWithBooking = ({
                   {discountPercent && (
                     <span className="text-muted-foreground text-sm line-through">€{price}</span>
                   )}
+                  <span className="text-muted-foreground text-xs">{t('popular.fromPrice')}</span>
                   <span className="font-heading font-bold text-xl text-primary">€{discountedPrice}</span>
-                  <span className="text-muted-foreground text-sm">/night</span>
+                  <span className="text-muted-foreground text-sm">{t('popular.perNight')}</span>
                 </>
               )}
             </div>

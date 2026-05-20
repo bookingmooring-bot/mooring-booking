@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
     X,
     Star,
@@ -28,7 +29,7 @@ import { cn } from "@/lib/utils";
 import BookingModal from "./BookingModal";
 import type { MooringLayer } from "@/lib/mooringLayer";
 import { getLayerBadge, getBookingMode, getLayerDisclaimer } from "@/lib/mooringLayer";
-import { openNavigation } from "@/lib/navigation";
+import { useNavigation } from "@/contexts/NavigationContext";
 import { useProfile } from "@/hooks/useProfile";
 import MooringImagePlaceholder from "./MooringImagePlaceholder";
 
@@ -120,6 +121,8 @@ const MooringDetailModal = ({
     initialCheckIn,
     initialCheckOut,
 }: MooringDetailModalProps) => {
+    const { t } = useTranslation();
+    const { openNavigation } = useNavigation();
     const [isBookingOpen, setIsBookingOpen] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
     const { data: profile } = useProfile();
@@ -277,10 +280,11 @@ const MooringDetailModal = ({
                                     €{mooring.price}
                                 </span>
                             )}
+                            <span className="text-muted-foreground text-xs">{t('popular.fromPrice')}</span>
                             <span className="font-heading font-bold text-3xl text-primary">
                                 €{discountedPrice}
                             </span>
-                            <span className="text-muted-foreground text-sm">/night</span>
+                            <span className="text-muted-foreground text-sm">{t('popular.perNight')}</span>
                         </div>
                         {mooring.winterStorage && mooring.winterPriceMonthly && (
                             <div className="flex items-center gap-1.5 text-secondary text-sm font-medium">

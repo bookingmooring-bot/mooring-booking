@@ -6,7 +6,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { format, isBefore, startOfToday, addDays } from "date-fns";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { openNavigation } from "@/lib/navigation";
+import { useNavigation } from "@/contexts/NavigationContext";
 import { useCreateBooking, useMooringAvailability } from "@/hooks/useBookings";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
@@ -44,6 +44,7 @@ interface BookingModalProps {
 
 const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOut }: BookingModalProps) => {
   const { t } = useTranslation();
+  const { openNavigation } = useNavigation();
   const createBooking = useCreateBooking();
   const bookingPayment = useBookingPayment();
   const { data: profile } = useProfile();
@@ -333,8 +334,8 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
                 {(mooring.discountPercent || mooring.isNow4Today) && (
                   <span className="text-muted-foreground text-xs sm:text-sm line-through">€{mooring.price}</span>
                 )}
-                <span className="font-heading font-bold text-primary text-sm sm:text-base">€{discountedPrice}</span>
-                <span className="text-xs sm:text-sm text-muted-foreground">/night</span>
+                <span className="text-muted-foreground text-xs">{t('popular.fromPrice')} </span><span className="font-heading font-bold text-primary text-sm sm:text-base">€{discountedPrice}</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">{t('popular.perNight')}</span>
               </div>
             </div>
           </div>

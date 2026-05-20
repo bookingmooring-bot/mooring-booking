@@ -1,35 +1,32 @@
-import { toast } from "sonner";
-
-interface NavigationDestination {
+export interface NavigationDestination {
   lat: number;
   lng: number;
   label?: string;
 }
 
-/**
- * Opens navigation to a destination using OpenSeaMap nautical charts
- */
-export const openNavigation = (destination: NavigationDestination) => {
-  const { lat, lng, label } = destination;
+export function calculateBearing(from: [number, number], to: [number, number]): number {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const toDeg = (r: number) => (r * 180) / Math.PI;
+  const lat1 = toRad(from[0]);
+  const lat2 = toRad(to[0]);
+  const dLng = toRad(to[1] - from[1]);
+  const y = Math.sin(dLng) * Math.cos(lat2);
+  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+  return (toDeg(Math.atan2(y, x)) + 360) % 360;
+}
 
-  toast.success('Opening nautical chart...', {
-    description: `Navigating to ${label || 'your mooring'}`
-  });
+export function calculateDistanceNM(from: [number, number], to: [number, number]): number {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const R = 3440.065; // Earth radius in nautical miles
+  const dLat = toRad(to[0] - from[0]);
+  const dLng = toRad(to[1] - from[1]);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(from[0])) * Math.cos(toRad(to[0])) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
-  const openSeaMapUrl = `https://map.openseamap.org/?zoom=14&lat=${lat}&lon=${lng}&layers=BFTFFFFFFFFTF`;
-  window.open(openSeaMapUrl, '_blank', 'noopener,noreferrer');
-};
-
-/**
- * Opens nautical navigation (for boats) using marine charts
- */
-export const openNauticalNavigation = (destination: NavigationDestination) => {
-  const { lat, lng, label } = destination;
-
-  toast.success('Opening nautical chart...', {
-    description: `Marine chart for ${label || 'your mooring'}`
-  });
-
-  const openSeaMapUrl = `https://map.openseamap.org/?zoom=14&lat=${lat}&lon=${lng}&layers=BFTFFFFFFFFTF`;
-  window.open(openSeaMapUrl, '_blank', 'noopener,noreferrer');
-};
+export function bearingToCompass(bearing: number): string {
+  const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+  return dirs[Math.round(bearing / 22.5) % 16];
+}
