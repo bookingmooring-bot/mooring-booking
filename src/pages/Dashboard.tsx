@@ -252,18 +252,28 @@ const Dashboard = () => {
                 ) : (
                     <div className="space-y-4">
                         {userBookings.map((booking) => {
-                            const isConcierge = booking.booking_type === 'concierge';
-                            const expiresAt = booking.concierge_expires_at ? new Date(booking.concierge_expires_at) : null;
+                            const isQuoteFlow = booking.booking_type === 'concierge' || booking.booking_type === 'now4today';
+                            const isConcierge = isQuoteFlow;
+                            const isNow4Today = booking.booking_type === 'now4today';
+                            const expiresAt = booking.concierge_status === 'price_quoted'
+                                ? (booking.guest_response_expires_at ? new Date(booking.guest_response_expires_at) : null)
+                                : (booking.concierge_expires_at ? new Date(booking.concierge_expires_at) : null);
                             const hoursLeft = expiresAt ? Math.max(0, Math.round((expiresAt.getTime() - Date.now()) / 3600000)) : 0;
+                            const minsLeft = expiresAt ? Math.max(0, Math.round(((expiresAt.getTime() - Date.now()) % 3600000) / 60000)) : 0;
 
                             return (
                             <div key={booking.id} className={`border p-4 rounded-xl hover:shadow-hover transition-shadow bg-background flex flex-col sm:flex-row justify-between gap-4 ${
-                                isConcierge ? 'border-blue-200 dark:border-blue-800' : 'border-border'
+                                isNow4Today ? 'border-orange-200 dark:border-orange-800' : isConcierge ? 'border-blue-200 dark:border-blue-800' : 'border-border'
                             }`}>
                                 <div>
                                     <div className="flex items-center gap-2">
                                         <h3 className="font-bold text-lg">{booking.moorings?.name || 'Unknown Mooring'}</h3>
-                                        {isConcierge && (
+                                        {isNow4Today && (
+                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">
+                                                Now4Today
+                                            </span>
+                                        )}
+                                        {!isNow4Today && isConcierge && (
                                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
                                                 <Phone size={10} /> Concierge
                                             </span>
@@ -282,13 +292,38 @@ const Dashboard = () => {
                                     )}
                                 </div>
                                 <div className="flex flex-col items-start sm:items-end justify-between gap-3">
-                                    {isConcierge && booking.concierge_status === 'pending_marina' ? (
+                                    {isQuoteFlow && booking.concierge_status === 'price_quoted' ? (
                                         <div className="flex flex-col items-start sm:items-end gap-1">
-                                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
-                                                <Clock size={12} /> Awaiting Marina Response
+                                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">
+                                                Quote: €{booking.quoted_price}
                                             </span>
                                             {hoursLeft > 0 && (
-                                                <span className="text-xs text-muted-foreground">Expires in {hoursLeft}h</span>
+                                                <span className="text-xs text-muted-foreground">Respond within {hoursLeft}h {minsLeft}m</span>
+                                            )}
+                                            <div className="flex gap-2 mt-1">
+                                                <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white text-xs h-7 px-3"
+                                                    onClick={async () => {
+                                                        const { error } = await supabase.functions.invoke('guest-quote-accept', { body: { bookingId: booking.id, action: 'accept' } });
+                                                        if (!error) { window.location.reload(); }
+                                                    }}>
+                                                    Accept
+                                                </Button>
+                                                <Button size="sm" variant="outline" className="border-red-300 text-red-600 text-xs h-7 px-3"
+                                                    onClick={async () => {
+                                                        const { error } = await supabase.functions.invoke('guest-quote-accept', { body: { bookingId: booking.id, action: 'decline' } });
+                                                        if (!error) { window.location.reload(); }
+                                                    }}>
+                                                    Decline
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ) : isQuoteFlow && booking.concierge_status === 'pending_marina' ? (
+                                        <div className="flex flex-col items-start sm:items-end gap-1">
+                                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+                                                <Clock size={12} /> Awaiting Price Quote
+                                            </span>
+                                            {hoursLeft > 0 && (
+                                                <span className="text-xs text-muted-foreground">Expires in {hoursLeft}h {minsLeft}m</span>
                                             )}
                                         </div>
                                     ) : isConcierge && booking.concierge_status === 'confirmed' ? (

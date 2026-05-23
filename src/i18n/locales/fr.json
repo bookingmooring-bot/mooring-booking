@@ -26,6 +26,7 @@
     "subtitle": "Découvrez les amarrages les plus réservés en Méditerranée",
     "viewAll": "Voir Tous les Amarrages",
     "perNight": "/nuit",
+    "fromPrice": "à partir de",
     "discount": "réduction",
     "lastMinute": "Dernière minute"
   },
@@ -373,6 +374,23 @@
     "calendarCustomPrice": "Double-cliquez sur un jour pour définir un prix personnalisé pour cette date.",
     "addressPlaceholder": "Adresse complète (visible après réservation)",
     "disposalDisclaimer": "En soumettant cette declaration, vous confirmez que vous disposez du droit legal de disposer de cet amarrage et etes responsable de l'exactitude des donnees fournies. La plateforme Mooring Booking n'est pas responsable des fausses declarations."
+  },
+  "quote": {
+    "awaitingQuote": "En attente du devis",
+    "quoteReceived": "Devis reçu",
+    "submitQuote": "Soumettre le devis",
+    "acceptQuote": "Accepter",
+    "declineQuote": "Refuser",
+    "quotePending": "La marina examine votre demande et enverra un devis.",
+    "quoteExpired": "Devis expiré — aucun frais appliqué.",
+    "quoteDeclined": "Devis refusé — aucun frais appliqué.",
+    "quoteConfirmed": "Réservation confirmée !",
+    "respondWithin": "Répondre dans",
+    "sameDayRequest": "Demande de poste le jour même",
+    "urgentRequest": "URGENT : Demande le jour même",
+    "privacyNote": "Vos coordonnées ne seront partagées avec la marina qu'après acceptation du devis.",
+    "pricePerNight": "Votre prix (EUR par nuit)",
+    "providerNote": "Le client examinera votre prix et décidera s'il accepte. Les coordonnées du client seront partagées après acceptation."
   },
   "admin": {
     "title": "Tableau de Bord Admin",

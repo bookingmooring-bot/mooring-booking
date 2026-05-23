@@ -26,6 +26,7 @@
     "subtitle": "Discover the most booked moorings across the Mediterranean",
     "viewAll": "View All Moorings",
     "perNight": "/night",
+    "fromPrice": "from",
     "discount": "discount",
     "lastMinute": "Now4Today"
   },
@@ -399,6 +400,23 @@
     "marketingToolsTitleDesc": "Get your unique QR code and affiliate link. Share on social media and earn more.",
     "joinCommunity": "Join 10,000+ Providers",
     "joinCommunityDesc": "Be part of the Mediterranean's largest mooring community. Support included."
+  },
+  "quote": {
+    "awaitingQuote": "Awaiting Price Quote",
+    "quoteReceived": "Quote Received",
+    "submitQuote": "Submit Price Quote",
+    "acceptQuote": "Accept",
+    "declineQuote": "Decline",
+    "quotePending": "The marina is reviewing your request and will send a price quote.",
+    "quoteExpired": "Quote expired — no charge applied.",
+    "quoteDeclined": "Quote declined — no charge applied.",
+    "quoteConfirmed": "Booking confirmed!",
+    "respondWithin": "Respond within",
+    "sameDayRequest": "Same-Day Berth Request",
+    "urgentRequest": "URGENT: Same-Day Request",
+    "privacyNote": "Your contact details will be shared with the marina only after you accept the quote.",
+    "pricePerNight": "Your Price (EUR per night)",
+    "providerNote": "The guest will review your price and decide whether to accept. Guest contact details will be shared after they accept."
   },
   "admin": {
     "title": "Admin Dashboard",

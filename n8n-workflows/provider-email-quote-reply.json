@@ -1,0 +1,165 @@
+{
+  "name": "Provider Email Quote Reply Parser",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            { "mode": "everyMinute", "minute": 5 }
+          ]
+        },
+        "filters": {
+          "readStatus": "unread",
+          "receivedAfter": "={{ $now.minus(10, 'minutes').toISO() }}"
+        },
+        "options": {
+          "dataPropertyAttachmentsPrefixName": "attachment_"
+        }
+      },
+      "id": "gmail-trigger",
+      "name": "Gmail - Watch Inbox",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CREDENTIAL_ID",
+          "name": "Gmail - Mooring Booking"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false },
+          "conditions": [
+            {
+              "id": "is-reply-to-booking",
+              "leftValue": "={{ $json.subject }}",
+              "rightValue": "Booking Request|Price Quote|Same-Day Request|Concierge Request",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "filter-booking-replies",
+      "name": "Is Booking Reply?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract reply text (strip quoted content)\nconst fullText = $input.item.json.text || $input.item.json.snippet || '';\n\n// Remove quoted replies (lines starting with >)\nconst lines = fullText.split('\\n');\nconst replyLines = [];\nfor (const line of lines) {\n  // Stop at quoted content markers\n  if (line.trim().startsWith('>')) break;\n  if (line.match(/^On .+ wrote:$/)) break;\n  if (line.match(/^-{3,}\\s*Original Message/i)) break;\n  if (line.match(/^From:/i) && replyLines.length > 0) break;\n  replyLines.push(line);\n}\n\nconst replyText = replyLines.join('\\n').trim();\n\n// Extract price from reply — look for EUR amounts\nconst pricePatterns = [\n  /€\\s*(\\d+[.,]?\\d*)/,\n  /(\\d+[.,]?\\d*)\\s*€/,\n  /(\\d+[.,]?\\d*)\\s*eur/i,\n  /price[:\\s]+(\\d+[.,]?\\d*)/i,\n  /cijena[:\\s]+(\\d+[.,]?\\d*)/i,\n  /cena[:\\s]+(\\d+[.,]?\\d*)/i,\n  /prezzo[:\\s]+(\\d+[.,]?\\d*)/i,\n  /prix[:\\s]+(\\d+[.,]?\\d*)/i,\n  /precio[:\\s]+(\\d+[.,]?\\d*)/i,\n  /preis[:\\s]+(\\d+[.,]?\\d*)/i,\n];\n\nlet price = null;\nfor (const pattern of pricePatterns) {\n  const match = replyText.match(pattern);\n  if (match) {\n    price = parseFloat(match[1].replace(',', '.'));\n    break;\n  }\n}\n\n// If no labeled price found, try standalone number (if reply is short)\nif (!price && replyText.length < 100) {\n  const numMatch = replyText.match(/(\\d{2,4}(?:[.,]\\d{1,2})?)/);\n  if (numMatch) {\n    price = parseFloat(numMatch[1].replace(',', '.'));\n  }\n}\n\n// Extract bookingId from the original email thread\n// Look for quote-respond URL in the thread\nconst html = $input.item.json.html || $input.item.json.text || '';\nconst bookingIdMatch = html.match(/bookingId=([a-f0-9-]{36})/i);\nconst bookingId = bookingIdMatch ? bookingIdMatch[1] : null;\n\n// Check for decline keywords\nconst declineKeywords = /\\b(decline|reject|no|nein|non|ne|nem|nie|hayır|rifiut|rechaz|odmit|odbi|elutasit)\\b/i;\nconst isDecline = !price && declineKeywords.test(replyText);\n\nreturn {\n  json: {\n    replyText,\n    price,\n    bookingId,\n    isDecline,\n    senderEmail: $input.item.json.from?.value?.[0]?.address || $input.item.json.from,\n    subject: $input.item.json.subject,\n    threadId: $input.item.json.threadId || $input.item.json.id\n  }\n};"
+      },
+      "id": "extract-price",
+      "name": "Extract Price & BookingId",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "has-booking-id",
+              "leftValue": "={{ $json.bookingId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            },
+            {
+              "id": "has-price-or-decline",
+              "leftValue": "={{ $json.price !== null || $json.isDecline }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "can-process",
+      "name": "Can Process?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/functions/v1/n8n-concierge-api",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ action: 'submit_provider_quote', params: { bookingId: $json.bookingId, price: $json.price, action: $json.isDecline ? 'decline' : 'quote' } }) }}",
+        "options": {}
+      },
+      "id": "submit-quote",
+      "name": "Submit Quote via API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "CREDENTIAL_ID",
+          "name": "N8N Concierge API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "=**Manual Review Needed**\n\nEmail from: {{ $json.senderEmail }}\nSubject: {{ $json.subject }}\n\nCould not extract booking ID or price from provider reply:\n```\n{{ $json.replyText }}\n```\n\nExtracted: bookingId={{ $json.bookingId }}, price={{ $json.price }}, isDecline={{ $json.isDecline }}",
+        "options": {}
+      },
+      "id": "log-manual-review",
+      "name": "Log for Manual Review",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1120, 420]
+    }
+  ],
+  "connections": {
+    "Gmail - Watch Inbox": {
+      "main": [
+        [{ "node": "Is Booking Reply?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Is Booking Reply?": {
+      "main": [
+        [{ "node": "Extract Price & BookingId", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Extract Price & BookingId": {
+      "main": [
+        [{ "node": "Can Process?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Can Process?": {
+      "main": [
+        [{ "node": "Submit Quote via API", "type": "main", "index": 0 }],
+        [{ "node": "Log for Manual Review", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    { "name": "concierge" },
+    { "name": "automation" }
+  ]
+}

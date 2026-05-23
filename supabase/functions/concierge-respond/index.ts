@@ -38,7 +38,7 @@ Deno.serve(async (req: Request) => {
       .from('bookings')
       .select('*, moorings(*)')
       .eq('id', bookingId)
-      .eq('booking_type', 'concierge')
+      .in('booking_type', ['concierge', 'now4today'])
       .eq('concierge_status', 'pending_marina')
       .single();
 
@@ -64,6 +64,7 @@ Deno.serve(async (req: Request) => {
         .eq('id', bookingId);
 
       // Notify user with marina contact details
+      const confirmEmailType = booking.booking_type === 'now4today' ? 'now4today_confirmed' : 'concierge_confirmed';
       try {
         await fetch(
           `${Deno.env.get('SUPABASE_URL')}/functions/v1/send-booking-emails`,
@@ -74,7 +75,7 @@ Deno.serve(async (req: Request) => {
               'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
             },
             body: JSON.stringify({
-              type: 'concierge_confirmed',
+              type: confirmEmailType,
               booking: booking,
               mooring: booking.moorings,
             }),
@@ -104,6 +105,7 @@ Deno.serve(async (req: Request) => {
         .eq('id', bookingId);
 
       // Notify user
+      const declineEmailType = booking.booking_type === 'now4today' ? 'now4today_declined' : 'concierge_declined';
       try {
         await fetch(
           `${Deno.env.get('SUPABASE_URL')}/functions/v1/send-booking-emails`,
@@ -114,7 +116,7 @@ Deno.serve(async (req: Request) => {
               'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
             },
             body: JSON.stringify({
-              type: 'concierge_declined',
+              type: declineEmailType,
               booking: booking,
               mooring: booking.moorings,
             }),

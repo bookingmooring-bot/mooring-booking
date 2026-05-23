@@ -26,6 +26,7 @@
     "subtitle": "Fedezze fel a legtöbbet foglalt kikötőhelyeket a Mediterránon",
     "viewAll": "Összes Kikötőhely",
     "perNight": "/éjszaka",
+    "fromPrice": "-tól",
     "discount": "kedvezmény",
     "lastMinute": "Last minute"
   },
@@ -373,6 +374,23 @@
     "joinCommunity": "Join 10,000+ Providers",
     "joinCommunityDesc": "Be part of the Mediterranean's largest mooring community. Support included.",
     "disposalDisclaimer": "Ezen nyilatkozat benyujtasaval megerositi, hogy jogos rendelkezesi joggal rendelkezik erre a kikotohelyre vonatkozoan es felelos a megadott adatok pontossagaert. A Mooring Booking platform nem vallal felelossegel hamis nyilatkozatokert."
+  },
+  "quote": {
+    "awaitingQuote": "Árajánlat várása",
+    "quoteReceived": "Árajánlat megérkezett",
+    "submitQuote": "Árajánlat küldése",
+    "acceptQuote": "Elfogadás",
+    "declineQuote": "Elutasítás",
+    "quotePending": "A kikötő áttekinti kérését és árajánlatot küld.",
+    "quoteExpired": "Árajánlat lejárt — díjmentesen.",
+    "quoteDeclined": "Árajánlat elutasítva — díjmentesen.",
+    "quoteConfirmed": "Foglalás megerősítve!",
+    "respondWithin": "Válaszoljon",
+    "sameDayRequest": "Aznapi kikötőhely kérés",
+    "urgentRequest": "SÜRGŐS: Aznapi kérés",
+    "privacyNote": "Az Ön elérhetőségei csak az árajánlat elfogadása után kerülnek megosztásra a kikötővel.",
+    "pricePerNight": "Az Ön ára (EUR éjszakánként)",
+    "providerNote": "A vendég áttekinti az Ön árát és dönt az elfogadásról. A vendég elérhetőségei az elfogadás után kerülnek megosztásra."
   },
   "admin": {
     "title": "Admin Vezérlőpult",

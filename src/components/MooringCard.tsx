@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Star, Heart, MapPin, Waves, Zap, Wifi, Droplets } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -49,6 +50,7 @@ const MooringCard = ({
   image,
   distance,
 }: MooringCardProps) => {
+  const { t } = useTranslation();
   const [imgError, setImgError] = useState(false);
   const discountedPrice = discountPercent
     ? Math.round(price * (1 - discountPercent / 100))
@@ -141,8 +143,9 @@ const MooringCard = ({
             {discountPercent && (
               <span className="text-muted-foreground text-sm line-through">€{price}</span>
             )}
+            <span className="text-muted-foreground text-xs">{t('popular.fromPrice')}</span>
             <span className="font-heading font-bold text-xl text-primary">€{discountedPrice}</span>
-            <span className="text-muted-foreground text-sm">/night</span>
+            <span className="text-muted-foreground text-sm">{t('popular.perNight')}</span>
           </div>
           {distance && (
             <span className="text-sm text-secondary font-medium">{distance}</span>

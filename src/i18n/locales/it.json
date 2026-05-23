@@ -26,6 +26,7 @@
     "subtitle": "Scopri gli ormeggi più prenotati nel Mediterraneo",
     "viewAll": "Vedi Tutti gli Ormeggi",
     "perNight": "/notte",
+    "fromPrice": "da",
     "discount": "sconto",
     "lastMinute": "Last minute"
   },
@@ -373,6 +374,23 @@
     "calendarCustomPrice": "Fai doppio clic su qualsiasi giorno per impostare un prezzo personalizzato per quella data.",
     "addressPlaceholder": "Indirizzo completo (visibile dopo la prenotazione)",
     "disposalDisclaimer": "Con questa dichiarazione confermate di avere il diritto legale di disposizione su questo ormeggio e di essere responsabili dell’accuratezza dei dati forniti. La piattaforma Mooring Booking non e responsabile per dichiarazioni false."
+  },
+  "quote": {
+    "awaitingQuote": "In attesa del preventivo",
+    "quoteReceived": "Preventivo ricevuto",
+    "submitQuote": "Invia preventivo",
+    "acceptQuote": "Accetta",
+    "declineQuote": "Rifiuta",
+    "quotePending": "Il porto sta esaminando la tua richiesta e invierà un preventivo.",
+    "quoteExpired": "Preventivo scaduto — nessun addebito.",
+    "quoteDeclined": "Preventivo rifiutato — nessun addebito.",
+    "quoteConfirmed": "Prenotazione confermata!",
+    "respondWithin": "Rispondi entro",
+    "sameDayRequest": "Richiesta posto barca in giornata",
+    "urgentRequest": "URGENTE: Richiesta in giornata",
+    "privacyNote": "I tuoi dati di contatto saranno condivisi con il porto solo dopo aver accettato il preventivo.",
+    "pricePerNight": "Il tuo prezzo (EUR a notte)",
+    "providerNote": "L'ospite esaminerà il tuo prezzo e deciderà se accettare. I dati di contatto dell'ospite saranno condivisi dopo l'accettazione."
   },
   "admin": {
     "title": "Dashboard Amministratore",

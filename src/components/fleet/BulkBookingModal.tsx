@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useVessels, type Vessel } from '@/hooks/useVesselProfile';
 import { useCreateBulkBooking, type BulkBookingResult } from '@/hooks/useCreateBulkBooking';
 import { useProfile } from '@/hooks/useProfile';
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function BulkBookingModal({ mooring, onClose }: Props) {
+  const { t } = useTranslation();
   const { data: vessels } = useVessels();
   const { data: profile } = useProfile();
   const bulkBook = useCreateBulkBooking();
@@ -74,7 +76,7 @@ export default function BulkBookingModal({ mooring, onClose }: Props) {
         <div className="flex items-center justify-between p-4 border-b border-border">
           <div>
             <h2 className="font-bold text-lg">Fleet Booking</h2>
-            <p className="text-sm text-muted-foreground">{mooring.name} — €{mooring.price}/night</p>
+            <p className="text-sm text-muted-foreground">{mooring.name} — €{mooring.price}{t('popular.perNight')}</p>
           </div>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X size={20} /></button>
         </div>

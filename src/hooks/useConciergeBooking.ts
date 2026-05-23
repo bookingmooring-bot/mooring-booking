@@ -53,9 +53,9 @@ export function useConciergeBookingStatus(bookingId: string | null) {
 
       const { data, error } = await supabase
         .from('bookings')
-        .select('id, concierge_status, concierge_expires_at, booking_status, payment_status')
+        .select('id, concierge_status, concierge_expires_at, booking_status, payment_status, quoted_price, guest_response_expires_at, booking_type')
         .eq('id', bookingId)
-        .eq('booking_type', 'concierge')
+        .in('booking_type', ['concierge', 'now4today'])
         .single();
 
       if (error) throw error;
@@ -78,7 +78,7 @@ export function useUserConciergeBookings() {
         .from('bookings')
         .select('*, moorings(name, location, country, image_urls)')
         .eq('user_id', user.id)
-        .eq('booking_type', 'concierge')
+        .in('booking_type', ['concierge', 'now4today'])
         .order('created_at', { ascending: false });
 
       if (error) throw error;

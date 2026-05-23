@@ -26,6 +26,7 @@
     "subtitle": "Objevte nejrezervovanější kotviště ve Středomoří",
     "viewAll": "Zobrazit Všechna",
     "perNight": "/noc",
+    "fromPrice": "od",
     "discount": "sleva",
     "lastMinute": "Last minute"
   },
@@ -373,6 +374,23 @@
     "joinCommunity": "Join 10,000+ Providers",
     "joinCommunityDesc": "Be part of the Mediterranean's largest mooring community. Support included.",
     "disposalDisclaimer": "Odesilanim tohoto prohlaseni potvrzujete, ze mate zakonne pravo nakladani s timto kotevnim mistem a jste odpovedni za presnost poskytnutych udaju. Platforma Mooring Booking nenese odpovednost za nepravdiva prohlaseni."
+  },
+  "quote": {
+    "awaitingQuote": "Čekání na cenovou nabídku",
+    "quoteReceived": "Nabídka přijata",
+    "submitQuote": "Odeslat cenovou nabídku",
+    "acceptQuote": "Přijmout",
+    "declineQuote": "Odmítnout",
+    "quotePending": "Přístav kontroluje váš požadavek a pošle cenovou nabídku.",
+    "quoteExpired": "Nabídka vypršela — bez poplatku.",
+    "quoteDeclined": "Nabídka odmítnuta — bez poplatku.",
+    "quoteConfirmed": "Rezervace potvrzena!",
+    "respondWithin": "Odpovězte do",
+    "sameDayRequest": "Požadavek na kotevní místo ve stejný den",
+    "urgentRequest": "NALÉHAVÉ: Požadavek ve stejný den",
+    "privacyNote": "Vaše kontaktní údaje budou sdíleny s přístavem až po přijetí nabídky.",
+    "pricePerNight": "Vaše cena (EUR za noc)",
+    "providerNote": "Host posoudí vaši cenu a rozhodne se, zda ji přijme. Kontaktní údaje hosta budou sdíleny po přijetí."
   },
   "admin": {
     "title": "Admin Panel",

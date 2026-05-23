@@ -30,14 +30,28 @@ Deno.serve(async (req: Request) => {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
     }
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    );
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+    const token = authHeader.replace('Bearer ', '');
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    let userId: string;
+
+    const body = await req.json();
+
+    if (token === serviceRoleKey) {
+      // Service role call (from MCP server / N8N) — trust userId from body
+      if (!body.userId) {
+        return new Response(JSON.stringify({ error: 'userId required for service role calls' }), { status: 400 });
+      }
+      userId = body.userId;
+    } else {
+      // Normal user JWT call
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+      if (authError || !user) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+      }
+      userId = user.id;
     }
 
-    const { mooringId, bookingData, serviceFeeAmount } = await req.json();
+    const { mooringId, bookingData, serviceFeeAmount } = body;
 
     // Fetch mooring to get contact details
     const { data: mooring, error: mooringError } = await supabase
@@ -58,21 +72,21 @@ Deno.serve(async (req: Request) => {
     const { data: profile } = await supabase
       .from('profiles')
       .select('stripe_customer_id, email, full_name')
-      .eq('id', user.id)
+      .eq('id', userId)
       .single();
 
     let customerId = profile?.stripe_customer_id;
     if (!customerId) {
       const customer = await stripe.customers.create({
-        email: user.email || profile?.email,
+        email: profile?.email,
         name: profile?.full_name || undefined,
-        metadata: { supabase_user_id: user.id },
+        metadata: { supabase_user_id: userId },
       });
       customerId = customer.id;
       await supabase
         .from('profiles')
         .update({ stripe_customer_id: customerId })
-        .eq('id', user.id);
+        .eq('id', userId);
     }
 
     // Create PaymentIntent with manual capture (authorization hold)
@@ -83,7 +97,7 @@ Deno.serve(async (req: Request) => {
       capture_method: 'manual',
       metadata: {
         mooring_id: mooringId,
-        user_id: user.id,
+        user_id: userId,
         booking_type: 'concierge',
         mooring_name: mooring.name,
       },
@@ -93,12 +107,13 @@ Deno.serve(async (req: Request) => {
     // Insert booking with concierge status
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + CONCIERGE_WINDOW_HOURS);
+    const quoteToken = crypto.randomUUID();
 
     const { data: booking, error: bookingError } = await supabase
       .from('bookings')
       .insert({
         mooring_id: mooringId,
-        user_id: user.id,
+        user_id: userId,
         check_in: bookingData.checkIn,
         check_out: bookingData.checkOut,
         guest_name: bookingData.guestName,
@@ -114,6 +129,7 @@ Deno.serve(async (req: Request) => {
         concierge_status: 'pending_marina',
         stripe_authorization_id: paymentIntent.id,
         concierge_expires_at: expiresAt.toISOString(),
+        quote_token: quoteToken,
         special_requests: bookingData.specialRequests || null,
       })
       .select()
@@ -139,7 +155,7 @@ Deno.serve(async (req: Request) => {
               type: 'concierge_request',
               booking: booking,
               mooring: mooring,
-              respondUrl: `${Deno.env.get('APP_URL')}/api/concierge-respond?bookingId=${booking.id}`,
+              respondUrl: `${Deno.env.get('APP_URL') || 'https://mooring-booking.com'}/quote-respond?bookingId=${booking.id}&token=${quoteToken}`,
             }),
           }
         );

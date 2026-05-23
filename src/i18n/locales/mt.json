@@ -26,6 +26,7 @@
     "subtitle": "Skopri l-moorings l-aktar ibbukjati fil-Mediterran",
     "viewAll": "Ara l-Moorings Kollha",
     "perNight": "/lejl",
+    "fromPrice": "minn",
     "discount": "skont",
     "lastMinute": "Last minute"
   },
@@ -373,6 +374,23 @@
     "joinCommunity": "Join 10,000+ Providers",
     "joinCommunityDesc": "Be part of the Mediterranean's largest mooring community. Support included.",
     "disposalDisclaimer": "Billi tissottometti din id-dikjarazzjoni, tikkonferma li ghandek id-dritt legali ta' disponiment fuq dan il-post ta' irbit u inti responsabbli ghall-precizzjoni tad-data pprovduta. Il-pjattaforma Mooring Booking mhix responsabbli ghal dikjarazzjonijiet foloz."
+  },
+  "quote": {
+    "awaitingQuote": "Qed jistenna kwotazzjoni tal-prezz",
+    "quoteReceived": "Kwotazzjoni waslet",
+    "submitQuote": "Ibgħat kwotazzjoni tal-prezz",
+    "acceptQuote": "Aċċetta",
+    "declineQuote": "Irrifjuta",
+    "quotePending": "Il-marina qed tirrevedi t-talba tiegħek u se tibgħat kwotazzjoni tal-prezz.",
+    "quoteExpired": "Il-kwotazzjoni skadiet — l-ebda ħlas.",
+    "quoteDeclined": "Il-kwotazzjoni ġiet irrifjutata — l-ebda ħlas.",
+    "quoteConfirmed": "Prenotazzjoni konfermata!",
+    "respondWithin": "Wieġeb fi żmien",
+    "sameDayRequest": "Talba għal post ta' irbit fl-istess ġurnata",
+    "urgentRequest": "URĠENTI: Talba fl-istess ġurnata",
+    "privacyNote": "Id-dettalji ta' kuntatt tiegħek jiġu kondiviżi mal-marina biss wara li taċċetta l-kwotazzjoni.",
+    "pricePerNight": "Il-prezz tiegħek (EUR kull lejl)",
+    "providerNote": "Il-mistieden se jirrevedi l-prezz tiegħek u jiddeċiedi jekk jaċċettax. Id-dettalji tal-kuntatt tal-mistieden jiġu kondiviżi wara l-aċċettazzjoni."
   },
   "admin": {
     "title": "Dashboard tal-Amministratur",

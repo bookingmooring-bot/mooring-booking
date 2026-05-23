@@ -26,6 +26,7 @@
     "subtitle": "Objavte najrezervovanejšie kotviská v Stredomorí",
     "viewAll": "Zobraziť Všetky",
     "perNight": "/noc",
+    "fromPrice": "od",
     "discount": "zľava",
     "lastMinute": "Last minute"
   },
@@ -373,6 +374,23 @@
     "joinCommunity": "Join 10,000+ Providers",
     "joinCommunityDesc": "Be part of the Mediterranean's largest mooring community. Support included.",
     "disposalDisclaimer": "Odoslanim tohto vyhlasenia potvrzujete, ze mate zakonne pravo nakladania s tymto kotevnym miestom a ste zodpovedni za presnost poskytnutych udajov. Platforma Mooring Booking nezodpoveda za nepravdive vyhlasenia."
+  },
+  "quote": {
+    "awaitingQuote": "Čakanie na cenovú ponuku",
+    "quoteReceived": "Ponuka prijatá",
+    "submitQuote": "Odoslať cenovú ponuku",
+    "acceptQuote": "Prijať",
+    "declineQuote": "Odmietnuť",
+    "quotePending": "Prístav kontroluje vašu žiadosť a pošle cenovú ponuku.",
+    "quoteExpired": "Ponuka vypršala — bez poplatku.",
+    "quoteDeclined": "Ponuka odmietnutá — bez poplatku.",
+    "quoteConfirmed": "Rezervácia potvrdená!",
+    "respondWithin": "Odpovedzte do",
+    "sameDayRequest": "Žiadosť o kotevné miesto v ten istý deň",
+    "urgentRequest": "NALIEHAVÉ: Žiadosť v ten istý deň",
+    "privacyNote": "Vaše kontaktné údaje budú zdieľané s prístavom až po prijatí ponuky.",
+    "pricePerNight": "Vaša cena (EUR za noc)",
+    "providerNote": "Hosť posúdi vašu cenu a rozhodne sa, či ju prijme. Kontaktné údaje hosťa budú zdieľané po prijatí."
   },
   "admin": {
     "title": "Admin Panel",

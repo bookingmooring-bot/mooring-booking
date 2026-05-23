@@ -1,0 +1,287 @@
+{
+  "name": "Concierge Booking Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "concierge-lead",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "trigger-webhook",
+      "name": "Webhook - New Lead",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/functions/v1/n8n-concierge-api",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ action: 'search_moorings', params: { location: $json.body.location, country: $json.body.country, checkIn: $json.body.checkIn, checkOut: $json.body.checkOut, minBoatLength: $json.body.boatLength, limit: 5 } }) }}",
+        "options": {}
+      },
+      "id": "search-moorings",
+      "name": "Search Moorings",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "CREDENTIAL_ID",
+          "name": "N8N Concierge API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-results",
+              "leftValue": "={{ $json.data.count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-found",
+      "name": "Moorings Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/functions/v1/n8n-concierge-api",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ action: 'create_concierge_request', params: { mooringId: $('Search Moorings').item.json.data.moorings[0].id, userId: $('Webhook - New Lead').item.json.body.userId, checkIn: $('Webhook - New Lead').item.json.body.checkIn, checkOut: $('Webhook - New Lead').item.json.body.checkOut, guestName: $('Webhook - New Lead').item.json.body.guestName, guestEmail: $('Webhook - New Lead').item.json.body.guestEmail, guestPhone: $('Webhook - New Lead').item.json.body.guestPhone, boatName: $('Webhook - New Lead').item.json.body.boatName, boatLength: $('Webhook - New Lead').item.json.body.boatLength, specialRequests: $('Webhook - New Lead').item.json.body.specialRequests } }) }}",
+        "options": {}
+      },
+      "id": "create-request",
+      "name": "Create Concierge Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "CREDENTIAL_ID",
+          "name": "N8N Concierge API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 15,
+        "unit": "minutes"
+      },
+      "id": "wait-15min",
+      "name": "Wait 15 min",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/functions/v1/n8n-concierge-api",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ action: 'check_booking_status', params: { bookingId: $('Create Concierge Request').item.json.data.bookingId } }) }}",
+        "options": {}
+      },
+      "id": "check-status",
+      "name": "Check Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "CREDENTIAL_ID",
+          "name": "N8N Concierge API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "still-pending",
+              "leftValue": "={{ $json.data.isPending }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-pending",
+      "name": "Still Pending?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1560, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-confirmed",
+              "leftValue": "={{ $json.data.concierge_status }}",
+              "rightValue": "confirmed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-confirmed",
+      "name": "Confirmed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1780, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "booking@mooring-booking.com",
+        "toEmail": "={{ $('Webhook - New Lead').item.json.body.guestEmail }}",
+        "subject": "Your mooring has been confirmed! ✅",
+        "emailType": "text",
+        "message": "Hi {{ $('Webhook - New Lead').item.json.body.guestName }},\n\nGreat news! The marina has confirmed your booking.\n\nBooking ID: {{ $('Create Concierge Request').item.json.data.bookingId }}\nCheck-in: {{ $('Webhook - New Lead').item.json.body.checkIn }}\nCheck-out: {{ $('Webhook - New Lead').item.json.body.checkOut }}\n\nYou will receive the marina contact details shortly.\n\nFair winds! 🌊"
+      },
+      "id": "email-confirmed",
+      "name": "Email - Confirmed",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [2000, 200]
+    },
+    {
+      "parameters": {
+        "fromEmail": "booking@mooring-booking.com",
+        "toEmail": "={{ $('Webhook - New Lead').item.json.body.guestEmail }}",
+        "subject": "Mooring update — we're looking for alternatives",
+        "emailType": "text",
+        "message": "Hi {{ $('Webhook - New Lead').item.json.body.guestName }},\n\nUnfortunately, the marina was unable to accommodate your booking request.\n\nStatus: {{ $json.data.concierge_status }}\n\nWe're searching for alternatives for you. We'll be in touch soon.\n\nBest regards,\nMooring Booking Team"
+      },
+      "id": "email-declined",
+      "name": "Email - Declined/Expired",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [2000, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, message: 'Lead received, concierge flow started' }) }}"
+      },
+      "id": "respond-ok",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [460, 500]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: false, message: 'No moorings found for this location/dates' }) }}"
+      },
+      "id": "respond-no-results",
+      "name": "Respond No Results",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [900, 400]
+    }
+  ],
+  "connections": {
+    "Webhook - New Lead": {
+      "main": [
+        [
+          { "node": "Search Moorings", "type": "main", "index": 0 },
+          { "node": "Respond OK", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Search Moorings": {
+      "main": [
+        [{ "node": "Moorings Found?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Moorings Found?": {
+      "main": [
+        [{ "node": "Create Concierge Request", "type": "main", "index": 0 }],
+        [{ "node": "Respond No Results", "type": "main", "index": 0 }]
+      ]
+    },
+    "Create Concierge Request": {
+      "main": [
+        [{ "node": "Wait 15 min", "type": "main", "index": 0 }]
+      ]
+    },
+    "Wait 15 min": {
+      "main": [
+        [{ "node": "Check Status", "type": "main", "index": 0 }]
+      ]
+    },
+    "Check Status": {
+      "main": [
+        [{ "node": "Still Pending?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Still Pending?": {
+      "main": [
+        [{ "node": "Wait 15 min", "type": "main", "index": 0 }],
+        [{ "node": "Confirmed?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Confirmed?": {
+      "main": [
+        [{ "node": "Email - Confirmed", "type": "main", "index": 0 }],
+        [{ "node": "Email - Declined/Expired", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [{ "name": "concierge" }, { "name": "booking" }, { "name": "automation" }]
+}

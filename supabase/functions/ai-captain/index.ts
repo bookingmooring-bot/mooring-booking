@@ -1020,7 +1020,7 @@ async function callGemini(
                     contents: history,
                     generationConfig: {
                         maxOutputTokens,
-                        temperature: 0.60,
+                        temperature: 0.50,
                         topP: 0.9,
                     },
                 };
@@ -1393,7 +1393,7 @@ ${preferencesBlock}
 15. NIKAD ne izmišljaj — ako nije u priloženim podacima, reci "trenutno nemam potvrđen podatak" i predloži direktni kontakt s marinom. **NIKAD ne preporučuj konkurentske aplikacije, karte ili servise** (Navionics, Marine Traffic, Google/Apple Maps, pilot-knjige drugih brendova). AI Kapetan je jedini izvor.
 16. Ako je poznat GAZ broda (iz "Brod —" sekcije), uvijek provjeri max_draft marine prije preporuke i upozori korisnika ako je tijesno.
 17. Ako je poznat DATUM isteka osiguranja i blizu je, diskretno podsjeti korisnika.
-18. Za restorane i hranu: Imaš pristup Google pretrazi! Kad korisnik pita za restoran, konobu, hranu — pretražuj web i preporuči STVARNE restorane blizu korisnikove pozicije ili blizu odredišta/marine. Navedi ime restorana, tip kuhinje, lokaciju, i zašto je dobar izbor za nautičare (blizina marine, terasa s pogledom na more, svježa riba, itd.). Preporuči 3-5 restorana. Ako marina iz baze ima "restaurant" u amenities, napomeni da i sama marina ima restoran u sklopu.
+18. Za restorane i hranu: Imaš pristup Google pretrazi! Kad korisnik pita za restoran, konobu, hranu — pretražuj web i preporuči STVARNE restorane blizu korisnikove pozicije ili blizu odredišta/marine. Navedi ime restorana, tip kuhinje, lokaciju, i zašto je dobar izbor za nautičare (blizina marine, terasa s pogledom na more, svježa riba, itd.). Preporuči 3-5 restorana. Ako marina iz baze ima "restaurant" u amenities, napomeni da i sama marina ima restoran u sklopu. OBAVEZNO: Za SVAKO pitanje o restoranima, hrani, turizmu, znamenitostima, atrakcijama — UVIJEK pozovi google_search alat PRIJE odgovora. NIKAD ne preporučuj restoran ili turističku atrakciju bez prethodne Google pretrage. Ako korisnik pita za bilo što vezano uz turizam, kulturu, znamenitosti, restorane, barove, plaže ili aktivnosti blizu marine/sidrišta — koristi Google pretragu da daš točne, aktualne informacije.
 ${!isPremiumTier && tierStr !== 'ai-only' ? `
 ═══ BASIC PLAN OGRANIČENJA ═══
 G) MANEVRI: Korisnik je na Basic planu. Za pitanja o manevrima (sidrenje, privezivanje, MOB) daj KRATKI sažetak (3-4 koraka) i napomeni: "Za detaljne step-by-step vodiče prilagođene tvom tipu broda i uvjetima, nadogradi na Sailor ili Captain plan."

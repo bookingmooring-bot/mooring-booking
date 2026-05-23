@@ -26,6 +26,7 @@
     "subtitle": "Entdecken Sie die meistgebuchten Liegeplätze im Mittelmeer",
     "viewAll": "Alle Liegeplätze anzeigen",
     "perNight": "/Nacht",
+    "fromPrice": "ab",
     "discount": "Rabatt",
     "lastMinute": "Now4Today"
   },
@@ -373,6 +374,23 @@
     "calendarCustomPrice": "Doppelklicken Sie auf einen Tag, um einen benutzerdefinierten Preis festzulegen.",
     "addressPlaceholder": "Vollständige Adresse (nach Buchung sichtbar)",
     "disposalDisclaimer": "Mit dieser Erklaerung bestaetigen Sie, dass Sie das gesetzliche Verfuegungsrecht ueber diesen Liegeplatz haben und fuer die Richtigkeit der angegebenen Daten verantwortlich sind. Die Mooring Booking Plattform haftet nicht fuer falsche Angaben."
+  },
+  "quote": {
+    "awaitingQuote": "Warte auf Preisangebot",
+    "quoteReceived": "Angebot erhalten",
+    "submitQuote": "Preisangebot abgeben",
+    "acceptQuote": "Akzeptieren",
+    "declineQuote": "Ablehnen",
+    "quotePending": "Die Marina prüft Ihre Anfrage und wird ein Preisangebot senden.",
+    "quoteExpired": "Angebot abgelaufen — keine Belastung.",
+    "quoteDeclined": "Angebot abgelehnt — keine Belastung.",
+    "quoteConfirmed": "Buchung bestätigt!",
+    "respondWithin": "Antworten innerhalb",
+    "sameDayRequest": "Liegeplatzanfrage am selben Tag",
+    "urgentRequest": "DRINGEND: Anfrage am selben Tag",
+    "privacyNote": "Ihre Kontaktdaten werden erst nach Annahme des Angebots an die Marina weitergegeben.",
+    "pricePerNight": "Ihr Preis (EUR pro Nacht)",
+    "providerNote": "Der Gast wird Ihren Preis prüfen und entscheiden, ob er annimmt. Die Kontaktdaten des Gastes werden nach der Annahme geteilt."
   },
   "admin": {
     "title": "Admin-Dashboard",

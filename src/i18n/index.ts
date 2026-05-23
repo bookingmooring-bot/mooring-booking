@@ -4,7 +4,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 import en from './locales/en.json';
 
-const localeModules = import.meta.glob('./locales/*.json') as Record<string, () => Promise<{ default: Record<string, unknown> }>>;
+const localeModules = import.meta.glob(['./locales/*.json', '!./locales/en.json']) as Record<string, () => Promise<{ default: Record<string, unknown> }>>;
 
 const supportedLngs = ['en', 'hr', 'de', 'el', 'it', 'fr', 'es', 'tr', 'hu', 'cs', 'sk', 'pl', 'sl', 'sq', 'mt'];
 

@@ -42,6 +42,7 @@ import AuthProviderBadge from "@/components/admin/AuthProviderBadge";
 import MooringLayerBadge from "@/components/admin/MooringLayerBadge";
 import SubscriptionTierBadge from "@/components/admin/SubscriptionTierBadge";
 import type { MooringLayer } from "@/lib/mooringLayer";
+import OsmImportPanel from "@/components/admin/OsmImportPanel";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const AdminDashboard = () => {
@@ -219,6 +220,7 @@ const AdminDashboard = () => {
               <TabsTrigger value="bookings">{t('admin.recentBookings') || "Bookings"}</TabsTrigger>
               <TabsTrigger value="commissions">{t('admin.pendingCommissions') || "Commissions"}</TabsTrigger>
               <TabsTrigger value="affiliates">🔗 Affiliates</TabsTrigger>
+              <TabsTrigger value="osm-import">🌍 OSM Import</TabsTrigger>
             </TabsList>
 
             {/* Overview Tab */}
@@ -731,6 +733,10 @@ const AdminDashboard = () => {
                 </div>
                 <AffiliateAdminTable />
               </div>
+            </TabsContent>
+
+            <TabsContent value="osm-import">
+              <OsmImportPanel />
             </TabsContent>
 
           </Tabs>

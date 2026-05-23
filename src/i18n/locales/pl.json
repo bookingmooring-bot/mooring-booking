@@ -26,6 +26,7 @@
     "subtitle": "Odkryj najczęściej rezerwowane cumowiska na Śródziemnomorzu",
     "viewAll": "Zobacz Wszystkie",
     "perNight": "/noc",
+    "fromPrice": "od",
     "discount": "zniżka",
     "lastMinute": "Last minute"
   },
@@ -373,6 +374,23 @@
     "joinCommunity": "Join 10,000+ Providers",
     "joinCommunityDesc": "Be part of the Mediterranean's largest mooring community. Support included.",
     "disposalDisclaimer": "Przesylajac to oswiadczenie, potwierdzasz, ze masz prawne prawo do dysponowania tym miejscem cumowania i jestes odpowiedzialny za dokladnosc podanych danych. Platforma Mooring Booking nie ponosi odpowiedzialnosci za falszywe oswiadczenia."
+  },
+  "quote": {
+    "awaitingQuote": "Oczekiwanie na wycenę",
+    "quoteReceived": "Wycena otrzymana",
+    "submitQuote": "Wyślij wycenę",
+    "acceptQuote": "Akceptuj",
+    "declineQuote": "Odrzuć",
+    "quotePending": "Marina rozpatruje Twoje zapytanie i wyśle wycenę.",
+    "quoteExpired": "Wycena wygasła — bez opłat.",
+    "quoteDeclined": "Wycena odrzucona — bez opłat.",
+    "quoteConfirmed": "Rezerwacja potwierdzona!",
+    "respondWithin": "Odpowiedz w ciągu",
+    "sameDayRequest": "Zapytanie o miejsce cumowania na dziś",
+    "urgentRequest": "PILNE: Zapytanie na dziś",
+    "privacyNote": "Twoje dane kontaktowe zostaną udostępnione marinie dopiero po zaakceptowaniu wyceny.",
+    "pricePerNight": "Twoja cena (EUR za noc)",
+    "providerNote": "Gość przejrzy Twoją cenę i zdecyduje, czy ją zaakceptować. Dane kontaktowe gościa zostaną udostępnione po akceptacji."
   },
   "admin": {
     "title": "Panel Administracyjny",

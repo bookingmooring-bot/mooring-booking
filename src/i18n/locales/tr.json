@@ -26,6 +26,7 @@
     "subtitle": "Akdeniz'de en çok rezervasyon yapılan bağlamaları keşfedin",
     "viewAll": "Tüm Bağlamaları Gör",
     "perNight": "/gece",
+    "fromPrice": "başlangıç",
     "discount": "indirim",
     "lastMinute": "Son dakika"
   },
@@ -373,6 +374,23 @@
     "calendarCustomPrice": "O tarih için özel fiyat belirlemek üzere herhangi bir güne çift tıklayın.",
     "addressPlaceholder": "Tam adres (rezervasyondan sonra görünür)",
     "disposalDisclaimer": "Bu beyani gondererek, bu baglama yeri uzerinde yasal tasarruf hakkina sahip oldugunuzu ve saglanan verilerin dogrulugunundan sorumlu oldugunuzu onaylarsınız. Mooring Booking platformu yanlis beyanlardan sorumlu degildir."
+  },
+  "quote": {
+    "awaitingQuote": "Fiyat teklifi bekleniyor",
+    "quoteReceived": "Teklif alındı",
+    "submitQuote": "Fiyat teklifi gönder",
+    "acceptQuote": "Kabul et",
+    "declineQuote": "Reddet",
+    "quotePending": "Marina talebinizi inceliyor ve bir fiyat teklifi gönderecek.",
+    "quoteExpired": "Teklif süresi doldu — ücret yok.",
+    "quoteDeclined": "Teklif reddedildi — ücret yok.",
+    "quoteConfirmed": "Rezervasyon onaylandı!",
+    "respondWithin": "Yanıt süresi",
+    "sameDayRequest": "Aynı gün bağlama yeri talebi",
+    "urgentRequest": "ACİL: Aynı gün talebi",
+    "privacyNote": "İletişim bilgileriniz teklifi kabul ettikten sonra marina ile paylaşılacaktır.",
+    "pricePerNight": "Fiyatınız (EUR/gece)",
+    "providerNote": "Misafir fiyatınızı inceleyecek ve kabul edip etmeyeceğine karar verecektir. Misafir iletişim bilgileri kabul sonrasında paylaşılacaktır."
   },
   "admin": {
     "title": "Yönetici Paneli",

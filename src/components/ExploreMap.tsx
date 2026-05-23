@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { Icon, DivIcon } from "leaflet";
 import { Mooring } from "@/data/moorings";
@@ -57,6 +58,7 @@ const MapController = ({ center }: { center: [number, number] }) => {
 };
 
 const ExploreMap = ({ moorings }: ExploreMapProps) => {
+  const { t } = useTranslation();
   const [selectedMooring, setSelectedMooring] = useState<Mooring | null>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
 
@@ -140,7 +142,7 @@ const ExploreMap = ({ moorings }: ExploreMapProps) => {
                     <span className="font-bold text-sm text-blue-600">
                       €{mooring.discountPercent
                         ? Math.round(mooring.price * (1 - mooring.discountPercent / 100))
-                        : mooring.price}/night
+                        : mooring.price}{t('popular.perNight')}
                     </span>
                   </div>
                   {validMoorings.length > 0 && (

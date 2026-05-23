@@ -26,6 +26,7 @@
     "subtitle": "Zbuloni ankorimet më të rezervuara në Mesdhe",
     "viewAll": "Shiko të Gjitha Ankorimet",
     "perNight": "/natë",
+    "fromPrice": "nga",
     "discount": "zbritje",
     "lastMinute": "Momentin e fundit"
   },
@@ -373,6 +374,23 @@
     "joinCommunity": "Join 10,000+ Providers",
     "joinCommunityDesc": "Be part of the Mediterranean's largest mooring community. Support included.",
     "disposalDisclaimer": "Duke paraqitur kete deklarate, konfirmoni se keni te drejten ligjore te disponimit mbi kete vend ankorimi dhe jeni pergjegjes per saktesine e te dhenave te dhena. Platforma Mooring Booking nuk mban pergjegjesine per deklarata te rreme."
+  },
+  "quote": {
+    "awaitingQuote": "Duke pritur ofertën e çmimit",
+    "quoteReceived": "Oferta u pranua",
+    "submitQuote": "Dërgo ofertën e çmimit",
+    "acceptQuote": "Prano",
+    "declineQuote": "Refuzo",
+    "quotePending": "Marina po shqyrton kërkesën tuaj dhe do të dërgojë një ofertë çmimi.",
+    "quoteExpired": "Oferta ka skaduar — pa pagesë.",
+    "quoteDeclined": "Oferta u refuzua — pa pagesë.",
+    "quoteConfirmed": "Rezervimi u konfirmua!",
+    "respondWithin": "Përgjigju brenda",
+    "sameDayRequest": "Kërkesë për vend ankorimi në ditën e njëjtë",
+    "urgentRequest": "URGJENTE: Kërkesë në ditën e njëjtë",
+    "privacyNote": "Detajet tuaja të kontaktit do të ndahen me marinën vetëm pasi të pranoni ofertën.",
+    "pricePerNight": "Çmimi juaj (EUR për natë)",
+    "providerNote": "Mysafiri do të shqyrtojë çmimin tuaj dhe do të vendosë nëse e pranon. Detajet e kontaktit të mysafirit do të ndahen pas pranimit."
   },
   "admin": {
     "title": "Paneli i Administratorit",

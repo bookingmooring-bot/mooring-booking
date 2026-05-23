@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
@@ -24,6 +25,7 @@ interface Mooring {
 }
 
 const HomeMap = () => {
+  const { t } = useTranslation();
   const [isClient, setIsClient] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [moorings, setMoorings] = useState<Mooring[]>([]);
@@ -120,7 +122,7 @@ const HomeMap = () => {
                 <p className="text-sm text-muted-foreground">{mooring.location}</p>
                 {mooring.price_per_night && (
                   <p className="text-sm font-semibold mt-1">
-                    €{mooring.price_per_night} / noć
+                    {t('popular.fromPrice')} €{mooring.price_per_night} {t('popular.perNight')}
                   </p>
                 )}
                 <a

@@ -26,6 +26,7 @@
     "subtitle": "Odkrijte najbolj rezervirane priveze na Mediteranu",
     "viewAll": "Ogled Vseh Privezov",
     "perNight": "/noč",
+    "fromPrice": "od",
     "discount": "popust",
     "lastMinute": "V zadnjem trenutku"
   },
@@ -373,6 +374,23 @@
     "joinCommunity": "Join 10,000+ Providers",
     "joinCommunityDesc": "Be part of the Mediterranean's largest mooring community. Support included.",
     "disposalDisclaimer": "Z oddajo te izjave potrjujete, da imate zakonito pravico razpolaganja s to privezno tocko in ste odgovorni za tocnost posredovanih podatkov. Platforma Mooring Booking ni odgovorna za lazne izjave."
+  },
+  "quote": {
+    "awaitingQuote": "Čakanje na ponudbo",
+    "quoteReceived": "Ponudba prejeta",
+    "submitQuote": "Pošlji ponudbo",
+    "acceptQuote": "Sprejmi",
+    "declineQuote": "Zavrni",
+    "quotePending": "Marina pregleduje vašo zahtevo in bo poslala ponudbo.",
+    "quoteExpired": "Ponudba je potekla — brez obremenitve.",
+    "quoteDeclined": "Ponudba zavrnjena — brez obremenitve.",
+    "quoteConfirmed": "Rezervacija potrjena!",
+    "respondWithin": "Odgovorite v roku",
+    "sameDayRequest": "Zahteva za privez isti dan",
+    "urgentRequest": "NUJNO: Zahteva za isti dan",
+    "privacyNote": "Vaši kontaktni podatki bodo posredovani marini šele po sprejetju ponudbe.",
+    "pricePerNight": "Vaša cena (EUR na noč)",
+    "providerNote": "Gost bo pregledal vašo ceno in se odločil ali jo sprejme. Kontaktni podatki gosta bodo posredovani po sprejetju."
   },
   "admin": {
     "title": "Nadzorna Plošča Administratorja",

@@ -26,6 +26,7 @@
     "subtitle": "Otkrijte najtraženije vezove na Mediteranu",
     "viewAll": "Pogledaj Sve Vezove",
     "perNight": "/noć",
+    "fromPrice": "od",
     "discount": "popust",
     "lastMinute": "Now4Today"
   },
@@ -399,6 +400,23 @@
     "createStripeFree": "Kreirajte besplatno",
     "calendarCustomPrice": "Dvostruki klik na bilo koji dan za postavljanje prilagođene cijene.",
     "addressPlaceholder": "Puna adresa (vidljiva nakon rezervacije)"
+  },
+  "quote": {
+    "awaitingQuote": "Čekanje ponude cijene",
+    "quoteReceived": "Ponuda primljena",
+    "submitQuote": "Pošalji ponudu cijene",
+    "acceptQuote": "Prihvati",
+    "declineQuote": "Odbij",
+    "quotePending": "Marina pregledava vaš zahtjev i poslat će ponudu cijene.",
+    "quoteExpired": "Ponuda je istekla — nema naplate.",
+    "quoteDeclined": "Ponuda odbijena — nema naplate.",
+    "quoteConfirmed": "Rezervacija potvrđena!",
+    "respondWithin": "Odgovorite u roku",
+    "sameDayRequest": "Zahtjev za vez isti dan",
+    "urgentRequest": "HITNO: Zahtjev za isti dan",
+    "privacyNote": "Vaši kontakt podaci bit će podijeljeni s marinom tek nakon što prihvatite ponudu.",
+    "pricePerNight": "Vaša cijena (EUR po noći)",
+    "providerNote": "Gost će pregledati vašu cijenu i odlučiti hoće li prihvatiti. Kontakt podaci gosta bit će podijeljeni nakon prihvaćanja."
   },
   "admin": {
     "title": "Admin Nadzorna Ploča",

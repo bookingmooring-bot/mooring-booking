@@ -26,6 +26,7 @@
     "subtitle": "Descubre los amarres más reservados del Mediterráneo",
     "viewAll": "Ver Todos los Amarres",
     "perNight": "/noche",
+    "fromPrice": "desde",
     "discount": "descuento",
     "lastMinute": "Última hora"
   },
@@ -373,6 +374,23 @@
     "calendarCustomPrice": "Haz doble clic en cualquier día para establecer un precio personalizado para esa fecha.",
     "addressPlaceholder": "Dirección completa (visible después de la reserva)",
     "disposalDisclaimer": "Al enviar esta declaracion, confirma que tiene el derecho legal de disposicion sobre este amarre y es responsable de la exactitud de los datos proporcionados. La plataforma Mooring Booking no es responsable de declaraciones falsas."
+  },
+  "quote": {
+    "awaitingQuote": "Esperando cotización",
+    "quoteReceived": "Cotización recibida",
+    "submitQuote": "Enviar cotización",
+    "acceptQuote": "Aceptar",
+    "declineQuote": "Rechazar",
+    "quotePending": "El puerto está revisando su solicitud y enviará una cotización.",
+    "quoteExpired": "Cotización expirada — sin cargo.",
+    "quoteDeclined": "Cotización rechazada — sin cargo.",
+    "quoteConfirmed": "¡Reserva confirmada!",
+    "respondWithin": "Responder dentro de",
+    "sameDayRequest": "Solicitud de amarre en el día",
+    "urgentRequest": "URGENTE: Solicitud en el día",
+    "privacyNote": "Sus datos de contacto se compartirán con el puerto solo después de aceptar la cotización.",
+    "pricePerNight": "Su precio (EUR por noche)",
+    "providerNote": "El huésped revisará su precio y decidirá si acepta. Los datos de contacto del huésped se compartirán después de la aceptación."
   },
   "admin": {
     "title": "Panel de Administración",
