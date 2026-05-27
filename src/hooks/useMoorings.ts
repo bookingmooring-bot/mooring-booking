@@ -97,32 +97,48 @@ function dbToFrontend(m: DbMooring): Mooring {
     };
 }
 
+const PAGE_SIZE = 1000;
+
+async function fetchAllActive(): Promise<DbMooring[]> {
+    const all: DbMooring[] = [];
+    let from = 0;
+
+    while (true) {
+        const { data, error } = await supabase
+            .from('moorings')
+            .select('*')
+            .eq('status', 'active')
+            .range(from, from + PAGE_SIZE - 1);
+
+        if (error) {
+            console.error('Failed to fetch moorings page:', error.message);
+            break;
+        }
+        if (!data || data.length === 0) break;
+
+        all.push(...data);
+        if (data.length < PAGE_SIZE) break;
+        from += PAGE_SIZE;
+    }
+
+    return all;
+}
+
 async function fetchMoorings(): Promise<Mooring[]> {
     if (!navigator.onLine) {
         const cached = await getMooringsOffline<Mooring>();
         if (cached.length > 0) return cached;
     }
 
-    const { data, error } = await supabase
-        .from('moorings')
-        .select('*')
-        .eq('status', 'active')
-        .order('mooring_layer', { ascending: true })
-        .order('rating', { ascending: false })
-        .limit(7000);
+    const raw = await fetchAllActive();
 
-    if (error) {
-        console.error('Failed to fetch moorings from Supabase:', error.message);
+    if (raw.length === 0) {
         const cached = await getMooringsOffline<Mooring>();
         if (cached.length > 0) return cached;
         return [];
     }
 
-    if (!data || data.length === 0) {
-        return [];
-    }
-
-    const moorings = data.map(dbToFrontend);
+    const moorings = raw.map(dbToFrontend);
     saveMooringsOffline(moorings).catch(() => {});
     return moorings;
 }
@@ -140,19 +156,21 @@ export function useMooringsByCountry(country: string) {
     return useQuery({
         queryKey: ['moorings', 'country', country],
         queryFn: async () => {
-            const { data, error } = await supabase
-                .from('moorings')
-                .select('*')
-                .eq('status', 'active')
-                .ilike('country', country)
-                .order('mooring_layer', { ascending: true })
-                .order('rating', { ascending: false })
-                .limit(7000);
-
-            if (error || !data) {
-                return [];
+            const all: DbMooring[] = [];
+            let from = 0;
+            while (true) {
+                const { data, error } = await supabase
+                    .from('moorings')
+                    .select('*')
+                    .eq('status', 'active')
+                    .ilike('country', country)
+                    .range(from, from + PAGE_SIZE - 1);
+                if (error || !data || data.length === 0) break;
+                all.push(...data);
+                if (data.length < PAGE_SIZE) break;
+                from += PAGE_SIZE;
             }
-            return data.map(dbToFrontend);
+            return all.map(dbToFrontend);
         },
         enabled: !!country,
     });
@@ -183,19 +201,21 @@ export function useSearchMoorings(query: string) {
         queryFn: async () => {
             if (!query) return fetchMoorings();
 
-            const { data, error } = await supabase
-                .from('moorings')
-                .select('*')
-                .eq('status', 'active')
-                .or(`name.ilike.%${query}%,location.ilike.%${query}%,country.ilike.%${query}%`)
-                .order('mooring_layer', { ascending: true })
-                .order('rating', { ascending: false })
-                .limit(7000);
-
-            if (error || !data) {
-                return [];
+            const all: DbMooring[] = [];
+            let from = 0;
+            while (true) {
+                const { data, error } = await supabase
+                    .from('moorings')
+                    .select('*')
+                    .eq('status', 'active')
+                    .or(`name.ilike.%${query}%,location.ilike.%${query}%,country.ilike.%${query}%`)
+                    .range(from, from + PAGE_SIZE - 1);
+                if (error || !data || data.length === 0) break;
+                all.push(...data);
+                if (data.length < PAGE_SIZE) break;
+                from += PAGE_SIZE;
             }
-            return data.map(dbToFrontend);
+            return all.map(dbToFrontend);
         },
         staleTime: 2 * 60 * 1000,
     });
@@ -371,11 +391,7 @@ export function useMooringsByLocation(params: LocationSearchParams) {
                 });
                 if (!error && data) raw = data as DbMooring[];
             } else {
-                const { data, error } = await supabase
-                    .from('moorings')
-                    .select('*')
-                    .eq('status', 'active');
-                if (!error && data) raw = data as DbMooring[];
+                raw = await fetchAllActive();
             }
 
             // 3. Calculate distance for every mooring, filter by radius, sort closest-first
