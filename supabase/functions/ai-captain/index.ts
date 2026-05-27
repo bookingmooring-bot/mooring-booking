@@ -8,11 +8,22 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "
 const EMBED_MODEL = "gemini-embedding-001";
 const EMBED_DIM = 768;
 
-const allowedOrigin = Deno.env.get("APP_URL") || "https://mooring-booking.com";
-const CORS = {
-    "Access-Control-Allow-Origin": allowedOrigin,
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+const ALLOWED_ORIGINS = new Set([
+    "https://mooring-booking.com",
+    "https://www.mooring-booking.com",
+    "https://mooringbooking.com",
+    "https://www.mooringbooking.com",
+    Deno.env.get("APP_URL") ?? "",
+].filter(Boolean));
+
+function getCorsHeaders(req: Request): Record<string, string> {
+    const origin = req.headers.get("origin") ?? "";
+    const allowed = ALLOWED_ORIGINS.has(origin) ? origin : "https://mooring-booking.com";
+    return {
+        "Access-Control-Allow-Origin": allowed,
+        "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    };
+}
 
 // ── Intent classifier (FAZA 4) ────────────────────────────────────────────────
 type Intent =
@@ -1067,6 +1078,7 @@ async function callGemini(
 
 // ── Main handler ──────────────────────────────────────────────────────────────
 Deno.serve(async (req: Request) => {
+    const CORS = getCorsHeaders(req);
     if (req.method === "OPTIONS") {
         return new Response("ok", { headers: CORS });
     }
