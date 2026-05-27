@@ -72,7 +72,7 @@ import OfflineIndicator from "./components/OfflineIndicator";
 // Hide chat widget on public provider/auth pages
 const ConditionalChatWidget = () => {
   const location = useLocation();
-  const hiddenRoutes = ["/auth"];
+  const hiddenRoutes = ["/auth", "/become-provider"];
   if (hiddenRoutes.some(r => location.pathname.startsWith(r))) return null;
   return (
     <Suspense fallback={null}>
