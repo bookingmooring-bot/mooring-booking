@@ -137,7 +137,7 @@ function osmToMooring(
   const hasWebsite = !!(tags["website"] || tags["contact:website"]);
   const hasPhone = !!(tags["phone"] || tags["contact:phone"]);
 
-  const isRich = hasWebsite && hasPhone && (capacity ?? 0) > 20 && amenities.length >= 3;
+  const isRich = (hasWebsite || hasPhone) && amenities.length >= 1;
   const mooringLayer = isRich ? "concierge" : "explore";
 
   const maxLength = parseFloat(tags["seamark:harbour:max_length"] ?? "") || null;
