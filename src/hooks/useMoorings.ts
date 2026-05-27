@@ -108,6 +108,8 @@ async function fetchAllActive(): Promise<DbMooring[]> {
             .from('moorings')
             .select('*')
             .eq('status', 'active')
+            .order('mooring_layer', { ascending: true })
+            .order('rating', { ascending: false })
             .range(from, from + PAGE_SIZE - 1);
 
         if (error) {
@@ -164,6 +166,8 @@ export function useMooringsByCountry(country: string) {
                     .select('*')
                     .eq('status', 'active')
                     .ilike('country', country)
+                    .order('mooring_layer', { ascending: true })
+                    .order('rating', { ascending: false })
                     .range(from, from + PAGE_SIZE - 1);
                 if (error || !data || data.length === 0) break;
                 all.push(...data);
@@ -209,6 +213,8 @@ export function useSearchMoorings(query: string) {
                     .select('*')
                     .eq('status', 'active')
                     .or(`name.ilike.%${query}%,location.ilike.%${query}%,country.ilike.%${query}%`)
+                    .order('mooring_layer', { ascending: true })
+                    .order('rating', { ascending: false })
                     .range(from, from + PAGE_SIZE - 1);
                 if (error || !data || data.length === 0) break;
                 all.push(...data);
