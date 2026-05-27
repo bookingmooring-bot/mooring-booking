@@ -58,6 +58,7 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
   const navigate = useNavigate();
   const routerLocation = useLocation();
   const [showPaywall, setShowPaywall] = useState(false);
+  const cachedLocation = useRef<{ lat: number; lng: number } | null>(null);
 
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
@@ -153,14 +154,15 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
     }
 
     try {
-      // ─── Always get GPS location so Edge Function always has weather data ──
-      // Fallback: Split, Croatia (Adriatic default)
-      let location: { lat: number; lng: number } = { lat: 43.5, lng: 16.4 };
-      try {
-        location = await getUserLocation();
-      } catch {
-        // Use fallback coordinates
+      // ─── Reuse cached GPS so the browser doesn't re-prompt every message ──
+      if (!cachedLocation.current) {
+        try {
+          cachedLocation.current = await getUserLocation();
+        } catch {
+          cachedLocation.current = { lat: 43.5, lng: 16.4 };
+        }
       }
+      const location = cachedLocation.current;
 
       // ─── Build payload (shared util — keeps 3 clients in sync) ─────────────
       const tier = getUserTier(profile);

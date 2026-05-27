@@ -1006,8 +1006,7 @@ async function callGemini(
         return "⚓ AI Kapetan nije konfiguriran (nedostaje API ključ). Kontaktirajte podršku.";
     }
 
-    const flashModels = await getAvailableFlashModels();
-    const modelsToTry = flashModels.length > 0 ? flashModels : ["gemini-2.0-flash", "gemini-1.5-flash"];
+    const modelsToTry = ["gemini-2.5-flash", "gemini-2.5-flash-lite"];
 
     const controller = new AbortController();
     const tid = setTimeout(() => controller.abort(), 120_000);
