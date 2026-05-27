@@ -107,9 +107,9 @@ async function fetchMoorings(): Promise<Mooring[]> {
         .from('moorings')
         .select('*')
         .eq('status', 'active')
-        .order('mooring_layer', { ascending: false })
+        .order('mooring_layer', { ascending: true })
         .order('rating', { ascending: false })
-        .limit(5000);
+        .limit(7000);
 
     if (error) {
         console.error('Failed to fetch moorings from Supabase:', error.message);
@@ -145,9 +145,9 @@ export function useMooringsByCountry(country: string) {
                 .select('*')
                 .eq('status', 'active')
                 .ilike('country', country)
-                .order('mooring_layer', { ascending: false })
+                .order('mooring_layer', { ascending: true })
                 .order('rating', { ascending: false })
-                .limit(5000);
+                .limit(7000);
 
             if (error || !data) {
                 return [];
@@ -188,9 +188,9 @@ export function useSearchMoorings(query: string) {
                 .select('*')
                 .eq('status', 'active')
                 .or(`name.ilike.%${query}%,location.ilike.%${query}%,country.ilike.%${query}%`)
-                .order('mooring_layer', { ascending: false })
+                .order('mooring_layer', { ascending: true })
                 .order('rating', { ascending: false })
-                .limit(5000);
+                .limit(7000);
 
             if (error || !data) {
                 return [];
