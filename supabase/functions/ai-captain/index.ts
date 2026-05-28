@@ -13,6 +13,10 @@ const ALLOWED_ORIGINS = new Set([
     "https://www.mooring-booking.com",
     "https://mooringbooking.com",
     "https://www.mooringbooking.com",
+    "https://ai-captain.app",
+    "https://www.ai-captain.app",
+    "http://localhost:8080",
+    "http://localhost:5173",
     Deno.env.get("APP_URL") ?? "",
 ].filter(Boolean));
 
