@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 
@@ -94,11 +94,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await supabase.auth.signOut();
     };
 
+    // The auth helpers (signUp, signIn, …) are stable closures that only call
+    // supabase and capture no render state, so the context value only needs to
+    // change when user/session/loading change. Memoizing prevents every consumer
+    // (Dashboard, Explore, protected routes) from re-rendering on each provider render.
+    const value = useMemo(
+        () => ({ user, session, loading, signUp, signIn, signInWithGoogle, signInWithApple, signOut }),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [user, session, loading],
+    );
+
     return (
-        <AuthContext.Provider value={{
-            user, session, loading,
-            signUp, signIn, signInWithGoogle, signInWithApple, signOut,
-        }}>
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -178,7 +178,7 @@ const ExplorePage = () => {
   // ── Client-side post-filter (amenities, special flags, sort) ─────────
   // When using geo results, they are already pre-sorted by distance.
   // We respect the user's sort choice but keep geo-distance sort as tiebreaker.
-  const filteredMoorings = allMoorings
+  const filteredMoorings = useMemo(() => allMoorings
     .filter((m) => {
       if (layerFilter !== 'all' && m.mooringLayer !== layerFilter) return false;
       if (showLastMinuteOnly && !m.isLastMinute) return false;
@@ -197,10 +197,11 @@ const ExplorePage = () => {
       if (sortBy === "price-high") return b.price - a.price;
       if (sortBy === "reviews") return b.reviewCount - a.reviewCount;
       return 0;
-    });
+    }),
+    [allMoorings, layerFilter, showLastMinuteOnly, showWinterStorageOnly, selectedAmenities, sortBy, useGeo]);
 
   // ── Handle Search button ───────────────────────────────────────────────
-  function handleSearch() {
+  const handleSearch = useCallback(() => {
     // Validate: check-out must be after check-in
     if (checkIn && checkOut && checkOut <= checkIn) {
       setCheckOut("");
@@ -208,12 +209,12 @@ const ExplorePage = () => {
     setCommittedLocation(locationInput);
     setCommittedCheckIn(checkIn);
     setCommittedCheckOut(checkOut);
-  }
+  }, [checkIn, checkOut, locationInput]);
 
   // Allow pressing Enter in the location input to trigger search
-  function handleKeyDown(e: React.KeyboardEvent) {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter") handleSearch();
-  }
+  }, [handleSearch]);
 
   // ── Result description ─────────────────────────────────────────────────
   function buildResultLabel() {

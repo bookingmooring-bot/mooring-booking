@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { memo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Star, Heart, MapPin, Waves, Zap, Wifi, Droplets, Navigation, Compass } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -131,6 +131,8 @@ const MooringCardWithBooking = ({
             <img
               src={image}
               alt={name}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               onError={() => setImgError(true)}
             />
@@ -322,4 +324,4 @@ const MooringCardWithBooking = ({
   );
 };
 
-export default MooringCardWithBooking;
+export default memo(MooringCardWithBooking);

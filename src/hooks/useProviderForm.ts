@@ -649,10 +649,14 @@ export function useProviderForm() {
           description: 'Your mooring is live! Check your email to verify your account.',
         });
 
+        // Fire-and-forget verification OTP — non-blocking by design, but log
+        // failures in dev so a broken email flow doesn't fail silently.
         supabase.auth.signInWithOtp({
           email: user!.email!,
           options: { shouldCreateUser: false },
-        }).catch(() => {});
+        }).catch((err) => {
+          if (import.meta.env.DEV) console.warn('[publish] verification OTP failed:', err);
+        });
       }
 
       setConsentAccepted(false);

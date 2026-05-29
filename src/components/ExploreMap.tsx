@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import { Icon, DivIcon } from "leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
+import { Icon, DivIcon, LatLngBounds } from "leaflet";
 import { Mooring } from "@/data/moorings";
 import { Button } from "@/components/ui/button";
 import { Star, MapPin, Navigation, Anchor, Phone } from "lucide-react";
@@ -57,17 +57,43 @@ const MapController = ({ center }: { center: [number, number] }) => {
   return null;
 };
 
+// Tracks the current viewport bounds so we only render markers that are visible.
+// Rendering one <Marker> per mooring (potentially thousands) creates that many DOM
+// nodes; culling to the viewport keeps the map responsive when panning/zooming.
+const BoundsWatcher = ({ onChange }: { onChange: (b: LatLngBounds) => void }) => {
+  const map = useMapEvents({
+    moveend: () => onChange(map.getBounds()),
+    zoomend: () => onChange(map.getBounds()),
+  });
+  return null;
+};
+
+// Safety cap: even within a viewport there can be a very large number of markers
+// (e.g. fully zoomed out). Render at most this many to avoid pathological DOM sizes.
+const MAX_MARKERS = 500;
+
 const ExploreMap = ({ moorings }: ExploreMapProps) => {
   const { t } = useTranslation();
   const [selectedMooring, setSelectedMooring] = useState<Mooring | null>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [bounds, setBounds] = useState<LatLngBounds | null>(null);
 
   // Filter out moorings with invalid/missing coordinates
-  const validMoorings = moorings.filter(
-    (m) => m.lat && m.lng && isFinite(m.lat) && isFinite(m.lng) && (m.lat !== 0 || m.lng !== 0)
+  const validMoorings = useMemo(
+    () => moorings.filter(
+      (m) => m.lat && m.lng && isFinite(m.lat) && isFinite(m.lng) && (m.lat !== 0 || m.lng !== 0)
+    ),
+    [moorings]
   );
 
-  const displayMoorings = validMoorings;
+  // Only render markers inside the current viewport (capped). Before the first
+  // move/zoom event `bounds` is null, so we fall back to the first MAX_MARKERS.
+  const displayMoorings = useMemo(() => {
+    const inView = bounds
+      ? validMoorings.filter((m) => bounds.contains([m.lat, m.lng]))
+      : validMoorings;
+    return inView.slice(0, MAX_MARKERS);
+  }, [validMoorings, bounds]);
 
   // Center on Mediterranean
   const defaultCenter: [number, number] = [40.5, 18.0];
@@ -95,6 +121,7 @@ const ExploreMap = ({ moorings }: ExploreMapProps) => {
           className="w-full h-full z-0"
           scrollWheelZoom={true}
         >
+          <BoundsWatcher onChange={setBounds} />
           {/* ESRI Ocean basemap — batimetrija i nautički prikaz */}
           <TileLayer
             attribution='Tiles &copy; <a href="https://services.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer">Esri</a> &mdash; Esri, GEBCO, NOAA &mdash; <a href="https://www.openseamap.org">OpenSeaMap</a> contributors'

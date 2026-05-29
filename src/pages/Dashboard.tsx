@@ -7,23 +7,25 @@ import { useQueryClient } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Loader2, Ship, Calendar, Settings, ShieldCheck, Save, Star, Clock, Phone, Users } from "lucide-react";
-import VesselProfileManager from "@/components/VesselProfileManager";
 import NotificationPreferences from "@/components/NotificationPreferences";
-import AffiliateDashboard from "@/components/affiliate/AffiliateDashboard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import MooringList from "@/components/provider/MooringList";
-import ProviderCalendar from "@/components/provider/ProviderCalendar";
-import ProviderEarningsDashboard from "@/components/provider/ProviderEarningsDashboard";
-import ProviderSpendingDashboard from "@/components/provider/ProviderSpendingDashboard";
 import ReviewMooringModal from "@/components/rating/ReviewMooringModal";
 import RateGuestModal from "@/components/rating/RateGuestModal";
 import { useStripeConnect } from "@/hooks/useStripeConnect";
 import WhiteLabelUpgradeCard from "@/components/provider/WhiteLabelUpgradeCard";
 
+// Tab content components are code-split so each tab's bundle loads only when
+// the tab is opened, keeping the initial Dashboard chunk small.
 const FleetDashboard = lazy(() => import("@/components/fleet/FleetDashboard"));
+const VesselProfileManager = lazy(() => import("@/components/VesselProfileManager"));
+const AffiliateDashboard = lazy(() => import("@/components/affiliate/AffiliateDashboard"));
+const MooringList = lazy(() => import("@/components/provider/MooringList"));
+const ProviderCalendar = lazy(() => import("@/components/provider/ProviderCalendar"));
+const ProviderEarningsDashboard = lazy(() => import("@/components/provider/ProviderEarningsDashboard"));
+const ProviderSpendingDashboard = lazy(() => import("@/components/provider/ProviderSpendingDashboard"));
 
 const Dashboard = () => {
     const { user, signOut } = useAuth();
@@ -628,6 +630,7 @@ const Dashboard = () => {
                     </div>
 
                     {/* Content Area */}
+                    <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin text-primary" size={24} /></div>}>
                     {activeTab === 'settings' ? (
                         renderSettingsView()
                     ) : activeTab === 'moorings' ? (
@@ -648,9 +651,7 @@ const Dashboard = () => {
                         </div>
                     ) : activeTab === 'fleet' ? (
                         <div className="mt-8 animate-fade-in">
-                            <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin text-primary" size={24} /></div>}>
-                                <FleetDashboard />
-                            </Suspense>
+                            <FleetDashboard />
                         </div>
                     ) : activeTab === 'affiliate' ? (
                         <div className="mt-8 animate-fade-in">
@@ -667,6 +668,7 @@ const Dashboard = () => {
                             )}
                         </>
                     )}
+                    </Suspense>
 
                 </div>
             </main>
