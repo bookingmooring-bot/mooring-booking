@@ -16,10 +16,23 @@ const GUEST_RESPONSE_HOURS: Record<string, number> = {
   concierge: 24,
 };
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-api-key, x-client-info, apikey, content-type',
-};
+// Dynamic CORS allowlist (returns booking + payment data). Server-to-server
+// callers (n8n / service-role) do not send an Origin header and are unaffected.
+const ALLOWED_ORIGINS = new Set([
+  'https://mooring-booking.com', 'https://www.mooring-booking.com',
+  'https://mooringbooking.com', 'https://www.mooringbooking.com',
+  'https://ai-captain.app', 'https://www.ai-captain.app',
+  'http://localhost:8080', 'http://localhost:5173',
+]);
+function getCorsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get('origin') ?? '';
+  const allowed = ALLOWED_ORIGINS.has(origin) ? origin : 'https://www.mooring-booking.com';
+  return {
+    'Access-Control-Allow-Origin': allowed,
+    'Access-Control-Allow-Headers': 'authorization, x-api-key, x-client-info, apikey, content-type',
+    'Vary': 'Origin',
+  };
+}
 
 function isApiKeyAuth(req: Request): boolean {
   const apiKey = req.headers.get('x-api-key');
@@ -33,6 +46,7 @@ function isApiKeyAuth(req: Request): boolean {
 }
 
 Deno.serve(async (req: Request) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
