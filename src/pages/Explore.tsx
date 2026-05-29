@@ -12,12 +12,11 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { useAvailableMoorings, useMooringsByLocation } from "@/hooks/useMoorings";
+import { useExploreMoorings, useExploreMooringsMap, useGeocodedLocation, type ExploreFilters } from "@/hooks/useMoorings";
 import { useDebounce } from "@/hooks/useDebounce";
 import ExploreMap from "@/components/ExploreMap";
 import { useTranslation } from "react-i18next";
 import type { MooringLayer } from "@/lib/mooringLayer";
-import { getLayerSortPriority } from "@/lib/mooringLayer";
 import { cn } from "@/lib/utils";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -144,61 +143,73 @@ const ExplorePage = () => {
 
   // ── Derive query params for the hooks ─────────────────────────────────
   const detectedCountry = detectCountry(committedLocation);
-  const hookParams = {
-    checkIn: committedCheckIn || undefined,
-    checkOut: committedCheckOut || undefined,
-    query: detectedCountry ? undefined : committedLocation,
-    country: detectedCountry || undefined,
-  };
 
-  // Text-based hook (exact country / location ilike match)
-  const { data: mooringsData, isLoading: mooringsLoading } =
-    useAvailableMoorings(hookParams);
-
-  // Geo-based hook — debounced 600 ms; kicks in for any non-country query
+  // Geocode free-text city/place queries (anything that isn't a known country).
+  // Debounced to respect Nominatim's 1 req/s rate limit.
   const debouncedLocation = useDebounce(committedLocation, 600);
   const useGeo = !!debouncedLocation && !detectedCountry;
+  const { data: geo, isLoading: geoLoading } = useGeocodedLocation(debouncedLocation, useGeo);
 
-  const { data: geoData, isLoading: geoLoading } = useMooringsByLocation({
-    query: useGeo ? debouncedLocation : '',
-    radiusKm: 20,
+  // Build the server-side filter object. All filtering, sorting, availability
+  // and geo-radius is applied by the get_explore_moorings RPC.
+  const filters: ExploreFilters = useMemo(() => ({
     checkIn: committedCheckIn || undefined,
     checkOut: committedCheckOut || undefined,
-  });
+    query: detectedCountry || useGeo ? undefined : committedLocation || undefined,
+    country: detectedCountry || undefined,
+    layer: layerFilter,
+    amenities: selectedAmenities,
+    lastMinute: showLastMinuteOnly,
+    winterStorage: showWinterStorageOnly,
+    sort: sortBy,
+    lat: useGeo ? geo?.lat : undefined,
+    lng: useGeo ? geo?.lng : undefined,
+    radiusKm: useGeo && geo ? 20 : undefined,
+    cityName: useGeo ? geo?.cityName : undefined,
+  }), [committedCheckIn, committedCheckOut, committedLocation, detectedCountry, useGeo, geo,
+       layerFilter, selectedAmenities, showLastMinuteOnly, showWinterStorageOnly, sortBy]);
 
-  // Use geo results as primary; fall back to text results only when geo is empty
-  const textMoorings = mooringsData || [];
-  const geoMoorings = geoData || [];
-  const allMoorings = useGeo
-    ? (geoMoorings.length > 0 ? geoMoorings : textMoorings)
-    : textMoorings;
+  // While we're still geocoding a city query, hold off on the list query so we
+  // don't briefly show unrelated (non-geo) results.
+  const awaitingGeo = useGeo && (geoLoading || !geo);
 
-  const mooringsLoading_ = mooringsLoading || (useGeo && geoLoading);
+  // ── Grid: infinite-scroll list ─────────────────────────────────────────
+  const {
+    data: pageData,
+    isLoading: gridLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useExploreMoorings(filters);
 
-  // ── Client-side post-filter (amenities, special flags, sort) ─────────
-  // When using geo results, they are already pre-sorted by distance.
-  // We respect the user's sort choice but keep geo-distance sort as tiebreaker.
-  const filteredMoorings = useMemo(() => allMoorings
-    .filter((m) => {
-      if (layerFilter !== 'all' && m.mooringLayer !== layerFilter) return false;
-      if (showLastMinuteOnly && !m.isLastMinute) return false;
-      if (showWinterStorageOnly && !m.winterStorage) return false;
-      if (selectedAmenities.length > 0 &&
-        !selectedAmenities.every((a) => m.amenities.includes(a))) return false;
-      return true;
-    })
-    .sort((a, b) => {
-      const pA = getLayerSortPriority(a.mooringLayer || 'premium');
-      const pB = getLayerSortPriority(b.mooringLayer || 'premium');
-      if (pA !== pB) return pA - pB;
-      if (useGeo && sortBy === "rating") return 0;
-      if (sortBy === "rating") return b.rating - a.rating;
-      if (sortBy === "price-low") return a.price - b.price;
-      if (sortBy === "price-high") return b.price - a.price;
-      if (sortBy === "reviews") return b.reviewCount - a.reviewCount;
-      return 0;
-    }),
-    [allMoorings, layerFilter, showLastMinuteOnly, showWinterStorageOnly, selectedAmenities, sortBy, useGeo]);
+  const filteredMoorings = useMemo(
+    () => (pageData?.pages.flatMap((p) => p.rows) ?? []),
+    [pageData],
+  );
+  const totalCount = pageData?.pages[0]?.total ?? 0;
+
+  const mooringsLoading_ = awaitingGeo || gridLoading;
+
+  // ── Map: single-shot query (only when the map view is open) ────────────
+  const { data: mapData } = useExploreMooringsMap(filters, viewMode === "map");
+  const mapMoorings = mapData ?? [];
+
+  // ── Infinite scroll: load the next page when the sentinel is visible ────
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !hasNextPage) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { rootMargin: "400px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   // ── Handle Search button ───────────────────────────────────────────────
   const handleSearch = useCallback(() => {
@@ -470,7 +481,7 @@ const ExplorePage = () => {
                 {/* Results header */}
                 <div className="flex items-center justify-between mb-6">
                   <p className="text-muted-foreground text-sm">
-                    <span className="font-semibold text-foreground">{filteredMoorings.length}</span>
+                    <span className="font-semibold text-foreground">{(viewMode === "map" ? mapMoorings.length : totalCount).toLocaleString()}</span>
                     {" "}{t("explore.mooringsFound", "moorings found")}
                     {buildResultLabel() && (
                       <span className="text-muted-foreground"> {buildResultLabel()}</span>
@@ -500,7 +511,7 @@ const ExplorePage = () => {
                 {/* Map view */}
                 {viewMode === "map" && (
                   <div className="mb-8">
-                    <ExploreMap moorings={filteredMoorings} />
+                    <ExploreMap moorings={mapMoorings} />
                   </div>
                 )}
 
@@ -574,6 +585,15 @@ const ExplorePage = () => {
                           >
                             {t("explore.clearSearch", "Clear search")}
                           </Button>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Infinite-scroll sentinel + loader */}
+                    {hasNextPage && (
+                      <div ref={sentinelRef} className="flex items-center justify-center py-10">
+                        {isFetchingNextPage && (
+                          <Loader2 className="w-6 h-6 animate-spin text-primary" />
                         )}
                       </div>
                     )}
