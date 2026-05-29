@@ -14,9 +14,11 @@ export function useProviderBySlug(slug: string | undefined) {
     queryFn: async () => {
       if (!slug) return null;
 
+      // Explicit non-sensitive columns only: this page is public (anon) and
+      // anon has no SELECT on the stripe_* columns, so select('*') would 403.
       const { data: profile, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, full_name, email, phone, avatar_url, provider_tier, provider_slug, role')
         .eq('provider_slug', slug)
         .single();
 
