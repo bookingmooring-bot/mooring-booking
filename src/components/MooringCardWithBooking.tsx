@@ -224,8 +224,8 @@ const MooringCardWithBooking = ({
           </div>
 
           {/* Footer */}
-          <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-border">
-            <div className="flex items-baseline gap-2 min-w-0">
+          <div className="flex flex-col gap-3 pt-3 border-t border-border">
+            <div className="flex items-baseline gap-2 min-w-0 flex-wrap">
               {mooringLayer === 'explore' ? (
                 <span className="text-emerald-500 text-sm font-medium">Navigate only</span>
               ) : (
@@ -242,7 +242,7 @@ const MooringCardWithBooking = ({
             {mooringLayer === 'explore' ? (
               <Button
                 size="sm"
-                className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold shrink-0 whitespace-nowrap"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold w-full justify-center whitespace-nowrap"
                 onClick={(e) => {
                   e.stopPropagation();
                   if (lat && lng) openNavigation({ lat, lng, label: name });
@@ -255,7 +255,7 @@ const MooringCardWithBooking = ({
             ) : mooringLayer === 'concierge' ? (
               <Button
                 size="sm"
-                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold shrink-0 whitespace-nowrap"
+                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold w-full justify-center whitespace-nowrap"
                 onClick={(e) => {
                   e.stopPropagation();
                   openDetail();
@@ -267,7 +267,7 @@ const MooringCardWithBooking = ({
             ) : (
               <Button
                 size="sm"
-                className="bg-gradient-ocean font-semibold shrink-0 whitespace-nowrap"
+                className="bg-gradient-ocean font-semibold w-full justify-center whitespace-nowrap"
                 onClick={(e) => {
                   e.stopPropagation();
                   openDetail();
