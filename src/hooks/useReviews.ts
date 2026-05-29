@@ -59,12 +59,28 @@ export function useMooringReviews(mooringId: string) {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('reviews')
-                .select('*, profiles(full_name)')
+                .select('*')
                 .eq('mooring_id', mooringId)
                 .order('created_at', { ascending: false });
 
             if (error) throw new Error(error.message);
-            return (data as MooringReview[]) ?? [];
+            const reviews = (data as MooringReview[]) ?? [];
+
+            // Author display names come from public_profiles (name/avatar only);
+            // the base profiles table no longer exposes other users' rows.
+            const userIds = [...new Set(reviews.map((r) => r.user_id).filter(Boolean))];
+            if (userIds.length === 0) return reviews;
+
+            const { data: authors } = await supabase
+                .from('public_profiles')
+                .select('id, full_name')
+                .in('id', userIds);
+
+            const nameById = new Map((authors ?? []).map((a) => [a.id, a.full_name]));
+            return reviews.map((r) => ({
+                ...r,
+                profiles: { full_name: nameById.get(r.user_id) ?? null },
+            }));
         },
         enabled: !!mooringId,
     });
