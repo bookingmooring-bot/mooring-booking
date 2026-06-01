@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY") || "";
-const FROM_EMAIL = "Mooring Booking <onboarding@resend.dev>";
+const FROM_EMAIL = "Mooring Booking <bookings@mooring-booking.com>";
 
 function button(href: string, label: string, color: string) {
   return `<a href="${href}" style="background-color:${color};color:white;padding:14px 28px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;margin:6px;">${label}</a>`;
