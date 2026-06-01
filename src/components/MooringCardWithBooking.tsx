@@ -152,7 +152,7 @@ const MooringCardWithBooking = ({
             })()}
             {discountPercent && (
               <Badge className="bg-success text-success-foreground font-semibold">
-                {discountPercent}% OFF
+                {discountPercent}% {t('card.off', 'OFF')}
               </Badge>
             )}
             {isLastMinute && (
@@ -209,7 +209,7 @@ const MooringCardWithBooking = ({
           <div className="flex items-center gap-4 mb-3">
             <div className={cn("flex items-center gap-1 text-sm", windProtectionColors[windProtection])}>
               <Waves size={14} />
-              <span className="capitalize">{windProtection}</span>
+              <span>{t(`card.windProtection.${windProtection}`, { excellent: 'Excellent', good: 'Good', moderate: 'Moderate', poor: 'Poor' }[windProtection] ?? windProtection)}</span>
             </div>
             <div className="flex items-center gap-2">
               {amenities.slice(0, 3).map((amenity) => (
@@ -227,7 +227,7 @@ const MooringCardWithBooking = ({
           <div className="flex flex-col gap-3 pt-3 border-t border-border">
             <div className="flex items-baseline gap-2 min-w-0 flex-wrap">
               {mooringLayer === 'explore' ? (
-                <span className="text-emerald-500 text-sm font-medium">Navigate only</span>
+                <span className="text-emerald-500 text-sm font-medium">{t('card.navigateOnly', 'Navigate only')}</span>
               ) : (
                 <>
                   {discountPercent && (
@@ -250,7 +250,7 @@ const MooringCardWithBooking = ({
                 }}
               >
                 <Navigation size={14} className="mr-1" />
-                Navigate
+                {t('card.navigate', 'Navigate')}
               </Button>
             ) : mooringLayer === 'concierge' ? (
               <Button
@@ -262,7 +262,7 @@ const MooringCardWithBooking = ({
                 }}
               >
                 <Compass size={14} className="mr-1" />
-                Request Booking
+                {t('card.requestBooking', 'Request Booking')}
               </Button>
             ) : (
               <Button
@@ -273,7 +273,7 @@ const MooringCardWithBooking = ({
                   openDetail();
                 }}
               >
-                View Details
+                {t('card.viewDetails', 'View Details')}
               </Button>
             )}
           </div>

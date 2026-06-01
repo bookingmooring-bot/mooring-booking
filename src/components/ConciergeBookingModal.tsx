@@ -82,11 +82,11 @@ const ConciergeBookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initi
 
   const handleSubmitRequest = async () => {
     if (!dateRange.from || !dateRange.to) {
-      toast.error("Please select check-in and check-out dates");
+      toast.error(t('concierge.errSelectDates', 'Please select check-in and check-out dates'));
       return;
     }
     if (!user) {
-      toast.error("Please sign in to submit a booking request");
+      toast.error(t('concierge.errSignIn', 'Please sign in to submit a booking request'));
       return;
     }
 
@@ -114,11 +114,16 @@ const ConciergeBookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initi
       setRequestResult({ bookingId: result.bookingId, expiresAt: result.expiresAt });
       setStep(4);
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : "Failed to submit request");
+      toast.error(err instanceof Error ? err.message : t('concierge.errSubmitFailed', 'Failed to submit request'));
     }
   };
 
-  const stepLabels = ["Vessel", "Contact", "Authorize", "Sent"];
+  const stepLabels = [
+    t('concierge.stepVessel', 'Vessel'),
+    t('concierge.stepContact', 'Contact'),
+    t('concierge.stepAuthorize', 'Authorize'),
+    t('concierge.stepSent', 'Sent'),
+  ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
@@ -157,24 +162,24 @@ const ConciergeBookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initi
           {step === 1 && (
             <>
               <div>
-                <label className="text-sm font-medium text-foreground">Boat Name *</label>
+                <label className="text-sm font-medium text-foreground">{t('concierge.boatNameLabel', 'Boat Name *')}</label>
                 <Input
                   value={formData.boatName}
                   onChange={(e) => setFormData(p => ({ ...p, boatName: e.target.value }))}
-                  placeholder="e.g. Sea Breeze"
+                  placeholder={t('concierge.boatNamePlaceholder', 'e.g. Sea Breeze')}
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground">Boat Length (meters) *</label>
+                <label className="text-sm font-medium text-foreground">{t('concierge.boatLengthLabel', 'Boat Length (meters) *')}</label>
                 <Input
                   type="number"
                   value={formData.boatLength}
                   onChange={(e) => setFormData(p => ({ ...p, boatLength: e.target.value }))}
-                  placeholder="e.g. 12"
+                  placeholder={t('concierge.boatLengthPlaceholder', 'e.g. 12')}
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground">Preferred Dates *</label>
+                <label className="text-sm font-medium text-foreground">{t('concierge.preferredDates', 'Preferred Dates *')}</label>
                 <Calendar
                   mode="range"
                   selected={dateRange}
@@ -184,11 +189,11 @@ const ConciergeBookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initi
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground">Special Requests</label>
+                <label className="text-sm font-medium text-foreground">{t('concierge.specialRequestsLabel', 'Special Requests')}</label>
                 <Textarea
                   value={formData.specialRequests}
                   onChange={(e) => setFormData(p => ({ ...p, specialRequests: e.target.value }))}
-                  placeholder="Any special requirements..."
+                  placeholder={t('concierge.specialRequestsPlaceholder', 'Any special requirements...')}
                   rows={3}
                 />
               </div>
@@ -197,7 +202,7 @@ const ConciergeBookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initi
                 disabled={!formData.boatName || !formData.boatLength || !dateRange.from || !dateRange.to}
                 onClick={() => setStep(2)}
               >
-                Continue
+                {t('concierge.continue', 'Continue')}
               </Button>
             </>
           )}
@@ -206,14 +211,14 @@ const ConciergeBookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initi
           {step === 2 && (
             <>
               <div>
-                <label className="text-sm font-medium text-foreground">Full Name *</label>
+                <label className="text-sm font-medium text-foreground">{t('concierge.fullNameLabel', 'Full Name *')}</label>
                 <Input
                   value={formData.guestName}
                   onChange={(e) => setFormData(p => ({ ...p, guestName: e.target.value }))}
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground">Email *</label>
+                <label className="text-sm font-medium text-foreground">{t('concierge.emailLabel', 'Email *')}</label>
                 <Input
                   type="email"
                   value={formData.guestEmail}
@@ -221,7 +226,7 @@ const ConciergeBookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initi
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground">Phone *</label>
+                <label className="text-sm font-medium text-foreground">{t('concierge.phoneLabel', 'Phone *')}</label>
                 <Input
                   type="tel"
                   value={formData.guestPhone}
@@ -237,13 +242,13 @@ const ConciergeBookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initi
               </div>
 
               <div className="flex gap-3">
-                <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>Back</Button>
+                <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>{t('concierge.back', 'Back')}</Button>
                 <Button
                   className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
                   disabled={!formData.guestName || !formData.guestEmail || !formData.guestPhone}
                   onClick={() => setStep(3)}
                 >
-                  Continue
+                  {t('concierge.continue', 'Continue')}
                 </Button>
               </div>
             </>

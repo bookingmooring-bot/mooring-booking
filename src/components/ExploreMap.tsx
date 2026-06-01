@@ -178,7 +178,7 @@ const ExploreMap = ({ moorings }: ExploreMapProps) => {
                       className="w-full bg-gradient-to-r from-blue-900 to-cyan-500 text-white"
                       onClick={handleBookNow}
                     >
-                      Book Now
+                      {t('map.bookNow', 'Book Now')}
                     </Button>
                   )}
                 </div>
@@ -189,15 +189,15 @@ const ExploreMap = ({ moorings }: ExploreMapProps) => {
 
         {/* Legend */}
         <div className="absolute bottom-4 left-4 bg-card/95 backdrop-blur-sm rounded-lg p-3 text-xs shadow-lg z-[1000]">
-          <p className="font-semibold text-foreground mb-2">Legend</p>
+          <p className="font-semibold text-foreground mb-2">{t('map.legend', 'Legend')}</p>
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-secondary" />
-              <span className="text-muted-foreground">Available</span>
+              <span className="text-muted-foreground">{t('map.available', 'Available')}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-gold" />
-              <span className="text-muted-foreground">Selected</span>
+              <span className="text-muted-foreground">{t('map.selected', 'Selected')}</span>
             </div>
           </div>
         </div>
@@ -205,7 +205,7 @@ const ExploreMap = ({ moorings }: ExploreMapProps) => {
         {/* Weather Alert */}
         <div className="absolute top-4 left-4 bg-warning/90 text-warning-foreground px-3 py-2 rounded-lg flex items-center gap-2 text-sm shadow-lg z-[1000]">
           <Anchor size={16} />
-          <span>Real-time weather data available</span>
+          <span>{t('map.weatherAvailable', 'Real-time weather data available')}</span>
         </div>
       </div>
 

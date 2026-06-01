@@ -250,7 +250,7 @@ const MooringDetailModal = ({
                         </Badge>
                         {mooring.discountPercent && (
                             <Badge className="bg-success text-success-foreground font-semibold shadow">
-                                {mooring.discountPercent}% OFF
+                                {t('detail.percentOff', { defaultValue: '{{percent}}% OFF', percent: mooring.discountPercent })}
                             </Badge>
                         )}
                         {mooring.isLastMinute && (
@@ -330,7 +330,7 @@ const MooringDetailModal = ({
                         {mooring.winterStorage && mooring.winterPriceMonthly && (
                             <div className="flex items-center gap-1.5 text-secondary text-sm font-medium">
                                 <Snowflake size={14} />
-                                <span>Winter: €{mooring.winterPriceMonthly}/mo</span>
+                                <span>{t('detail.winterShort', { defaultValue: 'Winter: €{{price}}/mo', price: mooring.winterPriceMonthly })}</span>
                             </div>
                         )}
                     </div>
@@ -339,7 +339,7 @@ const MooringDetailModal = ({
                     {mooring.description && (
                         <div>
                             <h3 className="font-heading font-semibold text-foreground mb-1.5">
-                                About this mooring
+                                {t('detail.aboutThisMooring', 'About this mooring')}
                             </h3>
                             <p className="text-muted-foreground text-sm leading-relaxed">
                                 {mooring.description}
@@ -350,7 +350,7 @@ const MooringDetailModal = ({
                     {/* Wind Protection */}
                     <div>
                         <h3 className="font-heading font-semibold text-foreground mb-2">
-                            Wind Protection
+                            {t('detail.windProtectionHeading', 'Wind Protection')}
                         </h3>
                         <div
                             className={cn(
@@ -360,7 +360,7 @@ const MooringDetailModal = ({
                         >
                             <Waves size={20} className={windCfg.color} />
                             <span className={cn("font-medium text-sm", windCfg.color)}>
-                                {windCfg.label}
+                                {t(`detail.windProtection.${mooring.windProtection}`, windCfg.label)}
                             </span>
                             {/* Visual bars */}
                             <div className="flex gap-1 ml-auto">
@@ -381,7 +381,7 @@ const MooringDetailModal = ({
                     {mooring.amenities.length > 0 && (
                         <div>
                             <h3 className="font-heading font-semibold text-foreground mb-2">
-                                Amenities & Services
+                                {t('detail.amenitiesServices', 'Amenities & Services')}
                             </h3>
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                 {mooring.amenities.map((amenity) => {
@@ -395,7 +395,7 @@ const MooringDetailModal = ({
                                                 {cfg?.icon ?? <Anchor size={18} />}
                                             </span>
                                             <span className="text-sm font-medium text-foreground">
-                                                {cfg?.label ?? prettifyAmenity(amenity)}
+                                                {t(`detail.amenity.${amenity}`, cfg?.label ?? prettifyAmenity(amenity))}
                                             </span>
                                         </div>
                                     );
@@ -407,7 +407,7 @@ const MooringDetailModal = ({
                     {/* Location info */}
                     <div>
                         <h3 className="font-heading font-semibold text-foreground mb-2">
-                            Location
+                            {t('detail.location', 'Location')}
                         </h3>
                         <div className="bg-muted/50 rounded-lg px-4 py-3 flex items-center justify-between">
                             <div className="flex items-center gap-2 text-muted-foreground text-sm">
@@ -422,7 +422,7 @@ const MooringDetailModal = ({
                                 )}
                             </div>
                             <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md">
-                                🔒 Full coords after booking
+                                🔒 {t('detail.fullCoordsAfterBooking', 'Full coords after booking')}
                             </span>
                         </div>
                     </div>
@@ -431,31 +431,31 @@ const MooringDetailModal = ({
                     {(mooring.mooringUnits || mooring.maxBoatLength || mooring.maxDraft || mooring.maxBeam) && (
                         <div>
                             <h3 className="font-heading font-semibold text-foreground mb-2">
-                                Marina Specifications
+                                {t('detail.marinaSpecs', 'Marina Specifications')}
                             </h3>
                             <div className="grid grid-cols-2 gap-2">
                                 {mooring.mooringUnits && (
                                     <div className="flex items-center gap-2.5 bg-muted/50 rounded-lg px-3 py-2.5">
                                         <Anchor size={16} className="text-secondary" />
-                                        <span className="text-sm text-foreground">{mooring.mooringUnits} berths</span>
+                                        <span className="text-sm text-foreground">{t('detail.berths', { defaultValue: '{{count}} berths', count: mooring.mooringUnits })}</span>
                                     </div>
                                 )}
                                 {mooring.maxBoatLength && (
                                     <div className="flex items-center gap-2.5 bg-muted/50 rounded-lg px-3 py-2.5">
                                         <Ruler size={16} className="text-secondary" />
-                                        <span className="text-sm text-foreground">Max LOA {mooring.maxBoatLength}m</span>
+                                        <span className="text-sm text-foreground">{t('detail.maxLoa', { defaultValue: 'Max LOA {{length}}m', length: mooring.maxBoatLength })}</span>
                                     </div>
                                 )}
                                 {mooring.maxDraft && (
                                     <div className="flex items-center gap-2.5 bg-muted/50 rounded-lg px-3 py-2.5">
                                         <Ship size={16} className="text-secondary" />
-                                        <span className="text-sm text-foreground">Max draft {mooring.maxDraft}m</span>
+                                        <span className="text-sm text-foreground">{t('detail.maxDraft', { defaultValue: 'Max draft {{draft}}m', draft: mooring.maxDraft })}</span>
                                     </div>
                                 )}
                                 {mooring.maxBeam && (
                                     <div className="flex items-center gap-2.5 bg-muted/50 rounded-lg px-3 py-2.5">
                                         <Ruler size={16} className="text-secondary" />
-                                        <span className="text-sm text-foreground">Max beam {mooring.maxBeam}m</span>
+                                        <span className="text-sm text-foreground">{t('detail.maxBeam', { defaultValue: 'Max beam {{beam}}m', beam: mooring.maxBeam })}</span>
                                     </div>
                                 )}
                             </div>
@@ -466,7 +466,7 @@ const MooringDetailModal = ({
                     {(mooring.contactPhone || mooring.contactEmail || mooring.vhfChannel || mooring.operatingHours || mooring.address) && (
                         <div>
                             <h3 className="font-heading font-semibold text-foreground mb-2">
-                                Contact & Info
+                                {t('detail.contactInfo', 'Contact & Info')}
                             </h3>
                             <div className="space-y-2">
                                 {mooring.address && (
@@ -490,7 +490,7 @@ const MooringDetailModal = ({
                                 {mooring.vhfChannel && (
                                     <div className="flex items-center gap-2.5 bg-muted/50 rounded-lg px-3 py-2.5">
                                         <Radio size={16} className="text-secondary flex-shrink-0" />
-                                        <span className="text-sm text-foreground">VHF Ch. {mooring.vhfChannel}</span>
+                                        <span className="text-sm text-foreground">{t('detail.vhfChannel', { defaultValue: 'VHF Ch. {{channel}}', channel: mooring.vhfChannel })}</span>
                                     </div>
                                 )}
                                 {mooring.operatingHours && (
@@ -507,7 +507,7 @@ const MooringDetailModal = ({
                     {mooring.ownerName && (
                         <div>
                             <h3 className="font-heading font-semibold text-foreground mb-2">
-                                Mooring Owner
+                                {t('detail.mooringOwner', 'Mooring Owner')}
                             </h3>
                             <div className="bg-muted/50 rounded-lg px-4 py-3 flex items-center justify-between">
                                 <div className="flex items-center gap-3">
@@ -519,7 +519,7 @@ const MooringDetailModal = ({
                                             {mooring.ownerName}
                                         </p>
                                         <p className="text-xs text-muted-foreground">
-                                            Verified provider
+                                            {t('detail.verifiedProvider', 'Verified provider')}
                                         </p>
                                     </div>
                                 </div>
@@ -533,7 +533,7 @@ const MooringDetailModal = ({
                                 )}
                             </div>
                             <p className="text-xs text-muted-foreground mt-1.5 text-center">
-                                Full contact details unlocked after booking
+                                {t('detail.contactUnlockedAfterBooking', 'Full contact details unlocked after booking')}
                             </p>
                         </div>
                     )}
@@ -544,12 +544,12 @@ const MooringDetailModal = ({
                             <Snowflake size={18} className="text-secondary mt-0.5 flex-shrink-0" />
                             <div>
                                 <p className="font-medium text-secondary text-sm">
-                                    Winter Storage Available
+                                    {t('detail.winterStorageAvailable', 'Winter Storage Available')}
                                 </p>
                                 <p className="text-xs text-muted-foreground mt-0.5">
-                                    Safe storage for the off-season
+                                    {t('detail.winterStorageDesc', 'Safe storage for the off-season')}
                                     {mooring.winterPriceMonthly
-                                        ? ` — €${mooring.winterPriceMonthly}/month`
+                                        ? t('detail.perMonthSuffix', { defaultValue: ' — €{{price}}/month', price: mooring.winterPriceMonthly })
                                         : ""}
                                 </p>
                             </div>
@@ -572,7 +572,7 @@ const MooringDetailModal = ({
                 {/* Sticky footer CTA */}
                 <div className="sticky bottom-0 bg-card border-t border-border p-4 flex gap-3">
                     <Button variant="outline" onClick={onClose} className="flex-1">
-                        Close
+                        {t('detail.close', 'Close')}
                     </Button>
                     {bookingMode === 'instant' && (
                         <Button
@@ -580,7 +580,7 @@ const MooringDetailModal = ({
                             className="flex-1 bg-gradient-ocean font-semibold text-base"
                         >
                             <Anchor size={18} className="mr-2" />
-                            Book Now
+                            {t('detail.bookNow', 'Book Now')}
                         </Button>
                     )}
                     {bookingMode === 'concierge' && (
@@ -589,7 +589,7 @@ const MooringDetailModal = ({
                             className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold text-base"
                         >
                             <Phone size={18} className="mr-2" />
-                            Request Booking
+                            {t('detail.requestBooking', 'Request Booking')}
                         </Button>
                     )}
                     {bookingMode === 'none' && mooring.lat && mooring.lng && (
@@ -598,7 +598,7 @@ const MooringDetailModal = ({
                             className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-base"
                         >
                             <Navigation size={18} className="mr-2" />
-                            Navigate
+                            {t('detail.navigate', 'Navigate')}
                         </Button>
                     )}
                 </div>
