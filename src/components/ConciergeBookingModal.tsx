@@ -75,7 +75,10 @@ const ConciergeBookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initi
   const nights = dateRange.from && dateRange.to
     ? Math.max(1, differenceInCalendarDays(dateRange.to, dateRange.from))
     : 0;
-  const estimatedMooringTotal = nights > 0 ? mooring.price * nights : 0;
+  const lengthForCalc = boatLengthNum && boatLengthNum > 0 ? boatLengthNum : 1;
+  const estimatedMooringTotal = nights > 0
+    ? Math.round(mooring.price * lengthForCalc * nights)
+    : 0;
 
   const handleSubmitRequest = async () => {
     if (!dateRange.from || !dateRange.to) {
@@ -102,6 +105,12 @@ const ConciergeBookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initi
         },
         serviceFeeAmount: serviceFee,
       });
+      if (result.url) {
+        // Redirect to Stripe Checkout to authorize the concierge fee.
+        window.location.href = result.url;
+        return;
+      }
+      // Free tier — no fee due, request already sent.
       setRequestResult({ bookingId: result.bookingId, expiresAt: result.expiresAt });
       setStep(4);
     } catch (err: unknown) {
@@ -263,10 +272,10 @@ const ConciergeBookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initi
                 <div className="border-t pt-2 flex justify-between text-sm">
                   <span className="text-muted-foreground">{t('concierge.estimatedMinPrice', 'Estimated minimum price')}</span>
                   <span className="text-right">
-                    <span className="font-medium">{t('concierge.fromPerNight', 'from €{{price}}/night', { price: mooring.price })}</span>
+                    <span className="font-medium">{t('concierge.fromPerMeterNight', 'from €{{price}}/m/night', { price: mooring.price })}</span>
                     {estimatedMooringTotal > 0 && (
                       <span className="block text-xs text-muted-foreground font-normal">
-                        ≈ €{estimatedMooringTotal} · {nights} {t('booking.nights', 'nights')}
+                        ≈ €{estimatedMooringTotal} · {nights} {t('booking.nights', 'nights')} · {formData.boatLength}m
                       </span>
                     )}
                   </span>

@@ -106,6 +106,7 @@
     "vessel": "Plovilo",
     "estimatedMinPrice": "Pretpostavljena minimalna cijena",
     "fromPerNight": "od €{{price}}/noć",
+    "fromPerMeterNight": "od €{{price}}/m/noć",
     "estimatedMinPriceNote": "Plaća se marini po dolasku — ne naplaćuje se sada i može biti viša.",
     "serviceFeeHold": "Concierge naknada (autorizacijski hold)",
     "howAuthTitle": "Kako funkcionira autorizacija:",
@@ -122,7 +123,12 @@
     "outcomeDeclined": "Odbijeno — hold se oslobađa, bez naplate.",
     "outcomeNoResponse": "Bez odgovora — hold se automatski oslobađa nakon 48h.",
     "close": "Zatvori",
-    "viewInDashboard": "Prikaži na nadzornoj ploči"
+    "viewInDashboard": "Prikaži na nadzornoj ploči",
+    "requestSentBodyGeneric": "Vaš zahtjev za rezervaciju je poslan i marina je obaviještena.",
+    "finalizeErrorTitle": "Nismo mogli potvrditi vaš zahtjev",
+    "finalizeErrorHelp": "Ako je vaša kartica autorizirana, zahtjev se možda ipak obrađuje — provjerite nadzornu ploču.",
+    "finalizeMissingSession": "Nedostaje referenca platne sesije.",
+    "finalizeFailed": "Neuspjelo finaliziranje zahtjeva."
   },
   "howItWorks": {
     "title": "Kako Mooring Booking Radi",

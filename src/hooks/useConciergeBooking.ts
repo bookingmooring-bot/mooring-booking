@@ -17,27 +17,74 @@ interface ConciergeRequestData {
   serviceFeeAmount: number;
 }
 
-interface ConciergeRequestResult {
+interface ConciergeCreateResult {
+  /** Stripe Checkout URL to redirect to (present when a concierge fee is due). */
+  url?: string;
+  /** True when no fee is due (free tier) — no payment step, request already sent. */
+  skipPayment?: boolean;
   bookingId: string;
-  authorizationId: string;
-  clientSecret: string;
   expiresAt: string;
+}
+
+interface ConciergeFinalizeResult {
+  ok: boolean;
+  bookingId: string;
+  expiresAt: string;
+}
+
+/**
+ * Invoke create-concierge-authorization with the user's access token and surface
+ * the real error from the function's JSON body (supabase-js otherwise returns a
+ * generic "non-2xx status code" message).
+ */
+async function invokeConcierge<T>(body: Record<string, unknown>): Promise<T> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.access_token) {
+    throw new Error('Your session has expired. Please sign in again.');
+  }
+
+  const { data: result, error } = await supabase.functions.invoke(
+    'create-concierge-authorization',
+    { body, headers: { Authorization: `Bearer ${session.access_token}` } }
+  );
+
+  if (error) {
+    let message = error.message || 'Concierge request failed';
+    const ctx = (error as { context?: Response }).context;
+    if (ctx && typeof ctx.json === 'function') {
+      try {
+        const b = await ctx.json();
+        if (b?.error) message = b.error;
+      } catch {
+        // response body wasn't JSON — keep the generic message
+      }
+    }
+    throw new Error(message);
+  }
+  if ((result as { error?: string })?.error) throw new Error((result as { error: string }).error);
+  return result as T;
 }
 
 export function useCreateConciergeRequest() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: ConciergeRequestData): Promise<ConciergeRequestResult> => {
-      const { data: result, error } = await supabase.functions.invoke(
-        'create-concierge-authorization',
-        { body: data }
-      );
-
-      if (error) throw new Error(error.message || 'Failed to create concierge request');
-      if (result?.error) throw new Error(result.error);
-      return result as ConciergeRequestResult;
+    mutationFn: (data: ConciergeRequestData) =>
+      invokeConcierge<ConciergeCreateResult>(data as unknown as Record<string, unknown>),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      queryClient.invalidateQueries({ queryKey: ['concierge-bookings'] });
     },
+  });
+}
+
+/** Finalize after returning from Stripe Checkout: attaches the hold + notifies the marina. */
+export function useFinalizeConciergeRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (sessionId: string) =>
+      invokeConcierge<ConciergeFinalizeResult>({ action: 'finalize', sessionId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
       queryClient.invalidateQueries({ queryKey: ['concierge-bookings'] });

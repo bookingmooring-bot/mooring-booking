@@ -61,6 +61,7 @@ const AddMooring = lazy(() => import("./pages/AddMooring"));
 const EditMooring = lazy(() => import("./pages/EditMooring"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const QuoteRespond = lazy(() => import("./pages/QuoteRespond"));
+const ConciergeSent = lazy(() => import("./pages/ConciergeSent"));
 const ProviderProfile = lazy(() => import("./pages/ProviderProfile"));
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -126,6 +127,7 @@ const App = () => {
                 <Route path="/edit-mooring/:id" element={<ProtectedRoute><EditMooring /></ProtectedRoute>} />
                 <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route path="/quote-respond" element={<QuoteRespond />} />
+                <Route path="/booking/concierge-sent" element={<ConciergeSent />} />
                 <Route path="/:slug" element={<ProviderProfile />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
