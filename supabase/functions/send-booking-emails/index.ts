@@ -49,6 +49,31 @@ function conciergeRequestEmail(booking: any, mooring: any, respondUrl: string) {
   };
 }
 
+function conciergeReminderEmail(booking: any, mooring: any, respondUrl: string) {
+  return {
+    from: FROM_EMAIL,
+    to: mooring.contact_email,
+    subject: `Reminder: booking request awaiting your reply — ${mooring.name} ⏰`,
+    html: card("Reminder: a booking request is still waiting", `
+      <p style="color:#334155;">A booking request for <strong>${mooring.name}</strong> is still awaiting your response.</p>
+      <p style="color:#334155;">Please <strong>submit your price quote</strong> so we can confirm the reservation for the guest.</p>
+      ${detailBox({
+        "Guest": booking.guest_name,
+        "Check-in": booking.check_in,
+        "Check-out": booking.check_out,
+        "Boat": booking.boat_name,
+        "Boat length": booking.boat_length ? `${booking.boat_length}m` : null,
+        "Special requests": booking.special_requests,
+      })}
+      <div style="text-align:center;margin:30px 0;">
+        ${button(respondUrl, "📝 Submit Your Price Quote", "#2563eb")}
+      </div>
+      <p style="color:#64748b;font-size:13px;">You can also reply to this email with your price (e.g. "€50 per night").</p>
+      <p style="color:#94a3b8;font-size:13px;">If you do not respond, the request will automatically expire 48 hours after it was made.</p>
+    `),
+  };
+}
+
 function now4todayRequestEmail(booking: any, mooring: any, respondUrl: string, providerEmail: string) {
   return {
     from: FROM_EMAIL,
@@ -382,6 +407,12 @@ serve(async (req) => {
       case "concierge_request":
         if (mooringData?.contact_email && respondUrl) {
           emails.push(conciergeRequestEmail(bookingData, mooringData, respondUrl));
+        }
+        break;
+
+      case "concierge_reminder":
+        if (mooringData?.contact_email && respondUrl) {
+          emails.push(conciergeReminderEmail(bookingData, mooringData, respondUrl));
         }
         break;
 
