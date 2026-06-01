@@ -22,6 +22,9 @@ import {
     Radio,
     Ruler,
     Ship,
+    LifeBuoy,
+    Shirt,
+    Construction,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -86,7 +89,23 @@ const amenityConfig: Record<
     toilet: { icon: <Toilet size={18} />, label: "WC / Toilet" },
     fuel: { icon: <Fuel size={18} />, label: "Fuel Station" },
     restaurant: { icon: <Utensils size={18} />, label: "Restaurant" },
+    laundry: { icon: <Shirt size={18} />, label: "Laundry" },
+    crane: { icon: <Construction size={18} />, label: "Crane / Lift" },
+    // Berth / mooring types — stored as `type_<id>` from the provider form
+    type_vez_u_marini: { icon: <Anchor size={18} />, label: "Marina Berth" },
+    type_bova: { icon: <LifeBuoy size={18} />, label: "Mooring Buoy" },
+    type_dok: { icon: <Ship size={18} />, label: "Dock" },
+    type_sidriste: { icon: <Anchor size={18} />, label: "Anchorage" },
+    type_obalni_vez: { icon: <Waves size={18} />, label: "Shore Mooring" },
 };
+
+// Prettify any amenity key not in the config (e.g. future OSM tags) so a raw
+// snake_case / `type_` key is never shown to the user.
+const prettifyAmenity = (amenity: string): string =>
+    amenity
+        .replace(/^type_/, "")
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase());
 
 const windProtectionConfig = {
     excellent: {
@@ -376,7 +395,7 @@ const MooringDetailModal = ({
                                                 {cfg?.icon ?? <Anchor size={18} />}
                                             </span>
                                             <span className="text-sm font-medium text-foreground">
-                                                {cfg?.label ?? amenity}
+                                                {cfg?.label ?? prettifyAmenity(amenity)}
                                             </span>
                                         </div>
                                     );
