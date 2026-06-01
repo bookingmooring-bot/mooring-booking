@@ -19,7 +19,7 @@ const GDPRPage = () => {
               <h1 className="font-heading text-4xl md:text-5xl font-bold text-primary-foreground mb-2">
                 GDPR Notice for Marina Operators
               </h1>
-              <p className="text-primary-foreground/80 mb-2">Version 2.0 | Intelligent Matrix s.r.o.</p>
+              <p className="text-primary-foreground/80 mb-2">Version 2.0 | Mooring Booking.com s.r.o.</p>
               <p className="text-primary-foreground/80 mb-2">{"Štěpánská"} 37, 110 00 Praha 1, {"Česká republika"}</p>
               <p className="text-primary-foreground/80 mb-6">Effective April 2026</p>
               <Button
@@ -55,7 +55,7 @@ const GDPRPage = () => {
               <div className="bg-card rounded-xl p-8 shadow-card">
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-6">2. IDENTITY OF THE DATA CONTROLLER</h2>
                 <div className="text-muted-foreground space-y-2">
-                  <p><strong className="text-foreground">Intelligent Matrix s.r.o.</strong></p>
+                  <p><strong className="text-foreground">Mooring Booking.com s.r.o.</strong></p>
                   <p>{"Štěpánská"} 37, 110 00 Praha 1, {"Česká republika"}</p>
                   <p>Registered number (I{"ČO"}): [INSERT]</p>
                   <p>Data protection contact: <strong className="text-foreground">privacy@mooring-booking.com</strong></p>
@@ -200,7 +200,7 @@ const GDPRPage = () => {
               <div className="bg-card rounded-xl p-8 shadow-card">
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-6">13. CONTACT</h2>
                 <div className="text-muted-foreground space-y-2">
-                  <p><strong className="text-foreground">Intelligent Matrix s.r.o.</strong> | {"Štěpánská"} 37, 110 00 Praha 1, {"Česká republika"}</p>
+                  <p><strong className="text-foreground">Mooring Booking.com s.r.o.</strong> | I{"ČO"} 29543631 · DI{"Č"} CZ29543631 | {"Štěpánská"} 37, 110 00 Praha 1, {"Česká republika"}</p>
                   <p>Data protection: <strong className="text-foreground">privacy@mooring-booking.com</strong></p>
                   <p>General: <strong className="text-foreground">info@mooring-booking.com</strong> | +420 739 328 337</p>
                   <p>Subject line for requests: <strong>"Removal Request — Marina Operator"</strong> or <strong>"Correction Request — Marina Operator"</strong></p>
@@ -210,7 +210,7 @@ const GDPRPage = () => {
               {/* FOOTER */}
               <div className="text-center text-muted-foreground py-4">
                 <p>GDPR Notice for Marina Operators v2.0 — consistent with Master Terms of Service v3.0, Privacy Policy v2.0 and Cookie Policy v2.0.</p>
-                <p>&copy; Intelligent Matrix s.r.o. All rights reserved.</p>
+                <p>&copy; Mooring Booking.com s.r.o. All rights reserved.</p>
               </div>
 
             </div>

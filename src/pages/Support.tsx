@@ -120,7 +120,7 @@ const SupportPage = () => {
         },
         {
           q: "Do you offer API integration?",
-          a: "Yes. API access is available for marinas with existing Property Management Systems or booking software. Contact info@intelligent-matrix.com for technical documentation. API access is included in the Captain subscription tier for individual sailors and is available to marina partners via the Partnership Agreement.",
+          a: "Yes. API access is available for marinas with existing Property Management Systems or booking software. Contact info@mooring-booking.com for technical documentation. API access is included in the Captain subscription tier for individual sailors and is available to marina partners via the Partnership Agreement.",
         },
       ],
     },
@@ -188,7 +188,7 @@ const SupportPage = () => {
         },
         {
           q: "How does GDPR apply to my data?",
-          a: "Intelligent Matrix s.r.o. is the data controller for all personal data processed through the Platform. Your data is processed on the legal bases described in Privacy Policy v2.0 at mooring-booking.com/privacy. You have the right to access, rectify, erase, restrict, port and object to processing of your personal data. To exercise any right, contact privacy@mooring-booking.com. If you are a marina operator whose data appears in a Layer 2 or Layer 3 listing, refer to our GDPR Notice at mooring-booking.com/gdpr-notice.",
+          a: "Mooring Booking.com s.r.o. is the data controller for all personal data processed through the Platform. Your data is processed on the legal bases described in Privacy Policy v2.0 at mooring-booking.com/privacy. You have the right to access, rectify, erase, restrict, port and object to processing of your personal data. To exercise any right, contact privacy@mooring-booking.com. If you are a marina operator whose data appears in a Layer 2 or Layer 3 listing, refer to our GDPR Notice at mooring-booking.com/gdpr-notice.",
         },
       ],
     },
@@ -240,13 +240,13 @@ const SupportPage = () => {
                 <span className="text-secondary font-medium text-sm">support@mooring-booking.com</span>
               </a>
 
-              <a href="mailto:info@intelligent-matrix.com" className="bg-card rounded-xl p-6 shadow-card hover:shadow-hover transition-shadow text-center">
+              <a href="mailto:info@mooring-booking.com" className="bg-card rounded-xl p-6 shadow-card hover:shadow-hover transition-shadow text-center">
                 <div className="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
                   <Mail className="text-secondary" size={28} />
                 </div>
                 <h3 className="font-heading font-semibold text-lg text-foreground mb-2">{t('support.businessInquiries')}</h3>
                 <p className="text-muted-foreground text-sm mb-4">{t('support.businessInquiriesDesc')}</p>
-                <span className="text-secondary font-medium text-sm">info@intelligent-matrix.com</span>
+                <span className="text-secondary font-medium text-sm">info@mooring-booking.com</span>
               </a>
             </div>
           </div>
@@ -323,7 +323,7 @@ const SupportPage = () => {
               <div>
                 <MapPin className="text-secondary mx-auto mb-3" size={24} />
                 <h3 className="font-heading font-semibold text-foreground mb-2">{t('support.headquarters')}</h3>
-                <p className="text-muted-foreground text-sm">Intelligent Matrix<br />Prague, Czech Republic</p>
+                <p className="text-muted-foreground text-sm">Mooring Booking.com<br />Prague, Czech Republic</p>
               </div>
               <div>
                 <Bot className="text-secondary mx-auto mb-3" size={24} />

@@ -1,0 +1,25 @@
+{
+  "region": "adriatic",
+  "label": "Adriatic",
+  "bbox": [
+    12,
+    39.5,
+    20,
+    46
+  ],
+  "version": "974b55a6ea85",
+  "build": {
+    "gridNM": 1,
+    "coastBufferNM": 0.15,
+    "edgeSampleNM": 0.2,
+    "coordDecimals": 5,
+    "connectivity": 8
+  },
+  "nodes": 44730,
+  "edges": 174867,
+  "bytes": {
+    "graphRaw": 4172516,
+    "graphGz": 740371
+  },
+  "generatedFrom": "naturalearth_10m_land"
+}

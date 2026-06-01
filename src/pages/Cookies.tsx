@@ -19,7 +19,7 @@ const CookiesPage = () => {
               <h1 className="font-heading text-4xl md:text-5xl font-bold text-primary-foreground mb-2">
                 Cookie Policy
               </h1>
-              <p className="text-primary-foreground/80 mb-2">Version 2.0 | Intelligent Matrix s.r.o.</p>
+              <p className="text-primary-foreground/80 mb-2">Version 2.0 | Mooring Booking.com s.r.o.</p>
               <p className="text-primary-foreground/80 mb-2">{"Štěpánská"} 37, 110 00 Praha 1, {"Česká republika"}</p>
               <p className="text-primary-foreground/80 mb-2">Applies to: mooring-booking.com | ai-captain.app</p>
               <p className="text-primary-foreground/80 mb-6">Effective April 2026</p>
@@ -43,7 +43,7 @@ const CookiesPage = () => {
               <div className="bg-card rounded-xl p-8 shadow-card">
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-6">1. INTRODUCTION AND LEGAL BASIS</h2>
                 <div className="space-y-4 text-muted-foreground">
-                  <p>Intelligent Matrix s.r.o. uses cookies and similar tracking technologies on the Mooring Booking platform (mooring-booking.com) and AI Captain application (ai-captain.app). This Cookie Policy explains what cookies are, which we use, why, who has access to cookie data, and how to manage your preferences.</p>
+                  <p>Mooring Booking.com s.r.o. uses cookies and similar tracking technologies on the Mooring Booking platform (mooring-booking.com) and AI Captain application (ai-captain.app). This Cookie Policy explains what cookies are, which we use, why, who has access to cookie data, and how to manage your preferences.</p>
                   <p>This Cookie Policy is an integral part of the legal package including Master Terms of Service v3.0 and Privacy Policy v2.0. It is compliant with: GDPR (EU) 2016/679; ePrivacy Directive 2002/58/EC and national implementations; EDPB Guidelines 05/2020 on consent; EDPB Guidelines 03/2022 on dark patterns; and applicable national electronic communications laws in EU Mediterranean jurisdictions.</p>
                 </div>
               </div>
@@ -198,7 +198,7 @@ const CookiesPage = () => {
               <div className="bg-card rounded-xl p-8 shadow-card">
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-6">9. CONTACT</h2>
                 <div className="text-muted-foreground space-y-2">
-                  <p><strong className="text-foreground">Intelligent Matrix s.r.o.</strong> | {"Štěpánská"} 37, 110 00 Praha 1, {"Česká republika"}</p>
+                  <p><strong className="text-foreground">Mooring Booking.com s.r.o.</strong> | I{"ČO"} 29543631 · DI{"Č"} CZ29543631 | {"Štěpánská"} 37, 110 00 Praha 1, {"Česká republika"}</p>
                   <p>Data protection: <strong className="text-foreground">privacy@mooring-booking.com</strong></p>
                   <p>General: <strong className="text-foreground">info@mooring-booking.com</strong> | Tel: +420 739 328 337</p>
                   <p>Supervisory authority: {"Úřad pro ochranu osobních údajů"} (uoou.cz)</p>
@@ -208,7 +208,7 @@ const CookiesPage = () => {
               {/* FOOTER */}
               <div className="text-center text-muted-foreground py-4">
                 <p>Cookie Policy v2.0 — consistent with Master Terms of Service v3.0, Privacy Policy v2.0 and GDPR Notice for Marina Operators v2.0.</p>
-                <p>&copy; Intelligent Matrix s.r.o. All rights reserved.</p>
+                <p>&copy; Mooring Booking.com s.r.o. All rights reserved.</p>
               </div>
 
             </div>

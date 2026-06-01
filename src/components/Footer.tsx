@@ -32,7 +32,7 @@ const Footer = () => {
             </p>
             <div className="flex items-center gap-2 text-sm text-primary-foreground/60">
               <Anchor size={16} />
-              <span>{t('footer.allRightsReserved')} Intelligent Matrix SRO © 2026</span>
+              <span>{t('footer.allRightsReserved')} Mooring Booking.com SRO © 2026</span>
             </div>
           </div>
 
@@ -162,7 +162,7 @@ const Footer = () => {
                 {t('footer.gdpr')}
               </button>
             </div>
-            <p>{t('footer.allRightsReserved')} Intelligent Matrix SRO © 2026 | mooring-booking.com</p>
+            <p>{t('footer.allRightsReserved')} Mooring Booking.com SRO © 2026 | mooring-booking.com</p>
           </div>
         </div>
       </div>

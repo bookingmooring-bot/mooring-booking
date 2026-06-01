@@ -57,7 +57,7 @@ const ContactMap = () => {
                 <MapPin className="text-secondary" size={32} />
               </div>
               <h3 className="font-heading font-bold text-lg text-foreground">
-                Intelligent Matrix
+                Mooring Booking.com
               </h3>
               <p className="text-muted-foreground">
                 {office.city}, {office.country}
@@ -122,7 +122,7 @@ const ContactMap = () => {
           >
             <Popup>
               <div className="text-center p-2">
-                <h3 className="font-bold text-lg">Intelligent Matrix</h3>
+                <h3 className="font-bold text-lg">Mooring Booking.com</h3>
                 <p className="text-sm text-muted-foreground">
                   {office.city}, {office.country}
                 </p>

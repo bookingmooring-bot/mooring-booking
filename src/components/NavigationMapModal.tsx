@@ -2,11 +2,12 @@ import { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { MapContainer, TileLayer, Marker, Polyline, useMap } from "react-leaflet";
 import { DivIcon, Icon, LatLngBounds } from "leaflet";
-import { X, Navigation, Compass, Copy, Locate, Loader2 } from "lucide-react";
+import { X, Navigation, Compass, Copy, Locate, Loader2, Route, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import type { NavigationDestination } from "@/lib/navigation";
 import { calculateBearing, calculateDistanceNM, bearingToCompass } from "@/lib/navigation";
+import { computeSeaRoute, fetchPreciseSeaRoute } from "@/lib/searoute";
 import "leaflet/dist/leaflet.css";
 
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -53,7 +54,7 @@ const userIcon = new DivIcon({
 const FitBounds = ({ bounds }: { bounds: LatLngBounds | null }) => {
   const map = useMap();
   useEffect(() => {
-    if (bounds) map.fitBounds(bounds, { padding: [60, 60], maxZoom: 13 });
+    if (bounds) map.fitBounds(bounds, { padding: [60, 60], maxZoom: 15 });
   }, [bounds, map]);
   return null;
 };
@@ -68,6 +69,11 @@ const NavigationMapModal = ({ destination, onClose }: Props) => {
   const [userPos, setUserPos] = useState<[number, number] | null>(null);
   const [geoError, setGeoError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [routePositions, setRoutePositions] = useState<[number, number][] | null>(null);
+  const [routeLengthNM, setRouteLengthNM] = useState<number | null>(null);
+  const [routeLoading, setRouteLoading] = useState(false);
+  const [routeSource, setRouteSource] = useState<"precise" | "approx" | null>(null);
+  const [showUpsell, setShowUpsell] = useState(false);
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -95,6 +101,55 @@ const NavigationMapModal = ({ destination, onClose }: Props) => {
 
   const destPos: [number, number] = [destination.lat, destination.lng];
 
+  // Resolve the route once we know where the user is, in three tiers:
+  //   1. precise server route (sea-route edge fn) — only if booked this mooring,
+  //   2. approximate client route (searoute-js) — everyone else,
+  //   3. straight line — when neither yields a path (left as routePositions=null).
+  useEffect(() => {
+    if (!userPos) {
+      setRoutePositions(null);
+      setRouteLengthNM(null);
+      setRouteSource(null);
+      setShowUpsell(false);
+      return;
+    }
+    let cancelled = false;
+    const dest: [number, number] = [destination.lat, destination.lng];
+    setRouteLoading(true);
+
+    const useApprox = async () => {
+      const route = await computeSeaRoute(userPos, dest);
+      if (cancelled) return;
+      setRoutePositions(route?.positions ?? null);
+      setRouteLengthNM(route?.lengthNM ?? null);
+      setRouteSource(route ? "approx" : null);
+    };
+
+    (async () => {
+      try {
+        if (destination.mooringId) {
+          const precise = await fetchPreciseSeaRoute(userPos, destination.mooringId);
+          if (cancelled) return;
+          if (precise.kind === "precise") {
+            setRoutePositions(precise.route.positions);
+            setRouteLengthNM(precise.route.lengthNM);
+            setRouteSource("precise");
+            setShowUpsell(false);
+            return;
+          }
+          if (precise.kind === "upsell") setShowUpsell(true);
+        }
+        await useApprox();
+      } finally {
+        if (!cancelled) setRouteLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [userPos, destination.lat, destination.lng, destination.mooringId]);
+
   const { distance, bearing, compass } = useMemo(() => {
     if (!userPos) return { distance: null, bearing: null, compass: null };
     return {
@@ -106,8 +161,9 @@ const NavigationMapModal = ({ destination, onClose }: Props) => {
 
   const bounds = useMemo(() => {
     if (!userPos) return null;
+    if (routePositions && routePositions.length > 1) return new LatLngBounds(routePositions);
     return new LatLngBounds(userPos, destPos);
-  }, [userPos, destPos]);
+  }, [userPos, destPos, routePositions]);
 
   const center: [number, number] = userPos
     ? [(userPos[0] + destPos[0]) / 2, (userPos[1] + destPos[1]) / 2]
@@ -129,14 +185,18 @@ const NavigationMapModal = ({ destination, onClose }: Props) => {
   return (
     <div className="fixed inset-0 z-[9999] flex flex-col bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-card border-b shadow-sm">
-        <div className="flex items-center gap-2">
-          <Navigation size={20} className="text-primary" />
+      <div className="flex items-center justify-between gap-2 px-4 py-3 bg-card border-b shadow-sm">
+        <div className="flex items-center gap-2 min-w-0">
+          <Button variant="ghost" size="sm" onClick={onClose} className="shrink-0 -ml-2">
+            <ArrowLeft size={18} className="mr-1" />
+            {t("nav.back", "Back")}
+          </Button>
+          <Navigation size={20} className="text-primary shrink-0" />
           <h2 className="font-heading font-bold text-lg text-foreground truncate">
             {destination.label || t("nav.destination", "Destination")}
           </h2>
         </div>
-        <Button variant="ghost" size="icon" onClick={onClose}>
+        <Button variant="ghost" size="icon" onClick={onClose} className="shrink-0">
           <X size={20} />
         </Button>
       </div>
@@ -159,9 +219,9 @@ const NavigationMapModal = ({ destination, onClose }: Props) => {
           zoomControl={false}
         >
           <TileLayer
-            attribution='Tiles &copy; Esri &mdash; Esri, GEBCO, NOAA &mdash; OpenSeaMap contributors'
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}"
-            maxZoom={13}
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://www.openseamap.org">OpenSeaMap</a>'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            maxZoom={19}
           />
           <TileLayer
             url="https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png"
@@ -176,17 +236,29 @@ const NavigationMapModal = ({ destination, onClose }: Props) => {
           {/* User position marker */}
           {userPos && <Marker position={userPos} icon={userIcon} />}
 
-          {/* Route polyline */}
-          {userPos && (
+          {/* Route polyline — sea route when available, straight line otherwise.
+              Precise (booked) routes render green; approximate ones blue. */}
+          {userPos && routePositions && routePositions.length > 1 ? (
             <Polyline
-              positions={[userPos, destPos]}
+              positions={routePositions}
               pathOptions={{
-                color: "#0ea5e9",
-                weight: 3,
-                dashArray: "10, 8",
-                opacity: 0.9,
+                color: routeSource === "precise" ? "#16a34a" : "#0ea5e9",
+                weight: 4,
+                opacity: 0.95,
               }}
             />
+          ) : (
+            userPos && (
+              <Polyline
+                positions={[userPos, destPos]}
+                pathOptions={{
+                  color: "#0ea5e9",
+                  weight: 3,
+                  dashArray: "10, 8",
+                  opacity: 0.9,
+                }}
+              />
+            )
           )}
         </MapContainer>
 
@@ -211,16 +283,42 @@ const NavigationMapModal = ({ destination, onClose }: Props) => {
               {destination.lat.toFixed(4)}°N, {destination.lng.toFixed(4)}°E
             </p>
             {distance !== null && bearing !== null && (
-              <div className="flex items-center gap-3 mt-1">
+              <div className="flex items-center gap-3 mt-1 flex-wrap">
                 <span className="flex items-center gap-1 text-sm font-semibold text-primary">
                   <Navigation size={14} />
-                  {distance < 1 ? `${(distance * 1852).toFixed(0)} m` : `${distance.toFixed(1)} NM`}
+                  {(() => {
+                    const d = routeLengthNM ?? distance;
+                    return d < 1 ? `${(d * 1852).toFixed(0)} m` : `${d.toFixed(1)} NM`;
+                  })()}
                 </span>
                 <span className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Compass size={14} />
                   {bearing.toFixed(0)}° {compass}
                 </span>
+                {routeLoading ? (
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Loader2 size={12} className="animate-spin" />
+                    {t("nav.calculatingRoute", "Calculating route…")}
+                  </span>
+                ) : routeSource === "precise" ? (
+                  <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                    <Route size={12} />
+                    {t("nav.preciseRoute", "Precise sea route")}
+                  </span>
+                ) : (
+                  routePositions && (
+                    <span className="flex items-center gap-1 text-xs text-sky-600 dark:text-sky-400">
+                      <Route size={12} />
+                      {t("nav.approxRoute", "Approx. sea route")}
+                    </span>
+                  )
+                )}
               </div>
+            )}
+            {showUpsell && routeSource !== "precise" && (
+              <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-400">
+                {t("nav.preciseUpsell", "Book this mooring to unlock the precise captain route.")}
+              </p>
             )}
           </div>
 

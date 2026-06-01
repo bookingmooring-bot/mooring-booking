@@ -1,0 +1,25 @@
+{
+  "region": "ionian",
+  "label": "Ionian",
+  "bbox": [
+    14.5,
+    35.5,
+    22,
+    40.5
+  ],
+  "version": "c90a068f2c3a",
+  "build": {
+    "gridNM": 1.5,
+    "coastBufferNM": 0.15,
+    "edgeSampleNM": 0.2,
+    "coordDecimals": 5,
+    "connectivity": 8
+  },
+  "nodes": 45902,
+  "edges": 181661,
+  "bytes": {
+    "graphRaw": 4314938,
+    "graphGz": 761328
+  },
+  "generatedFrom": "naturalearth_10m_land"
+}

@@ -27,6 +27,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import BookingModal from "./BookingModal";
+import ConciergeBookingModal from "./ConciergeBookingModal";
 import type { MooringLayer } from "@/lib/mooringLayer";
 import { getLayerBadge, getBookingMode, getLayerDisclaimer } from "@/lib/mooringLayer";
 import { useNavigation } from "@/contexts/NavigationContext";
@@ -147,8 +148,32 @@ const MooringDetailModal = ({
         setIsBookingOpen(false);
     };
 
-    // If booking opens, render BookingModal on top (detail modal stays mounted)
+    // If booking opens, render the booking modal on top (detail modal stays mounted).
+    // Concierge-layer marinas (no contract) use the request/authorization flow;
+    // premium (instant) marinas keep the instant confirmation flow.
     if (isBookingOpen) {
+        const closeBoth = () => {
+            handleBookingClose();
+            onClose();
+        };
+        if (bookingMode === 'concierge') {
+            return (
+                <ConciergeBookingModal
+                    mooring={{
+                        id: mooring.id,
+                        name: mooring.name,
+                        location: mooring.location,
+                        country: mooring.country,
+                        price: mooring.price,
+                        image: mooring.image,
+                    }}
+                    isOpen={true}
+                    onClose={closeBoth}
+                    initialCheckIn={initialCheckIn}
+                    initialCheckOut={initialCheckOut}
+                />
+            );
+        }
         return (
             <BookingModal
                 mooring={{
@@ -167,10 +192,7 @@ const MooringDetailModal = ({
                     ownerId: mooring.ownerId,
                 }}
                 isOpen={true}
-                onClose={() => {
-                    handleBookingClose();
-                    onClose();
-                }}
+                onClose={closeBoth}
                 initialCheckIn={initialCheckIn}
                 initialCheckOut={initialCheckOut}
             />
@@ -553,7 +575,7 @@ const MooringDetailModal = ({
                     )}
                     {bookingMode === 'none' && mooring.lat && mooring.lng && (
                         <Button
-                            onClick={() => openNavigation({ lat: mooring.lat!, lng: mooring.lng!, label: mooring.name })}
+                            onClick={() => openNavigation({ lat: mooring.lat!, lng: mooring.lng!, label: mooring.name, mooringId: mooring.id })}
                             className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-base"
                         >
                             <Navigation size={18} className="mr-2" />

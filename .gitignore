@@ -48,6 +48,11 @@ LEAD_BACKFILL_REPORT*.md
 # Supabase temp files
 supabase/.temp/
 
+# Sea-route graphs are stored in the DB (sea_route_graph table), uploaded by
+# scripts/searoute/upload-region-graph.mjs. The build dir keeps the gz + meta for
+# reproducibility; the large uncompressed graph JSON is a throwaway build artifact.
+scripts/searoute/build/*.graph.json
+
 # Logs
 logs
 *.log

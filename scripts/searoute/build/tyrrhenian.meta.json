@@ -1,0 +1,25 @@
+{
+  "region": "tyrrhenian",
+  "label": "Tyrrhenian",
+  "bbox": [
+    8,
+    37,
+    16.5,
+    44.5
+  ],
+  "version": "5ca7de209a1e",
+  "build": {
+    "gridNM": 2,
+    "coastBufferNM": 0.15,
+    "edgeSampleNM": 0.2,
+    "coordDecimals": 5,
+    "connectivity": 8
+  },
+  "nodes": 39407,
+  "edges": 155081,
+  "bytes": {
+    "graphRaw": 3720918,
+    "graphGz": 637098
+  },
+  "generatedFrom": "naturalearth_10m_land"
+}

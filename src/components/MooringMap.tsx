@@ -154,9 +154,9 @@ const MooringMap = ({ onSelectMooring, selectedLocation, bookingConfirmed = fals
         scrollWheelZoom={true}
       >
         <TileLayer
-          attribution='Tiles &copy; Esri &mdash; Esri, GEBCO, NOAA &mdash; OpenSeaMap contributors'
-          url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}"
-          maxZoom={13}
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://www.openseamap.org">OpenSeaMap</a>'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          maxZoom={19}
         />
         <TileLayer
           url="https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png"

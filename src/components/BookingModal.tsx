@@ -270,7 +270,8 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
     openNavigation({
       lat: mooring.lat || 43.5081,
       lng: mooring.lng || 16.4402,
-      label: mooring.name
+      label: mooring.name,
+      mooringId: mooring.id,
     });
   };
 

@@ -1,0 +1,25 @@
+{
+  "region": "westmed",
+  "label": "West Med",
+  "bbox": [
+    -1,
+    36,
+    9.5,
+    44.5
+  ],
+  "version": "0304fe67c9d4",
+  "build": {
+    "gridNM": 2,
+    "coastBufferNM": 0.15,
+    "edgeSampleNM": 0.2,
+    "coordDecimals": 5,
+    "connectivity": 8
+  },
+  "nodes": 38160,
+  "edges": 150476,
+  "bytes": {
+    "graphRaw": 3576863,
+    "graphGz": 629794
+  },
+  "generatedFrom": "naturalearth_10m_land"
+}

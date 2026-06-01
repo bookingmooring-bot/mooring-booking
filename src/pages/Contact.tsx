@@ -59,7 +59,7 @@ const ContactPage = () => {
                     <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center flex-shrink-0"><MapPin className="text-secondary" size={24} /></div>
                     <div>
                       <h3 className="font-heading font-semibold text-foreground mb-1">{t('contact.officesTitle')}</h3>
-                      <p className="text-foreground">Intelligent Matrix</p>
+                      <p className="text-foreground">Mooring Booking.com</p>
                       <p className="text-muted-foreground text-sm">Vienna, Austria</p>
                       <p className="text-muted-foreground text-sm">Prague, Czech Republic</p>
                     </div>

@@ -391,7 +391,7 @@ $part2 = @'
                     <li>I confirm ownership or long-term lease of the listed mooring(s).</li>
                     <li>I agree that Mooring Booking charges 15% commission on all bookings.</li>
                     <li>I consent to data transfer to any successor entity in the event of a sale or acquisition.</li>
-                    <li>I understand the Platform is "AS IS" and Intelligent Matrix is not liable for incidents.</li>
+                    <li>I understand the Platform is "AS IS" and Mooring Booking.com is not liable for incidents.</li>
                     <li>I accept mandatory arbitration under Austrian/EU law.</li>
                     {formData.marketingTools && <li>I agree to the €5/month charge for Marketing Tools.</li>}
                     {formData.premiumListing && <li>I agree to the €9.99/month charge for Premium Listing.</li>}

@@ -83,7 +83,7 @@ export const benefits = [
 export const termsContent = `MOORING BOOKING - GENERAL TERMS OF USE
 =======================================
 Last updated: 18 March 2026.
-Operator: Intelligent Matrix
+Operator: Mooring Booking.com
 
 1. PLATFORM
 Mooring Booking is an online marketplace connecting mooring providers with users looking for a berth for their vessel. The platform acts as an intermediary and does not own, operate, or control any moorings listed on the platform.
@@ -124,7 +124,7 @@ Providers agree to:
 By using the Platform, users consent to the transfer of personal data to a successor in the event of a sale, merger, or change of ownership. The successor is bound by the same privacy obligations. Users will be notified within 30 days.
 
 6. LIMITATION OF LIABILITY
-Intelligent Matrix is NOT liable for:
+Mooring Booking.com is NOT liable for:
 - The condition, safety, or legality of any mooring
 - Personal injury or property damage
 - Financial losses
@@ -143,9 +143,9 @@ MAXIMUM LIABILITY: the lesser of all fees paid in 12 months or \u{20AC}500.
 Disputes are first resolved through negotiation within 30 days. If negotiations fail, disputes are settled by arbitration under Czech law. Courts in Prague have exclusive jurisdiction.
 
 9. CONTACT
-Intelligent Matrix
+Mooring Booking.com
 Email: legal@mooring-booking.com
-Email: info@intelligent-matrix.com
+Email: info@mooring-booking.com
 Address: Prague, Czech Republic
 Phone: +420 739 328 337
 
@@ -154,7 +154,7 @@ Phone: +420 739 328 337
 export const privacyContent = `MOORING BOOKING - PRIVACY POLICY
 =================================
 Last updated: 18 March 2026.
-Operator: Intelligent Matrix
+Operator: Mooring Booking.com
 
 1. DATA COLLECTION
 We collect the following personal data:

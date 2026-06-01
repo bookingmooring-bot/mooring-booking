@@ -100,11 +100,11 @@ const HomeMap = () => {
         scrollWheelZoom={false}
         ref={mapRef}
       >
-        {/* ESRI Ocean basemap — batimetrija i nautički prikaz */}
+        {/* OpenStreetMap podloga — kopno, obala, otoci i nazivi mjesta/marina */}
         <TileLayer
-          attribution='Tiles &copy; <a href="https://services.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer">Esri</a> &mdash; Esri, GEBCO, NOAA, National Geographic, DeLorme, HERE, Geonames.org &mdash; <a href="https://www.openseamap.org">OpenSeaMap</a> contributors'
-          url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}"
-          maxZoom={13}
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://www.openseamap.org">OpenSeaMap</a>'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          maxZoom={19}
         />
         {/* OpenSeaMap overlay — nautički simboli: plutače, sidra, opasnosti */}
         <TileLayer

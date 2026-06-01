@@ -19,7 +19,7 @@ const PrivacyPage = () => {
               <h1 className="font-heading text-4xl md:text-5xl font-bold text-primary-foreground mb-2">
                 Privacy Policy
               </h1>
-              <p className="text-primary-foreground/80 mb-2">Version 2.0 | Intelligent Matrix s.r.o.</p>
+              <p className="text-primary-foreground/80 mb-2">Version 2.0 | Mooring Booking.com s.r.o.</p>
               <p className="text-primary-foreground/80 mb-2">{"Štěpánská"} 37, 110 00 Praha 1, {"Česká republika"}</p>
               <p className="text-primary-foreground/80 mb-2">Applies to: mooring-booking.com | ai-captain.app</p>
               <p className="text-primary-foreground/80 mb-6">Effective April 2026</p>
@@ -43,7 +43,7 @@ const PrivacyPage = () => {
               <div className="bg-card rounded-xl p-8 shadow-card">
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-6">1. INTRODUCTION AND IDENTITY OF DATA CONTROLLER</h2>
                 <div className="space-y-4 text-muted-foreground">
-                  <p>Intelligent Matrix s.r.o. ("Company", "we", "us"), operator of the Mooring Booking platform (mooring-booking.com) and AI Captain application (ai-captain.app), is the data controller for personal data processed through the Platform within the meaning of Article 4(7) of Regulation (EU) 2016/679 ("GDPR").</p>
+                  <p>Mooring Booking.com s.r.o. ("Company", "we", "us"), operator of the Mooring Booking platform (mooring-booking.com) and AI Captain application (ai-captain.app), is the data controller for personal data processed through the Platform within the meaning of Article 4(7) of Regulation (EU) 2016/679 ("GDPR").</p>
                   <p>These Privacy Policy form an integral part of, and must be read together with, the Master Terms of Service v3.0. Defined terms used herein have the same meaning as in the Master Terms of Service v3.0.</p>
                   <p><strong className="text-foreground">Contact:</strong> privacy@mooring-booking.com | info@mooring-booking.com | +420 739 328 337</p>
                 </div>
@@ -224,7 +224,7 @@ const PrivacyPage = () => {
               <div className="bg-card rounded-xl p-8 shadow-card">
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-6">13. CONTACT</h2>
                 <div className="text-muted-foreground space-y-2">
-                  <p>Data controller: <strong className="text-foreground">Intelligent Matrix s.r.o.</strong></p>
+                  <p>Data controller: <strong className="text-foreground">Mooring Booking.com s.r.o.</strong></p>
                   <p>{"Štěpánská"} 37, 110 00 Praha 1, {"Česká republika"}</p>
                   <p>Data protection contact: <strong className="text-foreground">privacy@mooring-booking.com</strong></p>
                   <p>General contact: <strong className="text-foreground">info@mooring-booking.com</strong> | +420 739 328 337</p>
@@ -234,7 +234,7 @@ const PrivacyPage = () => {
               {/* FOOTER */}
               <div className="text-center text-muted-foreground py-4">
                 <p>Privacy Policy v2.0 — consistent with Master Terms of Service v3.0, Cookie Policy v2.0 and GDPR Notice for Marina Operators v2.0.</p>
-                <p>&copy; Intelligent Matrix s.r.o. All rights reserved.</p>
+                <p>&copy; Mooring Booking.com s.r.o. All rights reserved.</p>
               </div>
 
             </div>

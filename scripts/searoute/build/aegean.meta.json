@@ -1,0 +1,25 @@
+{
+  "region": "aegean",
+  "label": "Aegean",
+  "bbox": [
+    22.5,
+    34.5,
+    28.5,
+    41
+  ],
+  "version": "4310a105b607",
+  "build": {
+    "gridNM": 1.5,
+    "coastBufferNM": 0.15,
+    "edgeSampleNM": 0.2,
+    "coordDecimals": 5,
+    "connectivity": 8
+  },
+  "nodes": 46480,
+  "edges": 181931,
+  "bytes": {
+    "graphRaw": 4332337,
+    "graphGz": 753438
+  },
+  "generatedFrom": "naturalearth_10m_land"
+}

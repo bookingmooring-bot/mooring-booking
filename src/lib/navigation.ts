@@ -2,6 +2,8 @@ export interface NavigationDestination {
   lat: number;
   lng: number;
   label?: string;
+  /** Mooring id — enables the precise (post-booking) sea route lookup. */
+  mooringId?: string;
 }
 
 export function calculateBearing(from: [number, number], to: [number, number]): number {

@@ -22,7 +22,7 @@ const TermsPage = () => {
               <h2 className="font-heading text-2xl md:text-3xl font-bold text-primary-foreground/90 mb-4">
                 MASTER TERMS OF SERVICE
               </h2>
-              <p className="text-primary-foreground/80 mb-2">Version 3.0 | Intelligent Matrix s.r.o.</p>
+              <p className="text-primary-foreground/80 mb-2">Version 3.0 | Mooring Booking.com s.r.o.</p>
               <p className="text-primary-foreground/80 mb-2">{"Štěpánská"} 37, 110 00 Praha 1, {"Česká republika"}</p>
               <p className="text-primary-foreground/80 mb-6">Effective April 2026</p>
               <Button
@@ -45,7 +45,7 @@ const TermsPage = () => {
               <div className="bg-destructive/10 border border-destructive/30 rounded-xl p-8">
                 <h3 className="font-heading text-lg font-bold text-foreground mb-4">IMPORTANT — READ CAREFULLY BEFORE USING THIS PLATFORM</h3>
                 <p className="text-muted-foreground">
-                  BY ACCESSING, REGISTERING FOR, OR USING THE MOORING BOOKING PLATFORM OR AI CAPTAIN (COLLECTIVELY, THE "PLATFORM"), YOU ENTER INTO A LEGALLY BINDING AGREEMENT WITH INTELLIGENT MATRIX S.R.O. ("COMPANY"). IF YOU DO NOT AGREE TO ALL TERMS, YOU MUST NOT USE THE PLATFORM.
+                  BY ACCESSING, REGISTERING FOR, OR USING THE MOORING BOOKING PLATFORM OR AI CAPTAIN (COLLECTIVELY, THE "PLATFORM"), YOU ENTER INTO A LEGALLY BINDING AGREEMENT WITH MOORING BOOKING.COM S.R.O. ("COMPANY"). IF YOU DO NOT AGREE TO ALL TERMS, YOU MUST NOT USE THE PLATFORM.
                 </p>
               </div>
 
@@ -54,8 +54,8 @@ const TermsPage = () => {
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-6">SECTION 1 — DEFINITIONS</h2>
                 <p className="text-muted-foreground mb-4">The following definitions apply throughout these Terms and all incorporated policies.</p>
                 <div className="space-y-4 text-muted-foreground">
-                  <p><strong className="text-foreground">1.1 Platform</strong> — The Mooring Booking website at mooring-booking.com, the AI Captain application at ai-captain.app, all mobile applications, APIs, subdomains, white-label deployments (such as mooring-booking.com/marinaABC), and all related services operated by Intelligent Matrix s.r.o.</p>
-                  <p><strong className="text-foreground">1.2 Company</strong> — Intelligent Matrix s.r.o., a company incorporated under Czech law, registered number [INSERT I{"ČO"}], {"Štěpánská"} 37, 110 00 Praha 1, {"Česká republika"}, operating the Platform under the brand names Mooring Booking and AI Captain.</p>
+                  <p><strong className="text-foreground">1.1 Platform</strong> — The Mooring Booking website at mooring-booking.com, the AI Captain application at ai-captain.app, all mobile applications, APIs, subdomains, white-label deployments (such as mooring-booking.com/marinaABC), and all related services operated by Mooring Booking.com s.r.o.</p>
+                  <p><strong className="text-foreground">1.2 Company</strong> — Mooring Booking.com s.r.o., a company incorporated under Czech law, registered number (I{"ČO"}) 29543631, VAT ID CZ29543631, {"Štěpánská"} 37, 110 00 Praha 1, {"Česká republika"}, operating the Platform under the brand names Mooring Booking and AI Captain.</p>
                   <p><strong className="text-foreground">1.3 Customer</strong> — Any individual or legal entity who uses the Platform to search for, enquire about, or reserve Mooring Services, including sailors, boat owners, charter skippers, and any other nautical user.</p>
                   <p><strong className="text-foreground">1.4 Provider</strong> — Any individual or legal entity who offers Mooring Services, whether as a Premium Partner (Layer 1), a Concierge Booking facility (Layer 2), or an Explore & Navigate reference location (Layer 3).</p>
                   <p><strong className="text-foreground">1.5 The Three Service Layers</strong> — The Platform organises Mooring Services into three distinct service layers, each with different contractual relationships, booking mechanisms and disclaimers, described in full in Section 4:</p>
@@ -217,7 +217,7 @@ const TermsPage = () => {
               <div className="bg-card rounded-xl p-8 shadow-card">
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-6">SECTION 9 — DATA PROTECTION AND GDPR</h2>
                 <div className="space-y-4 text-muted-foreground">
-                  <p><strong className="text-foreground">9.1 Data Controller</strong> — Intelligent Matrix s.r.o. is the data controller for personal data processed through the Platform pursuant to GDPR (EU) 2016/679. Contact: privacy@mooring-booking.com.</p>
+                  <p><strong className="text-foreground">9.1 Data Controller</strong> — Mooring Booking.com s.r.o. is the data controller for personal data processed through the Platform pursuant to GDPR (EU) 2016/679. Contact: privacy@mooring-booking.com.</p>
                   <p><strong className="text-foreground">9.2 Legal Bases</strong> — Personal data is processed on the following bases: (a) performance of contract (Article 6(1)(b)) for account and booking services; (b) legal obligation (Article 6(1)(c)) for financial records; (c) legitimate interest (Article 6(1)(f)) for security and service improvement; (d) consent (Article 6(1)(a)) for marketing and analytics cookies.</p>
                   <p><strong className="text-foreground">9.3 Non-Partner Listing Data</strong> — Business data of legal entities in Layer 2 and Layer 3 listings is not personal data under GDPR. For natural persons operating small facilities whose publicly published contact data is included, processing is based on legitimate interest under Article 6(1)(f) GDPR, as confirmed by CJEU in C-621/22 (KNLTB, 4 October 2024). Opt-out requests are processed at privacy@mooring-booking.com within 5 business days.</p>
                   <p><strong className="text-foreground">9.4 Business Transition Consent</strong> — By accepting these Terms, users expressly consent pursuant to Articles 6(1)(a) and 49(1)(a) GDPR to the transfer of personal data to any successor entity in any sale, merger, acquisition or change of ownership of the Company or Platform. Users will be notified within 30 days of completion. This consent may be withdrawn at privacy@mooring-booking.com.</p>
@@ -274,7 +274,7 @@ const TermsPage = () => {
               <div className="bg-card rounded-xl p-8 shadow-card">
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-6">SECTION 13 — INTELLECTUAL PROPERTY</h2>
                 <div className="space-y-4 text-muted-foreground">
-                  <p><strong className="text-foreground">13.1 Company IP</strong> — All intellectual property in the Platform — including software, source code, algorithms, AI Captain technology, UI designs, logos, trademarks, brand names Mooring Booking and AI Captain, and business methods — are and remain the exclusive property of Intelligent Matrix s.r.o. No User acquires any right, title or interest in Company IP.</p>
+                  <p><strong className="text-foreground">13.1 Company IP</strong> — All intellectual property in the Platform — including software, source code, algorithms, AI Captain technology, UI designs, logos, trademarks, brand names Mooring Booking and AI Captain, and business methods — are and remain the exclusive property of Mooring Booking.com s.r.o. No User acquires any right, title or interest in Company IP.</p>
                   <p><strong className="text-foreground">13.2 User Content Licence</strong> — By submitting content to the Platform, Users grant the Company a perpetual, worldwide, irrevocable, royalty-free, transferable licence to use, reproduce, modify, distribute and display such content in connection with the Platform and any successor services.</p>
                   <p><strong className="text-foreground">13.3 AI Captain Technology Protection</strong> — The AI technology underlying AI Captain, including all prompts, training approaches and conversational models, constitutes proprietary trade secrets. Reverse engineering, extraction or reproduction of AI Captain technology is strictly prohibited.</p>
                 </div>
@@ -306,7 +306,7 @@ const TermsPage = () => {
               <div className="bg-card rounded-xl p-8 shadow-card">
                 <h2 className="font-heading text-2xl font-bold text-foreground mb-6">SECTION 15 — INDEMNIFICATION</h2>
                 <div className="space-y-4 text-muted-foreground">
-                  <p><strong className="text-foreground">15.1 User Indemnification</strong> — Each User agrees to indemnify, defend and hold harmless Intelligent Matrix s.r.o. and its directors, officers, employees and agents from all claims, losses, liabilities, damages, costs and expenses (including legal fees) arising from: use of the Platform or any Mooring Services accessed through it; violation of these Terms or applicable law; content submitted to the Platform; injury, death or property damage arising at or in connection with Mooring Services; failure to hold required qualifications or comply with maritime regulations; and any tax liability arising from Platform use.</p>
+                  <p><strong className="text-foreground">15.1 User Indemnification</strong> — Each User agrees to indemnify, defend and hold harmless Mooring Booking.com s.r.o. and its directors, officers, employees and agents from all claims, losses, liabilities, damages, costs and expenses (including legal fees) arising from: use of the Platform or any Mooring Services accessed through it; violation of these Terms or applicable law; content submitted to the Platform; injury, death or property damage arising at or in connection with Mooring Services; failure to hold required qualifications or comply with maritime regulations; and any tax liability arising from Platform use.</p>
                   <p><strong className="text-foreground">15.2 Provider Indemnification</strong> — Providers additionally indemnify the Company against claims arising from the condition, availability, legality or safety of listed Mooring Services, failure to honour confirmed bookings, and misrepresentation in listing information.</p>
                 </div>
               </div>
@@ -345,7 +345,7 @@ const TermsPage = () => {
                   <p>Legal and compliance: <strong className="text-foreground">legal@mooring-booking.com</strong></p>
                   <p>Data protection and GDPR: <strong className="text-foreground">privacy@mooring-booking.com</strong></p>
                   <p>Partner enquiries: <strong className="text-foreground">partners@mooring-booking.com</strong></p>
-                  <p className="mt-4">Registered entity: <strong className="text-foreground">Intelligent Matrix s.r.o.</strong></p>
+                  <p className="mt-4">Registered entity: <strong className="text-foreground">Mooring Booking.com s.r.o.</strong></p>
                   <p>{"Štěpánská"} 37, 110 00 Praha 1, {"Česká republika"}</p>
                   <p>Telephone: <strong className="text-foreground">+420 739 328 337</strong></p>
                 </div>
@@ -354,7 +354,7 @@ const TermsPage = () => {
               {/* EFFECTIVE DATE */}
               <div className="text-center text-muted-foreground py-4">
                 <p>These Master Terms of Service are effective as of April 2026.</p>
-                <p>Version 3.0. &copy; Intelligent Matrix s.r.o. All rights reserved.</p>
+                <p>Version 3.0. &copy; Mooring Booking.com s.r.o. All rights reserved.</p>
               </div>
 
             </div>

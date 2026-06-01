@@ -245,7 +245,7 @@ const MooringCardWithBooking = ({
                 className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold w-full justify-center whitespace-nowrap"
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (lat && lng) openNavigation({ lat, lng, label: name });
+                  if (lat && lng) openNavigation({ lat, lng, label: name, mooringId: id });
                   else openDetail();
                 }}
               >
