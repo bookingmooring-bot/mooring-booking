@@ -1036,6 +1036,11 @@ async function callGemini(
                         maxOutputTokens,
                         temperature: 0.50,
                         topP: 0.9,
+                        // gemini-2.5-flash is a thinking model: without this, internal
+                        // reasoning eats the maxOutputTokens budget and the visible answer
+                        // gets cut off mid-word (MAX_TOKENS). Disable thinking so the whole
+                        // budget goes to the reply.
+                        thinkingConfig: { thinkingBudget: 0 },
                     },
                 };
                 if (useGoogleSearch) {
