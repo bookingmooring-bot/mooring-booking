@@ -128,14 +128,45 @@ const buildDescription = (condition: string, windDir: string, windSpeed: number)
 
 // ─── Get user location ────────────────────────────────────────────────────────
 
-export const getUserLocation = (): Promise<{ lat: number; lng: number }> =>
+const GEO_STORAGE_KEY = "user_geo";
+
+const readSavedLocation = (): { lat: number; lng: number } | null => {
+  try {
+    const raw = localStorage.getItem(GEO_STORAGE_KEY);
+    if (!raw) return null;
+    const v = JSON.parse(raw);
+    if (typeof v?.lat === "number" && typeof v?.lng === "number") {
+      return { lat: v.lat, lng: v.lng };
+    }
+  } catch { /* ignore corrupt/blocked storage */ }
+  return null;
+};
+
+const saveLocation = (loc: { lat: number; lng: number }) => {
+  try { localStorage.setItem(GEO_STORAGE_KEY, JSON.stringify(loc)); } catch { /* ignore */ }
+};
+
+export const getUserLocation = (opts?: {
+  /** Seed fallback (e.g. profile.last_known_*) used before geolocation resolves / on error. */
+  fallback?: { lat: number; lng: number };
+  /** Fired ONLY on a genuine GPS fix (never on fallback) — use to persist server-side. */
+  onFix?: (loc: { lat: number; lng: number }) => void;
+}): Promise<{ lat: number; lng: number }> =>
   new Promise((resolve) => {
-    const fallback = { lat: 43.5, lng: 16.4 }; // Split, Croatia — Adriatic default
+    // Once the user has granted permission and we've gotten a fix, persist it so a
+    // later slow/timed-out lookup reuses the real location instead of snapping back
+    // to the Split default. Priority: this device's last fix → caller seed → Split.
+    const fallback = readSavedLocation() ?? opts?.fallback ?? { lat: 43.5, lng: 16.4 }; // Split, Croatia — Adriatic default
     if (!navigator.geolocation) { resolve(fallback); return; }
     navigator.geolocation.getCurrentPosition(
-      (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      (pos) => {
+        const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        saveLocation(loc);
+        opts?.onFix?.(loc);
+        resolve(loc);
+      },
       () => resolve(fallback),
-      { timeout: 5000, maximumAge: 300_000 },
+      { timeout: 8000, maximumAge: 300_000 },
     );
   });
 

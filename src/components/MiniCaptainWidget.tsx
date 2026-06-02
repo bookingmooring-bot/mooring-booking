@@ -175,7 +175,26 @@ const MiniCaptainWidget = () => {
 
     try {
       let location: { lat: number; lng: number } = { lat: 43.5, lng: 16.4 };
-      try { location = await getUserLocation(); } catch { /* fallback */ }
+      try {
+        location = await getUserLocation({
+          // Cross-device seed: reuse the location saved on the user's profile.
+          fallback:
+            profile?.last_known_lat != null && profile?.last_known_lng != null
+              ? { lat: profile.last_known_lat, lng: profile.last_known_lng }
+              : undefined,
+          // On a real GPS fix, persist it server-side so it sticks across devices
+          // and feeds the storm-alert cron — only for logged-in users.
+          onFix: user
+            ? (loc) => {
+                void supabase
+                  .from("profiles")
+                  .update({ last_known_lat: loc.lat, last_known_lng: loc.lng })
+                  .eq("id", user.id)
+                  .then(() => undefined);
+              }
+            : undefined,
+        });
+      } catch { /* fallback */ }
 
       const tier = getUserTier(profile);
 
