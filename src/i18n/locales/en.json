@@ -372,7 +372,11 @@
           "hint": "Certified captain"
         }
       }
-    }
+    },
+    "limitReachedLong": "⭐ You've used all {{count}} free AI Captain questions this month.\n\nUpgrade to **Sailor** (€19.99/mo) or **AI-Only** (€7.99/mo) for unlimited access, 7-day forecasts and storm alerts! 🚢",
+    "limitReachedShort": "⭐ You've used all {{count}} free AI Captain questions this month. Upgrade to Premium for unlimited access.",
+    "premiumTitle": "AI Captain Premium",
+    "premiumUpsell": "You've used your {{count}} free questions. Upgrade for unlimited access!"
   },
   "provider": {
     "title": "Create Your Provider Profile",
@@ -1315,7 +1319,24 @@
     "createAccount": "Create Account",
     "signInBtn": "Sign In",
     "haveAccount": "Already have an account? Sign In",
-    "noAccount": "Don't have an account? Sign Up"
+    "noAccount": "Don't have an account? Sign Up",
+    "forgotPassword": "Forgot your password?",
+    "forgotTitle": "Reset your password",
+    "forgotSubtitle": "Enter your email and we'll send you a reset link",
+    "sendResetLink": "Send Reset Link",
+    "resetSent": "Check your email",
+    "resetSentDesc": "If an account exists for this address, a password reset link is on its way.",
+    "resetFailed": "Could not send reset email",
+    "setNewPassword": "Set a new password",
+    "setNewPasswordSubtitle": "Choose a new password for your account",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "updatePassword": "Update Password",
+    "passwordMismatch": "Passwords do not match",
+    "passwordUpdated": "Password updated",
+    "passwordUpdatedDesc": "You can now sign in with your new password on both Mooring Booking and AI Captain.",
+    "recoveryMissing": "This reset link is no longer valid or was opened in a different browser. Request a new link from the browser you will use to set the password.",
+    "requestNewLink": "Request a new link"
   },
   "aiCaptainTeaser": {
     "badge": "AI Captain",

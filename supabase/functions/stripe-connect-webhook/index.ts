@@ -88,15 +88,22 @@ Deno.serve(async (req: Request) => {
         if (mooringId) {
           const { data: mooring } = await supabase
             .from('moorings')
-            .select('price')
+            .select('price_per_night')
             .eq('id', mooringId)
             .single();
           if (mooring) {
-            const expectedTotal = Number(mooring.price) * Math.max(1, Number(bookingData.nights ?? 1));
+            const expectedTotal = Number(mooring.price_per_night) * Math.max(1, Number(bookingData.nights ?? 1));
             const clientTotal = Number(bookingData.total_price ?? 0);
-            if (Math.abs(clientTotal - expectedTotal) > 1) {
-              bookingData.total_price = expectedTotal;
-              console.warn('Price mismatch corrected:', clientTotal, '->', expectedTotal, 'session:', session.id);
+            // The amount Stripe actually charged is authoritative (the line item is the
+            // booking total). Never trust the metadata total; base price × nights is only
+            // a sanity reference because now4today / per-day custom prices lower it.
+            const chargedTotal = session.amount_total != null ? session.amount_total / 100 : clientTotal;
+            if (Math.abs(clientTotal - chargedTotal) > 0.01) {
+              console.warn('Metadata total differs from charged amount, using charged:', clientTotal, '->', chargedTotal, 'session:', session.id);
+            }
+            bookingData.total_price = chargedTotal;
+            if (chargedTotal > expectedTotal + 1) {
+              console.warn('Charged more than base price × nights:', chargedTotal, 'vs', expectedTotal, 'session:', session.id);
             }
           }
         }

@@ -173,7 +173,7 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
       }
     }
 
-    setDateRange(range);
+    setDateRange({ from: range.from, to: range.to });
   };
 
   const checkInStr = dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : "";
@@ -618,7 +618,7 @@ const BookingModal = ({ mooring, isOpen, onClose, initialCheckIn, initialCheckOu
               {/* WhatsApp */}
               {(mooring.ownerPhone) && (
                 <>
-                  <a href={`https://wa.me/${(mooring.ownerPhone).replace(/[\s\-\(\)]/g, "")}?text=${encodeURIComponent(`Booking confirmed at ${mooring.name}! Confirmation #MB-${Date.now().toString(36).toUpperCase()}. Check-in: ${checkInStr}, Check-out: ${checkOutStr}. Total: €${grandTotal}.`)}`} target="_blank" rel="noopener noreferrer" className="block mt-2">
+                  <a href={`https://wa.me/${(mooring.ownerPhone).replace(/[\s\-()]/g, "")}?text=${encodeURIComponent(`Booking confirmed at ${mooring.name}! Confirmation #MB-${Date.now().toString(36).toUpperCase()}. Check-in: ${checkInStr}, Check-out: ${checkOutStr}. Total: €${grandTotal}.`)}`} target="_blank" rel="noopener noreferrer" className="block mt-2">
                     <Button variant="outline" className="w-full border-[hsl(142,70%,45%)] text-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,45%)]/10">
                       📱 Send to WhatsApp
                     </Button>

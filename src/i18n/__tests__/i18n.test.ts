@@ -38,7 +38,7 @@ describe('translation key coverage', () => {
   const enKeys = Object.keys(en);
 
   it('EN file has no empty values', () => {
-    const emptyKeys = enKeys.filter(k => (en as Record<string, string>)[k] === '');
+    const emptyKeys = enKeys.filter(k => (en as unknown as Record<string, string>)[k] === '');
     expect(emptyKeys).toEqual([]);
   });
 });

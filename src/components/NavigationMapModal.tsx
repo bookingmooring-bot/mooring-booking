@@ -14,7 +14,7 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-// @ts-ignore
+// @ts-expect-error Leaflet types do not declare the private _getIconUrl
 delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x,
@@ -117,7 +117,7 @@ const NavigationMapModal = ({ destination, onClose }: Props) => {
     const dest: [number, number] = [destination.lat, destination.lng];
     setRouteLoading(true);
 
-    const useApprox = async () => {
+    const applyApproxRoute = async () => {
       const route = await computeSeaRoute(userPos, dest);
       if (cancelled) return;
       setRoutePositions(route?.positions ?? null);
@@ -139,7 +139,7 @@ const NavigationMapModal = ({ destination, onClose }: Props) => {
           }
           if (precise.kind === "upsell") setShowUpsell(true);
         }
-        await useApprox();
+        await applyApproxRoute();
       } finally {
         if (!cancelled) setRouteLoading(false);
       }

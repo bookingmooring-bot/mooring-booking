@@ -39,7 +39,7 @@ export function useFleetBookings() {
         .order('check_in', { ascending: false });
 
       if (error) return [];
-      return (data ?? []) as FleetBooking[];
+      return (data ?? []) as unknown as FleetBooking[];
     },
     enabled: !!user,
     staleTime: 2 * 60 * 1000,

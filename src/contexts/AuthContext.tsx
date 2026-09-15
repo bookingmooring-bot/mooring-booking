@@ -11,6 +11,8 @@ interface AuthContextType {
     signInWithGoogle: (redirectTo?: string) => Promise<{ error: AuthError | null }>;
     signInWithApple: () => Promise<{ error: AuthError | null }>;
     signOut: () => Promise<void>;
+    resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
+    updatePassword: (password: string) => Promise<{ error: AuthError | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,8 +34,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 if (!error && data.session) {
                     setSession(data.session);
                     setUser(data.session.user);
-                    // Clean URL
-                    window.history.replaceState(null, '', window.location.pathname);
+                    // Clean URL, but keep other params (e.g. ?mode=recovery for password reset)
+                    params.delete('code');
+                    const rest = params.toString();
+                    window.history.replaceState(null, '', window.location.pathname + (rest ? `?${rest}` : ''));
                 }
             }
             
@@ -94,12 +98,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await supabase.auth.signOut();
     };
 
+    // Sends the Supabase recovery email; the link lands on /auth?mode=recovery
+    // where the user sets a new password (same account as ai-captain.app).
+    const resetPassword = async (email: string) => {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: `${window.location.origin}/auth?mode=recovery`,
+        });
+        return { error };
+    };
+
+    const updatePassword = async (password: string) => {
+        const { error } = await supabase.auth.updateUser({ password });
+        return { error };
+    };
+
     // The auth helpers (signUp, signIn, …) are stable closures that only call
     // supabase and capture no render state, so the context value only needs to
     // change when user/session/loading change. Memoizing prevents every consumer
     // (Dashboard, Explore, protected routes) from re-rendering on each provider render.
     const value = useMemo(
-        () => ({ user, session, loading, signUp, signIn, signInWithGoogle, signInWithApple, signOut }),
+        () => ({ user, session, loading, signUp, signIn, signInWithGoogle, signInWithApple, signOut, resetPassword, updatePassword }),
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [user, session, loading],
     );

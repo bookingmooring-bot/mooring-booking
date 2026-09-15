@@ -1,3 +1,4 @@
+import type { SubscriptionTier } from "@/lib/subscription";
 // Single source of truth for AI Captain request payload shape.
 // 3 clients call this: AIChatWidget (web full), MiniCaptainWidget (web mini),
 // and MooringBookingApp/app/(tabs)/ai-captain.tsx (mobile RN mirror).
@@ -9,7 +10,7 @@ export interface ChatMessage {
 }
 
 export interface UserProfileContext {
-    tier: "basic" | "premium-monthly" | "premium-annual";
+    tier: SubscriptionTier;
     boatName?: string;
     boatLength?: number;
 }

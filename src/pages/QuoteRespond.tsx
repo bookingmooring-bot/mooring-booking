@@ -73,9 +73,10 @@ const QuoteRespond = () => {
       return;
     }
 
-    // Pre-fill with listing price
-    if (data.moorings?.price_per_night) {
-      setPrice(String(data.moorings.price_per_night));
+    // Pre-fill with listing price (PostgREST types the embedded relation as an array)
+    const mooringRow = Array.isArray(data.moorings) ? data.moorings[0] : data.moorings;
+    if (mooringRow?.price_per_night) {
+      setPrice(String(mooringRow.price_per_night));
     }
 
     setPageState("form");

@@ -140,7 +140,7 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
       setShowPaywall(true);
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: `⭐ Iskoristio si svih ${AI_BASIC_LIMIT} besplatnih pitanja AI Kapetana.\n\nNadogradi na **Sailor** (€19.99/mj) ili **AI-Only** (€7.99/mj) za neograničen pristup, 7-dnevne prognoze i upozorenja na oluje! 🚢`
+        content: t('aiChat.limitReachedLong', `⭐ You've used all ${AI_BASIC_LIMIT} free AI Captain questions this month.\n\nUpgrade to **Sailor** (€19.99/mo) or **AI-Only** (€7.99/mo) for unlimited access, 7-day forecasts and storm alerts! 🚢`, { count: AI_BASIC_LIMIT })
       }]);
       setIsLoading(false);
       return;
@@ -201,7 +201,7 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
         setShowPaywall(true);
         setMessages(prev => [...prev, {
           role: "assistant",
-          content: data?.reply ?? `⭐ Iskoristio si svih ${AI_BASIC_LIMIT} besplatnih pitanja AI Kapetana. Nadogradi na Premium.`,
+          content: data?.reply ?? t('aiChat.limitReachedShort', `⭐ You've used all ${AI_BASIC_LIMIT} free AI Captain questions this month. Upgrade to Premium for unlimited access.`, { count: AI_BASIC_LIMIT }),
         }]);
         setIsLoading(false);
         return;
@@ -438,9 +438,9 @@ const AIChatWidget = ({ isOpen: externalIsOpen, onClose }: AIChatWidgetProps) =>
             <div className="p-4 border-t border-border">
               <div className="bg-gradient-to-r from-gold/10 to-secondary/10 border border-gold/30 rounded-xl p-4 text-center">
                 <Crown className="text-gold mx-auto mb-2" size={28} />
-                <p className="text-sm font-semibold text-foreground mb-1">AI Kapetan Premium</p>
+                <p className="text-sm font-semibold text-foreground mb-1">{t('aiChat.premiumTitle', 'AI Captain Premium')}</p>
                 <p className="text-xs text-muted-foreground mb-3">
-                  Iskoristio si {AI_BASIC_LIMIT} besplatnih pitanja. Nadogradi za neograničen pristup!
+                  {t('aiChat.premiumUpsell', `You've used your ${AI_BASIC_LIMIT} free questions. Upgrade for unlimited access!`, { count: AI_BASIC_LIMIT })}
                 </p>
                 <Button
                   onClick={() => { handleClose(); navigate('/user-pricing'); }}

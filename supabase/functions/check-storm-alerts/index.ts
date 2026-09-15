@@ -100,7 +100,7 @@ Deno.serve(async (req: Request) => {
     .not("expo_push_token", "is", null)
     .not("last_known_lat", "is", null)
     .not("last_known_lng", "is", null)
-    .in("subscription_tier", ["premium-monthly", "premium-annual"]);
+    .in("subscription_tier", ["sailor", "captain", "charter-fleet", "ai-only", "premium-monthly", "premium-annual"]);
 
   if (usersErr) {
     return new Response(JSON.stringify({ error: usersErr.message }), {

@@ -98,7 +98,7 @@ export const generateCalendarDays = (): CalendarDay[] => {
     const days: CalendarDay[] = [];
     const startDate = new Date(2026, 0, 1);
     const endDate = new Date(2026, 11, 31);
-    let currentDate = new Date(startDate);
+    const currentDate = new Date(startDate);
     while (currentDate <= endDate) {
         days.push({
             date: new Date(currentDate),

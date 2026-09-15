@@ -10,7 +10,7 @@ export const RESERVED_SLUGS = new Set([
   'webhook', 'stripe', 'whatsapp', 'favicon', 'assets', 'static',
 ]);
 
-const SLUG_REGEX = /^[a-z0-9][a-z0-9\-]{2,48}[a-z0-9]$/;
+const SLUG_REGEX = /^[a-z0-9][a-z0-9-]{2,48}[a-z0-9]$/;
 
 export function isSlugFormatValid(slug: string): boolean {
   return SLUG_REGEX.test(slug);
