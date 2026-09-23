@@ -114,11 +114,17 @@ Deno.serve(async (req: Request) => {
     }
 
     if (userId) {
-      await supabase.from('profiles').update({
-        full_name,
-        phone: phone || null,
-        role: 'provider',
-      }).eq('id', userId);
+      // Public endpoint (website form needs no secret): only fill blanks and upgrade
+      // user → provider. Never overwrite an existing account's name/phone and never
+      // touch an admin — this used to demote admins to provider (2026-09-23).
+      const { data: current } = await supabase.from('profiles').select('full_name, phone, role').eq('id', userId).maybeSingle();
+      const patch: Record<string, unknown> = {};
+      if (!current?.full_name) patch.full_name = full_name;
+      if (!current?.phone && phone) patch.phone = phone;
+      if (!current?.role || current.role === 'user') patch.role = 'provider';
+      if (Object.keys(patch).length > 0) {
+        await supabase.from('profiles').update(patch).eq('id', userId);
+      }
 
       // Ensure email is confirmed so client-side signInWithPassword succeeds
       // (client signUp may leave the user unconfirmed if Supabase email confirmation is on)

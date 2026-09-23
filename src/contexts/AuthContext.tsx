@@ -94,8 +94,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { error };
     };
 
+    // Local scope: log out only this browser. The default ('global') revokes every
+    // session of the account — other tabs, phones and ai-captain.app (same Supabase)
+    // get kicked out with "Refresh Token Not Found".
     const signOut = async () => {
-        await supabase.auth.signOut();
+        await supabase.auth.signOut({ scope: 'local' });
     };
 
     // Sends the Supabase recovery email; the link lands on /auth?mode=recovery

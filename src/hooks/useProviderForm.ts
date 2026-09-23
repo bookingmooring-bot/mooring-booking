@@ -644,19 +644,27 @@ export function useProviderForm() {
         setMooringCount(prev => prev + 1);
         setJustSubmitted(true);
 
+        // Google/Apple and already-verified accounts don't need a verification link;
+        // sending one anyway looked like something went wrong.
+        const needsVerification = !user!.email_confirmed_at;
+
         toast({
           title: '✅ Mooring Published!',
-          description: 'Your mooring is live! Check your email to verify your account.',
+          description: needsVerification
+            ? 'Your mooring is live! Check your email to verify your account.'
+            : 'Your mooring is live!',
         });
 
-        // Fire-and-forget verification OTP — non-blocking by design, but log
-        // failures in dev so a broken email flow doesn't fail silently.
-        supabase.auth.signInWithOtp({
-          email: user!.email!,
-          options: { shouldCreateUser: false },
-        }).catch((err) => {
-          if (import.meta.env.DEV) console.warn('[publish] verification OTP failed:', err);
-        });
+        if (needsVerification) {
+          // Fire-and-forget verification OTP — non-blocking by design, but log
+          // failures in dev so a broken email flow doesn't fail silently.
+          supabase.auth.signInWithOtp({
+            email: user!.email!,
+            options: { shouldCreateUser: false },
+          }).catch((err) => {
+            if (import.meta.env.DEV) console.warn('[publish] verification OTP failed:', err);
+          });
+        }
       }
 
       setConsentAccepted(false);
